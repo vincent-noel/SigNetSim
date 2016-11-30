@@ -4,8 +4,6 @@ DIR=`dirname $PWD/$0`
 INSTALL_DIR=`dirname $DIR`
 
 cd $INSTALL_DIR
-#virtualenv venv
-#source venv/bin/activate
 
 pip install -r requirements.txt
 
@@ -15,13 +13,12 @@ mkdir -p data/media
 bower --allow-root install
 
 mkdir -p signetsim/static/mpld3
-cp -r venv/lib/python2.7/site-packages/mpld3/js/d3.v3.min.js signetsim/static/mpld3/
-cp -r venv/lib/python2.7/site-packages/mpld3/js/mpld3.v0.2.min.js signetsim/static/mpld3/
+cp -r /usr/local/lib/python2.7/site-packages/mpld3/js/d3.v3.min.js signetsim/static/mpld3/
+cp -r /usr/local/lib/python2.7/site-packages/mpld3/js/mpld3.v0.2.min.js signetsim/static/mpld3/
 mkdir static
 
+rm -r ~/.cache/matplotlib
 python manage.py makemigrations --noinput
 python manage.py migrate --noinput
-python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput > /dev/null
 echo "from signetsim.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'admin')" | python manage.py shell
-
-#deactivate

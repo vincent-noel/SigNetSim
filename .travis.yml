@@ -3,12 +3,12 @@ python: 2.7
 
 before_install:
   - sudo apt-get -qq update
-  - bash scripts/build_dep_ubuntu1204
+  - bash scripts/build_dep_precise
 
 install:
   - bash scripts/make
-  - bash scripts/configure_apache_ubuntu1204
-  - bash scripts/install_apache_ubuntu1204
+  - bash scripts/configure_apache_precise
+  - bash scripts/install_apache_precise
 
 
 script:
