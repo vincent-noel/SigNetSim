@@ -6,8 +6,7 @@ cp $DIR/apache_template $DIR/apache_conf
 sed -i "s|___ROOT_DIR___|signetsim|g" $DIR/apache_conf
 sed -i "s|___INSTALL_DIR___|$INSTALL_DIR|g" $DIR/apache_conf
 
-ls -al /etc/apache2
-ls -al /etc/apache2/sites-available
+
 cp /etc/apache2/sites-available/000-default.conf $DIR
 NB_LINES=`wc -l $DIR/000-default.conf | cut -d' ' -f1`
 POS_ENDVH=`cat $DIR/000-default.conf | grep -n /VirtualHost | cut -d: -f1`

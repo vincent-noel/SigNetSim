@@ -3,4 +3,4 @@ sudo apt-get install -y apache2 libapache2-mod-wsgi \
 					libsundials-serial-dev libsundials-serial \
 					git python-pip npm nodejs \
 					python-virtualenv graphviz
-bower -g install
+npm -g install bower
