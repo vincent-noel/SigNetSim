@@ -38,6 +38,24 @@ You will need :
 
 ##Installation
 
+	chmod +x scripts/*
+	scripts/build_dep
+	scripts/make
+
+
+
+##Run the development server
+
+	scripts/run_env
+
+
+
+##Run the apache server
+
+	scripts/configure_apache
+	sudo scripts/install_apache
+
+
 
 ##License
 
