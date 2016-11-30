@@ -1,0 +1,89 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% load tags %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Selected model</th>
+    </tr>
+  </thead>
+</table>
+<br/>
+<div class="container-fluid">
+  <div class="dropdown">
+    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+      <span id="model_name" class="dropdown-text">{% if not model_name == None %}{{ model_name }}{% else %}Choose a model {% endif %}</span>
+      <span class="glyphicon glyphicon-triangle-bottom"></span>
+    </button>
+    <ul id="model_list" class="dropdown-menu">
+        {% for sbml_model in sbml_models %}
+        <li><a href="#">{{ sbml_model.name }}</a></li>
+        {% endfor %}
+    </ul>
+  </div>
+  <form class="form" method="POST" action="." id="choose_model" label="Choose model">
+  {% csrf_token %}
+  <input type="hidden" id="model_id" Class="form-control" name="model_id">
+  <input type="hidden" class="form-control" name="action" value="choose_model">
+  </form>
+  <script>
+    $('#model_list li').on('click', function(){
+      $("#model_name").html($(this).text());
+      $('#model_id').val($(this).index());
+      $('#choose_model').submit();
+    });
+  </script>
+</div>
+{% if model_has_submodels and show_submodels == True %}
+<br/>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Selected submodel</th>
+    </tr>
+  </thead>
+</table>
+<br/>
+<div class="container-fluid">
+  <div class="dropdown">
+    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+      <span id="submodel_label" class="dropdown-text">{% if model_submodel == None or model_submodel == 0 %}{{model_submodels|my_lookup:0}}{% else %}{% if model_submodel == -1 %}Flatten model{% else %}{{model_submodels|my_lookup:model_submodel}}{% endif %}{% endif %}</span>
+      <span class="glyphicon glyphicon-triangle-bottom"></span>
+    </button>
+    <ul id="submodel_dropdown" class="dropdown-menu">
+        {% for submodel in model_submodels %}
+        <li><a href="#">{{ submodel }}</a></li>
+        {% endfor %}
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Flatten model</a></li>
+    </ul>
+  </div>
+  <form class="form" method="POST" action="." id="choose_submodel" label="Choose submodel">
+  {% csrf_token %}
+  <input type="hidden" id="submodel_id" name="submodel_id" value="{{submodel_id}}">
+  <input type="hidden" name="action" value="choose_submodel">
+  </form>
+  <script>
+    $('#submodel_dropdown li').on('click', function(){
+      $("#submodel_label").html($(this).text());
+      $('#submodel_id').val($(this).index());
+      $('#choose_submodel').submit();
+    });
+  </script>
+</div>
+{% endif %}

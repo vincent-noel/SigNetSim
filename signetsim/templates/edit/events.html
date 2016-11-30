@@ -1,0 +1,336 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% block title %} Events | {{ block.super }}{% endblock title %}
+
+{% block edit_item %}active{% endblock edit_item %}
+{% block view_name %}Model events{% endblock view_name %}
+{% block view_sidebar %}{% include 'edit/menu.html' with page="events" %}{% endblock view_sidebar %}
+
+{% block view_content %}
+{% load bootstrap3 %}
+{% load tags %}
+<div class="container-fluid" id="view">
+  <h4>Events</h4>
+  <hr/>
+  {% if model_id != None %}
+  {% include 'commons/error_page.html' %}
+  <br/>
+  <div class="container-fluid">
+    <table class="table table-striped">
+      <thead>
+        <tr class="row">
+          <th class="col-xs-6">Name</th>
+          <th class="col-xs-4">Trigger</th>
+          <th class="col-xs-2 text-right"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for event in list_of_events %}
+        <tr class="row">
+          <td class="col-xs-6">{% if event.getName != None %}{{event.getName}} {% endif %}</td>
+          <td class="col-xs-4">{{event.trigger.getPrettyPrintMathFormula}}</td>
+          <td class="col-xs-2">
+            {% if user.is_authenticated %}
+            <div class="pull-right">
+                <form class="form-inline" method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <input type="hidden" name="event_id" value="{{ forloop.counter0 }}">
+                  <button type="submit" name="action" value="edit" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                  <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+                </form>
+              </div>
+            {% endif %}
+           </td>
+         </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if user.is_authenticated %}
+  <hr/>
+  <div class="container-fluid">
+    <button type="button" class="btn btn-primary btn-sm" id="new_event_button">{% bootstrap_icon "file" %} Create new event</button>
+  </div>
+  {% endif %}
+  {% endif %}
+</div>
+
+{% endblock view_content %}
+
+
+{% block view_modal %}
+
+<div class="modal fade in" id="modal_event" tabindex="1" role="dialog" aria-labelledby="{% if event_to_edit != None %}Edit{% else %}New{% endif %} event">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="" method="post" class="form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="event_id" value="{% if form.id != None %}{{form.id}}{% endif %}">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">{% if event_edit != None %}Edit{% else %}New{% endif %} event</h4>
+        </div>
+        <div class="modal-body">
+          <div class="input-group">
+            <span class="input-group-addon">Name</span>
+            <input type="text" class="form-control input-sm" placeholder="Input event's name" name="event_name" value="{% if form.name != None %}{{form.name}}{% endif %}" id="event_name"/>
+          </div>
+          <br/>
+          <div class="row" style="padding-left:15px;padding-right:15px">
+            <div class="col-xs-11" style="padding:0">
+              <div class="input-group">
+                <span class="input-group-addon">Trigger</span>
+                <input type="text" class="form-control input-sm" placeholder="Input trigger's expression" name="event_trigger" value="{{form.trigger}}" id="event_trigger"/>
+              </div>
+            </div><div class="col-xs-1" style="padding:0">
+              <div class="input-group pull-right">
+                <button type="button"  class="btn btn-default btn-sm" id="toggle_trigger_options">{% bootstrap_icon "cog" %}</button>
+              </div>
+            </div>
+          </div>
+          <div id="trigger_options" class="collapse out">
+            <br/>
+            <div class="input-group">
+              <span class="input-group-addon">Priority</span>
+              <input type="text" class="form-control input-sm" placeholder="Input trigger's priority" name="event_priority" value="{% if form.priority != None %}{{form.priority}}{% endif %}" id="event_priority"/>
+            </div>
+            <br/>
+            <div class="input-group">
+              <span class="input-group-addon">Delay</span>
+              <input type="text" class="form-control input-sm" placeholder="Input trigger's delay" name="event_delay" value="{% if form.delay != None %}{{form.delay}}{% endif %}" id="event_delay"/>
+            </div>
+            <br/>
+            <div class="row" style="padding-left:15px;padding-right:15px">
+              <div class="col-md-4" style="padding:0px">
+                <div class="input-group col-xs-12" onclick="toggle_slide('event_persistent');" style="padding:0">
+                  <span class="input-group-addon input-sm" style="width:100%">Persistent</span>
+                  <span class="input-group-addon" style="padding-bottom:0px">
+                    <label class="switch">
+                      <input type="checkbox" name="event_persistent" id="event_persistent" {% if form.persistent == True %}checked{% endif %}>
+                      <div class="slider round"></div>
+                    </label>
+                  </span>
+                </div>
+              </div>
+              <div class="col-md-4" style="padding:0px">
+                <div class="input-group col-xs-12" onclick="toggle_slide('event_initialvalue');" style="padding:0">
+                  <span class="input-group-addon input-sm" style="width:100%">Initial value</span>
+                  <span class="input-group-addon" style="padding-bottom:0px">
+                    <label class="switch">
+                      <input type="checkbox" name="event_initialvalue" id="event_initialvalue" {% if form.initialvalue == True %}checked{% endif %}>
+                      <div class="slider round"></div>
+                    </label>
+                  </span>
+                </div>
+              </div>
+              <div class="col-md-4" style="padding:0px">
+                <div class="input-group col-xs-12" onclick="toggle_slide('event_usetriggertime');" style="padding:0">
+                  <span class="input-group-addon input-sm" style="width:100%">Use trigger time values</span>
+                  <span class="input-group-addon" style="padding-bottom:0px">
+                    <label class="switch">
+                      <input type="checkbox" name="event_usetriggertime" id="event_usetriggertime" {% if form.useValuesFromTriggerTime == True %}checked{% endif %}>
+                      <div class="slider round"></div>
+                    </label>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th colspan="2" class="col-xs-10">Assignments</th>
+                <th class="col-xs-2 text-right"><button type="button" class="btn btn-primary btn-xs" onclick="add_assignment();">{% bootstrap_icon "plus" %}</button></th>
+              </tr>
+            </thead>
+            <tbody id="body_assignments">
+              {% for event_assignment in form.assignments %}
+              <tr id="event_assignment_{{forloop.counter0}}_tr">
+                <td class="col-xs-5 text-center">
+                  <input type="hidden" id="event_assignment_{{ forloop.counter0 }}" name="event_assignment_{{ forloop.counter0 }}_id" value="{% if event_assignment.0 != None %}{{event_assignment.0}}{% endif %}">
+                  <div class="dropdown">
+                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                      <span id="event_assignment_{{ forloop.counter0 }}_label">{% if event_assignment.0 != None %}{{list_of_variables|my_lookup:event_assignment.0}}{% else %}Choose a variable{% endif %}</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul id="event_assignment_{{ forloop.counter0 }}_dropdown" class="dropdown-menu">
+                      {% for var in list_of_variables %}
+                      <li><a href="#">{{ var }}</a></li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </td>
+                <td class="col-xs-5">
+                  <input type="text" class="form-control input-sm" placeholder="Input assignment exression" name="event_assignment_{{ forloop.counter0 }}_expression" value="{% if event_assignment.1 != None %}{{event_assignment.1}}{% endif %}">
+                </td>
+                <td class="col-xs-2 text-right vert-align">
+                  <button type="button" onclick="remove_assignment({{forloop.counter0}});" class="btn btn-danger btn-xs">{% bootstrap_icon "remove" %}</button>
+                </td>
+                <script>
+                {% for event_assignment in form.assignments %}
+
+                  $('#event_assignment_{{ forloop.counter0 }}_dropdown li').on('click', function(){
+                    $('#event_assignment_{{ forloop.counter0 }}_label').html($(this).text());
+                    $('#event_assignment_{{ forloop.counter0 }}').val($(this).index());
+                  });
+
+                {% endfor %}
+                </script>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+      </div>
+      {% include 'commons/error_modal.html' %}
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" name="action" value="save" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock view_modal %}
+
+{% block js %}
+
+{{ block.super }}
+
+
+
+
+
+var nb_assignments = {{form.assignments|length}} - 1;
+
+function add_assignment(){
+    nb_assignments = nb_assignments + 1;
+    $("#body_assignments").append("\
+    <tr id='event_assignment_" + nb_assignments.toString() + "_tr'>\
+      <td class=\"col-xs-5 text-center\">\
+        <input type=\"hidden\" id=\"event_assignment_" + nb_assignments.toString() + "\" name=\"event_assignment_" + nb_assignments.toString() + "_id\" value=\"\">\
+        <div class=\"dropdown\">\
+          <button type=\"button\" class=\"btn btn-primary btn-sm dropdown-toggle\" data-toggle=\"dropdown\">\
+            <span id=\"event_assignment_" + nb_assignments.toString() + "_label\">Choose a variable</span>\
+            <span class=\"caret\"></span>\
+          </button>\
+          <ul id=\"event_assignment_" + nb_assignments.toString() + "_dropdown\" class=\"dropdown-menu\">\
+            {% for var in list_of_variables %}<li><a href=\"#\">{{ var }}</a></li>{% endfor %}\
+          </ul>\
+        </div>\
+      </td>\
+      <td class=\"col-xs-5\">\
+        <input type=\"text\" class=\"form-control input-sm\" placeholder=\"Input assignment exression\" name=\"event_assignment_" + nb_assignments.toString() + "_expression\" value=\"\">\
+      </td>\
+      <td class=\"col-xs-2 text-right vert-align\">\
+        <button type=\"button\" onclick=\"remove_assignment(" + nb_assignments.toString() + ");\" class=\"btn btn-danger btn-xs\"><span class=\"glyphicon glyphicon-remove\"></span></button>\
+      </td>\
+    </tr>\
+    ");
+
+    $("<script>").attr("type", "text/javascript").text("\
+         $(\"#event_assignment_" + nb_assignments.toString() + "_dropdown li\").on(\"click\", function(){\
+           $(\"#event_assignment_" + nb_assignments.toString() + "_label\").html($(this).text());\
+           $(\"#event_assignment_" + nb_assignments.toString() + "\").val($(this).index());});")
+       .appendTo('#event_assignment_' + nb_assignments.toString() + '_tr');
+
+    updateFormNames();
+}
+
+function remove_assignment(assignment_id)
+{
+    $("#event_assignment_" + assignment_id + "_tr").remove();
+    updateFormNames();
+
+}
+
+function updateFormNames()
+{
+    var ass_id = 0;
+
+    $("#body_assignments").children("tr").each(function()
+    {
+        $('input', $(this)).each(function()
+        {
+            var id = new RegExp('^event_assignment_[0-9]+_id$');
+            if (id.test($(this).attr('name')))
+            {
+              $(this).attr('name', 'event_assignment_' + ass_id.toString() + '_id');
+            }
+
+            var exp = new RegExp('^event_assignment_[0-9]+_expression$');
+            if (exp.test($(this).attr('name')))
+            {
+                $(this).attr('name', 'event_assignment_' + ass_id.toString() + '_expression');
+            }
+        });
+        ass_id = ass_id + 1;
+    });
+}
+
+
+$('#toggle_trigger_options').on('click', function(){
+
+  if($("#trigger_options").hasClass("out")) {
+          $("#trigger_options").addClass("in");
+          $("#trigger_options").removeClass("out");
+
+  } else {
+          $("#trigger_options").addClass("out");
+          $("#trigger_options").removeClass("in");
+  }
+});
+
+$('#new_event_button').on('click', function(){
+    $("#body_assignments").children("tr").remove();
+    add_assignment();
+    $("#event_trigger").attr("value", "");
+    $("#event_priority").attr("value", "");
+    $("#event_delay").attr("value", "");
+    $("#event_persistent").attr("checked", true);
+    $("#event_initialvalue").attr("checked", false);
+    $("#error_messages").remove();
+    if($("#trigger_options").hasClass("in")) {
+            $("#trigger_options").addClass("out");
+            $("#trigger_options").removeClass("in");
+    }
+    $('#modal_event').modal('show');
+
+});
+
+
+function toggle_slide(slide_id) {
+  if ($('#' + slide_id).prop('checked') == true) {
+    $('#' + slide_id).prop("checked", false);
+  } else {
+    $('#' + slide_id).prop("checked", true);
+  }
+}
+
+
+{% if form.hasErrors == True or form.isEditing == True %}
+
+    $(window).on('load',function(){
+        $('#modal_event').modal('show');
+    });
+
+{% endif %}
+
+{% endblock js %}

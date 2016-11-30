@@ -1,0 +1,309 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/fullpage.html' %}
+{% load static from staticfiles %}
+
+{% block title %} Condition | {{ block.super }}{% endblock title %}
+
+
+{% block view_name %}Experiment : {{ experiment_name }};  Condition : {{ condition_name}}{% endblock view_name %}
+
+{% block header %}
+  <script src="{% static "chart.js/dist/Chart.min.js" %}"></script>
+{% endblock header %}
+
+{% block view_content %}
+{% load bootstrap3 %}
+
+
+<div class="main">
+  <h4>
+    <a href="../" class="h4-link">{{experiment_name}}</a>
+    <span class="glyphicon glyphicon-menu-right btn-sm"></span>
+    <a href="." class="h4-link">{{condition_name}}</a>
+  </h4>
+  <br/><br/><br/>
+  <h4>Treatments</h4>
+  <hr/><br/>
+  <div class="container-fluid">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th class="col-xs-4">Species</th>
+          <th class="col-xs-3">Time</th>
+          <th class="col-xs-3">Value</th>
+          <th class="col-xs-2 text-right"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for data_point in experiment_initial_data %}
+        <tr>
+           <td class="col-xs-4">{{ data_point.species }}</td>
+           <td class="col-xs-3">{{ data_point.time }}</td>
+           <td class="col-xs-3">{{ data_point.value }}</td>
+           <td class="col-xs-2">
+            {% if user.is_authenticated %}
+            <div class="pull-right">
+              <form class="form-inline" role="form" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="data_type" value="treatment">
+                <input type="hidden" name="id" value="{{ data_point.id }}">
+                <button type="submit" name="action" value="edit" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+               </form>
+             </div>
+             {% endif %}
+           </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <hr/>
+  {% if user.is_authenticated %}
+  <div class="containter-fluid">
+    <button type="button" class="btn btn-primary btn-sm" id="new_treatment_button">{% bootstrap_icon "plus" %} New treatment</button>
+  </div>
+  {% endif %}
+
+  <hr/><br/>
+  <h4>Observations</h4>
+  <hr/>
+  {% include 'commons/error_page.html' %}
+  <br/>
+  <div class="container">
+    <canvas id="observations_graph"></canvas>
+  </div>
+  <br/><hr/><br/>
+  <div class="container-fluid">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr class="row">
+          <th class="col-xs-3">Species</th>
+          <th class="col-xs-3">Time</th>
+          <th class="col-xs-3">Value</th>
+          <th class="col-xs-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for data_point in experiment_data %}
+        <tr class="row">
+           <td class="col-xs-3">{{ data_point.species }}</td>
+           <td class="col-xs-3">{{ data_point.time }}</td>
+           <td class="col-xs-3">{{ data_point.value }}</td>
+           <td class="col-xs-3">
+             {% if user.is_authenticated %}
+             <div class="pull-right">
+               <form class="form-inline" role="form" method="post">
+                 {% csrf_token %}
+                 <input type="hidden" name="data_type" value="observation">
+                 <input type="hidden" name="id" value="{{ data_point.id }}">
+                 <button type="submit" name="action" value="edit" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+               </form>
+             </div>
+             {% endif %}
+           </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <hr/>
+  <div class="container-fluid">
+    <button type="button" class="btn btn-primary btn-sm" id="new_observation_button">{% bootstrap_icon "file" %} New observed data</button>
+  </div>
+
+
+
+
+</div>
+
+{% endblock view_content %}
+
+{% block view_modal %}
+
+<div class="modal fade in" id="treatment_modal" tabindex="1" role="dialog" aria-labelledby="{% if treatment_form.isEditing == True %}Edit{% else %}New{% endif %} treatment">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="" method="post" class="form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" class="form-control" name="data_type" value="treatment">
+        <input type="hidden" class="form-control" name="id" value="{% if treatment_form.isEditing == True %}{{treatment_form.id}}{% endif %}">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title"><span id="treatment_title">{% if treatment_form.isEditing == True %}Edit{% else %}New{% endif %} treatment</span></h4>
+        </div>
+        <div class="modal-body text-center">
+          <div class="input-group">
+            <span class="input-group-addon">Species</span>
+            <input type="text" class="form-control input-sm" id="treatment_name" placeholder="Input species name" name="name" value="{% if treatment_form.isEditing == True %}{{treatment_form.name}}{% endif %}">
+          </div>
+          <br/>
+          <div class="input-group">
+            <span class="input-group-addon">Time</span>
+            <input type="text" class="form-control input-sm" id="treatment_time" placeholder="Input observation time" name="time" value="{% if treatment_form.isEditing == True %}{{treatment_form.time}}{% endif %}">
+          </div>
+          <br/>
+          <div class="input-group">
+            <span class="input-group-addon">Value</span>
+            <input type="text" class="form-control input-sm" id="treatment_value" placeholder="Input observation value" name="value" value="{% if treatment_form.isEditing == True %}{{treatment_form.value}}{% endif %}">
+          </div>
+          <br/>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" name="action" value="save" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade in" id="observation_modal" tabindex="1" role="dialog" aria-labelledby="{% if observation_form.isEditing == True %}Edit{% else %}New{% endif %} observation">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="" method="post" class="form" role="form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" class="form-control" name="data_type" value="observation">
+        <input type="hidden" class="form-control" name="id" value="{% if observation_form.isEditing == True %}{{observation_form.id}}{% endif %}">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title"><span id="observation_title">{% if observation_form.isEditing == True %}Edit{% else %}New{% endif %} observed data</span></h4>
+        </div>
+        <div class="modal-body text-center">
+          <div class="input-group">
+            <span class="input-group-addon">Species</span>
+            <input type="text" class="form-control input-sm" id="observation_name" placeholder="Input species name" name="name" value="{% if observation_form.isEditing == True %}{{observation_form.name}}{% endif %}">
+          </div>
+          <br/>
+          <div class="input-group">
+            <span class="input-group-addon">Time</span>
+            <input type="text" class="form-control input-sm" id="observation_time" placeholder="Input value" name="time" value="{% if observation_form.isEditing == True %}{{observation_form.time}}{% endif %}">
+          </div>
+          <br/>
+          <div class="input-group">
+            <span class="input-group-addon">Value</span>
+            <input type="text" class="form-control input-sm" id="observation_value" placeholder="Input value" name="value" value="{% if observation_form.isEditing == True %}{{observation_form.value}}{% endif %}">
+          </div>
+          <br/>
+          <div class="input-group">
+            <span class="input-group-addon">Standard deviation</span>
+            <input type="text" class="form-control input-sm" id="observation_stddev" placeholder="Input value" name="stddev" value="{% if observation_form.isEditing == True %}{{observation_form.stddev}}{% endif %}">
+          </div>
+          <br/>
+          <table class="table table-striped">
+            <thead>
+              <tr onclick="toggle_reversible();" >
+                <th class="col-xs-8">Reversible</th>
+                <th class="col-xs-4 text-right">
+                  <span class="col-xs-12 input-group">
+                    <label class="switch">
+                      <input type="checkbox" name="steady_state" id="observation_steady_state" {% if observation_form.steadyState == True %}checked{% endif %}>
+                      <div class="slider round"></div>
+                    </label>
+                  </span>
+              </th>
+              </tr>
+            </thead>
+          </table>
+          <div class="collapse {% if observation_form.steadyState == True %}in{% else %}out{% endif %}" id="steady_state_on">
+            <div class="input-group">
+              <span class="input-group-addon">Minimal time to steady state</span>
+              <input type="text" class="form-control input-sm" id="observation_min_steady_stateplace" placeholder="Input value" name="min_steady_state" value="{% if observation_form.isEditing == True and observation_form.steadyState == True %}{{observation_form.minTimeSteadyState}}{% endif %}">
+            </div>
+            <br/>
+            <div class="input-group">
+              <span class="input-group-addon">Maximal time to steady state</span>
+              <input type="text" class="form-control input-sm" id="observation_max_steady_stateplace" placeholder="Input value" name="max_steady_state" value="{% if observation_form.isEditing == True and observation_form.steadyState == True %}{{observation_form.maxTimeSteadyState}}{% endif %}">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" name="action" value="save" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock view_modal %}
+
+
+{% block js %}
+{{ block.super }}
+
+{% include "data/data_graph.js" %}
+
+{% if treatment_form.isEditing == True %}
+  $(window).on('load',function(){
+    $('#treatment_modal').modal('show');
+  });
+{% endif %}
+
+$('#new_treatment_button').on('click', function(){
+  $("#treatment_name").attr("value", "");
+  $("#treatment_time").attr("value", "");
+  $("#treatment_value").attr("value", "");
+  $("#treatment_title").html("New treatment");
+  $('#treatment_modal').modal('show');
+});
+
+
+{% if observation_form.isEditing == True %}
+  $(window).on('load',function(){
+    $('#observation_modal').modal('show');
+  });
+{% endif %}
+
+$('#new_observation_button').on('click', function(){
+    $("#observation_name").attr("value", "");
+    $("#observation_time").attr("value", "");
+    $("#observation_value").attr("value", "");
+    $("#observation_stddevs").attr("value", "");
+    $("#observation_steady_state").attr("checked", false);
+    $("#observation_min_steady_state").attr("value", "");
+    $("#observation_max_steady_state").attr("value", "");
+    $("#observation_title").html("New Observation");
+    $('#observation_modal').modal('show');
+});
+
+function toggle_slide(slide_id) {
+  if ($('#' + slide_id).prop('checked') == true) {
+    $('#' + slide_id).prop("checked", false);
+  } else {
+    $('#' + slide_id).prop("checked", true);
+  }
+
+
+}
+
+function toggle_reversible () {
+
+  toggle_slide('observation_steady_state');
+
+  if ($("#steady_state_on").hasClass("out")) {
+          $("#steady_state_on").addClass("in");
+  } else {
+    $("#steady_state_on").removeClass("in");
+  }
+}
+{% endblock js %}

@@ -1,0 +1,175 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/fullpage.html' %}
+{% load static from staticfiles %}
+
+{% block title %} Optimization results | {{ block.super }}{% endblock title %}
+{% block header_js %}
+  <script src="{% static "chart.js/dist/Chart.js" %}"></script>
+{% endblock header_js %}
+{% block view_name %}Optimization_results{% endblock view_name %}
+
+{% block view_content %}
+{% load bootstrap3 %}
+
+<div class="container-fluid">
+  <div class="row row-xs-offset-2">
+    <div class="col-xs-12 main">
+
+      <h3 class="page-header">Optimization result</h4>
+      <br/>
+      <table class="table table-striped">
+        <thead>
+          <tr class="row">
+            <th class="col-xs-6">Parameter name</th>
+            <th class="col-xs-3 text-right">Initial value</th>
+            <th class="col-xs-3 text-right">Fitted value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for parameter in parameters %}
+            <tr class="row">
+              <td class="col-xs-6">{{parameter.3}}</td>
+              <td class="col-xs-3 text-right">{{parameter.1}}</td>
+              <td class="col-xs-3 text-right">{{parameter.2}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <table class="table table-striped">
+        <thead>
+          <tr class="row">
+            <th colspan="3" class="col-xs-12">Fitting control</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr class="row">
+              <td class="col-xs-4 text-center">
+
+              </td>
+              <td class="col-xs-4 text-center">
+                <form action="" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" name="action" value="stop_optim" class="btn btn-primary btn-sm">{% bootstrap_icon "stop" %} Stop optimization</button>
+                </form>
+              </td>
+              <td class="col-xs-4 text-center">
+
+              </td>
+            </tr>
+        </tbody>
+        <tfoot>
+          <tr class="row">
+            <td colspan="3" class="col-xs-12"></td>
+          </tr>
+        </tfoot>
+      </table>
+      <br/><br/>
+      <table class="table table-striped">
+        <thead>
+          <tr class="row">
+            <th colspan="3" class="col-xs-12">Fitted model</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr class="row">
+              <td class="col-xs-4 text-center">
+                <form action="" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" name="action" value="save_model" class="btn btn-primary btn-sm">{% bootstrap_icon "floppy-disk" %} Save</button>
+                </form>
+              </td>
+              <td class="col-xs-4 text-center">
+                <form action="" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" name="action" value="save_as_new_model" class="btn btn-primary btn-sm">{% bootstrap_icon "duplicate" %} Save as a new model</button>
+                </form>
+              </td>
+              <td class="col-xs-4 text-center">
+                <a href="/signetsim/media/{{user.id}}/models/fitted/{{optimization_id}}/fitted_model.sbml">
+                  <button type="button" class="btn btn-primary btn-sm">{% bootstrap_icon "download-alt" %} Save SBML</button>
+                </a>
+              </td>
+            </tr>
+        </tbody>
+        <tfoot>
+          <tr class="row">
+            <td colspan="3" class="col-xs-12"></td>
+          </tr>
+        </tfoot>
+      </table>
+      <br/><br/>
+      <table class="table">
+        <thead>
+            <tr class="row">
+              <th class="col-xs-12">Fitting result</th>
+            </tr>
+        </thead>
+      </table>
+      <ul class="nav nav-tabs text-center">
+        {% for experiment in experiments %}
+        <li  {% if forloop.counter0 == 0 %}class="active"{% endif %}><a data-toggle="tab" href="#exp_{{forloop.counter0}}">Experiment #{{forloop.counter0}}</a></li>
+        {% endfor %}
+      </ul>
+
+      {% for experiment in experiments %}
+      <div class="tab-content">
+        <div id="exp_{{forloop.counter0}}" class="tab-pane fade in active">
+          <ul class="nav nav-tabs text-center">
+            {% for condition in experiment %}
+            <li {% if forloop.counter0 == 0 %}class="active"{% endif %}><a data-toggle="tab" href="#cond_{{forloop.parentloop.counter0}}_{{forloop.counter0}}">Condition #{{forloop.counter0}}</a></li>
+            {% endfor %}
+          </ul>
+          <div class="tab-content">
+            {% for condition in experiment %}
+
+            <div id="cond_{{forloop.parentloop.counter0}}_{{forloop.counter0}}" class="tab-pane fade in {% if forloop.counter0 == 0 %}active{% endif %}">
+              <canvas id="optim_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}}"></canvas>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+      <table class="table">
+        <thead>
+          <tr class="row">
+            <th>Score history</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row" id="score">
+            <td class="col text-center">
+              <canvas id="optim_score"></canvas>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock view_content %}
+
+
+{% block js %}
+{% include "fit/result_graph.js" %}
+
+{{ block.super }}
+
+{% endblock js %}

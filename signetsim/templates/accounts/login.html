@@ -1,0 +1,48 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/fullpage.html' %}
+
+{% block title %} Login | {{ block.super }}{% endblock title %}
+{% block view_name %}Login{% endblock view_name %}
+{% block view_content %}
+
+<div class="container-fluid" id="view">
+   <h4>Login</h4>
+   <hr/><br/>
+   {% include 'commons/error_page.html' %}
+   <div class="container-fluid">
+     <form method="post">
+       {% csrf_token %}
+       <div id="div_id_username" class="form-group">
+         <label for="id_username" class="control-label requiredField">Username<span class="asteriskField">*</span></label>
+         <input autofocus="" class="textinput textInput form-control" id="id_username" maxlength="254" name="username" type="text" required />
+       </div>
+       <div id="div_id_password" class="form-group">
+         <label for="id_password" class="control-label requiredField">Password<span class="asteriskField">*</span></label>
+         <input class="textinput textInput form-control" id="id_password" name="password" type="password" required />
+       </div>
+       <div class="form-group">
+         <input type="hidden" name="referer" value="{{ request.META.HTTP_REFERER }}">
+         <input type="submit" name="action" value="login" class="btn btn-primary btn-primary" id="submit-id-login"/>
+       </div>
+     </form>
+   </div>
+ </div>
+
+
+{% endblock view_content %}

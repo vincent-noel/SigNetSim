@@ -1,0 +1,167 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/fullpage.html' %}
+{% block title %} Experiment | {{ block.super }}{% endblock title %}
+
+
+{% block view_name %}Experiment : {{ experiment_name }}{% endblock view_name %}
+{% block view_content %}
+{% load bootstrap3 %}
+
+
+<div class="main">
+  <h4>{{experiment_name}}</h4>
+  <hr/><br/>
+  <div class="container-fluid">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr class="row">
+          <th class="col-xs-8 col-sm-9 col-md-10 col-lg-11">Conditions</th>
+          <th class="col-xs-4 col-sm-3 col-md-2 col-lg-1 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for condition in conditions %}
+        <tr class="row">
+           <td class="col-xs-8 col-sm-9 col-md-10 col-lg-11"><a href="{{condition.id}}">{{ condition.name }}</a></td>
+           <td class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
+             {% if user.is_authenticated %}
+             <div class="pull-right">
+               <form class="form" role="form" action="" method="post">
+                 {% csrf_token %}
+                 <input type="hidden" class="form-control" name="id" value="{{condition.id}}">
+                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger" title="Remove">{% bootstrap_icon "trash" %}</button>
+                 <button type="submit"  name="action" value="duplicate" class="btn btn-xs btn-primary" title="Duplicate">{% bootstrap_icon "duplicate" %}</button>
+                 <button type="submit" name="action" value="edit" class="btn btn-primary btn-xs btn-primary" title="Edit">{% bootstrap_icon "pencil" %}</button>
+               </form>
+             </div>
+             {% endif %}
+           </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if user.is_authenticated %}
+  <hr/>
+  <div class="containter-fluid">
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#new_condition">{% bootstrap_icon "file" %} New condition</button>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock view_content %}
+{% block view_modal %}
+
+<div class="modal fade in" id="new_condition" tabindex="1" role="dialog" aria-labelledby="New condition">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="." method="post" class="form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Create a new condition</h4>
+        </div>
+        <div class="modal-body">
+          <div class="input-group">
+            <span class="input-group-addon">Name</span>
+            <input type="text" class="form-control input-sm" placeholder="Input condition name" name="condition_name" value="">
+          </div>
+          <br/>
+          <table class="table table-striped">
+            <thead>
+              <tr class="row">
+                <th class="col-sm-12">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row">
+                <td class="col-sm-12">
+                  <div class="form-group">
+                   <textarea class="form-control" name="condition_notes" rows="5">{% if condition_notes %}{{condition_notes}}{% endif %}</textarea>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" name="action" value="create" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade in" id="edit_condition" tabindex="1" role="dialog" aria-labelledby="Edit condition">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="." method="post" class="form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" class="form-control" name="id" value="{{condition_id}}">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Edit condition</h4>
+        </div>
+        <div class="modal-body">
+          <div class="input-group">
+            <span class="input-group-addon">Name</span>
+            <input type="text" class="form-control input-sm" placeholder="Input condition name" name="condition_name" value="{{condition_name}}">
+          </div>
+          <br/>
+          <table class="table table-striped">
+            <thead>
+              <tr class="row">
+                <th class="col-sm-12">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row">
+                <td class="col-sm-12">
+                  <div class="form-group">
+                   <textarea class="form-control" name="condition_notes" rows="5">{% if condition_notes %}{{condition_notes}}{% endif %}</textarea>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" name="action" value="save" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock view_modal %}
+{% block js %}
+{{ block.super }}
+
+{% if condition_id != None %}
+
+  $(window).on('load',function(){
+    $('#edit_condition').modal('show');
+  });
+
+{% endif %}
+
+{% endblock js %}

@@ -1,0 +1,277 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% load static from staticfiles %}
+{% load bootstrap3 %}
+{% load tags %}
+
+{% block title %} Overview | {{ block.super }}{% endblock title %}
+{% block header %}
+<script src="{% static "cytoscape/cytoscape.min.js" %}"></script>
+{% endblock header %}
+
+{% block view_name %}Model overview{% endblock view_name %}
+{% block view_sidebar %}{% include 'edit/menu.html' with page="overview" %}{% endblock view_sidebar %}
+{% block view_content %}
+
+<div class="container-fluid" id="view">
+  <h4>Overview</h4>
+  <hr/><br/>
+  {% if model_id != None %}
+
+  <ul class="nav nav-tabs text-center">
+    <li class="active"><a data-toggle="tab" href="#tab_graph_reactions" id="tab_graph_reactions_link" >Reactions graph</a></li>
+    <li><a data-toggle="tab" href="#tab_graph_interactions" id="tab_graph_interactions_link" >Interation graph</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div id="tab_graph_reactions" class="tab-pane fade in active">
+      <div class="container-fluid" id="cy"></div>
+    </div>
+    <div id="tab_graph_interactions" class="tab-pane fade in">
+      <div class="container-fluid" id="stoichiometry_graph"></div>
+    </div>
+  </div>
+
+  {% endif %}
+</div>
+
+{% endblock view_content %}
+{% block js %}
+{{ block.super }}
+
+
+function loadInteractionGraph () {
+
+  $('#cy').cytoscape({
+    layout: {
+      name: 'cose',
+      padding: 0
+    },
+
+    style: cytoscape.stylesheet()
+      .selector('node')
+        .css({
+          'shape': 'roundrectangle',
+          'padding-left': 20,
+          'padding-right': 20,
+          'padding-bottom': 20,
+          'padding-top': 20,
+          'content': 'data(name)',
+          'text-valign': 'center',
+          'text-outline-width': 2,
+          'text-outline-color': '#fff',
+          'background-color': '#fff',
+          'color': '#000'
+        })
+      .selector(':selected')
+        .css({
+          'border-width': 3,
+          'border-color': '#333'
+        })
+      .selector('edge')
+        .css({
+          'curve-style': 'bezier',
+          'opacity': 0.666,
+          'width': 'mapData(50, 70, 100, 2, 6)',
+          'target-arrow-shape': 'tee',
+          'source-arrow-shape': 'none',
+          'line-color': '#000"',
+          'source-arrow-color': '#000',
+          'target-arrow-color': '#000'
+        })
+
+      .selector('edge.positive')
+        .css({
+          'target-arrow-shape': 'triangle'
+        })
+
+      .selector('edge.negative')
+        .css({
+          'target-arrow-shape': 'tee'
+        })
+
+      .selector('edge.questionable')
+        .css({
+          'line-style': 'dotted',
+          'target-arrow-shape': 'triangle'
+        })
+
+      .selector('.faded')
+        .css({
+          'opacity': 0.25,
+          'text-opacity': 0
+        }),
+
+    elements: {
+      nodes: [
+        {% for species in list_of_species %}
+          { data: { id: '{{species}}', name: '{{species}}'} },
+        {% endfor %}
+      ],
+      edges: [
+        {% for source in interaction_matrix %}
+          {% for sign in source %}
+            {% if sign != 0 %}
+            { data: { source: '{{list_of_species|my_lookup:forloop.counter0}}',
+            target: '{{list_of_species|my_lookup:forloop.parentloop.counter0}}'},
+            {% if sign == -1 %}
+            classes: 'negative',
+            {% elif sign == 1 %}
+            classes: 'positive',
+            {% endif %}
+           },
+            {% endif %}
+          {% endfor %}
+
+        {% endfor %}
+
+      ]
+    },
+
+    ready: function(){
+      window.cy = this;
+
+      // giddy up
+    }
+  });
+
+}
+
+
+function loadReactionGraph () {
+
+  $('#stoichiometry_graph').cytoscape({
+    layout: {
+      name: 'cose',
+      padding: 0
+    },
+
+    style: cytoscape.stylesheet()
+      .selector('node')
+        .css({
+          'shape': 'roundrectangle',
+          'padding-left': 20,
+          'padding-right': 20,
+          'padding-bottom': 20,
+          'padding-top': 20,
+          'content': 'data(name)',
+          'text-valign': 'center',
+          'text-outline-width': 2,
+          'text-outline-color': '#fff',
+          'background-color': '#fff',
+          'color': '#000'
+        })
+      .selector(':selected')
+        .css({
+          'border-width': 3,
+          'border-color': '#333'
+        })
+      .selector('edge')
+        .css({
+          'curve-style': 'bezier',
+          'opacity': 0.666,
+          'width': 'mapData(50, 70, 100, 2, 6)',
+          'target-arrow-shape': 'tee',
+          'source-arrow-shape': 'none',
+          'line-color': '#000"',
+          'source-arrow-color': '#000',
+          'target-arrow-color': '#000'
+        })
+
+      .selector('edge.positive')
+        .css({
+          'target-arrow-shape': 'triangle'
+        })
+
+      .selector('edge.negative')
+        .css({
+          'target-arrow-shape': 'tee'
+        })
+
+      .selector('edge.questionable')
+        .css({
+          'line-style': 'dotted',
+          'target-arrow-shape': 'triangle'
+        })
+
+      .selector('.faded')
+        .css({
+          'opacity': 0.25,
+          'text-opacity': 0
+        }),
+
+    elements: {
+      nodes: [
+        {% for species in list_of_species %}
+          { data: { id: '{{species}}', name: '{{species}}'} },
+        {% endfor %}
+      ],
+      edges: [
+        {% for source in interaction_matrix %}
+          {% for sign in source %}
+            {% if sign != 0 %}
+            { data: { source: '{{list_of_species|my_lookup:forloop.counter0}}',
+            target: '{{list_of_species|my_lookup:forloop.parentloop.counter0}}'},
+            {% if sign == -1 %}
+            classes: 'negative',
+            {% elif sign == 1 %}
+            classes: 'positive',
+            {% endif %}
+           },
+            {% endif %}
+          {% endfor %}
+
+        {% endfor %}
+
+      ]
+    },
+
+    ready: function(){
+      window.stoichiometry_graph = this;
+
+      // giddy up
+    }
+  });
+
+}
+
+
+$(document).on('ready', function(){ // on dom ready
+
+  $("#cy").css({ height: $(window).height() - $(".navbar-header").height() - 150 + "px" });
+  loadInteractionGraph();
+
+}); // on dom ready
+
+$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+
+  if (e.target == $("#tab_graph_reactions_link").get(0)) {
+    $("#cy").css({ height: $(window).height() - $(".navbar-header").height() - 150 + "px" });
+    loadInteractionGraph();
+  } else {
+    $("#stoichiometry_graph").css({ height: $(window).height() - $(".navbar-header").height() - 150 + "px" });
+    loadReactionGraph();
+  }
+
+});
+
+
+
+
+{% endblock js %}

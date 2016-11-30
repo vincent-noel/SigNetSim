@@ -1,0 +1,19 @@
+language: python
+python: 2.7
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y apache2 libapache2-mod-wsgi \
+							libopenmpi-dev openmpi-bin \
+							libsundials-serial-dev libsundials-serial \
+							git python-pip npm nodejs-legacy \
+							virtualenv graphviz
+
+install:
+  - scripts/make
+  - scripts/configure_apache
+  - scripts/install_apache
+
+
+script:
+  - expr `curl -s localhost:80/signetsim/success/` == SUCCESS

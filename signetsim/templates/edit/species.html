@@ -1,0 +1,304 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% block title %} Species | {{ block.super }}{% endblock title %}
+
+{% block edit_item %}active{% endblock edit_item %}
+{% block view_name %}Model species{% endblock view_name %}
+{% block view_sidebar %}{% include 'edit/menu.html' with page="species" %}{% endblock view_sidebar %}
+{% block view_content %}
+{% load static from staticfiles %}
+{% load bootstrap3 %}
+{% load tags %}
+
+<div class="container-fluid" id="view">
+  <h4>Species</h4>
+  <hr/>
+  {% if model_id != None %}
+  {% include 'commons/error_page.html' %}
+  <br/>
+  <div class="container-fluid">
+    <!-- Default panel contents -->
+    <!-- Table -->
+    <table class="table table-striped">
+      <thead>
+        <tr class="row">
+          <th class="col-sm-5 col-xs-5">Name</th>
+          <th class="col-sm-5 col-xs-4">InitialAmount</th>
+          <th class="col-sm-2 col-xs-3"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for species in list_of_species %}
+        <tr class="row">
+          <td class="col-sm-5 col-xs-5">{{species.getNameOrSbmlId}}</td>
+          <td class="col-sm-5 col-xs-4">{{species.getValue}} {% if unit != None %}({{ species.getUnits.getName }}){% endif %}</td>
+          <td class="col-sm-2 col-xs-3">
+            {% if user.is_authenticated %}
+            <div class="pull-right">
+              <form class="form-inline" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="species_id" value="{{ forloop.counter0 }}">
+                <button type="submit" name="action" value="edit" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+             </form>
+          </div>
+          {% endif %}
+         </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if user.is_authenticated %}
+  <hr/>
+  <div class="container-fluid">
+      <button type="button" id="new_species_button" class="btn btn-primary btn-sm">{% bootstrap_icon "file" %} Create new species</button>
+  </div>
+  {% endif %}
+  {% endif %}
+</div>
+
+
+
+{% endblock view_content %}
+
+{% block view_modal %}
+
+<!-- Modal -->
+<div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="{% if form.isEditing == True %}Edit{% else %}New{% endif %} species" id="modal_species">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form class="form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="species_id" id="species_id" value="{% if form.isEditing == True %}{{form.id}}{% endif %}">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="modal_title">{% if form.isEditing == True %}Edit{% else %}New{% endif %} species</h4>
+        </div>
+        <div class="modal-body">
+          <ul class="nav nav-tabs text-center">
+            <li class="active"><a data-toggle="tab" href="#general">General</a></li>
+            <li><a data-toggle="tab" href="#math">Math</a></li>
+            <li><a data-toggle="tab" href="#annotation">Annotation</a></li>
+          </ul>
+          <div class="tab-content">
+            <div id="general" class="tab-pane fade in active">
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12">
+                      <input type="text" class="form-control input-sm" placeholder="<Input name>" id="species_name" name="species_name" value="{% if form.isEditing == True and form.name != None %}{{form.name}}{% endif %}">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-11">Identifier</th>
+                    <th class="col-xs-1"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-11">
+                      <input type="text" class="form-control input-sm" placeholder="<Input name>" id="species_sbml_id" name="species_sbml_id" value="{% if form.isEditing == True and form.sbmlId != None %}{{form.sbmlId}}{% endif %}">
+                    </td>
+                    <td class="col-xs-1" style="vertical-align:middle">
+                      <div id="sbmlid_validating" class="pull-right collapse">
+                        <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+                      </div>
+                      <div id="sbmlid_valid" class="pull-right collapse">
+                        <span class="glyphicon glyphicon-ok" style="color:#5cb85c; font-size: 1.5em"></span>
+                      </div>
+                      <div id="sbmlid_invalid" class="pull-right collapse">
+                      <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Compartment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12">
+                      <input type="hidden" name="species_compartment" id="species_compartment" value="{% if form.isEditing == True and form.compartment != None %}{{form.compartment}}{% else %}{% if list_of_compartments|my_len == 1 %}0{% endif %}{% endif %}">
+                      <div class="input-group col-xs-12">
+                          <div class="dropdown">
+                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span id="species_compartment_label">{% if form.isEditing == True and form.compartment != None %}{{list_of_compartments|my_lookup:form.compartment}}{% else %}{% if list_of_compartments|my_len == 1 %}{{list_of_compartments|my_lookup:0}}{% else %}Choose a compartment{% endif %}{% endif %}</span>
+                            <span class="caret"></span>
+                          </button>
+                          <ul id="species_compartment_dropdown" class="dropdown-menu">
+                            {% for compartment in list_of_compartments %}
+                            <li><a href="#">{{compartment}}</a></li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                        <script>
+                          $('#species_value_type_dropdown li').on('click', function(){
+                            $("#species_value_type_label").html($(this).text());
+                            $('#species_value_type').val($(this).index());
+                          });
+                        </script>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="math" class="tab-pane fade in">
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-8">Value</th>
+                    <th class="col-xs-4">Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-8">
+                      <input type="text" class="form-control input-sm" placeholder="<Input value>" id="species_value" name="species_value" value="{% if form.isEditing == True and form.value != None %}{{form.value}}{% endif %}">
+                    </td>
+                    <td class="col-xs-4">
+                      <div class="input-group col-xs-12">
+                        <input type="hidden" name="species_value_type" id="species_value_type" value="{% if not species.hasOnlySubstanceUnits %}1{% else %}0{% endif %}">
+                        <div class="dropdown">
+                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span id="species_value_type_label">{% if not species.hasOnlySubstanceUnits %}Concentration{% else %}Amount{% endif %}</span>
+                            <span class="caret"></span>
+                          </button>
+                          <ul id="species_value_type_dropdown" class="dropdown-menu">
+                            <li><a href="#">Amount</a></li>
+                            <li><a href="#">Concentration</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row"  onclick="toggle_slide('constant_checkbox');">
+                    <th class="col-xs-10">Constant</th>
+                    <th class="col-xs-2 text-right">
+                      <span class="input-group col-xs-12">
+                          <label class="switch">
+                            <input type="checkbox" name="species_constant" id="constant_checkbox" {% if form.constant == True %}checked{% endif %}>
+                            <div class="slider round"></div>
+                          </label>
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+              </table>
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row"  onclick="toggle_slide('boundary_checkbox');">
+                    <th class="col-xs-10">Boundary condition</th>
+                    <th class="col-xs-2 text-right">
+                      <span class="input-group col-xs-12">
+                          <label class="switch">
+                            <input type="checkbox" name="species_boundary" id="boundary_checkbox" {% if form.boundaryCondition == True %}checked{% endif %}>
+                            <div class="slider round"></div>
+                          </label>
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+              </table>
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Unit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12">
+                      <div class="input-group col-xs-12">
+                        <input type="hidden" name="species_unit" id="species_unit" value="{% if form.unit != None %}{{ form.unit}}{% endif %}">
+                        <div class="dropdown">
+                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span id="species_unit_label">{% if form.isEditing == True and form.unit != None %}{{list_of_units|my_lookup:form.unit}}{% else %}Choose an unit{% endif %}</span>
+                            <span class="caret"></span>
+                          </button>
+                          <ul id="unit_list" class="dropdown-menu">
+                            {% for unit in list_of_units %}
+                            <li><a href="#">{{unit}}</a></li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+            <div id="annotation" class="tab-pane fade in">
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-sm-12">Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-sm-12">
+                      <div class="form-group">
+                       <textarea class="form-control" name="species_notes" rows="10">{% if form.isEditing == True and form.notes != None %}{{form.notes}}{% endif %}</textarea>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {% include 'commons/error_modal.html' %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" name="action" value="save" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock view_modal %}
+
+
+{% block js %}
+
+{{ block.super }}
+{% include 'edit/species.js'%}
+{% endblock js %}

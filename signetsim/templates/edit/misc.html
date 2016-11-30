@@ -1,0 +1,379 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+
+{% block title %} Overview | {{ block.super }}{% endblock title %}
+
+{% block edit_item %}active{% endblock edit_item %}
+{% block view_name %}Model overview{% endblock view_name %}
+{% block view_sidebar %}{% include 'edit/menu.html' with page="misc" %}{% endblock view_sidebar %}
+{% block view_content %}
+{% load bootstrap3 %}
+{% load tags %}
+
+<div class="container-fluid" id="view">
+  <h4>Settings</h4>
+  <hr/><br/>
+  {% if model_id != None %}
+  <div class="container-fluid">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="edit_model_name">
+      <input type="hidden" name="model_id" value="{{ model_id }}">
+      <table class="table table-striped">
+        <thead>
+          <tr class="row">
+            <th class="col-xs-10">Model name</th>
+            <th class="col-xs-2 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row">
+            <td class="col-xs-10 text-center">
+              <div class="collapse in" id="edit_reaction_off">{% if form.name != None %}{{form.name}}{% endif %}</div>
+              <div class="collapse out" id="edit_reaction_on">
+                <input type="text" class="form-control input-sm" placeholder="<Input name>" id="model_name_input" name="model_name" value="{% if form.name != None %}{{form.name}}{% endif %}">
+              </div>
+            </td>
+            <td class="col-xs-2">
+              {% if user.is_authenticated %}
+                <div class="pull-right collapse in" id="edit_reaction_off_actions">
+                  <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_name">{% bootstrap_icon "pencil" %}</button>
+                </div>
+                <div class="pull-right collapse out" id="edit_reaction_on_actions">
+                  <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_name_cancel">{% bootstrap_icon "remove" %}</button>
+                  <button type="submit" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
+                </div>
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+
+    <table class="table table-striped">
+      <thead>
+        <tr class="row">
+          <th class="col-xs-6">Units</th>
+          <th class="col-xs-4"></th>
+          <th class="col-xs-2"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row">
+          <td class="col-xs-6">Time</td>
+          <td class="col-xs-4">
+            <div class="input-group">
+              <form method="post" enctype="multipart/form-data" id="choose_time_unit">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="choose_time_unit">
+                <input type="hidden" name="time_unit_id" id="time_unit_id" value="{% if form.timeUnit != None %}{{form.timeUnit}}{% endif %}">
+                <div class="dropdown">
+                  <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <span id="time_unit_label">{% if form.timeUnit != None %}{{list_of_units|my_lookup:form.timeUnit}}{% else %}Choose an unit{% endif %}</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul id="time_unit_list" class="dropdown-menu">
+                    {% for unit in list_of_units %}
+                    <li><a href="#">{{unit}}</a></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </form>
+            </div>
+          </td>
+          <td class="col-xs-2">
+            <div class="pull-right">
+              <form class="form-inline" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <button type="submit" name="action" value="reset_time_unit" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+               </form>
+            </div>
+          </td>
+        </tr>
+        <tr class="row">
+          <td class="col-xs-6">Substance</td>
+          <td class="col-xs-4">
+            <div class="input-group">
+              <form method="post" enctype="multipart/form-data" id="choose_substance_unit">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="choose_substance_unit">
+                <input type="hidden" name="substance_unit_id" id="substance_unit_id" value="{% if form.substanceUnit != None %}{{ form.substanceUnit}}{% endif %}">
+                <div class="dropdown">
+                  <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <span id="substance_unit_label">{% if form.substanceUnit != None %}{{list_of_units|my_lookup:form.substanceUnit}}{% else %}Choose an unit{% endif %}</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul id="substance_unit_list" class="dropdown-menu">
+                    {% for unit in list_of_units %}
+                    <li><a href="#">{{unit}}</a></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </form>
+            </div>
+          </td>
+          <td class="col-xs-2">
+            <div class="pull-right">
+              <form class="form-inline" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <button type="submit" name="action" value="reset_substance_unit" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+               </form>
+            </div>
+          </td>
+        </tr>
+        {% if sbml_levels|my_lookup:form.sbmlLevel == 3 %}
+        <tr class="row">
+          <td class="col-xs-6">Extent</td>
+          <td class="col-xs-4">
+            <div class="input-group">
+              <form method="post" enctype="multipart/form-data" id="choose_extent_unit">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="choose_extent_unit">
+                <input type="hidden" name="extent_unit_id" id="extent_unit_id" value="{% if form.extentUnit != None %}{{ form.extentUnit}}{% endif %}">
+                <div class="dropdown">
+                  <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <span id="extent_unit_label">{% if form.extentUnit != None %}{{list_of_units|my_lookup:form.extentUnit}}{% else %}Choose an unit{% endif %}</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul id="extent_unit_list" class="dropdown-menu">
+                    {% for unit in list_of_units %}
+                    <li><a href="#">{{unit}}</a></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </form>
+            </div>
+          </td>
+          <td class="col-xs-2">
+            <div class="pull-right">
+              <form class="form-inline" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <button type="submit" name="action" value="reset_extent_unit" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+               </form>
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+    {% if sbml_levels|my_lookup:form.sbmlLevel == 3 %}
+
+    <table class="table table-striped">
+      <thead>
+        <tr class="row text-center">
+          <th class="col-xs-6">Scaling factor</th>
+          <th class="col-xs-4"></th>
+          <th class="col-xs-2"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row">
+          <td class="col-xs-6"></td>
+          <td class="col-xs-4">
+            <div class="input-group">
+              <form method="post" enctype="multipart/form-data" id="choose_scaling_factor">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="choose_scaling_factor">
+                <input type="hidden" name="scaling_factor_id" id="scaling_factor_id" value="{% if scaling_factor_id != None %}{{ form.scalingFactor}}{% endif %}">
+                <div class="dropdown">
+                  <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <span id="scaling_factor_label">{% if form.scalingFactor != None %}{{ list_of_parameters|my_lookup:form.scalingFactor}}{% else %}Choose an parameter{% endif %}</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul id="scaling_factor_list" class="dropdown-menu">
+                    {% for parameter in list_of_parameters %}
+                    <li><a href="#">{{parameter}}</a></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </form>
+            </div>
+          </td>
+          <td class="col-xs-2">
+            <div class="pull-right">
+              <form class="form-inline" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <button type="submit" name="action" value="reset_scaling_factor" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    {% endif %}
+    <table class="table table-striped">
+      <thead>
+        <tr class="row text-center">
+          <th class="col-xs-6">Sbml Level</th>
+          <th class="col-xs-6">Sbml Version</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row">
+          <td class="col-xs-6 text-center">
+            <div class="input-group">
+              <form method="post" enctype="multipart/form-data" id="choose_sbml_level">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="choose_sbml_level">
+                <input type="hidden" name="model_sbml_level" id="sbml_level_id" value="{% if form.sbmlLevel != None %}{{ form.sbmlLevel }}{% endif %}">
+                <div class="dropdown">
+                  <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <span id="sbml_level_label">{% if form.sbmlLevel != None %}{{ sbml_levels|my_lookup:form.sbmlLevel }}{% else %}Choose an unit{% endif %}</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul id="sbml_level_list" class="dropdown-menu">
+                    {% for t_level in sbml_levels %}
+                    <li><a href="#">{{t_level}}</a></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </form>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <form action="." class="form" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="edit_model_notes">
+      <input type="hidden" name="model_id" value="{{ model_id }}">
+      <table class="table table-striped">
+        <thead>
+          <tr class="row">
+            <th class="col-xs-10">Notes</th>
+            <th class="col-xs-2"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row">
+            <td class="col-xs-10 text-center">
+              <div class="collapse in" id="edit_notes_off">{% if form.notes != None %}{% autoescape off %}{{form.notes}}{% endautoescape %}{% endif %}</div>
+              <div class="collapse out" id="edit_notes_on">
+                <textarea class="form-control" name="model_notes" rows="10">{% if form.notes != None %}{{form.notes}}{% endif %}</textarea>
+              </div>
+            </td>
+            <td class="col-xs-2">
+              {% if user.is_authenticated %}
+              <div class="pull-right collapse in" id="edit_notes_off_actions">
+                  <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_notes">{% bootstrap_icon "pencil" %}</button>
+              </div>
+              <div class="pull-right collapse out" id="edit_notes_on_actions">
+                  <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_notes_cancel">{% bootstrap_icon "remove" %}</button>
+                  <button type="submit" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
+              </div>
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock view_content %}
+{% block js %}
+{{ block.super }}
+
+$('#edit_model_name').on('click', function(){
+    $("#edit_reaction_on").addClass("in");
+    $("#edit_reaction_on").removeClass("out");
+    $("#edit_reaction_off").addClass("out");
+    $("#edit_reaction_off").removeClass("in");
+    $("#edit_reaction_on_actions").addClass("in");
+    $("#edit_reaction_on_actions").removeClass("out");
+    $("#edit_reaction_off_actions").addClass("out");
+    $("#edit_reaction_off_actions").removeClass("in");
+});
+
+$('#edit_model_name_cancel').on('click', function(){
+  $("#edit_reaction_off").addClass("in");
+  $("#edit_reaction_off").removeClass("out");
+  $("#edit_reaction_on").addClass("out");
+  $("#edit_reaction_on").removeClass("in");
+  $("#edit_reaction_off_actions").addClass("in");
+  $("#edit_reaction_off_actions").removeClass("out");
+  $("#edit_reaction_on_actions").addClass("out");
+  $("#edit_reaction_on_actions").removeClass("in");
+});
+
+$('#time_unit_list li').on('click', function(){
+  $("#time_unit_label").html($(this).text());
+  $('#time_unit_id').val($(this).index());
+  $('#choose_time_unit').submit();
+});
+
+$('#substance_unit_list li').on('click', function(){
+  $("#substance_unit_label").html($(this).text());
+  $('#substance_unit_id').val($(this).index());
+  $('#choose_substance_unit').submit();
+});
+
+{% if sbml_levels|my_lookup:form.sbmlLevel == 3 %}
+$('#extent_unit_list li').on('click', function(){
+  $("#extent_unit_label").html($(this).text());
+  $('#extent_unit_id').val($(this).index());
+  $('#choose_extent_unit').submit();
+});
+{% endif %}
+
+$('#scaling_factor_list li').on('click', function(){
+  $("#scaling_factor_label").html($(this).text());
+  $('#scaling_factor_id').val($(this).index());
+  $('#choose_scaling_factor').submit();
+});
+
+$('#sbml_level_list li').on('click', function(){
+  $("#sbml_level_label").html($(this).text());
+  $('#sbml_level_id').val($(this).index());
+  $('#choose_sbml_level').submit();
+});
+
+$('#sbml_version_list li').on('click', function(){
+  $("#sbml_version_label").html($(this).text());
+  $('#sbml_version_id').val($(this).index());
+  $('#choose_sbml_version').submit();
+});
+
+$('#edit_model_notes').on('click', function(){
+    $("#edit_notes_on").addClass("in");
+    $("#edit_notes_on").removeClass("out");
+    $("#edit_notes_off").addClass("out");
+    $("#edit_notes_off").removeClass("in");
+    $("#edit_notes_on_actions").addClass("in");
+    $("#edit_notes_on_actions").removeClass("out");
+    $("#edit_notes_off_actions").addClass("out");
+    $("#edit_notes_off_actions").removeClass("in");
+});
+
+$('#edit_model_notes_cancel').on('click', function(){
+  $("#edit_notes_off").addClass("in");
+  $("#edit_notes_off").removeClass("out");
+  $("#edit_notes_on").addClass("out");
+  $("#edit_notes_on").removeClass("in");
+  $("#edit_notes_off_actions").addClass("in");
+  $("#edit_notes_off_actions").removeClass("out");
+  $("#edit_notes_on_actions").addClass("out");
+  $("#edit_notes_on_actions").removeClass("in");
+});
+
+
+
+{% endblock js %}

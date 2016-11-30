@@ -1,0 +1,45 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% load static from staticfiles %}
+{% load bootstrap3 %}
+{% load tags %}
+
+{% block title %} Overview | {{ block.super }}{% endblock title %}
+{% block header %}
+<script src="{% static "cytoscape/dist/cytoscape.min.js" %}"></script>
+{% endblock header %}
+
+{% block view_name %}Model overview{% endblock view_name %}
+{% block view_sidebar %}{% include 'edit/menu.html' with page="overview" %}{% endblock view_sidebar %}
+{% block view_content %}
+
+<div class="container-fluid" id="view">
+  <h4>Overview</h4>
+  <hr/><br/>
+  {% if model_id != None %}
+  <img src="../../media/{{png_graph}}"/>
+  {% endif %}
+</div>
+
+{% endblock view_content %}
+{% block js %}
+{{ block.super }}
+
+
+{% endblock js %}
