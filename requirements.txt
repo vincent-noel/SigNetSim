@@ -1,7 +1,7 @@
-Django==1.10.3
-django-bootstrap3==7.1.0
-Jinja2==2.8
+Django
+django-bootstrap3
+Jinja2
 lxml
 bs4
--e git+https://github.com/jamesscottbrown/sbml-diff.git@2943a917c5db7c2b028afbab9c21b3f360e1779f#egg=sbml_diff
+git+https://github.com/jamesscottbrown/sbml-diff.git
 git+https://github.com/vincent-noel/libSigNetSim.git
