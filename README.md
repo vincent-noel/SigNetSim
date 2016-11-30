@@ -17,11 +17,11 @@ You will need :
 - GraphViz to generate PNGs from DOT files.
 
 
-		apache2 libapache2-mod-wsgi
-		libopenmpi-dev openmpi-bin
-		libsundials-serial-dev libsundials-serial
-		git python-pip npm nodejs-legacy
-		virtualenv graphviz
+	apache2 libapache2-mod-wsgi \\
+	libopenmpi-dev openmpi-bin \\
+	libsundials-serial-dev libsundials-serial \\
+	git python-pip npm nodejs-legacy \\
+	virtualenv graphviz 
 
 
 
