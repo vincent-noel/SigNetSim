@@ -3,7 +3,7 @@ python: 2.7
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y apache2 libapache2-mod-wsgi libopenmpi-dev openmpi-bin libsundials-serial-dev libsundials-serial git python-pip npm nodejs-legacy virtualenv graphviz
+  - scripts/build_dep
 
 install:
   - scripts/make
