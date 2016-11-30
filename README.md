@@ -39,7 +39,7 @@ You will need :
 ##Installation
 
 	chmod +x scripts/*
-	scripts/build_dep
+	scripts/build_dep_[debian|ubuntu]
 	scripts/make
 
 

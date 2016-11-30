@@ -3,14 +3,13 @@ python: 2.7
 
 before_install:
   - sudo apt-get -qq update
-  -	chmod +x scripts/build_dep_debian scripts/make scripts/configure_apache scripts/install_apache scripts/test_apache
-  - scripts/build_dep_debian
+  - bash scripts/build_dep_debian
 
 install:
-  - scripts/make
-  - scripts/configure_apache
-  - scripts/install_apache
+  - bash scripts/make
+  - bash scripts/configure_apache
+  - bash scripts/install_apache
 
 
 script:
-  - ./scripts/test_apache
+  - bash scripts/test_apache
