@@ -38,22 +38,21 @@ You will need :
 
 ##Installation
 
-	chmod +x scripts/*
-	scripts/build_dep_[debian|ubuntu]
-	scripts/make
+	bash scripts/build_dep_[debian|ubuntu]
+	bash scripts/make
 
 
 
 ##Run the development server
 
-	scripts/run_env
+	bash scripts/run_env
 
 
 
 ##Run the apache server
 
-	scripts/configure_apache
-	sudo scripts/install_apache
+	bash scripts/configure_apache
+	sudo bash scripts/install_apache
 
 
 
