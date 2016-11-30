@@ -16,4 +16,4 @@ install:
 
 
 script:
-  - expr `curl -s localhost:80/signetsim/success/` == SUCCESS
+  - ./scripts/test_apache
