@@ -3,8 +3,7 @@ DIR=`dirname $PWD/$0`
 INSTALL_DIR=`dirname $DIR`
 
 cd $INSTALL_DIR
-source venv/bin/activate
+#source venv/bin/activate
 python manage.py runserver
-deactivate
+#deactivate
 cd $EXEC_DIR
-

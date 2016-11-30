@@ -4,8 +4,8 @@ DIR=`dirname $PWD/$0`
 INSTALL_DIR=`dirname $DIR`
 
 cd $INSTALL_DIR
-virtualenv venv
-source venv/bin/activate
+#virtualenv venv
+#source venv/bin/activate
 
 pip install -r requirements.txt
 
@@ -24,4 +24,4 @@ python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 echo "from signetsim.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'admin')" | python manage.py shell
 
-deactivate
+#deactivate
