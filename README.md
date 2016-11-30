@@ -38,7 +38,7 @@ You will need :
 
 ##Installation
 
-	bash scripts/build_dep_[debian|ubuntu]
+	bash scripts/build_dep_[xenial|precise]
 	bash scripts/make
 
 
@@ -51,8 +51,8 @@ You will need :
 
 ##Run the apache server
 
-	bash scripts/configure_apache
-	sudo bash scripts/install_apache
+	bash scripts/configure_apache_[xenial|precise]
+	sudo bash scripts/install_apache_[xenial|precise]
 
 
 

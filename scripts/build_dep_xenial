@@ -1,0 +1,6 @@
+sudo apt-get install -y apache2 libapache2-mod-wsgi \
+					libopenmpi-dev openmpi-bin \
+					libsundials-serial-dev libsundials-serial \
+					git python-pip npm nodejs-legacy \
+					virtualenv graphviz
+npm -g install bower
