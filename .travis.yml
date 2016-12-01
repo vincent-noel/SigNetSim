@@ -12,4 +12,4 @@ install:
 
 
 script:
-  - bash scripts/test_apache
+  - bash scripts/travis/test_apache
