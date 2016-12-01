@@ -19,7 +19,7 @@ Alias /___ROOT_DIR___/static/ ___INSTALL_DIR___/static/
 </Directory>
 
 # Configuration WSGI
-WSGIDaemonProcess signetsim #python-path=___INSTALL_DIR___/venv/lib/python2.7/site-packages
+WSGIDaemonProcess signetsim python-path=/home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages
 WSGIScriptAlias /___ROOT_DIR___ ___INSTALL_DIR___/settings/wsgi.py
 WSGIApplicationGroup %{GLOBAL}
 <Location /___ROOT_DIR___/>
