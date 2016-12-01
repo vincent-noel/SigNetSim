@@ -2,6 +2,7 @@
 EXEC_DIR=$PWD
 DIR=`dirname $PWD/$0`
 INSTALL_DIR=`dirname $DIR`
+INSTALL_DIR=`dirname $INSTALL_DIR`
 
 cd $INSTALL_DIR
 

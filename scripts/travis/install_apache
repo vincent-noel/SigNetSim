@@ -1,6 +1,9 @@
+#!/bin/bash
+
 EXEC_DIR=$PWD
 DIR=`dirname $PWD/$0`
 INSTALL_DIR=`dirname $DIR`
+INSTALL_DIR=`dirname $INSTALL_DIR`
 
 chgrp -R www-data $INSTALL_DIR/data/
 chmod -R 664 $INSTALL_DIR/data/
