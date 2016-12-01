@@ -8,7 +8,7 @@ before_install:
 install:
   - bash scripts/make
   - bash scripts/configure_apache_precise
-  - bash scripts/install_apache_precise
+  - sudo bash scripts/install_apache_precise
 
 
 script:
