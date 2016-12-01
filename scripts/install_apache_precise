@@ -11,6 +11,7 @@ mv $DIR/signetsim /etc/apache2/sites-available/
 cd /etc/apache2/sites-enabled/
 a2dissite *
 
+a2enmod rewrite
 a2enmod wsgi
 a2ensite signetsim
 
