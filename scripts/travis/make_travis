@@ -17,7 +17,6 @@ cp -r /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages/mpld3/js/
 cp -r /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages/mpld3/js/mpld3.v0.2.min.js signetsim/static/mpld3/
 mkdir static
 
-rm -r ~/.cache/matplotlib
 python manage.py makemigrations --noinput
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput > /dev/null
