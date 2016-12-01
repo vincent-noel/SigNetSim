@@ -29,7 +29,6 @@ SIGNETSIM_MODE = 'development'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-EXEC_DIR = os.getcwd()
 BASE_URL = "/"
 
 
@@ -105,7 +104,7 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': os.path.join(EXEC_DIR, 'data/db/db.sqlite3'),
+		'NAME': os.path.join(BASE_DIR, 'data/db/db.sqlite3'),
 	}
 }
 
