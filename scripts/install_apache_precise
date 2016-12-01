@@ -14,4 +14,7 @@ a2dissite *
 a2enmod wsgi
 a2ensite signetsim
 
+cat /etc/apache2/sites-available/default
+cat /etc/apache2/sites-available/signetsim.conf
+
 service apache2 reload

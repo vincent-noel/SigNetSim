@@ -6,7 +6,7 @@ before_install:
   - bash scripts/build_dep_precise
 
 install:
-  - bash scripts/make
+  - bash scripts/make_travis
   - bash scripts/configure_apache_precise
   - sudo bash scripts/install_apache_precise
 
