@@ -14,8 +14,8 @@ mkdir -p data/media
 bower --allow-root install
 
 mkdir -p signetsim/static/mpld3
-cp -r /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages/mpld3/js/d3.v3.min.js signetsim/static/mpld3/
-cp -r /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages/mpld3/js/mpld3.v0.2.min.js signetsim/static/mpld3/
+cp -r /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages/mpld3/js/*.js signetsim/static/mpld3/
+#cp -r /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages/mpld3/js/mpld3.v0.3.min.js signetsim/static/mpld3/
 mkdir static
 
 python manage.py makemigrations --noinput
