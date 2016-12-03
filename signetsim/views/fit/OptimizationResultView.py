@@ -285,7 +285,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 	def readModelSimulation(self, experiment, condition, var, proc=0):
 
 		f_optim = open(
-			os.path.join(self.optimPath, "logs/model_exp_%d_cond_%d_var_%d_proc_%d" %
+			os.path.join(self.optimPath, "logs/best_res/model_exp_%d_cond_%d_var_%d_proc_%d" %
 						 (experiment, condition, var, proc)), "r")
 
 		res = []
