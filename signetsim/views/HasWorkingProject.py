@@ -147,6 +147,11 @@ class HasWorkingProject(HasUserLoggedIn):
 		else:
 			self.listOfProjects = Project.objects.filter(access=Project.PUBLIC)
 
+
+	def getProjectFolder(self):
+		if self.project is not None:
+			return os.path.join(settings.MEDIA_ROOT, str(self.project.folder))
+
 	def getProjectModels(self, request):
 		if self.isUserLoggedIn(request) and self.project is not None:
 			return SbmlModel.objects.filter(project=self.project)

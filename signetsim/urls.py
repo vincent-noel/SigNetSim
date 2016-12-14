@@ -94,7 +94,7 @@ urlpatterns = [
 
 	# Optimization
 	url(r'^fit/model/$', ModelOptimizationView.as_view(), name='optimize_model'),
-	url(r'^fit/data/$', DataOptimizationView0.as_view(), name='optimize_data'),
+	url(r'^fit/data/$', DataOptimizationView.as_view(), name='optimize_data'),
 	url(r'^fit/list/$', ListOfOptimizationsView.as_view(), name='list_of_optimizations'),
 	url(r'^fit/([0-9]+)/$', OptimizationResultView.as_view(), name='view_optimization'),
 

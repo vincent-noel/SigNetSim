@@ -131,7 +131,7 @@ class ListOfOptimizationsView(TemplateView, HasWorkingModel):
 				if not exists(optim_path):
 					optimization_status = "Not found"
 
-				elif isfile(optim_path + "/final_score"):
+				elif isfile(optim_path + "/logs/score/score"):
 					optimization_status = "Finished"
 
 				elif isfile(optim_path + "/err_optim"):

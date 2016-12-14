@@ -19,152 +19,152 @@
 
 <table class="table table-striped">
   <thead>
-    <tr class="row">
-      <th class="col-sm-10">Selected dataset</th>
-      <th class="col-sm-2"></th>
-    </tr>
+	<tr class="row">
+	  <th class="col-sm-10">Selected dataset</th>
+	  <th class="col-sm-2"></th>
+	</tr>
   </thead>
   <tbody>
-    {% if selected_datasets != None %}
-    {% for dataset, mapping_treatments, mapping_observations in selected_datasets %}
-    <tr class="row">
-      <td class="col-sm-10">
-        {{dataset.name}}
-      </td>
-      <td class="col-sm-2">
-        <div class="text-right">
-          <form method="POST" action="">
-            {% csrf_token %}
-            <input type="hidden" name="dataset_id" value="{{dataset.id}}"/>
-            {% for dataset,_ in selected_datasets %}
-              <input type="hidden" name="dataset_{{forloop.counter0}}" value="{{dataset.id}}"/>
-            {% endfor %}
+	{% if selected_datasets != None %}
+	{% for dataset, mapping_treatments, mapping_observations in selected_datasets %}
+	<tr class="row">
+	  <td class="col-sm-10">
+		{{dataset.name}}
+	  </td>
+	  <td class="col-sm-2">
+		<div class="text-right">
+		  <form method="POST" action="">
+			{% csrf_token %}
+			<input type="hidden" name="dataset_id" value="{{dataset.id}}"/>
+			{% for dataset,_,_ in selected_datasets %}
+			  <input type="hidden" name="dataset_{{forloop.counter0}}" value="{{dataset.id}}"/>
+			{% endfor %}
 
-            <button type="button" id="mapping_{{forloop.counter0}}_button" class="btn btn-primary btn-xs btn-info">{% bootstrap_icon "link" %}</button>
-            <button type="submit" name="action" value="remove_dataset" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
-          </form>
-        </div>
-      </td>
-    </tr>
-    <tr class="row collapse out" id="mapping_{{forloop.counter0}}">
-      <td colspan=2 style="padding:0px;">
-        <table class="table table-striped">
-          <thead>
-            <tr class="row">
-              <th class="col-xs-4">Treatments</th>
-              <th class="col-xs-4"></th>
-              <th class="col-xs-3"> Interpolation</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for species, model_species, model_species_index, model_species_name, interpolation in mapping_treatments %}
-            <tr class="row">
-              <td class="col-xs-4">
-                {{ species }}
-              </td>
-              <td class="col-xs-4">
-                <div class="dropdown">
-                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                    <span id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_label">{% if model_species != None %}{{model_species_name}}{% else %}Select a species{% endif %}</span>
-                    <span class="caret"></span>
-                  </button>
-                  <ul id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_dropdown" class="dropdown-menu">
-                    {% for species in list_of_species %}
-                      <li><a href="#">{{ species.name }}</a></li>
-                    {% endfor %}
-                  </ul>
-                </div>
-              </td>
-              <td class="col-xs-3">
-                <div class="dropdown">
-                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                    <span id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation_label">{% if interpolation == True %}True{% else %}False{% endif %}</span>
-                    <span class="caret"></span>
-                  </button>
-                  <ul id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation_dropdown" class="dropdown-menu">
-                    <li><a href="#">False</a></li>
-                    <li><a href="#">True</a></li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <table class="table table-striped">
-          <thead>
-            <tr class="row">
-              <th class="col-xs-4">Observations</th>
-              <th class="col-xs-4"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for species, model_species, model_species_ind, model_species_name in mapping_observations %}
-            <tr class="row">
-              <td class="col-xs-4">
-                {{ species }}
-              </td>
-              <td class="col-xs-4">
-                <div class="dropdown">
-                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                    <span id="mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_label">{% if model_species != None %}{{model_species_name}}{% else %}Select a species{% endif %}</span>
-                    <span class="caret"></span>
-                  </button>
-                  <ul id="mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_dropdown" class="dropdown-menu">
-                    {% for species in list_of_species %}
-                      <li><a href="#">{{ species.name }}</a></li>
-                    {% endfor %}
-                  </ul>
-                </div>
-              </td>
-              <td class="col-xs-3">
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </td>
-    </tr>
+			<button type="button" id="mapping_{{forloop.counter0}}_button" class="btn btn-primary btn-xs btn-info">{% bootstrap_icon "link" %}</button>
+			<button type="submit" name="action" value="remove_dataset" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+		  </form>
+		</div>
+	  </td>
+	</tr>
+	<tr class="row collapse out" id="mapping_{{forloop.counter0}}">
+	  <td colspan=2 style="padding:0px;">
+		<table class="table table-striped">
+		  <thead>
+			<tr class="row">
+			  <th class="col-xs-4">Treatments</th>
+			  <th class="col-xs-4"></th>
+			  <th class="col-xs-3"> Interpolation</th>
+			</tr>
+		  </thead>
+		  <tbody>
+			{% for species, model_species, model_species_index, model_species_name, interpolation in mapping_treatments %}
+			<tr class="row">
+			  <td class="col-xs-4">
+				{{ species }}
+			  </td>
+			  <td class="col-xs-4">
+				<div class="dropdown">
+				  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+					<span id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_label">{% if model_species != None %}{{model_species_name}}{% else %}Select a species{% endif %}</span>
+					<span class="caret"></span>
+				  </button>
+				  <ul id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_dropdown" class="dropdown-menu">
+					{% for species in list_of_species %}
+					  <li><a href="#">{{ species.name }}</a></li>
+					{% endfor %}
+				  </ul>
+				</div>
+			  </td>
+			  <td class="col-xs-3">
+				<div class="dropdown">
+				  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+					<span id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation_label">{% if interpolation == True %}True{% else %}False{% endif %}</span>
+					<span class="caret"></span>
+				  </button>
+				  <ul id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation_dropdown" class="dropdown-menu">
+					<li><a href="#">False</a></li>
+					<li><a href="#">True</a></li>
+				  </ul>
+				</div>
+			  </td>
+			</tr>
+			{% endfor %}
+		  </tbody>
+		</table>
+		<table class="table table-striped">
+		  <thead>
+			<tr class="row">
+			  <th class="col-xs-4">Observations</th>
+			  <th class="col-xs-4"></th>
+			</tr>
+		  </thead>
+		  <tbody>
+			{% for species, model_species, model_species_ind, model_species_name in mapping_observations %}
+			<tr class="row">
+			  <td class="col-xs-4">
+				{{ species }}
+			  </td>
+			  <td class="col-xs-4">
+				<div class="dropdown">
+				  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+					<span id="mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_label">{% if model_species != None %}{{model_species_name}}{% else %}Select a species{% endif %}</span>
+					<span class="caret"></span>
+				  </button>
+				  <ul id="mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_dropdown" class="dropdown-menu">
+					{% for species in list_of_species %}
+					  <li><a href="#">{{ species.name }}</a></li>
+					{% endfor %}
+				  </ul>
+				</div>
+			  </td>
+			  <td class="col-xs-3">
+			  </td>
+			</tr>
+			{% endfor %}
+		  </tbody>
+		</table>
+	  </td>
+	</tr>
 
-    {% endfor %}
-    {% else %}
-    <tr class="row">
-      <td class="col-sm-10">
-      </td>
-      <td class="col-sm-2">
-        <div class="text-right">
-        </div>
-      </td>
-    </tr>
+	{% endfor %}
+	{% else %}
+	<tr class="row">
+	  <td class="col-sm-10">
+	  </td>
+	  <td class="col-sm-2">
+		<div class="text-right">
+		</div>
+	  </td>
+	</tr>
 
-    {% endif %}
+	{% endif %}
   </tbody>
   <tfoot>
-    <tr class="row">
-        <td class="col-sm-10">
-          <div class="dropdown">
-            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-              <span id="dataset_id_label">Choose an experimental data set</span>
-              <span class="caret"></span>
-            </button>
-            <ul id="dataset_id_dropdown" class="dropdown-menu">
-              {% for experiment in experimental_data_sets %}
-                <li><a href="#">{{ experiment.name }}</a></li>
-              {% endfor %}
-            </ul>
-          </div>
-        </td>
-        <td class="col-sm-2">
-          <form method="POST" action="">
-            {% csrf_token %}
-            {% for dataset,mapping in selected_datasets %}
-            <input type="hidden" name="dataset_{{forloop.counter0}}" value="{{dataset.id}}"/>
-            {% endfor %}
-            <input type="hidden" id="dataset_id" name="dataset_id" value="">
+	<tr class="row">
+		<td class="col-sm-10">
+		  <div class="dropdown">
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+			  <span id="dataset_id_label">Choose an experimental data set</span>
+			  <span class="caret"></span>
+			</button>
+			<ul id="dataset_id_dropdown" class="dropdown-menu">
+			  {% for experiment in experimental_data_sets %}
+				<li><a href="#">{{ experiment.name }}</a></li>
+			  {% endfor %}
+			</ul>
+		  </div>
+		</td>
+		<td class="col-sm-2">
+		  <form method="POST" action="">
+			{% csrf_token %}
+			{% for dataset,_,_ in selected_datasets %}
+			<input type="hidden" name="dataset_{{forloop.counter0}}" value="{{dataset.id}}"/>
+			{% endfor %}
+			<input type="hidden" id="dataset_id" name="dataset_id" value="">
 
-            <button type="submit" name="action" value="add_dataset" class="btn btn-primary">Add dataset</button>
-          </form>
-        </td>
-    </tr>
+			<button type="submit" name="action" value="add_dataset" class="btn btn-primary">Add dataset</button>
+		  </form>
+		</td>
+	</tr>
   </tfoot>
 </table>

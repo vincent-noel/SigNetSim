@@ -71,3 +71,8 @@ def my_model_color(array, i):
 @register.filter
 def my_data_color(array, i):
 	return array[i*2+1]
+
+@register.filter
+def multiply(value, multiplier):
+	# you would need to do any localization of the result here
+	return value * multiplier

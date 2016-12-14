@@ -26,20 +26,14 @@ from django.views.generic import TemplateView
 from django.conf import settings
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.models import Optimization
-from signetsim.models import Experiment, Condition
-from signetsim.models import Observation, Treatment
+from signetsim.models import Optimization, SbmlModel, Experiment
 from signetsim.views.fit.DataOptimizationForm import DataOptimizationForm
-from libsignetsim.data.Experiment import Experiment as SigNetSimExperiment
-from libsignetsim.data.ExperimentalCondition import ExperimentalCondition
-from libsignetsim.data.ListOfExperimentalData import ListOfExperimentalData
-from libsignetsim.data.ExperimentalData import ExperimentalData
 
 from libsignetsim.optimization.ModelVsTimeseriesOptimization import ModelVsTimeseriesOptimization
 
 import threading
 import os
-import json
+# import json
 
 
 class DataOptimizationView(TemplateView, HasWorkingModel):
@@ -59,6 +53,7 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 
 		kwargs['experimental_data_sets'] = Experiment.objects.filter(project=self.project)
 		kwargs['list_of_species'] = self.model.listOfSpecies.values()
+		kwargs['list_of_parameters'] = self.model.listOfParameters.values()
 		kwargs['ids_of_species'] = self.model.listOfSpecies.sbmlIds()
 		kwargs['selected_datasets'] = self.form.selectedDataSets
 		kwargs['selected_datasets_ids'] = self.form.selectedDataSetsIds
@@ -107,19 +102,34 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 		self.form.readSelectedDataset(request)
 		self.form.loadMapping(request)
 
+
+		t_parameters = []
+		for (ind, active, value, vmin, vmax) in self.form.selectedParameters:
+
+			if active:
+				t_parameter = None
+				if ind < self.model.listOfParameters:
+					t_parameter = self.model.listOfParameters.getByPos(ind)
+				else:
+					i_parameter = len(self.model.listOfParameters)
+					i_reaction = 0
+					while (i_parameter + len(self.model.listOfReactions.getByPos(i_reaction).listOfLocalParameters)) < ind:
+						i_parameter += len(self.model.listOfReactions.getByPos(i_reaction).listOfLocalParameters)
+						i_reaction += 1
+					t_parameter = self.model.listOfReactions.getByPos(i_reaction).listOfLocalParameters.getByPos(ind-i_parameter)
+
+				t_parameters.append((t_parameter, value, vmin, vmax))
+
+
 		experiments = self.form.buildExperiments(request)
-		return
 		t_optimization = ModelVsTimeseriesOptimization(
 							workingModel = self.model,
 							list_of_experiments = experiments,
-							mapping=self.speciesMapping,
-							parameters_to_fit=self.selectedParameters)
-		t_optimization.setTempDirectory(os.path.join(settings.MEDIA_ROOT, str(self.project.folder), "optimizations"))
-		nb_procs = 1
-
-		print "calling writeOptimizationFiles from the view"
-		t_optimization.writeOptimizationFiles(nb_procs)
-		print "view is done"
+							# mapping=self.speciesMapping,
+							parameters_to_fit=t_parameters)
+		t_optimization.setTempDirectory(os.path.join(self.getProjectFolder(), "optimizations"))
+		nb_procs = 2
+		# return
 		t = threading.Thread(group=None,
 								target=t_optimization.runOptimization,
 								args=(nb_procs, None, None, ))
@@ -127,7 +137,9 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 		t.setDaemon(True)
 		t.start()
 
+		t_model = SbmlModel.objects.get(id=self.model_id)
+
 		new_optimization = Optimization(project=self.project,
-								model=self.list_of_models[self.model_id],
+								model=t_model,
 								optimization_id=t_optimization.optimizationId)
 		new_optimization.save()

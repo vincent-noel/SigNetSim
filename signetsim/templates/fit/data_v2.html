@@ -1,47 +1,31 @@
-{#   _layout/base.html : This is the top template 							  #}
-
-{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
-
-{#   This program is free software: you can redistribute it and/or modify     #}
-{#   it under the terms of the GNU Affero General Public License as published #}
-{#   by the Free Software Foundation, either version 3 of the License, or     #}
-{#   (at your option) any later version. 									  #}
-
-{#   This program is distributed in the hope that it will be useful, 		  #}
-{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
-{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
-{#   GNU Affero General Public License for more details.					  #}
-
-{#   You should have received a copy of the GNU Affero General Public License #}
-{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
 {% extends '_layouts/menupage.html' %}
 {% block view_name %}Optimize data{% endblock view_name %}
 {% block view_sidebar %}{% include 'fit/menu.html' %}{% endblock view_sidebar %}
 {% block view_content %}
 {% load bootstrap3 %}
-
+{% load tags %}
 <div class="container-fluid" id="view">
   <h4>Model vs Data Fitting</h4>
   <hr/><br/>
 
   <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#data">Data</a></li>
-    <li><a data-toggle="tab" href="#params">Parameters</a></li>
-    <li><a data-toggle="tab" href="#settings">Settings</a></li>
+	<li class="active"><a data-toggle="tab" href="#data">Data</a></li>
+	<li><a data-toggle="tab" href="#params">Parameters</a></li>
+	<li><a data-toggle="tab" href="#settings">Settings</a></li>
   </ul>
   <br/><br/>
   <div class="tab-content">
-    <div id="data" class="tab-pane fade in active">
-      {% include 'fit/select_data.html' %}
+	<div id="data" class="tab-pane fade in active">
+	  {% include 'fit/select_data.html' %}
 
-    </div>
-    <div id="params" class="tab-pane fade">
-      {% include 'fit/select_parameters.html' %}
+	</div>
+	<div id="params" class="tab-pane fade">
+	  {% include 'fit/select_parameters.html' %}
 
-    </div>
-    <div id="settings" class="tab-pane fade">
-    </div>
+	</div>
+	<div id="settings" class="tab-pane fade">
+	</div>
   </div>
 
 
@@ -49,27 +33,25 @@
   <br/><br/>
 
   <form action="" method="POST">
-    {% csrf_token %}
-    {% for dataset, mapping_treatments, mapping_observations in selected_datasets %}
-      <input type="hidden" name="dataset_{{forloop.counter0}}" value="{{dataset.id}}"/>
-      {% for _, species_model, species_index, species_name, interpolation in mapping_treatments %}
-        <input type="hidden" name="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}" id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}" value="{{species_model}}"/>
-        <input type="hidden" name="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation" id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation" value="{% if interpolation %}1{% else %}0{% endif %}"/>
-      {% endfor %}
-      {% for species, species_model, species_model_index, _ in mapping_observations %}
-        <input type="hidden" name="mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}" id="mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}" value="{{species_model_index}}"/>
-      {% endfor %}
-    {% endfor %}
-    {% for parameter in selected_parameters %}
-    <input type="hidden" name="parameter_{{forloop.counter0}}_rid" id="parameter_{{forloop.counter0}}_rid" value="{{parameter.0}}"/>
-    <input type="hidden" name="parameter_{{forloop.counter0}}_id" id="parameter_{{forloop.counter0}}_id" value="{{parameter.1}}"/>
-    <input type="hidden" name="parameter_{{forloop.counter0}}_active" id="parameter_{{forloop.counter0}}_active" value="{% if parameter.2 %}1{% else %}0{% endif %}"/>
-    <input type="hidden" name="parameter_{{forloop.counter0}}_name" id="parameter_{{forloop.counter0}}_name" value="{{parameter.3}}"/>
-    <input type="hidden" name="parameter_{{forloop.counter0}}_value" id="parameter_{{forloop.counter0}}_value" value="{{parameter.4}}"/>
-    <input type="hidden" name="parameter_{{forloop.counter0}}_min" id="parameter_{{forloop.counter0}}_min" value="{{parameter.5}}"/>
-    <input type="hidden" name="parameter_{{forloop.counter0}}_max" id="parameter_{{forloop.counter0}}_max" value="{{parameter.6}}"/>
-    {% endfor %}
-    <button type="submit" name="action" value="create" class="btn btn-primary">{% bootstrap_icon "road" %} Launch !</button>
+	{% csrf_token %}
+	{% for dataset, mapping_treatments, mapping_observations in selected_datasets %}
+	  <input type="hidden" name="dataset_{{forloop.counter0}}" value="{{dataset.id}}"/>
+	  {% for _, species_model, species_index, species_name, interpolation in mapping_treatments %}
+		<input type="hidden" name="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}" id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}" value="{{species_model}}"/>
+		<input type="hidden" name="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation" id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation" value="{% if interpolation %}1{% else %}0{% endif %}"/>
+	  {% endfor %}
+	  {% for species, species_model, species_model_index, _ in mapping_observations %}
+		<input type="hidden" name="mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}" id="mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}" value="{{species_model_index}}"/>
+	  {% endfor %}
+	{% endfor %}
+	{% for parameter in selected_parameters %}
+	<input type="hidden" name="parameter_{{forloop.counter0}}_id" id="parameter_{{forloop.counter0}}_id" value="{{forloop.counter0}}"/>
+	<input type="hidden" name="parameter_{{forloop.counter0}}_active" id="parameter_{{forloop.counter0}}_active" value="{% if parameter.0 == True %}1{% else %}0{% endif %}"/>
+	<input type="hidden" name="parameter_{{forloop.counter0}}_value" id="parameter_{{forloop.counter0}}_value" value="{{parameter.2}}"/>
+	<input type="hidden" name="parameter_{{forloop.counter0}}_min" id="parameter_{{forloop.counter0}}_min" value="{{parameter.3}}"/>
+	<input type="hidden" name="parameter_{{forloop.counter0}}_max" id="parameter_{{forloop.counter0}}_max" value="{{parameter.4}}"/>
+	{% endfor %}
+	<button type="submit" name="action" value="create" class="btn btn-primary">{% bootstrap_icon "road" %} Launch !</button>
   </form>
 </div>
 
@@ -83,42 +65,42 @@ $('#dataset_id_dropdown li').on('click', function(){
 
 {% for dataset, mapping_treatments, mapping_observations in selected_datasets %}
 
-  {% for _,_,_,_ in mapping_treatments %}
+  {% for _,_,_,_,_ in mapping_treatments %}
 
 
-    $('#mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_dropdown li').on('click', function(){
-      $("#mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_label").html($(this).text());
-      $('#mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}').val($(this).index());
-    });
-    $('#mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation_dropdown li').on('click', function(){
-      $("#mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation_label").html($(this).text());
-      $('#mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation').val($(this).index());
-    });
+	$('#mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_dropdown li').on('click', function(){
+	  $("#mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_label").html($(this).text());
+	  $('#mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}').val($(this).index());
+	});
+	$('#mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation_dropdown li').on('click', function(){
+	  $("#mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation_label").html($(this).text());
+	  $('#mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation').val($(this).index());
+	});
 
   {% endfor %}
 
   {% for _,_,_,_ in mapping_observations %}
 
-    $('#mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_dropdown li').on('click', function(){
-      $("#mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_label").html($(this).text());
-      alert($(this).index());
-      $('#mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}').val($(this).index());
-    });
+	$('#mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_dropdown li').on('click', function(){
+	  $("#mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_label").html($(this).text());
+	  alert($(this).index());
+	  $('#mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}').val($(this).index());
+	});
 
   {% endfor %}
 
   $("#mapping_{{forloop.counter0}}_button").on('click', function(){
 
-    if ($("#mapping_{{forloop.counter0}}").hasClass('in')){
+	if ($("#mapping_{{forloop.counter0}}").hasClass('in')){
 
-      $("#mapping_{{forloop.counter0}}").addClass('out');
-      $("#mapping_{{forloop.counter0}}").removeClass('in');
+	  $("#mapping_{{forloop.counter0}}").addClass('out');
+	  $("#mapping_{{forloop.counter0}}").removeClass('in');
 
-    } else {
-      $("#mapping_{{forloop.counter0}}").addClass('in');
-      $("#mapping_{{forloop.counter0}}").removeClass('out');
+	} else {
+	  $("#mapping_{{forloop.counter0}}").addClass('in');
+	  $("#mapping_{{forloop.counter0}}").removeClass('out');
 
-    }
+	}
 
   });
 {% endfor %}
@@ -127,32 +109,32 @@ $('#dataset_id_dropdown li').on('click', function(){
 
   $("#select_parameter_{{forloop.counter0}}").on('click', function(){
 
-    if ($(this).prop('checked')){
-      $("#parameter_{{forloop.counter0}}_min_input").prop('disabled', false);
-      $("#parameter_{{forloop.counter0}}_value_input").prop('disabled', false);
-      $("#parameter_{{forloop.counter0}}_max_input").prop('disabled', false);
-      $("#parameter_{{forloop.counter0}}_active").val(1);
+	if ($(this).prop('checked')){
+	  $("#parameter_{{forloop.counter0}}_min_input").prop('disabled', false);
+	  $("#parameter_{{forloop.counter0}}_value_input").prop('disabled', false);
+	  $("#parameter_{{forloop.counter0}}_max_input").prop('disabled', false);
+	  $("#parameter_{{forloop.counter0}}_active").val(1);
 
-    } else {
-      $("#parameter_{{forloop.counter0}}_min_input").prop('disabled', true);
-      $("#parameter_{{forloop.counter0}}_value_input").prop('disabled', true);
-      $("#parameter_{{forloop.counter0}}_max_input").prop('disabled', true);
-      $("#parameter_{{forloop.counter0}}_active").val(0);
-    }
+	} else {
+	  $("#parameter_{{forloop.counter0}}_min_input").prop('disabled', true);
+	  $("#parameter_{{forloop.counter0}}_value_input").prop('disabled', true);
+	  $("#parameter_{{forloop.counter0}}_max_input").prop('disabled', true);
+	  $("#parameter_{{forloop.counter0}}_active").val(0);
+	}
 
   });
 
 
   $("#parameter_{{forloop.counter0}}_value_input").change(function() {
-    $("#parameter_{{forloop.counter0}}_value").val($(this).val());
+	$("#parameter_{{forloop.counter0}}_value").val($(this).val());
   });
 
   $("#parameter_{{forloop.counter0}}_min_input").change(function() {
-    $("#parameter_{{forloop.counter0}}_min").val($(this).val());
+	$("#parameter_{{forloop.counter0}}_min").val($(this).val());
   });
 
   $("#parameter_{{forloop.counter0}}_max_input").change(function() {
-    $("#parameter_{{forloop.counter0}}_max").val($(this).val());
+	$("#parameter_{{forloop.counter0}}_max").val($(this).val());
   });
 
 {% endfor %}

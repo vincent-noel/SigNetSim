@@ -1,4 +1,4 @@
-Django
+Django<1.9
 django-bootstrap3
 Jinja2
 lxml

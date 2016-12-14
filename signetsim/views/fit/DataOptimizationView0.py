@@ -119,6 +119,9 @@ class DataOptimizationView0(TemplateView, HasWorkingModel):
 
 		experiments = self.buildExperiments(request)
 
+		print self.speciesMapping
+		print self.selectedParameters
+
 
 		t_optimization = ModelVsTimeseriesOptimization(
 							workingModel = self.getModelInstance(),
@@ -248,7 +251,7 @@ class DataOptimizationView0(TemplateView, HasWorkingModel):
 			for parameter in self.getModelInstance().listOfParameters.values():
 
 				self.selectedParameters.append(
-					(None, parameter.objId, True, parameter.getNameOrSbmlId(),
+					(parameter,
 						parameter.getValue(),
 						parameter.getValue()*1e-4,
 						parameter.getValue()*1e4))
@@ -258,8 +261,7 @@ class DataOptimizationView0(TemplateView, HasWorkingModel):
 				for parameter in reaction.listOfLocalParameters.values():
 
 					self.selectedParameters.append(
-						(reaction.objId ,parameter.objId,
-							True, parameter.getNameOrSbmlId(),
+						(parameter,
 							parameter.getValue(),
 							parameter.getValue()*1e-4,
 							parameter.getValue()*1e4))
@@ -270,19 +272,30 @@ class DataOptimizationView0(TemplateView, HasWorkingModel):
 			i_parameter = 0
 			while ("parameter_%d_active" % i_parameter) in request.POST:
 
+				t_parameter = None
+				t_parameter_id = int(request.POST["parameter_%d_id" % i_parameter])
+
 				if str(request.POST['parameter_%d_rid' % i_parameter]) == "None":
-					parameter_rid = None
+					t_parameter = self.getModelInstance().listOfParameters[t_parameter_id]
 				else:
-					parameter_rid = int(request.POST['parameter_%d_rid' % i_parameter])
+					t_parameter_rid = int(request.POST['parameter_%d_rid' % i_parameter])
+					t_parameter = self.getModelInstance().listOfReactions[t_parameter_rid].listOfLocalParameters[t_parameter_id]
 
 				self.selectedParameters.append(
-					(parameter_rid, int(request.POST['parameter_%d_id' % i_parameter]),
-					(int(request.POST["parameter_%d_active" % i_parameter]) == 1),
-					str(request.POST["parameter_%d_name" % i_parameter]),
+					(t_parameter,
 					float(request.POST["parameter_%d_value" % i_parameter]),
 					float(request.POST["parameter_%d_min" % i_parameter]),
 					float(request.POST["parameter_%d_max" % i_parameter]),
 					))
+
+				# self.selectedParameters.append(
+				# 	(parameter_rid, int(request.POST['parameter_%d_id' % i_parameter]),
+				# 	(int(request.POST["parameter_%d_active" % i_parameter]) == 1),
+				# 	str(request.POST["parameter_%d_name" % i_parameter]),
+				# 	float(request.POST["parameter_%d_value" % i_parameter]),
+				# 	float(request.POST["parameter_%d_min" % i_parameter]),
+				# 	float(request.POST["parameter_%d_max" % i_parameter]),
+				# 	))
 				i_parameter += 1
 
 	def get_user_optimizations_path(self):
@@ -293,7 +306,7 @@ class DataOptimizationView0(TemplateView, HasWorkingModel):
 
 	def buildExperiments(self, request, interpolate=True):
 
-		list_of_experiments = {}
+		list_of_experiments = []
 		for i, (experiment, _) in enumerate(self.selectedDataSets):
 
 			t_experiment = SigNetSimExperiment()
@@ -332,7 +345,7 @@ class DataOptimizationView0(TemplateView, HasWorkingModel):
 				t_experiment.addCondition(t_condition)
 
 			t_experiment.name = experiment.name
-			list_of_experiments.update({len(list_of_experiments): t_experiment})
+			list_of_experiments.append(t_experiment)
 
 
 		return list_of_experiments

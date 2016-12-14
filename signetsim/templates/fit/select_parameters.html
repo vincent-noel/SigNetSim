@@ -16,38 +16,36 @@
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
 {% load bootstrap3 %}
-
+{% load tags %}
 <table class="table table-striped">
   <thead>
-    <tr class="row">
-      <th class="col-sm-4" colspan="2">Selected parameters</th>
-      <th class="col-sm-2">Min value</th>
-      <th class="col-sm-2">Value</th>
-      <th class="col-sm-2">Max value</th>
-    </tr>
+	<tr class="row">
+	  <th class="col-sm-4" colspan="2">Selected parameters</th>
+	  <th class="col-sm-2">Min value</th>
+	  <th class="col-sm-2">Value</th>
+	  <th class="col-sm-2">Max value</th>
+	</tr>
   </thead>
   <tbody>
-    {% for parameter in selected_parameters %}
-    <tr class="row">
-      <td class="col-xs-1 vert-align">
-        <div class="checkbox">
-          <label><input type="checkbox" value="" id="select_parameter_{{forloop.counter0}}" {% if parameter.2 %}checked="True" {% endif %}></label>
-        </div>
-      </td>
-      <td class="col-xs-5 vert-align">
-        {{parameter.3}}
-      </td>
-      <td class="col-xs-2 vert-align">
-        <input type="text" class="form-control" id="parameter_{{forloop.counter0}}_min_input" value="{{parameter.5}}">
-      </td>
-      <td class="col-xs-2 vert-align">
-        <input type="text" class="form-control" id="parameter_{{forloop.counter0}}_value_input" value="{{parameter.4}}">
-      </td>
-      <td class="col-xs-2 vert-align">
-        <input type="text" class="form-control" id="parameter_{{forloop.counter0}}_max_input" value="{{parameter.6}}">
-      </td>
-    </tr>
-    {% endfor %}
+	{% for parameter in selected_parameters %}
+	<tr class="row">
+	  <td class="col-xs-1 vert-align">
+		<label><input type="checkbox" value="" id="select_parameter_{{forloop.counter0}}" {% if parameter.0 %}checked="True" {% endif %}></label>
+	  </td>
+	  <td class="col-xs-5 vert-align">
+		{{parameter.1}}
+	  </td>
+	  <td class="col-xs-2 vert-align">
+		<input type="text" class="form-control invisible_inputs" id="parameter_{{forloop.counter0}}_min_input" value="{{parameter.3}}">
+	  </td>
+	  <td class="col-xs-2 vert-align">
+		<input type="text" class="form-control invisible_inputs" id="parameter_{{forloop.counter0}}_value_input" value="{{parameter.2}}">
+	  </td>
+	  <td class="col-xs-2 vert-align">
+		<input type="text" class="form-control invisible_inputs" id="parameter_{{forloop.counter0}}_max_input" value="{{parameter.4}}">
+	  </td>
+	</tr>
+	{% endfor %}
   </tbody>
   <tfoot>
   </tfoot>

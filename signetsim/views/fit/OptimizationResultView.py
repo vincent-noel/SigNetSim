@@ -187,15 +187,18 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 
 
 		self.optimizationId = str(args[0])
-		self.optimPath = os.path.join(settings.MEDIA_ROOT, str(self.project.folder),
+		self.optimPath = os.path.join(self.getProjectFolder(),
 						"optimizations/optimization_%s/" % self.optimizationId)
 
 		self.optimizationStatus = None
 
+		# print self.optimPath
+		# printos.path.join(self.optimPath, "/logs/score/score")
+		# print os.path.isfile(os.path.join(self.optimPath, "/logs/score/score"))
 		if not os.path.exists(self.optimPath):
 			self.optimizationStatus = "Not found"
 
-		elif os.path.isfile(self.optimPath + "/final_score"):
+		elif os.path.isfile(self.optimPath + "/logs/score/score"):
 			self.optimizationStatus = "Finished"
 
 		elif os.path.getsize(self.optimPath + "/err_optim") > 0:
@@ -251,10 +254,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 			data_structure.append(t_cond_data_structure)
 			nb_experiments += 1
 
-		print " nb experiments : %d" % nb_experiments
-		print " nb conditions : %d" % nb_conditions
-		print " max conditions : %d" % self.max_conditions
-		print " max vars : %d" % self.max_vars
+
 		#print data_structure
 		self.experiments = vars_structure
 		self.experimentsData = data_structure
@@ -267,16 +267,12 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 			os.path.join(self.optimPath, "logs/exp_%d_cond_%d_var_%d" %
 						 (experiment, condition, var)), "r")
 
-		#x = []
-		#y = []
-		#e = []
+
 		res = []
 		for line in f_optim:
 			data = re.split("\t", line.strip())
 			res.append((float(data[0]), float(data[1]), float(data[2])))
-			#x.append(float(data[0]) / 60)
-			#y.append(float(data[1]))
-			#e.append(float(data[2]))
+
 
 		f_optim.close()
 		return res
@@ -284,9 +280,26 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 
 	def readModelSimulation(self, experiment, condition, var, proc=0):
 
-		f_optim = open(
-			os.path.join(self.optimPath, "logs/best_res/model_exp_%d_cond_%d_var_%d_proc_%d" %
-						 (experiment, condition, var, proc)), "r")
+
+		if os.path.isfile(os.path.join(self.optimPath,
+					"logs/res/model_exp_%d_cond_%d_var_%d_proc_%d" %
+					 (experiment, condition, var, proc))):
+
+			f_optim = open(
+						os.path.join(self.optimPath,
+							"logs/res/model_exp_%d_cond_%d_var_%d_proc_%d" %
+							 (experiment, condition, var, proc)), "r")
+		elif os.path.isfile(os.path.join(self.optimPath,
+					"logs/best_res/model_exp_%d_cond_%d_var_%d_proc_%d" %
+					 (experiment, condition, var, proc))):
+
+			f_optim = open(
+						os.path.join(self.optimPath,
+							"logs/best_res/model_exp_%d_cond_%d_var_%d_proc_%d" %
+							 (experiment, condition, var, proc)), "r")
+
+		else:
+			return
 
 		res = []
 

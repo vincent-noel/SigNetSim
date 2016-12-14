@@ -73,7 +73,8 @@ class DataOptimizationForm(object):
 		self.selectedDataSetsIds = list(set(self.selectedDataSetsIds))
 
 		self.loadMapping(request)
-
+		print self.selectedDataSets
+		print self.selectedDataSetsIds
 
 	def readSelectedDataset(self, request):
 
@@ -164,7 +165,7 @@ class DataOptimizationForm(object):
 			for parameter in self.view.model.listOfParameters.values():
 
 				self.selectedParameters.append(
-					(None, parameter.objId, True, parameter.getNameOrSbmlId(),
+					(False, parameter.getNameOrSbmlId(),
 						parameter.getValue(),
 						parameter.getValue()*1e-4,
 						parameter.getValue()*1e4))
@@ -174,8 +175,7 @@ class DataOptimizationForm(object):
 				for parameter in reaction.listOfLocalParameters.values():
 
 					self.selectedParameters.append(
-						(reaction.objId ,parameter.objId,
-							True, parameter.getNameOrSbmlId(),
+						(False, parameter.getNameOfSbmlId(),
 							parameter.getValue(),
 							parameter.getValue()*1e-4,
 							parameter.getValue()*1e4))
@@ -186,19 +186,14 @@ class DataOptimizationForm(object):
 			i_parameter = 0
 			while ("parameter_%d_active" % i_parameter) in request.POST:
 
-				if str(request.POST['parameter_%d_rid' % i_parameter]) == "None":
-					parameter_rid = None
-				else:
-					parameter_rid = int(request.POST['parameter_%d_rid' % i_parameter])
-
 				self.selectedParameters.append(
-					(parameter_rid, int(request.POST['parameter_%d_id' % i_parameter]),
-					(int(request.POST["parameter_%d_active" % i_parameter]) == 1),
-					str(request.POST["parameter_%d_name" % i_parameter]),
+					(i_parameter,
+					int(request.POST["parameter_%d_active" % i_parameter]) == 1,
 					float(request.POST["parameter_%d_value" % i_parameter]),
 					float(request.POST["parameter_%d_min" % i_parameter]),
 					float(request.POST["parameter_%d_max" % i_parameter]),
 					))
+
 				i_parameter += 1
 
 
@@ -206,10 +201,9 @@ class DataOptimizationForm(object):
 		return '{0}/optimizations/{1}/{2}'.format(settings.MEDIA_ROOT,self.project.id, instance.optimization_id)
 
 
-	def buildExperiments(self, request, interpolate=True):
+	def buildExperiments(self, request, interpolate=False):
 
-		print request.POST
-		list_of_experiments = {}
+		list_of_experiments = []
 
 		for i, (experiment, _, _) in enumerate(self.selectedDataSets):
 
@@ -232,8 +226,6 @@ class DataOptimizationForm(object):
 
 			while ("mapping_treatment_%d_%d" % (i, i_treatment)) in request.POST:
 				mapping_treatment.update({speciesTreatments[i_treatment]: str(request.POST["mapping_treatment_%d_%d" % (i, i_treatment)])})
-				# print request.POST["mapping_treatment_%d_%d_interpolation" % (i, i_treatment)]
-				# print bool(request.POST["mapping_treatment_%d_%d_interpolation" % (i, i_treatment)])
 				mapping_treatment_interpolation.update({speciesTreatments[i_treatment]: bool(request.POST["mapping_treatment_%d_%d_interpolation" % (i, i_treatment)])})
 				i_treatment += 1
 
@@ -245,9 +237,6 @@ class DataOptimizationForm(object):
 				mapping_observation.update({speciesObservations[i_observation]: str(request.POST["mapping_observation_%d_%d" % (i, i_observation)])})
 				i_observation += 1
 
-			# print mapping_treatment
-			# print mapping_treatment_interpolation
-			# print mapping_observation
 
 			t_experiment = SigNetSimExperiment()
 
@@ -264,7 +253,8 @@ class DataOptimizationForm(object):
 
 					list_of_experimental_data.add(t_experimental_data)
 
-				list_of_experimental_data.interpolate()
+				if interpolate:
+					list_of_experimental_data.interpolate()
 
 				input_data = Treatment.objects.filter(condition=condition).order_by('time')
 
@@ -275,7 +265,8 @@ class DataOptimizationForm(object):
 							str(data.species), data.time, data.value)
 					list_of_input_data.add(t_experimental_data)
 
-				list_of_input_data.interpolate()
+				if interpolate:
+					list_of_input_data.interpolate()
 
 				t_condition = ExperimentalCondition()
 				t_condition.read(list_of_input_data, list_of_experimental_data)
@@ -283,7 +274,7 @@ class DataOptimizationForm(object):
 				t_experiment.addCondition(t_condition)
 
 			t_experiment.name = experiment.name
-			list_of_experiments.update({len(list_of_experiments): t_experiment})
+			list_of_experiments.append(t_experiment)
 
 
 		return list_of_experiments
