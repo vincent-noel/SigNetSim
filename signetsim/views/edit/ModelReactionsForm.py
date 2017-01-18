@@ -24,7 +24,7 @@
 
 from libsignetsim.model.ModelException import ModelException
 from libsignetsim.model.math.MathFormula import MathFormula
-from libsignetsim.model.math.MathKineticLaw import MathKineticLaw
+from libsignetsim.model.sbml.KineticLaw import KineticLaw
 from signetsim.views.edit.ModelParentForm import ModelParentForm
 
 class ModelReactionsForm(ModelParentForm):
@@ -78,7 +78,7 @@ class ModelReactionsForm(ModelParentForm):
 		self.loadReactants(reaction)
 		self.loadModifiers(reaction)
 		self.loadProducts(reaction)
-		if self.reactionType != MathKineticLaw.UNDEFINED:
+		if self.reactionType != KineticLaw.UNDEFINED:
 			self.loadParameters(reaction)
 
 		self.isEditing = True
@@ -95,7 +95,7 @@ class ModelReactionsForm(ModelParentForm):
 			self.saveModifiers(reaction)
 			self.saveProducts(reaction)
 
-			if self.reactionType == MathKineticLaw.UNDEFINED:
+			if self.reactionType == KineticLaw.UNDEFINED:
 				reaction.setKineticLaw(self.reactionType, self.reversible, math=self.kineticLaw)
 			else:
 				t_parameters = [self.parent.listOfParameters[param] for param in self.listOfParameters]
@@ -132,7 +132,7 @@ class ModelReactionsForm(ModelParentForm):
 								"the type of the kinetic law",
 								max_value=len(self.parent.reactionTypes))
 
-		if self.reactionType != MathKineticLaw.UNDEFINED:
+		if self.reactionType != KineticLaw.UNDEFINED:
 			self.readParameters(request)
 			print "parameters"
 			print self.listOfParameters

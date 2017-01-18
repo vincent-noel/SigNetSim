@@ -62,10 +62,9 @@ class ModelRulesForm(ModelParentForm):
 			self.ruleType = 3
 
 		if self.ruleType != 0:
-			print "loading rule. variable = %s" % t_rule.getVariable().getNameOrSbmlId()
 			self.variable = self.parent.listOfVariables.index(t_rule.getVariable())
 
-		self.definition = t_rule.getExpression()
+		self.definition = t_rule.getPrettyPrintDefinition()
 
 		self.isEditing = True
 
@@ -91,20 +90,12 @@ class ModelRulesForm(ModelParentForm):
 		self.ruleType = self.readInt(request, 'rule_type',
 								"the type of rule",
 								max_value=len(self.parent.ruleTypes))
-		#
-		# print self.ruleType
-		# print self.parent.ruleTypes
-		print request.POST
+
 		if self.ruleType is not None:
-
 			if self.ruleType in [1,2,3]:
-
-				print "var id = %d" % int(request.POST['variable_id'])
 				self.variable = self.readInt(request, 'variable_id',
 									"the variable affected",
 									max_value=len(self.parent.listOfVariables))
-				print [var.getSbmlId() for var in self.parent.listOfVariables]
-				print ">> %d" % self.variable
 
 				self.definition = self.readMath(request, 'rule_expression',
 										"the mathematical formula")
@@ -112,6 +103,3 @@ class ModelRulesForm(ModelParentForm):
 			else:
 				self.definition = self.readMath(request, 'rule_expression_alg',
 										"the mathematical formula")
-
-
-		self.printErrors()

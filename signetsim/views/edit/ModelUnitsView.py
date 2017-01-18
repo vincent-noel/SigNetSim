@@ -24,7 +24,7 @@
 
 from django.views.generic import TemplateView
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from libsignetsim.model.sbmlobject.UnitDefinition import Unit, UnitDefinition
+from libsignetsim.model.sbml.UnitDefinition import Unit, UnitDefinition
 class ModelUnitsView(TemplateView, HasWorkingModel):
 
 	template_name = 'edit/units.html'
