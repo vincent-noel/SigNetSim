@@ -1,0 +1,116 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% load static from staticfiles %}
+{% block title %} Analyse | {{ block.super }}{% endblock title %}
+{% block header %}
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX","output/HTML-CSS"],
+  extensions: ["tex2jax.js","MathMenu.js","MathZoom.js", "AssistiveMML.js"],
+  TeX: {
+    extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+  },
+  tex2jax: {
+    inlineMath: [ ['$','$'], ['\\(','\\)'] ]
+  },
+});
+
+</script>
+<script type="text/javascript" src="{% static 'MathJax/MathJax.js' %}"></script>
+
+{% endblock header %}
+
+{% block view_name %}Analysis{% endblock view_name %}
+{% block view_sidebar %}{% include 'analyse/menu.html' %}{% endblock view_sidebar %}
+{% block view_content %}
+{% load bootstrap3 %}
+
+
+<div class="container-fluid" id="view">
+  <h4>Analysis</h4>
+  <hr/>
+  {% if model_id != None %}
+  {% include 'commons/error_page.html' %}
+  <div class="container-fluid text-right">
+    <a href="#" onclick="$('#modal_latex').modal('show');" class="btn btn-default">Show LaTeX code</a>
+  </div>
+  <div class="container-fluid text-left">
+  <br/>
+  ODEs
+  <hr/>
+    {% for ode in latex_odes %}
+      ${{ode}}$ <br/><br/>
+    {% endfor %}
+  <br/>
+
+  DAEs
+  <hr/>
+    {% for dae in latex_daes %}
+      ${{dae}}$ <br/><br/>
+    {% endfor %}
+  <br/>
+
+  Exact solutions
+  <hr/>
+    {% for cfe in latex_cfes %}
+      ${{cfe}}$ <br/><br/>
+    {% endfor %}
+  <br/>
+
+  Conservation laws
+  <hr/>
+    {% for conslaw in latex_conslaws %}
+      ${{conslaw}}$ <br/><br/>
+    {% endfor %}
+  {% endif %}
+</div>
+
+{% endblock view_content %}
+{% block view_modal %}
+<div id="modal_latex" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">LaTeX Code</h4>
+      </div>
+      <div class="modal-body">
+        {% for ode in latex_odes %}
+          {{ode}} <br/><br/>
+        {% endfor %}
+        <br/>
+        {% for cfe in latex_cfes %}
+          {{cfe}} <br/><br/>
+        {% endfor %}
+        <br/>
+        {% for conslaw in latex_conslaws %}
+          {{conslaw}} <br/><br/>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+{% endblock view_modal %}

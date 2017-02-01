@@ -1,0 +1,209 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% load static from staticfiles %}
+{% block title %} Analyse | {{ block.super }}{% endblock title %}
+
+{% block header %}
+<script type="text/javascript" src="{% static "mpld3/d3.v3.min.js" %}"></script>
+<script type="text/javascript" src="{% static "mpld3/mpld3.v0.3.min.js" %}"></script>
+{% endblock header %}
+{% block view_name %}Bifurcation analysis{% endblock view_name %}
+{% block view_sidebar %}{% include 'analyse/menu.html' %}{% endblock view_sidebar %}
+{% block view_content %}
+{% load bootstrap3 %}
+
+
+<div class="container-fluid" id="view">
+  <h4>Equilibrium-Point Curve</h4>
+  <hr/><br/>
+  {% if model_id != None %}
+  {% include 'commons/error_page.html' %}
+  <div class="container-fluid">
+
+  <table class="table table-striped">
+	<thead>
+	  <tr class="row">
+		<th class="col-lg-6 col-md-7 col-xs-7">Name</th>
+		<th class="col-lg-4 col-md-3 col-xs-2 text-center">Status</th>
+		<th class="col-lg-2 col-md-2 col-xs-3"></th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for computation in list_of_computations %}
+	  <tr class="row">
+		<td class="col-lg-6 col-md-7 col-xs-7">Variable : {{computation.variable}}, Parameter : {{computation.parameter}}</td>
+		<td class="col-lg-4 col-md-3 col-xs-2 text-center">
+
+		</td>
+		<td class="col-lg-2 col-md-2 col-xs-3">
+		  <form class="form-inline" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+			<input type="hidden" name="result_id" value="{{ forloop.counter0 }}">
+			<div id="result_{{forloop.counter0}}_waiting" class="collapse{% if computation.status == "BU" %} in{% endif %}">
+			  <div class="pull-right">
+				<img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+			  </div>
+			</div>
+			<div id="result_{{forloop.counter0}}_finished" class="collapse{% if computation.status == "EN" %} in{% endif %}">
+			  <div class="pull-right">
+				<button type="button" onclick="$('#modal_result_{{forloop.counter0}}').modal('show');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+				<button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+			  </div>
+			</div>
+			<div id="result_{{forloop.counter0}}_failed" class="collapse{% if computation.status == "ER" %} in{% endif %}">
+			  <div class="pull-right">
+				<button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+			  </div>
+			</div>
+
+		  </form>
+		 </td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+  </table>
+  </div>
+  <div class="container-fluid">
+	  <button type="button" class="btn btn-primary btn-sm" id="new_curve_button">{% bootstrap_icon "file" %} Compute a new Curve</button>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock view_content %}
+{% block view_modal %}
+
+<!-- Modal -->
+<div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New curve" id="modal_new_curve">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <form class="form" method="POST">
+		{% csrf_token %}
+		<div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		  <h4 class="modal-title" id="modal_modification_title">New Curve</h4>
+		</div>
+		<div class="modal-body">
+		  <table class="table table-striped">
+			<thead>
+			  <tr class="row">
+				<th class="col-xs-12">Parameter</th>
+			  </tr>
+			</thead>
+			<tbody>
+			  <tr class="row">
+				<td class="col-xs-12">
+				  <input type="hidden" name="parameter_id" id="parameter_id" value="">
+				  <div class="dropdown">
+					<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+					  <span id="parameter_label">Choose a parameter</span>
+					  <span class="caret"></span>
+					</button>
+					<ul id="parameter_dropdown" class="dropdown-menu">
+					  {% for constant in list_of_constants %}
+					  <li><a href="#">{{constant}}</a></li>
+					  {% endfor %}
+					</ul>
+					<script>
+					  $('#parameter_dropdown li').on('click', function(){
+						$("#parameter_label").html($(this).text());
+						$('#parameter_id').val($(this).index());
+					  });
+					</script>
+				  </div>
+				</td>
+			  </tr>
+			</tbody>
+		  </table>
+		  <table class="table table-striped">
+			<thead>
+			  <tr class="row">
+				<th class="col-xs-12">Variable</th>
+			  </tr>
+			</thead>
+			<tbody>
+			  <tr class="row">
+				<td class="col-xs-12">
+				  <tr class="row">
+					<td class="col-xs-12">
+					  <input type="hidden" name="variable_id" id="variable_id" value="">
+					  <div class="dropdown">
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+						  <span id="variable_label">Choose a variable</span>
+						  <span class="caret"></span>
+						</button>
+						<ul id="variable_dropdown" class="dropdown-menu">
+						  {% for variable in list_of_variables %}
+						  <li><a href="#">{{variable}}</a></li>
+						  {% endfor %}
+						</ul>
+						<script>
+						  $('#variable_dropdown li').on('click', function(){
+							$("#variable_label").html($(this).text());
+							$('#variable_id').val($(this).index());
+						  });
+						</script>
+					  </div>
+				</td>
+			  </tr>
+			</tbody>
+		  </table>
+
+		  {% include 'commons/error_modal.html' %}
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		  <button type="submit" name="action" value="compute_curve" class="btn btn-primary">Launch</button>
+		</div>
+	  </form>
+	</div>
+  </div>
+</div>
+
+{% for computation in list_of_computations %}
+<div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New curve" id="modal_result_{{forloop.counter0}}">
+  <div class="modal-dialog modal-lg" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h4 class="modal-title" id="modal_modification_title">New Curve</h4>
+	  </div>
+	  <div class="modal-body">
+		<div class="container">
+		  <br/><br/>
+		  {% autoescape off %}
+		  {{computation.figure}}
+		  {% endautoescape %}
+		  <br/><br/>
+		</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	  </div>
+	</div>
+  </div>
+</div>
+{% endfor %}
+
+{% endblock view_modal %}
+
+
+{% block js %}
+{{ block.super }}
+{% include 'analyse/bifurcations.js' %}
+{% endblock js %}

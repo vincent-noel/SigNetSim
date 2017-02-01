@@ -1,0 +1,403 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% load static from staticfiles %}
+{% load bootstrap3 %}
+{% load tags %}
+
+<div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="{% if form.isEditing == True %}Edit{% else %}New{% endif %} reaction" id="modal_reaction">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form class="form" method="POST" action="" label="Save reaction">
+        {% csrf_token %}
+        <input type="hidden" id="reaction_id" name="reaction_id" value="{% if form.isEditing == True and form.id != None %}{{form.id}}{% endif %}">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">{% if form.isEditing == True %}Edit{% else %}New{% endif %} reaction</h4>
+        </div>
+        <div class="modal-body">
+
+          <ul class="nav nav-tabs text-center">
+            <li class="active"><a data-toggle="tab" href="#summary">Summary</a></li>
+            <li><a data-toggle="tab" href="#species">Species</a></li>
+            <li><a data-toggle="tab" href="#kinetic_law">Kinetic law</a></li>
+            <li><a data-toggle="tab" href="#annotation">Annotation</a></li>
+
+          </ul>
+          <div class="tab-content">
+            <div id="summary" class="tab-pane fade in active">
+              <br/>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Summary</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="col-xs-12 text-center"><span id="reaction_summary">N/A</span></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Reaction name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12">
+                      <input type="text" class="form-control input-sm" placeholder="<Input reaction name>" id="edit_reaction_name" name="reaction_name" value="{% if form.name != None %}{{form.name}}{% endif %}">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-11">Reaction identifier</th>
+                    <th class="col-xs-1"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-11 text-center">
+                      <input type="text" class="form-control input-sm" placeholder="<Input reaction identifier>" id="edit_reaction_id" name="reaction_sbml_id" value="{% if form.sbmlId != None %}{{form.sbmlId}}{% endif %}">
+                    </td>
+                    <td class="col-xs-1" style="vertical-align:middle">
+                      <div id="sbmlid_validating" class="pull-right collapse">
+                        <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+                      </div>
+                      <div id="sbmlid_valid" class="pull-right collapse">
+                        <span class="glyphicon glyphicon-ok" style="color:#5cb85c;font-size: 1.5em"></span>
+                      </div>
+                      <div id="sbmlid_invalid" class="pull-right collapse">
+                      <span class="glyphicon glyphicon-remove" style="color:#d9534f; vertical-align:bottom; font-size: 1.5em"></span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+
+            </div>
+            <div id="species" class="tab-pane fade in">
+              <br/>
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-2 text-center">Stoichiometry</th>
+                    <th class="col-xs-8 text-center">Reactants</th>
+                    <th class="col-xs-2 text-right"><button type="button" onclick="add_reactant();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
+                  </tr>
+                </thead>
+                <tbody id="body_reactants">
+                {% for t_reactant in form.listOfReactants %}
+                  <tr class="row" id="reaction_reactant_{{forloop.counter0}}_tr">
+                    <td class="col-xs-2">
+                      <input type="text" class="form-control input-sm text-center" placeholder="Input stoichiometry" name="reaction_reactant_{{ forloop.counter0 }}_stoichiometry" value="{{t_reactant.1}}">
+                    </td>
+                    <td class="col-xs-8">
+                      <input type="hidden" id="reaction_reactant_{{ forloop.counter0 }}" name="reaction_reactant_{{ forloop.counter0 }}" value="{{t_reactant.0}}">
+                      <div class="dropdown">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                          <span id="reaction_reactant_{{ forloop.counter0 }}_label">{% if t_reactant.0 != None %}{{ list_of_species|my_lookup:t_reactant.0}}{% else %}Choose a specie {% endif %}</span>
+                          <span class="caret"></span>
+                        </button>
+                        <ul id="reaction_reactant_{{ forloop.counter0 }}_dropdown" class="dropdown-menu">
+                          {% for species in list_of_species %}
+                          <li><a href="#">{{ species }}</a></li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </td>
+                    <td class="col-xs-2 text-right">
+                      <button type="button" onclick="remove_reactant({{forloop.counter0}});" class="btn btn-danger btn-xs">{% bootstrap_icon "remove" %}</button>
+                    </td>
+                    <script>
+                      $('#reaction_reactant_{{ forloop.counter0}}_dropdown li').on('click', function(){
+                        $("#reaction_reactant_{{ forloop.counter0}}_label").html($(this).text());
+                        $('#reaction_reactant_{{ forloop.counter0}}').val($(this).index());
+                        buildReactionDescription();
+                      });
+                    </script>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-2 text-center">Stoichiometry</th>
+                    <th class="col-xs-8 text-center">Modifiers</th>
+                    <th class="col-xs-2 text-right"><button type="button" onclick="add_modifier();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
+                  </tr>
+                </thead>
+                <tbody id="body_modifiers">
+                {% for t_modifier in form.listOfModifiers %}
+                  <tr class="row" id="reaction_modifier_{{forloop.counter0}}_tr">
+                    <td class="col-xs-2">
+                      <input type="text" class="form-control input-sm text-center" placeholder="1" name="reaction_modifier_{{ forloop.counter0 }}_stoichiometry" value="{{t_modifier.1}}">
+                    </td>
+                    <td class="col-xs-8">
+                      <input type="hidden" id="reaction_modifier_{{ forloop.counter0 }}" name="reaction_modifier_{{ forloop.counter0 }}" value="{{t_modifier.0}}">
+                      <div class="dropdown">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                          <span id="reaction_modifier_{{ forloop.counter0 }}_label">{% if t_modifier.0 != None %}{{ list_of_species|my_lookup:t_modifier.0 }}{% else %}Choose a specie {% endif %}</span>
+                          <span class="caret"></span>
+                        </button>
+                        <ul id="reaction_modifier_{{ forloop.counter0 }}_dropdown" class="dropdown-menu">
+                            {% for species in list_of_species %}
+                            <li><a href="#">{{ species }}</a></li>
+                            {% endfor %}
+                        </ul>
+                      </div>
+                    </td>
+                    <td class="col-xs-2 text-right">
+                      <button type="button" onclick="remove_modifier({{forloop.counter0}});" class="btn btn-danger btn-xs">{% bootstrap_icon "remove" %}</button>
+                    </td>
+                    <script>
+                      $('#reaction_modifier_{{ forloop.counter0}}_dropdown li').on('click', function(){
+                        $("#reaction_modifier_{{ forloop.counter0}}_label").html($(this).text());
+                        $('#reaction_modifier_{{ forloop.counter0}}').val($(this).index());
+                        buildReactionDescription();
+                      });
+                    </script>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-2 text-center">Stoichiometry</th>
+                    <th class="col-xs-8 text-center">Products</th>
+                    <th class="col-xs-2 text-right"><button type="button" onclick="add_product();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
+                  </tr>
+                </thead>
+                <tbody id="body_products">
+                {% for t_product in form.listOfProducts %}
+                  <tr class="row" id="reaction_product_{{forloop.counter0}}_tr">
+                    <td class="col-xs-2">
+                      <input type="text" class="form-control input-sm text-center" placeholder="1" name="reaction_product_{{ forloop.counter0 }}_stoichiometry" value="{{t_product.1}}">
+                    </td>
+                    <td class="col-xs-8">
+                      <input type="hidden" id="reaction_product_{{ forloop.counter0 }}" name="reaction_product_{{ forloop.counter0 }}" value="{{t_product.0}}">
+                      <div class="dropdown">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                          <span id="reaction_product_{{ forloop.counter0 }}_label">{% if t_product.0 != None %}{{ list_of_species|my_lookup:t_product.0 }}{% else %}Choose a specie {% endif %}</span>
+                          <span class="caret"></span>
+                        </button>
+                        <ul id="reaction_product_{{ forloop.counter0 }}_dropdown" class="dropdown-menu">
+                            {% for species in list_of_species %}
+                            <li><a href="#">{{ species }}</a></li>
+                            {% endfor %}
+                        </ul>
+                      </div>
+                    </td>
+                    <td class="col-xs-2 text-right">
+                      <button type="button" onclick="remove_product({{ forloop.counter0}});" class="btn btn-danger btn-xs">{% bootstrap_icon "remove" %}</button>
+                    </td>
+                    <script>
+                      $('#reaction_product_{{ forloop.counter0}}_dropdown li').on('click', function(){
+                        $("#reaction_product_{{ forloop.counter0}}_label").html($(this).text());
+                        $('#reaction_product_{{ forloop.counter0}}').val($(this).index());
+                        buildReactionDescription();
+                      });
+                    </script>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div id="kinetic_law" class="tab-pane fade in">
+              <br/>
+
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Kinetic law</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="col-xs-12">
+                      <input type="hidden" id="new_reaction_type" name="reaction_type" value="{% if form.isEditing == True %}{{form.reactionType}}{% else %}0{% endif %}">
+                      <div class="input-group col-xs-12">
+                        <div class="dropdown">
+                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span id="new_reaction_type_label">{% if form.isEditing == True %}{{reaction_types|my_lookup:form.reactionType}}{% else %}{{reaction_types|my_lookup:0}}{% endif %}</span>
+                            <span class="caret"></span>
+                          </button>
+                          <ul id="new_reaction_type_dropdown" class="dropdown-menu">
+                              {% for reaction_type in reaction_types.values %}
+                              <li><a href="#">{{ reaction_type }}</a></li>
+                              {% endfor %}
+                          </ul>
+                        </div>
+                      </div>
+                      <script>
+                        $('#new_reaction_type_dropdown li').on('click', function(){
+                          $("#new_reaction_type_label").html($(this).text());
+                          $('#new_reaction_type').val($(this).index());
+                          updateReversibleToggle($(this).index());
+                          updateParameters($(this).index(), ($('#reaction_reversible').prop('checked') == true));
+                          if ($(this).index() == 2) {
+                            $("#input_parameters").removeClass("in");
+                            $("#input_kinetic_law").addClass("in");
+                          } else {
+                            $("#input_kinetic_law").removeClass("in");
+                            $("#input_parameters").addClass("in");
+                          }
+                        });
+                      </script>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <table class="table table-striped">
+                <thead>
+                  <tr onclick="toggle_reversible();" >
+                    <th class="col-xs-8">Reversible</th>
+                    <th class="col-xs-4 text-right">
+                      <span class="col-xs-12 input-group">
+                        <label class="switch">
+                          <input type="checkbox" name="reaction_reversible" id="reaction_reversible" {% if form.reversible == True %}checked{% endif %}>
+                          <div class="slider round"></div>
+                        </label>
+                      </span>
+                  </th>
+                  </tr>
+                </thead>
+              </table>
+              <div id="input_kinetic_law" class="collapse {% if form.isEditing == True and form.reactionType == 2 %}in{% endif %}">
+                <table class="table table-striped">
+                  <thead>
+                    <tr class="row">
+                      <th class="col-xs-11">Kinetic law</th>
+                      <th class="col-xs-1"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="row">
+                      <td class="col-xs-11 text-center">
+                          <input type="text" class="form-control input-sm" placeholder="<Input kinetic law>" id="kineticlaw_input" name="reaction_kinetic_law" value="{% if form.kineticLaw != None %}{{form.kineticLaw}}{% endif %}">
+                      </td>
+                      <td class="col-xs-1" style="vertical-align:middle">
+                        <div id="kineticlaw_validating" class="pull-right collapse">
+                          <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+                        </div>
+                        <div id="kineticlaw_valid" class="pull-right collapse">
+                          <span class="glyphicon glyphicon-ok" style="color:#5cb85c;font-size: 1.5em"></span>
+                        </div>
+                        <div id="kineticlaw_invalid" class="pull-right collapse">
+                        <span class="glyphicon glyphicon-remove" style="color:#d9534f; vertical-align:bottom; font-size: 1.5em"></span>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div id="input_parameters" class="collapse {% if form.isEditing == True and form.reactionType != 2 %}in{% endif %}">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Parameters</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="body_parameters">
+                    {% if form.isEditing == True and form.reactionType != 2 %}
+                    {% for parameter in parameters_list|my_lookup:form.reactionType|my_lookup:form.reversible %}
+                    <tr>
+                      <td class="col-sm-6"><span id="reaction_parameter_{{forloop.counter0}}_name">{{parameter}}</span></td>
+                      <td class="col-sm-6">
+                        {% if form.listOfParameters != None %}
+                        {% with form.listOfParameters|my_lookup:forloop.counter0 as t_id %}
+                        <input type="hidden" id="reaction_parameter_{{forloop.counter0}}" name="reaction_parameter_{{forloop.counter0}}" value="{{t_id}}">
+                        <div class="dropdown">
+                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span id="reaction_parameter_{{forloop.counter0}}_label">{{ list_of_parameters|my_lookup:t_id }}</span>
+
+                        {% endwith %}
+                        {% else %}
+                        <input type="hidden" id="reaction_parameter_{{forloop.counter0}}" name="reaction_parameter_{{forloop.counter0}}" value="">
+                        <div class="dropdown">
+                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span id="reaction_parameter_{{forloop.counter0}}_label">Choose a parameter</span>
+
+                        {% endif %}
+                            <span class="caret"></span>
+                          </button>
+                          <ul id="reaction_parameter_{{forloop.counter0}}_dropdown" class="dropdown-menu">
+                              {% for t_parameter in list_of_parameters %}
+                              <li><a href="#">{{ t_parameter }}</a></li>
+                              {% endfor %}
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <script>
+                        $('#reaction_parameter_{{ forloop.counter0}}_dropdown li').on('click', function(){
+                          $("#reaction_parameter_{{ forloop.counter0}}_label").html($(this).text());
+                          $('#reaction_parameter_{{ forloop.counter0}}').val($(this).index());
+                        });
+                    </script>
+                    {% endfor %}
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+            <div id="annotation" class="tab-pane fade in">
+              <br/>
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12">
+                      <div class="form-group">
+                        <textarea class="form-control" id="reaction_notes" name="reaction_notes" rows="10">{% if form.isEditing == True and form.notes != None %}{{form.notes}}{% endif %}</textarea>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {% include 'commons/error_modal.html' %}
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" name="action" value="save" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

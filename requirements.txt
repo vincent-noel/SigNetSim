@@ -1,0 +1,7 @@
+Django<1.9
+django-bootstrap3
+Jinja2
+lxml
+bs4
+git+https://github.com/jamesscottbrown/sbml-diff.git
+git+https://github.com/vincent-noel/libSigNetSim.git@5b2f6c926899ff5854c5949973b1a948f2933f6c

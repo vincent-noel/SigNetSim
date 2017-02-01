@@ -1,0 +1,52 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% load bootstrap3 %}
+{% load tags %}
+<table class="table table-striped">
+  <thead>
+	<tr class="row">
+	  <th class="col-sm-4" colspan="2">Selected parameters</th>
+	  <th class="col-sm-2">Min value</th>
+	  <th class="col-sm-2">Value</th>
+	  <th class="col-sm-2">Max value</th>
+	</tr>
+  </thead>
+  <tbody>
+	{% for parameter in selected_parameters %}
+	<tr class="row">
+	  <td class="col-xs-1 vert-align">
+		<label><input type="checkbox" value="" id="select_parameter_{{forloop.counter0}}" {% if parameter.0 %}checked="True" {% endif %}></label>
+	  </td>
+	  <td class="col-xs-5 vert-align">
+		{{parameter.1}}
+	  </td>
+	  <td class="col-xs-2 vert-align">
+		<input type="text" class="form-control invisible_inputs" id="parameter_{{forloop.counter0}}_min_input" value="{{parameter.3}}">
+	  </td>
+	  <td class="col-xs-2 vert-align">
+		<input type="text" class="form-control invisible_inputs" id="parameter_{{forloop.counter0}}_value_input" value="{{parameter.2}}">
+	  </td>
+	  <td class="col-xs-2 vert-align">
+		<input type="text" class="form-control invisible_inputs" id="parameter_{{forloop.counter0}}_max_input" value="{{parameter.4}}">
+	  </td>
+	</tr>
+	{% endfor %}
+  </tbody>
+  <tfoot>
+  </tfoot>
+</table>

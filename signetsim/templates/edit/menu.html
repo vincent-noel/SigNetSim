@@ -1,0 +1,80 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+  <br/>
+  {% include 'commons/select_model.html' with show_submodels=True %}
+  <br/><br/>
+  <table class="table">
+    <thead>
+      <tr>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr{% if page == "overview" %}  class="item_active"{% endif %}>
+        <td>
+          <a href="{% url 'edit_overview' %}">Overview</a>
+        </td>
+      </tr>
+      <tr{% if page == "species" %}  class="item_active"{% endif %}>
+        <td>
+          <a href="{% url 'edit_species' %}">Species</a>
+        </td>
+      </tr>
+      <tr{% if page == "parameters" %}  class="item_active"{% endif %}>
+        <td>
+          <a href="{% url 'edit_parameters' %}">Parameters</a>
+        </td>
+      </tr>
+      <tr{% if page == "reactions" %}  class="item_active"{% endif %}>
+        <td>
+          <a href="{% url 'edit_reactions' %}">Reactions</a>
+        </td>
+      </tr>
+      <tr{% if page == "compartments" %}  class="item_active"{% endif %}>
+        <td>
+          <a href="{% url 'edit_compartments' %}">Compartments</a>
+        </td>
+      </tr>
+      <tr{% if page == "rules" %}  class="item_active"{% endif %}>
+        <td>
+          <a href="{% url 'edit_rules' %}">Rules</a>
+        </td>
+      </tr>
+      <tr{% if page == "events" %}  class="item_active"{% endif %}>
+        <td>
+          <a href="{% url 'edit_events' %}">Events</a>
+        </td>
+      </tr>
+      <tr{% if page == "submodels" %}  class="item_active"{% endif %}>
+        <td>
+          <a href="{% url 'edit_submodels' %}">Submodels</a>
+        </td>
+      </tr>
+      <tr{% if page == "units" %}  class="item_active"{% endif %}>
+        <td>
+          <a href="{% url 'edit_units' %}">Units</a>
+        </td>
+      </tr>
+      <tr{% if page == "misc" %}  class="item_active"{% endif %}>
+        <td>
+          <a href="{% url 'edit_misc' %}">Settings</a>
+        </td>
+      </tr>
+    </tbody>
+
+  </table>

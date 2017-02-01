@@ -1,0 +1,135 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<meta name="description" content="">
+	<meta name="author" content="">
+	{# <link rel="icon" href="../../favicon.ico">#}
+
+	<title>{% block title %}SigNetSim{% endblock title %}</title>
+	<!-- Bootstrap core CSS -->
+	<link href="{% static "bootstrap/dist/css/bootstrap.min.css" %}" rel="stylesheet">
+	{# <link href="https://bootswatch.com/flatly/bootstrap.min.css" rel="stylesheet">#}
+	<!-- Custom styles for this template -->
+	{% block css %}{% endblock css %}
+	<script src="{% static "jquery/dist/jquery.min.js" %}"></script>
+	{% block header %}{% endblock header %}
+	{% block header_js %}{% endblock header_js %}
+  </head>
+
+  <body>
+	<nav class="navbar navbar-inverse navbar-fixed-top" id="navbar-fixed-top">
+	  <div class="container-fluid">
+		<div class="navbar-header">
+		  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		  </button>
+		  <a class="navbar-brand" href="{% url 'home' %}">SigNetSim</a>
+		</div>
+		<div id="navbar" class="navbar-collapse collapse">
+		  {% if project_id != None %}
+		  <ul class="nav navbar-nav navbar-left">
+			<li class="{% block models_item %}{% endblock models_item %}"><a href="{% url 'models' %}">Models</a></li>
+			<li class="{% block data_item %}{% endblock data_item %}"><a href="{% url 'experimental_data' %}">Data</a></li>
+			<li class="{% block edit_item %}{% endblock edit_item %}"><a href="{% url 'edit_overview' %}">Edition</a></li>
+			<li class="{% block sim_item %}{% endblock sim_item %}"><a href="{% url 'simulate_model' %}">Simulation</a></li>
+			{% if user.is_authenticated %}
+			<li class="{% block fit_item %}{% endblock fit_item %}"><a href="{% url 'list_of_optimizations' %}">Fitting</a></li>
+			<li class="{% block analyse_item %}{% endblock analyse_item %}"><a href="{% url 'analyse' %}">Analysis</a></li>
+			{% endif %}
+		  </ul>
+		  {% endif %}
+		  <ul class="nav navbar-nav navbar-right">
+			<li>{% include 'commons/select_project.html' %}</li>
+			{% if not user.is_authenticated %}
+			<li><a href="{% url 'signup' %}">Signup</a></li>
+			<li><a href="{% url 'login' %}">Login</a></li>
+			{% endif %}
+			{% if user.is_authenticated %}
+			<li><a href="{% url 'profile' user.username %}">{{user.username}}</a></li>
+			{% if user.is_staff %}
+			<li><a href="{% url 'admin' %}">Admin</a></li>
+			{% endif %}
+			<li><a href="{% url 'help' %}">Help</a></li>
+			<li><a href="{% url 'logout' %}">Logout</a></li>
+			{% endif %}
+		  </ul>
+		</div>
+	  </div>
+	</nav>
+
+	{% block view %}{% endblock view %}
+
+	{% block view_modal %}
+
+	{% endblock view_modal %}
+	{% include 'commons/select_project_modal.html' %}
+
+
+	<!-- Bootstrap core JavaScript -->
+	<!-- Placed at the start of the document so the pages load faster -->
+	<script src="{% static "bootstrap/dist/js/bootstrap.min.js" %}"></script>
+	{% block footer_js %}{% endblock footer_js %}
+
+	<script>
+
+	  function csrfSafeMethod(method) {
+		// these HTTP methods do not require CSRF protection
+		return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+	  }
+
+	{% block js %}{% endblock js %}
+
+
+
+	$(window).on('resize', function(){
+	  $(".navbar-collapse").css({ maxHeight: $(window).height() - $(".navbar-header").height() + "px" });
+
+
+
+	});
+	$(".navbar-collapse").css({ maxHeight: $(window).height() - $(".navbar-header").height() + "px" });
+
+
+	</script>
+
+	<script>
+	  $(window).on('beforeunload', function(){
+	   $('#loading').css("display", "block");
+	  });
+	</script>
+
+	<div id="loading">
+	  <div id="loading-image">
+	  <!-- SPINNER #2 -->
+	  <img src="{% static 'images/wait_blue.svg' %}">
+	  </div>
+	</div>
+
+
+  </body>
+</html>

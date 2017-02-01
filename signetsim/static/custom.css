@@ -1,0 +1,179 @@
+/******************************************************************************
+ *                                                                            *
+ *   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)           *
+ *                                                                            *
+ *   plsa is free software: you can redistribute it and/or modify             *
+ *   it under the terms of the GNU Affero General Public License as published *
+ *   by the Free Software Foundation, either version 3 of the License, or     *
+ *   (at your option) any later version.                                      *
+ *                                                                            *
+ *   plsa is distributed in the hope that it will be useful,                  *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ *   GNU Affero General Public License for more details                       *
+ *                                                                            *
+ *   You should have received a copy of the GNU General Affero Public License *
+ *   along with plsa. If not, see <http://www.gnu.org/licenses/>.             *
+ *                                                                            *
+ ******************************************************************************/
+ /*
+ * Base structure
+ */
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px;
+}
+
+/*
+ * Top navigation
+ * Hide default border to remove 1px line.
+ */
+.navbar-fixed-top {
+  border: 0;
+}
+
+/*
+ * Main content
+ */
+
+.main {
+  padding: 20px;
+}
+@media (min-width: 768px) {
+  .main {
+	padding-right: 40px;
+	padding-left: 40px;
+  }
+}
+.main .page-header {
+  margin-top: 0px;
+}
+
+
+
+.input-xs {
+   height: 22px;
+   padding: 2px 5px;
+   font-size: 12px;
+   line-height: 1.5; //If Placeholder of the input is moved up, rem/modify this.
+   border-radius: 3px;
+   }
+
+.table tbody>tr>td.vert-align
+{
+   vertical-align: middle;
+}
+
+.short-label{
+	width: 200px;
+	white-space: normal;
+}
+
+.row_buttons {
+	padding-right: 25px;
+}
+
+.navbar .navbar-nav {
+  display: inline;
+  float: none;
+  vertical-align: top;
+}
+
+
+@media (min-width: 768px) {
+  .navbar .navbar-nav {
+	display: inline-block;
+	vertical-align: top;
+  }
+
+}
+
+.navbar .navbar-collapse {
+  text-align: center;
+}
+
+.navbar .navbar-collapse.collapse.in {
+  text-align: left;
+}
+
+/* Dropdowns style within top bar */
+.navbar-fixed-top .dropdown {
+  position:relative;
+  height: 50px;
+}
+
+.navbar .navbar-collapse.collapse.in .dropdown-menu {
+  float:left;
+  position: relative;
+  margin-bottom: 50px;
+}
+
+.navbar-fixed-top .dropdown-toggle {
+  margin-top: 8px;
+  width: 140px;
+  height: 34px;
+  vertical-align: bottom;
+}
+
+.navbar-fixed-top .dropdown-text {
+  overflow: hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  width:100px;
+  display:inline-block;
+  vertical-align: bottom;
+}
+
+.btn-inverse {
+  color: #000000;
+  background-color: #ffffff;
+}
+
+table a {
+  text-decoration: none;
+  display:block;
+  padding: 0px;
+  color: #000;
+}
+
+table a:hover,
+table a:active,
+table a:focus {
+  text-decoration: none;
+  display:block;
+  color: #222;
+}
+
+
+
+.h3-link {
+  text-decoration: none;
+  color: #000;
+}
+
+.h3-link:hover,
+.h3-link:active,
+.h3-link:focus {
+  color: #222;
+}
+
+
+#loading {
+  display:none;
+  position:fixed;
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+  background:rgba(255, 255, 255, 0.9);
+  text-align:center;
+  color:#111;
+}
+
+#loading-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 100000000000;
+}

@@ -1,0 +1,61 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% if projects != None %}
+<div class="container-fluid">
+  <div class="dropdown">
+    <button type="button" class="btn btn-md btn-inverse dropdown-toggle" data-toggle="dropdown">
+      <span id="project_name" class="dropdown-text">{% if not project_name == None %}{{ project_name }}{% else %}Choose a project {% endif %}</span>
+      <span class="glyphicon glyphicon-triangle-bottom"></span>
+    </button>
+    <ul id="project_list" class="dropdown-menu">
+        {% for project in projects %}
+        <li><a href="#">{{ project.name }}</a></li>
+        {% endfor %}
+        {% if user.is_authenticated %}
+        <li role="separator" class="divider"></li>
+        <li><a href="#">New project</a></li>
+        {% endif %}
+    </ul>
+  </div>
+    <form class="form" method="POST" id="choose_project">
+      {% csrf_token %}
+      <input type="hidden" id="project_id" Class="form-control" name="project_id" {% if not project_id == None %}value="{{project_id}}"{% endif %}>
+      <input type="hidden" class="form-control" name="action" value="choose_project">
+  </form>
+  <script>
+
+    $('#project_list li').on('click', function(){
+      var nb_projects = $('#project_list').children().length - 1;
+
+      {% if user.is_authenticated %}
+        if ($(this).index() >= nb_projects) {
+        $('#new_project').modal('show');
+      }
+      else{
+      {% endif %}
+        $("#project_name").html($(this).text());
+        $('#project_id').val($(this).index());
+        $('#choose_project').submit();
+      {% if user.is_authenticated %}
+      }
+      {% endif %}
+    });
+
+  </script>
+</div>
+{% endif %}

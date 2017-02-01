@@ -1,0 +1,56 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/base.html' %}
+{% load static from staticfiles %}
+
+
+{% block css %}
+<link href="{% static "custom_bare.css" %}" rel="stylesheet">
+<link href="{% static "custom_sidebar.css" %}" rel="stylesheet">
+{% endblock css %}
+
+
+{% block view %}
+<div id="wrapper" class="main">
+  <div id="sidebar" class="sidebar-nav">
+	<div class="container-fluid">
+
+	{% block view_sidebar %}{% endblock view_sidebar %}
+  </div>
+
+  </div>
+  <div id="content" class="content">
+	{% block view_content %}{% endblock view_content %}
+  </div>
+</div>
+<a href="#menu-toggle" class="sidebar-toggle" id="sidebar-toggle">
+  <span class="btn btn-default btn-md glyphicon glyphicon-menu-hamburger"></span>
+</a>
+
+{% endblock view %}
+
+
+{% block footer_js %}
+<script src="{% static "custom_sidebar.js" %}"></script>
+{% endblock footer_js %}
+
+
+{% block js %}
+{{ block.super }}
+
+{% endblock js %}

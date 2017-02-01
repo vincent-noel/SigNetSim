@@ -1,0 +1,125 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% load static from staticfiles %}
+{% load bootstrap3 %}
+{% load tags %}
+
+{% block view_name %}Simulate steady states{% endblock view_name %}
+{% block header_js %}
+  {% if simulation_results_loaded == True %}
+    <script src="{% static "chart.js/dist/Chart.js" %}"></script>
+  {% endif %}
+{% endblock header_js %}
+{% block view_sidebar %}{% include 'simulate/menu.html' %}{% endblock view_sidebar %}
+{% block view_content %}
+
+<div class="container-fluid" id="view">
+  <h4>Steady states simulations</h4>
+  <hr/><br/>
+  <div class="container-fluid">
+    {% if species %}
+    <div class="form-group">
+      <form class="form-vertical" method="POST" action="{% url 'simulate_steady_states' %}">
+        {% csrf_token %}
+        {% if species %}
+        <label>Species to plot (hold shift to select more than one):</label>
+        {% with species|my_len as len_species %}
+        <select multiple class="form-control" id="sel2" name="species_selected" size="{% if len_species > 10 %}10{% else %}{{len_species}}{% endif %}">
+        {% endwith %}
+          {% for specie in species %}
+          <option {% if forloop.counter0 in ids_species_selected %}selected{% endif %} name="{{ forloop.counter0 }}" id="{{ forloop.counter0 }}" value="{{ forloop.counter0 }}">{{specie.getNameOrSbmlId}}</option>
+          {% endfor %}
+        </select>
+        <br/>
+        {% endif %}
+        <label>Input species</label>
+        <input type="hidden" name="species_id" value="" id="species_id">
+        <div class="dropdown">
+          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+            <span id="species_name">{% if species_name != None %}{{ species_name }}{% else %}Choose a species {% endif %}</span>
+            <span class="caret"></span>
+          </button>
+          <ul id="species_list" class="dropdown-menu">
+              {% for t_species in species %}
+              <li><a href="#">{{ t_species.getNameOrSbmlId }}</a></li>
+              {% endfor %}
+          </ul>
+        </div>
+        <br/>
+        <label>Values to plot</label><input type="text" ID="ss_to_plot" class="form-control" name="ss_to_plot" value="{% if ss_to_plot %}{{ss_to_plot}}{% else %}0{% endif %}"></input>
+        <br/>
+        <label>Minimum time to reach steady state</label><input type="text" ID="time_min" class="form-control" name="time_min" value="{% if t_min %}{{t_min}}{% else %}0{% endif %}"></input>
+        <br/>
+        <label>Maximum time to reach steady state</label><input type="text" ID="time_max" class="form-control" name="time_max" value="{% if t_max %}{{t_max}}{% else %}1000{% endif %}"></input>
+        <br/><br/>
+        <input type="hidden" ID="model_id" name="model_id" value="{{model_id}}"></input>
+        <input type="hidden" ID="wdth" name="wdth"></input>
+        <div class="row">
+          <div class="col-xs-6">
+            <button type="submit" name="action" value="simulate_steady_states" class="btn btn-primary">Simulate</button>
+          </div>
+          <div class="col-xs-6 text-right">
+            <button type="button" class="btn btn-primary">More options</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  {% endif %}
+  <br/><br/>
+
+  {% if simulation_error_message != None %}
+  <br/>
+  <div class="alert alert-danger">
+    <strong>Error :</strong> {{ simulation_error_message }}
+  </div>
+  {% endif %}
+
+
+    <br/><br/><br/>
+    <div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <script>
+    {% include 'simulate/steadystates_graph.js' %}
+    </script>
+
+
+</div>
+{% endblock view_content %}
+{% block js %}
+
+
+
+{% if model_id != None %}
+
+
+$('#species_list li').on('click', function(){
+  $("#species_name").html($(this).text());
+  $('#species_id').val($(this).index());
+});
+
+{% endif %}
+{{ block.super }}
+
+
+{% endblock js %}

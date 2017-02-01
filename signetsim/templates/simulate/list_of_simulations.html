@@ -1,0 +1,57 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% block view_name %}Stored simulations{% endblock view_name %}
+{% block view_sidebar %}{% include 'simulate/menu.html' %}{% endblock view_sidebar %}
+{% block view_content %}
+{% load bootstrap3 %}
+
+<div class="container-fluid" id="view">
+  <h4>Stored simulations</h4>
+  <br/>
+  <div class="container-fluid">
+    <table class="table table-striped">
+      <thead>
+        <tr class="row">
+          <th class="col-xs-10">Name</th>
+          <th class="col-xs-2 text-right"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row">
+           <td class="col-xs-10 col-sm-10">
+             <a href=""></a>
+           </td>
+           <td class="col-xs-2 col-sm-2">
+             <div class="pull-right">
+               <form class="form-inline" method="post" enctype="multipart/form-data">
+                 {% csrf_token %}
+                 <button type="button" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+               </form>
+             </div>
+           </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <hr/>
+  <div class="container-fluid">
+    <button type="button" class="btn btn-primary btn-sm">{% bootstrap_icon "folder-open" %}&nbsp;&nbsp;Load SEDML file</button>
+  </div>
+</div>
+{% endblock view_content %}

@@ -1,0 +1,134 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/fullpage.html' %}
+{% load static from staticfiles %}
+{% load bootstrap3 %}
+
+{% block title %} Models | {{ block.super }}{% endblock title %}
+{% block view_name %}Models{% endblock view_name %}
+{% block view_content %}
+{% if project_id != None %}
+
+
+<div class="main">
+  <h4>Models</h4>
+  <hr/>
+  {% include 'commons/error_page.html' %}
+  <br/>
+  <div class="container-fluid">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr class="row">
+          <th class="col-xs-8 col-sm-10">Model name</th>
+          <th class="col-xs-4 col-sm-2 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for id, name, path in sbml_models_v2 %}
+        <tr class="row">
+          <td class="col-xs-8 col-sm-10">
+            <a href="{% url 'edit_model' id %}">{{ name }}</a>
+          </td>
+          <td class="col-xs-4 col-sm-2">
+            <div class="pull-right">
+              {% if user.is_authenticated %}
+                <form class="form-inline" method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <input type="hidden" name="id" value="{{ id }}">
+                  <a href="../media{{ path }}" style="display: inline-block">
+                    <button type="button" class="btn btn-xs btn-default" title="Download">{% bootstrap_icon "download-alt" %}</button>
+                  </a>
+                  <button type="submit" name="action" value="duplicate_model" class="btn btn-xs btn-primary" tite="Duplicate">{% bootstrap_icon "duplicate" %}</button>
+                  <button type="submit" name="action" value="delete_model" class="btn btn-primary btn-xs btn-danger" title="Remove">{% bootstrap_icon "trash" %}</button>
+                </form>
+
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if user.is_authenticated %}
+  <hr/>
+  <div class="container-fluid">
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#new_model">{% bootstrap_icon "file" %} Create new model</button>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#load_model">{% bootstrap_icon "folder-open" %}&nbsp;&nbsp;Load model</button>
+  </div>
+  {% endif %}
+</div>
+
+
+{% endif %}
+{% endblock view_content %}
+
+{% block view_modal %}
+
+<!-- Modal -->
+<div class="modal fade in" id="new_model" tabindex="1" role="dialog" aria-labelledby="New model">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="." method="post" class="form-inline" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="new_model">
+        {% csrf_token %}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Create a new model</h4>
+        </div>
+        <div class="modal-body">
+            <div class="input-group">
+              <span class="input-group-addon" id="model_name_id">Model name</span>
+              <input type="text" class="form-control" placeholder="Name" aria-describedby="model_name_id" name="model_name">
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade in" id="load_model" tabindex="1" role="dialog" aria-labelledby="Load model">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="." method="post" class="form-inline" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="load_model">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel_2">Load SBML model</h4>
+      </div>
+      <div class="modal-body">
+        {% csrf_token %}
+        {% bootstrap_form form layout=inline %}
+        {% buttons %}
+        {% endbuttons %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Load model</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+{% endblock view_modal %}

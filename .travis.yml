@@ -1,0 +1,15 @@
+language: python
+python: 2.7
+
+before_install:
+  - sudo apt-get -qq update
+  - bash scripts/travis/build_dep
+
+install:
+  - bash scripts/travis/make
+  - bash scripts/travis/configure_apache
+  - sudo bash scripts/travis/install_apache
+
+
+script:
+  - bash scripts/travis/test_apache

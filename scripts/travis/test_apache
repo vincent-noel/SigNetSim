@@ -1,0 +1,14 @@
+#!/bin/bash
+RETURN_APACHE=`curl -s localhost:80/signetsim/success/`
+RES=`expr $RETURN_APACHE  == SUCCESS`
+RETURN_APACHE_STATIC=`curl -s localhost:80/signetsim/static/success`
+RES_STATIC=`expr $RETURN_APACHE_STATIC  == SUCCESS`
+
+echo "Return Apache : " $RETURN_APACHE
+echo "Return Apache (static) : " $RETURN_APACHE_STATIC
+
+if [ $RES -eq 1 ] && [ $RES_STATIC -eq 1 ]; then
+	exit 0;
+else
+	exit 1;
+fi

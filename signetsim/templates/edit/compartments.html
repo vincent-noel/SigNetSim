@@ -1,0 +1,224 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% load bootstrap3 %}
+{% load tags %}
+{% load static from staticfiles %}
+{% block edit_item %}active{% endblock edit_item %}
+{% block title %} Compartments | {{ block.super }}{% endblock title %}
+{% block view_name %}Model compartments{% endblock view_name %}
+{% block view_sidebar %}{% include 'edit/menu.html' with page="compartments" %}{% endblock view_sidebar %}
+
+{% block view_content %}
+<div class="container-fluid" id="view">
+  <h4>Compartments</h4>
+  <hr/>
+  {% if model_id != None %}
+  {% include 'commons/error_page.html' %}
+  <br/>
+  <div class="container-fluid">
+    <table class="table table-striped">
+      <thead>
+        <tr class="row">
+          <th class="col-xs-10">Name</th>
+          <th class="col-xs-2 text-right">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for compartment in list_of_compartments %}
+        <tr class="row">
+          <td class="col-xs-10">{{compartment.getNameOrSbmlId}}</td>
+          <td class="col-xs-2">
+            <div class="pull-right">
+              {% if user.is_authenticated %}
+              <form class="form-inline" method="post" enctype="multipart/form-data">
+               {% csrf_token %}
+               <input type="hidden" name="compartment_id" value="{{ forloop.counter0 }}">
+               <button type="submit" name="action" value="edit"  class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+               <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+              </form>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if user.is_authenticated %}
+  <hr/>
+  <div class="container-fluid">
+    <button type="button" class="btn btn-primary btn-sm" id="new_compartment_button">{% bootstrap_icon "file" %} Create new compartment</button>
+  </div>
+  {% endif %}
+  {% endif %}
+</div>
+{% endblock view_content %}
+
+{% block view_modal %}
+<div class="modal fade in" id="modal_compartment" tabindex="1" role="dialog" aria-labelledby="{% if form.isEditing == True %}Edit{% else %}New{% endif %} compartment">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="" method="post" class="form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" id="compartment_id" name="compartment_id" value="{% if form.id != None %}{{form.id}}{% endif %}" >
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="modal_title">{% if form.isEditing == True %}Edit{% else %}New{% endif %} compartment</h4>
+        </div>
+        <div class="modal-body text-center">
+          <ul class="nav nav-tabs text-center">
+            <li class="active"><a data-toggle="tab" href="#general">General</a></li>
+            <li><a data-toggle="tab" href="#math">Math</a></li>
+            <li><a data-toggle="tab" href="#annotation">Annotation</a></li>
+          </ul>
+          <div class="tab-content">
+            <div id="general" class="tab-pane fade in active">
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12">
+                      <input type="text" class="form-control input-sm" placeholder="Input name of compartment" name="compartment_name" id="compartment_name" value="{% if form.name != None %}{{form.name}}{% endif %}">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-11">Identifier</th>
+                    <th class="col-xs-1"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-11">
+                      <input type="text" class="form-control input-sm" placeholder="Input identifier of compartment" name="compartment_sbml_id" id="compartment_sbml_id" value="{% if form.sbmlId != None %}{{form.sbmlId}}{% endif %}">
+                    </td>
+                    <td class="col-xs-1" style="vertical-align:middle">
+                      <div id="sbmlid_validating" class="pull-right collapse">
+                        <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+                      </div>
+                      <div id="sbmlid_valid" class="pull-right collapse">
+                        <span class="glyphicon glyphicon-ok" style="color:#5cb85c; font-size: 1.5em"></span>
+                      </div>
+                      <div id="sbmlid_invalid" class="pull-right collapse">
+                      <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="math" class="tab-pane fade in">
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Size</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12">
+                      <input type="text" class="form-control input-sm" placeholder="Input size of compartment" name="compartment_size" id="compartment_size" value="{% if form.size != None %}{{form.size}}{% else %}1{% endif %}">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row"  onclick="toggle_slide('constant_checkbox');">
+                    <th class="col-xs-10">Constant</th>
+                    <th class="col-xs-2 text-right">
+                      <span class="input-group col-xs-12">
+                          <label class="switch">
+                            <input type="checkbox" name="compartment_constant" id="constant_checkbox" {% if form.constant == True %}checked{% endif %}>
+                            <div class="slider round"></div>
+                          </label>
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+              </table>
+
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Unit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12">
+                        <input type="hidden" name="compartment_unit" id="compartment_unit" value="{% if form.unit != None %}{{form.unit}}{% endif %}">
+                        <div class="dropdown">
+                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" style="width:100%" data-toggle="dropdown">
+                            <span id="compartment_unit_label">{% if form.unit != None %}{{list_of_units|my_lookup:form.unit}}{% else %}Choose an unit{% endif %}</span>
+                            <span class="caret"></span>
+                          </button>
+                          <ul id="unit_list" class="dropdown-menu">
+                            {% for unit in list_of_units %}
+                            <li><a href="#">{{unit}}</a></li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="annotation" class="tab-pane fade in">
+            <table class="table table-striped">
+              <thead>
+                <tr class="row">
+                  <th class="col-sm-12">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="row">
+                  <td class="col-sm-12">
+                   <textarea class="form-control" name="compartment_notes" id="compartment_notes" rows="12">{% if form.isEditing == True and form.notes != None %}{{form.notes}}{% endif %}</textarea>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {% include 'commons/error_modal.html' %}
+      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" name="action" value="save" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock view_modal %}
+
+{% block js %}
+{{ block.super }}
+{% include 'edit/compartments.js' %}
+{% endblock js %}

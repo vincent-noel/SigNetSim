@@ -1,0 +1,61 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% block view_name %}Optimize data{% endblock view_name %}
+{% block view_sidebar %}{% include 'fit/menu.html' %}{% endblock view_sidebar %}
+{% block view_content %}
+{% load bootstrap3 %}
+{# {% load crispy_forms_tags %}#}
+
+<div class="container-fluid" id="view">
+  <h4>Launched optimizations</h4>
+  <br/>
+  <div class="container-fluid">
+    <table class="table table-striped">
+      <thead>
+        <tr class="row">
+          <th class="col-xs-4">Model name</th>
+          <th class="col-xs-3">Started</th>
+          <th class="col-xs-3">Status</th>
+          <th class="col-xs-2 text-right">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for optimization, optimization_status, optimization_start, model_name in optimizations %}
+        <tr class="row">
+           <td class="col-xs-4 col-sm-6"><a href="{% url 'view_optimization' optimization.optimization_id  %}">{{ model_name }}</a></td>
+           <td class="col-xs-3 col-sm-2">{{ optimization_start }}</td>
+           <td class="col-xs-3 col-sm-2">{{ optimization_status}}</td>
+           <td class="col-xs-2 col-sm-2">
+             <div class="pull-right">
+               <form class="form-inline" method="post" enctype="multipart/form-data">
+                 {% csrf_token %}
+                 <input type="hidden" name="action" value="delete_optimization">
+                 <input type="hidden" name="entry_id" value="{{ optimization.id }}">
+                 <input type="hidden" name="optimization_id" value="{{ optimization.optimization_id }}">
+                 <button type="submit" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+               </form>
+             </div>
+         </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock view_content %}
