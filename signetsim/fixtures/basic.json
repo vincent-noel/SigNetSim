@@ -1,0 +1,22 @@
+[
+{
+  "fields": {
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": true,
+    "max_cores": null,
+    "is_staff": true,
+    "last_login": null,
+    "groups": [],
+    "user_permissions": [],
+    "fullname": null,
+    "password": "pbkdf2_sha256$20000$F4Yugl8u5wNo$gp4ZZw/crqtPny2/766vGt5A3VjthGrhDrbVxz00lqg=",
+    "email": "admin@example.com",
+    "date_joined": "2017-04-23T20:21:41.851Z"
+  },
+  "model": "signetsim.user",
+  "pk": 1
+}
+]

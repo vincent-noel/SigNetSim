@@ -50,7 +50,7 @@ class SignUpForm(HasErrorMessages):
 	def read(self, request):
 
 		self.username = self.readString(request, 'username', 'the username')
-		self.fullname = self.readUnicodeString(request, 'fullname', 'the full name')
+		self.fullname = self.readUnicodeString(request, 'fullname', 'the full name', required=False)
 		self.email = self.readString(request, 'email', 'the email address')
 		self.password1 = self.readString(request, 'password1', 'the password')
 		self.password2 = self.readString(request, 'password2', 'the password confirmation')
@@ -62,7 +62,6 @@ class SignUpForm(HasErrorMessages):
 			validate_email(self.email)
 		except ValidationError:
 			self.addError("Invalid email address")
-
 
 class SignUpView(TemplateView):
 
@@ -113,7 +112,10 @@ class SignUpView(TemplateView):
 				request.session['signup_username'] = self.form.username
 				request.session['signup_email'] = self.form.email
 
-				self.sendAdminEmail(request, self.form.username, self.form.email)
+				# For test runs
+				if 'HTTP_HOST' in request.META:
+					self.sendAdminEmail(request, self.form.username, self.form.email)
+
 				return True
 		return False
 

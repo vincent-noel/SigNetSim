@@ -18,3 +18,7 @@ install:
 
 script:
 - docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/test_apache.sh"
+- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/run_tests.sh"
+
+after_script:
+- coveralls

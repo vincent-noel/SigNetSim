@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" tests.py
+""" __init__.py
 
 
 	This file...
@@ -22,7 +22,3 @@
 	along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 """
-
-from django.test import TestCase
-
-# Create your tests here.
