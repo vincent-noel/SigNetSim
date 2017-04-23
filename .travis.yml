@@ -11,5 +11,6 @@ before_install:
 - docker pull signetsim/signetsim:xenial
 
 install:
-- docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/libSigNetSim signetsim/signetsim:xenial bash
+- docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/signetsim:xenial bash
+- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; ls scripts"
 - docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/install.sh"
