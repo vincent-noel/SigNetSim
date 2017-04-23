@@ -1,6 +1,0 @@
-Django<1.9
-django-bootstrap3
-Jinja2
-lxml
-bs4
-git+https://github.com/jamesscottbrown/sbml-diff.git

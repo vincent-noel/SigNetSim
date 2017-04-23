@@ -138,7 +138,6 @@ class ModelReactionsView(TemplateView, HasWorkingModel, HasErrorMessages):
 								  reportField=False)
 		self.form.load(self.listOfReactions[t_id])
 
-
 	def saveReaction(self, request):
 
 		self.form.read(request)
@@ -154,7 +153,6 @@ class ModelReactionsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.saveModel(request)
 			self.loadReactions()
 			self.form.clear()
-
 
 	def loadReactions(self):
 		self.listOfReactions = self.getModel().listOfReactions.values()

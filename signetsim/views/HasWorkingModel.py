@@ -28,7 +28,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from signetsim.models import SbmlModel
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.model.Model import Model
-from libsignetsim.model.ModelException import ModelException
+# from libsignetsim.model.ModelException import ModelException
 from signetsim.views.HasWorkingProject import HasWorkingProject
 import os
 import time
@@ -116,7 +116,7 @@ class HasWorkingModel(HasWorkingProject):
 		if self.model is not None:
 			self.savePickledModel(request)
 			if self.model_filename is not None:
-				self.model.parentDoc.writeSbml(self.model_filename)
+				self.model.parentDoc.writeSbmlToFile(self.model_filename)
 
 
 	def reloadModel(self):
@@ -246,7 +246,7 @@ class HasWorkingModel(HasWorkingProject):
 			self.model_filename = os.path.join(settings.MEDIA_ROOT, str(t_model.sbml_file))
 
 			t_doc = SbmlDocument()
-			t_doc.readSbml(self.model_filename)
+			t_doc.readSbmlFromFile(self.model_filename)
 			self.model = t_doc.model
 			self.model_name = self.model.getName()
 
@@ -313,7 +313,7 @@ class HasWorkingModel(HasWorkingProject):
 			t_models = [pm for pm in self.getProjectModels(request) if pm.id != self.model_id]
 			t_filename = os.path.join(settings.MEDIA_ROOT, str(t_models[model_id].sbml_file))
 			doc = SbmlDocument()
-			doc.readSbml(t_filename)
+			doc.readSbmlFromFile(t_filename)
 			if doc.useCompPackage:
 				return [doc.model.getSbmlId()] + doc.listOfModelDefinitions.sbmlIds()+doc.listOfExternalModelDefinitions.sbmlIds()
 			else:
@@ -325,7 +325,7 @@ class HasWorkingModel(HasWorkingProject):
 		if self.isUserLoggedIn(request) and self.project is not None and self.model_id is not None:
 			t_filename = os.path.join(settings.MEDIA_ROOT, str(self.model_filename))
 			doc = SbmlDocument()
-			doc.readSbml(t_filename)
+			doc.readSbmlFromFile(t_filename)
 			if doc.useCompPackage:
 				return (doc.listOfModelDefinitions.getListOfModelDefinitions()
 						+doc.listOfExternalModelDefinitions.getListOfModelDefinitions())

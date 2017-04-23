@@ -30,7 +30,7 @@ from signetsim.models import SbmlModel, Project
 
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.model.Model import Model
-from libsignetsim.model.ModelException import ModelException
+# from libsignetsim.model.ModelException import ModelException
 import os
 
 class HasWorkingProject(HasUserLoggedIn):

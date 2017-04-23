@@ -27,7 +27,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from signetsim.models import SbmlModel
 
-from libsignetsim.model import Model, ModelException
+from libsignetsim.model.Model import Model
+from libsignetsim.model.ModelException import ModelException
 # from signetsim.views.HasWorkingProject import HasWorkingProject
 import os
 

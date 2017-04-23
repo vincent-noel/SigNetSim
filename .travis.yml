@@ -1,15 +1,15 @@
+sudo: required
+
+services: docker
+
 language: python
+
 python: 2.7
 
 before_install:
-  - sudo apt-get -qq update
-  - bash scripts/travis/build_dep
+- pip install coveralls
+- docker pull signetsim/signetsim:xenial
 
 install:
-  - bash scripts/travis/make
-  - bash scripts/travis/configure_apache
-  - sudo bash scripts/travis/install_apache
-
-
-script:
-  - bash scripts/travis/test_apache
+- docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/libSigNetSim signetsim/signetsim:xenial bash
+- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/install.sh"

@@ -22,7 +22,7 @@
 
 """
 
-from libsignetsim.model.ModelException import ModelException
+# from libsignetsim.model.ModelException import ModelException
 from libsignetsim.model.math.MathFormula import MathFormula
 
 from re import match
@@ -72,7 +72,7 @@ class HasErrorMessages(object):
 			t_formula.setPrettyPrintMathFormula(expression)
 			return None
 
-		except ModelException as e:
+		except Excepton as e:
 			return e.message
 
 

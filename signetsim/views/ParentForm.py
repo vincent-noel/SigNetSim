@@ -23,7 +23,7 @@
 """
 
 from libsignetsim.model.math.MathFormula import MathFormula
-from libsignetsim.model.ModelException import ModelException
+# from libsignetsim.model.ModelException import ModelException
 from signetsim.views.HasErrorMessages import HasErrorMessages
 
 
@@ -52,5 +52,5 @@ class ParentForm(HasErrorMessages):
 			t_formula.setPrettyPrintMathFormula(expression)
 			return None
 
-		except ModelException as e:
+		except Exception as e:
 			return e.message
