@@ -18,3 +18,20 @@ cat $DIR/apache_conf >> $DIR/signetsim.conf
 cat $DIR/000-default.conf | tail -n $LINES_LEFT >> $DIR/signetsim.conf
 
 rm $DIR/000-default.conf $DIR/apache_conf
+
+chgrp -R www-data $INSTALL_DIR/data/
+#chgrp -R www-data $INSTALL_DIR/settings/
+
+chmod -R 664 $INSTALL_DIR/data/
+#chmod -R 664 $INSTALL_DIR/settings/
+
+find $INSTALL_DIR/data/ -type d  -exec chmod 775 {} \;
+
+
+mv $DIR/signetsim.conf /etc/apache2/sites-available/
+cd /etc/apache2/sites-enabled/
+a2dissite *
+a2enmod wsgi
+a2enmod rewrite
+a2ensite signetsim
+service apache2 restart

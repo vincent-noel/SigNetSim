@@ -14,7 +14,6 @@ install:
 - docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/signetsim:xenial bash
 - docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/install.sh"
 - docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/configure_apache.sh"
-- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/install_apache.sh"
 
 
 script:
