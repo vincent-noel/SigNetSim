@@ -18,4 +18,4 @@ a2dissite *
 a2enmod wsgi
 a2enmod rewrite
 a2ensite signetsim
-service apache2 reload
+service apache2 start

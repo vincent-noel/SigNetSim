@@ -2,7 +2,7 @@
 
 RETURN_APACHE=`wget -q -O - localhost:80/signetsim/success/ | tail -n 1`
 RES=`expr $RETURN_APACHE  == SUCCESS`
-RETURN_APACHE_STATIC=`wget -q -O - localhost:80/signetsim/success/ | tail -n 1`
+RETURN_APACHE_STATIC=`wget -q -O - localhost:80/signetsim/static/success/ | tail -n 1`
 RES_STATIC=`expr $RETURN_APACHE_STATIC  == SUCCESS`
 
 echo "Return Apache : " $RETURN_APACHE
