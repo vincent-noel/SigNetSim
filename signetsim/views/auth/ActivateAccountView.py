@@ -44,9 +44,6 @@ class ActivateAccountView(TemplateView, HasUserLoggedIn):
 
 
 	def get(self, request, *args, **kwargs):
-		print request.user
-
-		print request.user.is_staff
 
 		if (request.user.is_staff is True
 			and request.GET.get('username') != None

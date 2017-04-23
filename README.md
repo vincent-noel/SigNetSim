@@ -1,4 +1,4 @@
-# SigNetSim : The Signaling Network Simulator [![Build Status](https://travis-ci.org/vincent-noel/SigNetSim.svg?branch=master)](https://travis-ci.org/vincent-noel/SigNetSim)
+# SigNetSim : The Signaling Network Simulator [![Build Status](https://travis-ci.org/vincent-noel/SigNetSim.svg?branch=master)](https://travis-ci.org/vincent-noel/SigNetSim) [![Coverage Status](https://coveralls.io/repos/github/vincent-noel/SigNetSim/badge.svg?branch=develop)](https://coveralls.io/github/vincent-noel/SigNetSim?branch=develop)
 
 A django web application for building, fitting, and analyzing mathematical models of molecular signaling networks.
 

@@ -73,8 +73,8 @@ class LoginView(TemplateView):
 		if "action" in request.POST:
 			if request.POST['action'] == "login":
 				if self.login(request) is True:
-					print str(request.POST.get('referer'))
-					if str(request.POST.get('referer')) == "http://127.0.0.1:8000/accounts/login/":
+
+					if request.POST.get('referer') is None or str(request.POST.get('referer')) == "http://127.0.0.1:8000/accounts/login/":
 						return redirect('home')
 					else:
 						return HttpResponseRedirect(request.POST.get('referer'))
