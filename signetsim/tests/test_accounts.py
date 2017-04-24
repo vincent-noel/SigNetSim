@@ -81,7 +81,6 @@ class TestAccounts(TestCase):
 		})
 
 		self.assertRedirects(response_login_v2, '/', status_code=302, target_status_code=200)
-
 		self.assertTrue(c.login(username='test_user', password='password'))
 
 		response_change_fullname = c.post('/profile/test_user/', {

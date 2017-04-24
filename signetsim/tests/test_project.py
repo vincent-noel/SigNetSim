@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-""" test_accounts.py
+""" test_projects.py
 
 
-	This file...
+	This file tests the creation, copy, deletion and sharing of projects
 
 
 
@@ -28,7 +28,7 @@ from signetsim.models import User, Project
 
 class TestAccounts(TestCase):
 
-	fixtures = ["test_user.json"]
+	fixtures = ["users.json"]
 
 	def testCreateProject(self):
 
@@ -88,7 +88,7 @@ class TestAccounts(TestCase):
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		self.assertEqual(len(Project.objects.filter(user=user_2)), 1)
 
-		
+
 
 
 

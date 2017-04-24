@@ -28,7 +28,7 @@ from django.contrib.auth.models import AbstractUser
 import os
 from random import choice
 from string import ascii_uppercase, ascii_lowercase, digits
-
+from os.path import dirname, basename, join
 
 def new_model_filename():
 	rand_string = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(6))
@@ -46,10 +46,15 @@ def new_project_folder():
 
 
 def model_filename(instance, filename):
-	# print filename
-	full_filename = '{0}/models/{1}'.format(instance.project.folder, filename)
+
+	path = dirname(filename)
+	filename = basename(filename)
+	full_path = join(join(path, "models"), str(instance.project.folder))
+	full_filename = join(full_path, filename)
+
+	# full_filename = '{0}/models/{1}'.format(instance.project.folder, filename)
 	while os.path.isfile(full_filename):
-		full_filename = '{0}/models/{1}'.format(instance.project.folder, new_model_filename())
+		full_filename = join(full_path, new_model_filename())
 	return full_filename
 
 def sedml_filename(instance, filename):

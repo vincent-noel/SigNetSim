@@ -31,7 +31,7 @@ from django.core.files import File
 from django.conf import settings
 from django.shortcuts import redirect
 
-from signetsim.models import SbmlModel
+from signetsim.models import SbmlModel, new_model_filename
 from signetsim.forms import DocumentForm
 
 from libsignetsim.model.SbmlDocument import SbmlDocument
@@ -116,7 +116,7 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 	def newModel(self, request):
 
 		model_name = str(request.POST['model_name'])
-		model_filename = os.path.join(settings.MEDIA_ROOT, model_name.lower())
+		model_filename = os.path.join(settings.MEDIA_ROOT, new_model_filename())
 
 		open(model_filename,"a")
 		new_model = SbmlModel(project=self.project, name=model_name, sbml_file=File(open(model_filename,"r")))
@@ -125,7 +125,7 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 
 		doc = SbmlDocument()
 		doc.model.newModel(model_name)
-		doc.writeSbml(os.path.join(settings.MEDIA_ROOT, str(new_model.sbml_file)))
+		doc.writeSbmlToFile(os.path.join(settings.MEDIA_ROOT, str(new_model.sbml_file)))
 
 
 	def duplicateModel(self, request):
@@ -148,6 +148,9 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 
 	def loadModel(self, request):
 
+		# print request.FILES
+		# print request.POST
+
 		self.fileUploadForm = DocumentForm(request.POST, request.FILES)
 		if self.fileUploadForm.is_valid():
 			try:
@@ -158,7 +161,7 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 
 				try:
 					doc = SbmlDocument()
-					doc.readSbml(os.path.join(settings.MEDIA_ROOT,
+					doc.readSbmlFromFile(os.path.join(settings.MEDIA_ROOT,
 												str(new_sbml_model.sbml_file)))
 
 					name = doc.model.getName()
@@ -190,10 +193,8 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 		if self.project is not None:
 			self.listOfModels = SbmlModel.objects.filter(project=self.project)
 			self.listOfModels_v2 = []
-			print settings.MEDIA_ROOT
 			for model in self.listOfModels:
 				filename = str(model.sbml_file)
 				if filename.startswith(settings.MEDIA_ROOT):
 					filename = filename.replace(settings.MEDIA_ROOT, "")
 				self.listOfModels_v2.append((model.id, model.name, filename))
-			print self.listOfModels_v2

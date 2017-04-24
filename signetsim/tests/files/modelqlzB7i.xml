@@ -1,0 +1,834 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="model_0" name="SOS-Ras-MAPK with n17" substanceUnits="nmol" timeUnits="s" extentUnits="nmol">
+    <listOfUnitDefinitions>
+      <unitDefinition id="L" name="Litre">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol" name="Nanomoles">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_per_liter" name="Nanomoles per litre">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="s" name="Seconds">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="s_1" name="per Seconds">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_1" name="per Nanomoles ">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="dim_less" name="Dimensionless">
+        <listOfUnits>
+          <unit kind="dimensionless" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_nmol_per_seconds" name="per Nanomoles per Seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mnol_per_seconds" name="Nanomoles per seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_per_liter_per_seconds" name="Nanomoles per litre per seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_nmol_per_liter_per_seconds" name="per Nanomoles per liter per Seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+          <unit kind="litre" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="cell" name="cell" spatialDimensions="3" size="1" units="L" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="sos" name="SOS" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="ras_gdp" name="Ras-GDP" compartment="cell" initialConcentration="265.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="ras_gtp" name="Ras-GTP" compartment="cell" initialConcentration="64.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="sos_ras_gdp" name="SOS-Ras-GDP" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="sos_ras_gtp" name="SOS-Ras-GTP" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="gap" name="GAP" compartment="cell" initialConcentration="125" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="total_ras_gtp" name="Total Ras-GTP" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="total_ras_gdp" name="Total Ras-GDP" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="total_sos" name="Total SOS" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="gef" name="GEF" compartment="cell" initialConcentration="100" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="sos_i" name="SOS_inactive" compartment="cell" initialConcentration="330" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="fgf2" name="FGF2" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="ras_n17" name="Ras-N17" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="sos_ras_n17" name="SOS-Ras-N17" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="raf" name="Raf" compartment="cell" initialConcentration="81" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="raf_p" name="Raf-P" compartment="cell" initialConcentration="19" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="mek" name="Mek" compartment="cell" initialConcentration="270" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="mek_p" name="Mek-P" compartment="cell" initialConcentration="21.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="mek_pp" name="Mek-PP" compartment="cell" initialConcentration="8.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="mapk" name="Mapk" compartment="cell" initialConcentration="286" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="mapk_p" name="Mapk-P" compartment="cell" initialConcentration="10.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="mapk_pp" name="Mapk-PP" compartment="cell" initialConcentration="3.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="total_mek_p" name="Total MEK activated" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="total_mapk_activated" name="Total MAPK activated" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="gef_rasn17" name="GEF-RasN17" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="sos_ras_gdp_comp" name="SOS-Ras-GDP complexification constant" value="0.00011255" units="per_nmol_per_liter_per_seconds" constant="true"/>
+      <parameter id="sos_ras_gdp_decomp" name="SOS-Ras-GDP decomplexification constant" value="3" units="s_1" constant="true"/>
+      <parameter id="parameter_3" name="Ras activation by SOS-Ras-GDP catalytic constant" value="0.003" units="s_1" constant="true"/>
+      <parameter id="parameter_4" name="Ras activation by SOS-Ras-GDP michaelis constant" value="14600" units="nmol_per_liter" constant="true"/>
+      <parameter id="parameter_5" name="Ras activation by SOS-Ras-GTP catalytic constant" value="20" units="s_1" constant="true"/>
+      <parameter id="parameter_6" name="Ras activation by SOS-Ras-GTP michaelis constant" value="2750" units="nmol_per_liter" constant="true"/>
+      <parameter id="ras_inactivation_by_gap_cat" name="Ras inactivation by GAP catalytic constant" value="0.1" units="s_1" constant="true"/>
+      <parameter id="ras_inactivation_by_gap_mich" name="Ras inactivation by GAP michaelis constant" value="178" units="nmol_per_liter" constant="true"/>
+      <parameter id="sos_ras_gtp_comp" name="SOS-Ras-GTP complexification constant" value="0.0001" units="per_nmol_per_liter_per_seconds" constant="true"/>
+      <parameter id="sos_ras_gtp_decomp" name="SOS-Ras-GTP decomplexification constant" value="0.4" units="s_1" constant="true"/>
+      <parameter id="ras_activation_by_gef_cat" name="Ras activation by GEF catalytic constant" value="0.01" units="s_1" constant="true"/>
+      <parameter id="ras_activation_by_gef_mich" name="Ras activation by GEF michaelis constant" value="0.0085" units="nmol_per_liter" constant="true"/>
+      <parameter id="parameter_12" name="SOS activation by FGF2" value="5.44e-05" units="per_nmol_per_liter_per_seconds" constant="true"/>
+      <parameter id="sos_inactivation_by_ras_cat" name="SOS deactivation by Ras-GTP catalytic constant" value="0" units="s_1" constant="true">
+        <notes>
+          <body xmlns="http://www.w3.org/1999/xhtml">170</body>
+        </notes>
+      </parameter>
+      <parameter id="parameter_18" name="SOS deactivation by Ras-GTP michaelis constant" value="3360000" units="nmol_per_liter" constant="true"/>
+      <parameter id="sos_ras_n17_comp" name="SOS-Ras-N17 complexification" value="1.5e-05" units="per_nmol_per_liter_per_seconds" constant="true"/>
+      <parameter id="sos_ras_n17_decomp" name="SOS-Ras-N17 decomplexification" value="1.92e-05" units="s_1" constant="true"/>
+      <parameter id="raf_activation_cat" name="Raf activation catalytic constant" value="0.0611" units="s_1" constant="true">
+        <notes>
+          <body xmlns="http://www.w3.org/1999/xhtml">0.0046</body>
+        </notes>
+      </parameter>
+      <parameter id="raf_activation_mich" name="Raf activation michaelis constant" value="0.0362" units="nmol_per_liter" constant="true"/>
+      <parameter id="raf_inactivation_cat" name="Raf inactivation catalytic" value="0.25" units="nmol_per_liter_per_seconds" constant="true"/>
+      <parameter id="raf_inactivation_michaelis" name="Raf inactivation michaelis constant" value="8" units="nmol_per_liter" constant="true"/>
+      <parameter id="mek_activation_cat" name="Mek activation catalytic constant" value="0.025" units="s_1" constant="true"/>
+      <parameter id="mek_activation_michaelis" name="Mek activation michaelis" value="15" units="nmol_per_liter" constant="true"/>
+      <parameter id="mek_inactivation_cat" name="Mek inactivation catalytic constant" value="0.75" units="nmol_per_liter_per_seconds" constant="true"/>
+      <parameter id="mek_inactivation_mich" name="Mek inactivation michaelis constant" value="15" units="nmol_per_liter" constant="true"/>
+      <parameter id="mapk_activation_cat" name="Mapk activation catalytic constant" value="0.025" units="s_1" constant="true"/>
+      <parameter id="mapk_activation_mich" name="Mapk activation michaelis constant" value="15" units="nmol_per_liter" constant="true"/>
+      <parameter id="mapk_inactivation_cat" name="Mapk inactivation catalytic constant" value="0.5" units="nmol_per_liter_per_seconds" constant="true"/>
+      <parameter id="mapk_inactivation_mich" name="Mapk inactivation michaelis constant" value="15" units="nmol_per_liter" constant="true"/>
+      <parameter id="sos_inactivation_mapk_cat" name="SOS inactivation by Mapk catalytic constant" value="25.5" units="s_1" constant="true"/>
+      <parameter id="sos_inactivation_mapk_michaelis" name="SOS inactivation by Mapk michaelis constant" value="230000" units="nmol_per_liter" constant="true"/>
+      <parameter id="parameter_31" name="Raf inactivation by ERK catalytic constant" value="1.64" units="s_1" constant="true"/>
+      <parameter id="parameter_32" name="Raf inactivation by ERK michaelis constant" value="7.9" units="nmol_per_liter" constant="true"/>
+      <parameter id="gef_rasn17_comp" name="GEF Ras-N17 complexification" value="0.002" units="per_nmol_per_liter_per_seconds" constant="true"/>
+      <parameter id="gef_rasn17_decomp" name="GEF Ras-N17 decomplexification" value="1.92e-05" units="s_1" constant="true"/>
+    </listOfParameters>
+    <listOfRules>
+      <assignmentRule variable="total_ras_gtp">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <ci> ras_gtp </ci>
+            <ci> sos_ras_gtp </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="total_ras_gdp">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <ci> ras_gdp </ci>
+            <ci> sos_ras_gdp </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="total_sos">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <ci> sos </ci>
+            <ci> sos_i </ci>
+            <ci> sos_ras_gdp </ci>
+            <ci> sos_ras_gtp </ci>
+            <ci> sos_ras_n17 </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="total_mek_p">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <ci> mek_p </ci>
+            <ci> mek_pp </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="total_mapk_activated">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <ci> mapk_p </ci>
+            <ci> mapk_pp </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+    </listOfRules>
+    <listOfReactions>
+      <reaction id="reaction_2" name="SOS-Ras-GDP Complexification" reversible="true" fast="false">
+        <listOfReactants>
+          <speciesReference species="sos" stoichiometry="1" constant="true"/>
+          <speciesReference species="ras_gdp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="sos_ras_gdp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cell </ci>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <cn type="integer"> -1 </cn>
+                  <ci> sos_ras_gdp </ci>
+                  <ci> sos_ras_gdp_decomp </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> ras_gdp </ci>
+                  <ci> sos </ci>
+                  <ci> sos_ras_gdp_comp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="reaction_3" name="SOS-Ras-GTP Complexification" reversible="true" fast="false">
+        <listOfReactants>
+          <speciesReference species="sos" stoichiometry="1" constant="true"/>
+          <speciesReference species="ras_gtp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="sos_ras_gtp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cell </ci>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <cn type="integer"> -1 </cn>
+                  <ci> sos_ras_gtp </ci>
+                  <ci> sos_ras_gtp_decomp </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> ras_gtp </ci>
+                  <ci> sos </ci>
+                  <ci> sos_ras_gtp_comp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="reaction_4" name="Ras activation by SOS-Ras-GDP" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="ras_gdp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ras_gtp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="sos_ras_gdp"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> ras_gdp </ci>
+                <ci> sos_ras_gdp </ci>
+                <ci> cell </ci>
+                <ci> parameter_3 </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> ras_gdp </ci>
+                <ci> parameter_4 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="reaction_5" name="Ras activation by SOS-Ras-GTP" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="ras_gdp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ras_gtp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="sos_ras_gtp"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> ras_gdp </ci>
+                <ci> sos_ras_gtp </ci>
+                <ci> cell </ci>
+                <ci> parameter_5 </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> ras_gdp </ci>
+                <ci> parameter_6 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="reaction_6" name="Ras inactivation by GAP" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="ras_gtp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ras_gdp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="gap"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> gap </ci>
+                <ci> ras_gtp </ci>
+                <ci> cell </ci>
+                <ci> ras_inactivation_by_gap_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> ras_gtp </ci>
+                <ci> ras_inactivation_by_gap_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="reaction_9" name="Ras activation by GEF" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="ras_gdp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ras_gtp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="gef"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> gef </ci>
+                <ci> ras_gdp </ci>
+                <ci> cell </ci>
+                <ci> ras_activation_by_gef_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> ras_gdp </ci>
+                <ci> ras_activation_by_gef_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="reaction_10" name="SOS activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="fgf2" stoichiometry="1" constant="true"/>
+          <speciesReference species="sos_i" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="sos" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> fgf2 </ci>
+              <ci> sos_i </ci>
+              <ci> cell </ci>
+              <ci> parameter_12 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="reaction_7" name="SOS inactivation by Ras-GTP" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="sos" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="sos_i" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="ras_gtp"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> ras_gtp </ci>
+                <ci> sos </ci>
+                <ci> cell </ci>
+                <ci> sos_inactivation_by_ras_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> sos </ci>
+                <ci> parameter_18 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="reaction_8" name="SOS-Ras-N17 complexification" reversible="true" fast="false">
+        <listOfReactants>
+          <speciesReference species="sos" stoichiometry="1" constant="true"/>
+          <speciesReference species="ras_n17" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="sos_ras_n17" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cell </ci>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <cn type="integer"> -1 </cn>
+                  <ci> sos_ras_n17 </ci>
+                  <ci> sos_ras_n17_decomp </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> ras_n17 </ci>
+                  <ci> sos </ci>
+                  <ci> sos_ras_n17_comp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Raf_activation_by_Ras_GTP" name="Raf activation by Ras-GTP" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="raf" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="raf_p" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="ras_gtp"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> raf </ci>
+                <ci> ras_gtp </ci>
+                <ci> cell </ci>
+                <ci> raf_activation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> raf </ci>
+                <ci> raf_activation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Raf_inactivation" name="Raf inactivation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="raf_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="raf" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> raf_p </ci>
+                <ci> cell </ci>
+                <ci> raf_inactivation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> raf_p </ci>
+                <ci> raf_inactivation_michaelis </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Mek_activation_1" name="Mek activation 1" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="mek" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="mek_p" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="raf_p"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mek </ci>
+                <ci> raf_p </ci>
+                <ci> cell </ci>
+                <ci> mek_activation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mek </ci>
+                <ci> mek_activation_michaelis </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Mek_activation_2" name="Mek activation 2" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="mek_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="mek_pp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="raf_p"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mek_p </ci>
+                <ci> raf_p </ci>
+                <ci> cell </ci>
+                <ci> mek_activation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mek_p </ci>
+                <ci> mek_activation_michaelis </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Mek_inactivation_1" name="Mek inactivation 1" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="mek_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="mek" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mek_p </ci>
+                <ci> cell </ci>
+                <ci> mek_inactivation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mek_p </ci>
+                <ci> mek_inactivation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Mek_inactivation_2" name="Mek inactivation 2" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="mek_pp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="mek_p" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mek_pp </ci>
+                <ci> cell </ci>
+                <ci> mek_inactivation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mek_pp </ci>
+                <ci> mek_inactivation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Mapk_activation_1" name="Mapk activation 1" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="mapk" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="mapk_p" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="mek_pp"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mapk </ci>
+                <ci> mek_pp </ci>
+                <ci> cell </ci>
+                <ci> mapk_activation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mapk </ci>
+                <ci> mapk_activation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Mapk_activation_2" name="Mapk activation 2" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="mapk_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="mapk_pp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="mek_pp"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mapk_p </ci>
+                <ci> mek_pp </ci>
+                <ci> cell </ci>
+                <ci> mapk_activation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mapk_p </ci>
+                <ci> mapk_activation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Mapk_inactivation_1" name="Mapk inactivation 1" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="mapk_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="mapk" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mapk_p </ci>
+                <ci> cell </ci>
+                <ci> mapk_inactivation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mapk_p </ci>
+                <ci> mapk_inactivation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Mapk_inactivation_2" name="Mapk inactivation 2" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="mapk_pp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="mapk_p" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mapk_pp </ci>
+                <ci> cell </ci>
+                <ci> mapk_inactivation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mapk_pp </ci>
+                <ci> mapk_inactivation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="SOS_inactivation_by_Erk" name="SOS inactivation by Erk" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="sos" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="sos_i" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="mapk_pp"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mapk_pp </ci>
+                <ci> sos </ci>
+                <ci> cell </ci>
+                <ci> sos_inactivation_mapk_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> sos </ci>
+                <ci> sos_inactivation_mapk_michaelis </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="RAF_inactivation_by_mapk" name="Ras inactivation by Mapk" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="raf_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="raf" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="mapk_pp"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mapk_pp </ci>
+                <ci> raf_p </ci>
+                <ci> cell </ci>
+                <ci> parameter_31 </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> raf_p </ci>
+                <ci> parameter_32 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="GEF___Ras_N17_complexification" name="GEF - Ras-N17 complexification" reversible="true" fast="false">
+        <listOfReactants>
+          <speciesReference species="gef" stoichiometry="1" constant="true"/>
+          <speciesReference species="ras_n17" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="gef_rasn17" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cell </ci>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <cn type="integer"> -1 </cn>
+                  <ci> gef_rasn17 </ci>
+                  <ci> gef_rasn17_decomp </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> gef </ci>
+                  <ci> ras_n17 </ci>
+                  <ci> gef_rasn17_comp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
