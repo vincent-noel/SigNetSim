@@ -98,7 +98,7 @@ class TestModels(TestCase):
 		self.assertEqual(response_duplicate_model.status_code, 200)
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 2)
 
-		response_choose_project = c.get('/models/', {
+		response_choose_project = c.post('/models/', {
 			'action': 'choose_project',
 			'project_id': 0
 		})
@@ -154,6 +154,16 @@ class TestModels(TestCase):
 
 		self.assertEqual(response_load_submodel_3.status_code, 200)
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 5)
+
+		model_filename = join(comp_files_folder, "modelz9xdww.xml")
+
+		response_load_model = c.post('/models/', {
+			'action': 'load_model',
+			'docfile': open(model_filename, 'r')
+		})
+
+		self.assertEqual(response_load_model.status_code, 200)
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 6)
 		# Request factory example
 		# rf = RequestFactory()
 		# post_request = rf.post('/models/', {'action': 'load_model'})
