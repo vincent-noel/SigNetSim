@@ -37,9 +37,9 @@ class TestAccounts(TestCase):
 		c = Client()
 		response_signup = c.post('/accounts/register/', {
 			'action': 'signup',
-			'username': 'labestiol',
+			'username': 'test_user',
 			'fullname': '',
-			'email': 'labestiol@gmail.com',
+			'email': 'test_user@mail.com',
 			'password1': 'password',
 			'password2': 'password'
 		})
@@ -47,16 +47,15 @@ class TestAccounts(TestCase):
 		self.assertTrue(len(User.objects.filter(is_superuser=False)) == 1)
 		new_user = User.objects.filter(is_superuser=False)[0]
 
-		self.assertEqual(new_user.username, 'labestiol')
+		self.assertEqual(new_user.username, 'test_user')
 		self.assertEqual(new_user.fullname, None)
-		self.assertEqual(new_user.email, 'labestiol@gmail.com')
-		self.assertEqual(new_user.email, 'labestiol@gmail.com')
+		self.assertEqual(new_user.email, 'test_user@mail.com')
 		self.assertEqual(new_user.is_active, False)
 		self.assertRedirects(response_signup, 'accounts/register_success/', status_code=302, target_status_code=200)
 
 		response_login = c.post('/accounts/login/', {
 			'action': 'login',
-			'username': 'labestiol',
+			'username': 'test_user',
 			'password': 'password'
 		})
 
@@ -65,7 +64,7 @@ class TestAccounts(TestCase):
 		self.assertTrue(c.login(username='admin', password='admin'))
 
 		response_activation = c.get('/accounts/activate_account/', {
-			'username': 'labestiol'
+			'username': 'test_user'
 		})
 
 		self.assertEqual(response_activation.context['activated'], True)
@@ -77,13 +76,41 @@ class TestAccounts(TestCase):
 
 		response_login_v2 = c.post('/accounts/login/', {
 			'action': 'login',
-			'username': 'labestiol',
+			'username': 'test_user',
 			'password': 'password'
 		})
 
 		self.assertRedirects(response_login_v2, '/', status_code=302, target_status_code=200)
 
-		self.assertTrue(c.login(username='labestiol', password='password'))
+		self.assertTrue(c.login(username='test_user', password='password'))
 
-		
+		response_change_fullname = c.post('/profile/test_user/', {
+			'action': 'change_fullname',
+			'fullname': 'Test User'
+		})
 
+		self.assertEqual(response_change_fullname.status_code, 200)
+
+		new_user = User.objects.filter(is_superuser=False)[0]
+		self.assertEqual(new_user.fullname, "Test User")
+
+		response_change_email = c.post('/profile/test_user/', {
+			'action': 'change_email',
+			'email': 'test_user@signetsim.org'
+		})
+
+		self.assertEqual(response_change_email.status_code, 200)
+
+		new_user = User.objects.filter(is_superuser=False)[0]
+		self.assertEqual(new_user.email, "test_user@signetsim.org")
+
+		response_change_password = c.post('/profile/test_user/', {
+			'action': 'change_password',
+			'password1': 'new_password',
+			'password2': 'new_password'
+		})
+
+		self.assertEqual(response_change_password.status_code, 200)
+
+		c.logout()
+		self.assertTrue(c.login(username='test_user', password='new_password'))
