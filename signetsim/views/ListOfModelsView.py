@@ -141,9 +141,9 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 		t_filename = os.path.join(settings.MEDIA_ROOT, str(new_sbml_model.sbml_file))
 
 		doc = SbmlDocument()
-		doc.readSbml(t_filename)
+		doc.readSbmlFromFile(t_filename)
 		doc.model.setName(str(new_sbml_model.name))
-		doc.writeSbml(t_filename)
+		doc.writeSbmlToFile(t_filename)
 
 
 	def loadModel(self, request):
@@ -153,31 +153,30 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 
 		self.fileUploadForm = DocumentForm(request.POST, request.FILES)
 		if self.fileUploadForm.is_valid():
-			try:
 
-				new_sbml_model = SbmlModel(project=self.project,
-											sbml_file=request.FILES['docfile'])
+			new_sbml_model = SbmlModel(project=self.project,
+										sbml_file=request.FILES['docfile'])
+			new_sbml_model.save()
+
+			try:
+				doc = SbmlDocument()
+				doc.readSbmlFromFile(os.path.join(settings.MEDIA_ROOT,
+											str(new_sbml_model.sbml_file)))
+
+				new_sbml_model.name = doc.model.getName()
 				new_sbml_model.save()
 
-				try:
-					doc = SbmlDocument()
-					doc.readSbmlFromFile(os.path.join(settings.MEDIA_ROOT,
-												str(new_sbml_model.sbml_file)))
+			except MissingSubmodelException:
+				new_sbml_model.delete()
+				self.addError(
+					"This model is importing some models which were not found in the project folder. Please import them first")
 
-					name = doc.model.getName()
-
-
-
-				# Is triggered where name is None ??
-				except ModelException:
-					name = os.path.splitext(str(new_sbml_model.sbml_file))[0]
-
+			# Is triggered where name is None ??
+			except ModelException:
+				name = os.path.splitext(str(new_sbml_model.sbml_file))[0]
 				new_sbml_model.name = name
 				new_sbml_model.save()
 
-			except MissingSubmodelException as e:
-				new_sbml_model.delete()
-				self.addError("This model is importing some models which were not found in the project folder. Please import them first")
 
 	def deleteModel(self, request):
 

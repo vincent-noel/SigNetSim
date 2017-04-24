@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="model_0" name="SOS" substanceUnits="nmol" timeUnits="s" extentUnits="nmol">
+    <listOfUnitDefinitions>
+      <unitDefinition id="L" name="Litre">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol" name="Nanomoles">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_per_liter" name="Nanomoles per litre">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="s" name="Seconds">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="s_1" name="per Seconds">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_1" name="per Nanomoles ">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="dim_less" name="Dimensionless">
+        <listOfUnits>
+          <unit kind="dimensionless" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_nmol_per_seconds" name="per Nanomoles per Seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mnol_per_seconds" name="Nanomoles per seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_per_liter_per_seconds" name="Nanomoles per litre per seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_nmol_per_liter_per_seconds" name="per Nanomoles per liter per Seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+          <unit kind="litre" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="cell" name="cell" spatialDimensions="3" size="1" units="L" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="sos" name="SOS" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="sos_i" name="SOS_inactive" compartment="cell" initialConcentration="330" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="fgf2" name="FGF2" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="erkpp" name="ERK-PP" compartment="cell" initialAmount="1" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="parameter_12" name="SOS activation by FGF2" value="5.44e-05" units="per_nmol_per_liter_per_seconds" constant="true"/>
+      <parameter id="sos_inactivation_mapk_cat" name="SOS inactivation by Mapk catalytic constant" value="25.5" constant="false"/>
+      <parameter id="sos_inactivation_mapk_michaelis" name="SOS inactivation by Mapk michaelis constant" value="230000" constant="false"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="reaction_10" name="SOS activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="fgf2" stoichiometry="1" constant="true"/>
+          <speciesReference species="sos_i" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="sos" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> fgf2 </ci>
+              <ci> sos_i </ci>
+              <ci> cell </ci>
+              <ci> parameter_12 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="sos_inactivation_erk_pp" name="SOS inactivation by Erk" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="sos" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="sos_i" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="erkpp"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> erkpp </ci>
+                <ci> sos </ci>
+                <ci> cell </ci>
+                <ci> sos_inactivation_mapk_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> sos </ci>
+                <ci> sos_inactivation_mapk_michaelis </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

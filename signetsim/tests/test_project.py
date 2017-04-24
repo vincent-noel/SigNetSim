@@ -25,6 +25,7 @@
 
 from django.test import TestCase, Client
 from signetsim.models import User, Project
+from django.conf import settings
 
 class TestAccounts(TestCase):
 
@@ -32,6 +33,7 @@ class TestAccounts(TestCase):
 
 	def testCreateProject(self):
 
+		settings.MEDIA_ROOT = "/tmp/"
 		user = User.objects.filter(username='test_user')
 		self.assertEqual(len(Project.objects.filter(user=user)), 0)
 

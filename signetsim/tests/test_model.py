@@ -27,6 +27,7 @@ from django.test import TestCase, Client, RequestFactory
 from django.contrib.sessions.middleware import SessionMiddleware
 from signetsim.models import User, Project, SbmlModel
 from signetsim.views.ListOfModelsView import ListOfModelsView
+from django.conf import settings
 from os.path import dirname, join
 
 
@@ -35,6 +36,9 @@ class TestModels(TestCase):
 	fixtures = ["user_with_project.json"]
 
 	def testCreateModel(self):
+
+		settings.MEDIA_ROOT = "/tmp/"
+
 
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
@@ -77,6 +81,79 @@ class TestModels(TestCase):
 
 		self.assertEqual(loaded_model.name, "SOS-Ras-MAPK with n17")
 
+		response_delete_model = c.post('/models/', {
+			'action': 'delete_model',
+			'id': created_model.id
+		})
+
+		self.assertEqual(response_delete_model.status_code, 200)
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 1)
+		self.assertEqual(SbmlModel.objects.filter(project=project)[0], loaded_model)
+
+		response_duplicate_model = c.post('/models/', {
+			'action': 'duplicate_model',
+			'id': loaded_model.id
+		})
+
+		self.assertEqual(response_duplicate_model.status_code, 200)
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 2)
+
+		response_choose_project = c.get('/models/', {
+			'action': 'choose_project',
+			'project_id': 0
+		})
+		self.assertEqual(response_choose_project.status_code, 200)
+
+		loaded_model_copy = None
+		for i, t_model in enumerate(SbmlModel.objects.filter(project=project)):
+			if t_model == loaded_model:
+				self.assertEqual(t_model.name, u'SOS-Ras-MAPK with n17')
+			else:
+				loaded_model_copy = t_model
+				self.assertEqual(t_model.name, u'SOS-Ras-MAPK with n17 (copy)')
+
+		comp_files_folder = join(files_folder, "comp_model")
+		model_filename = join(comp_files_folder, "modelz9xdww.xml")
+
+		response_load_model = c.post('/models/', {
+			'action': 'load_model',
+			'docfile': open(model_filename, 'r')
+		})
+
+		self.assertEqual(response_load_model.status_code, 200)
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 2)
+		self.assertEqual(
+			response_load_model.context['getErrors'],
+			['This model is importing some models which were not found in the project folder. Please import them first']
+		)
+
+		model_filename = join(comp_files_folder, "modelcEvRcX.xml")
+		response_load_submodel_1 = c.post('/models/', {
+			'action': 'load_model',
+			'docfile': open(model_filename, 'r')
+		})
+
+		self.assertEqual(response_load_submodel_1.status_code, 200)
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 3)
+
+		model_filename = join(comp_files_folder, "modelEHfev9.xml")
+		response_load_submodel_2 = c.post('/models/', {
+			'action': 'load_model',
+			'docfile': open(model_filename, 'r')
+		})
+
+		self.assertEqual(response_load_submodel_2.status_code, 200)
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 4)
+
+
+		model_filename = join(comp_files_folder, "modelI1vrys.xml")
+		response_load_submodel_3 = c.post('/models/', {
+			'action': 'load_model',
+			'docfile': open(model_filename, 'r')
+		})
+
+		self.assertEqual(response_load_submodel_3.status_code, 200)
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 5)
 		# Request factory example
 		# rf = RequestFactory()
 		# post_request = rf.post('/models/', {'action': 'load_model'})

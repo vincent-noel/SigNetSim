@@ -49,18 +49,21 @@ def model_filename(instance, filename):
 
 	path = dirname(filename)
 	filename = basename(filename)
-	full_path = join(join(path, "models"), str(instance.project.folder))
+	full_path = join(join(path, str(instance.project.folder)), "models")
 	full_filename = join(full_path, filename)
 
-	# full_filename = '{0}/models/{1}'.format(instance.project.folder, filename)
 	while os.path.isfile(full_filename):
 		full_filename = join(full_path, new_model_filename())
 	return full_filename
 
 def sedml_filename(instance, filename):
-	filename = '{0}/simulations/{1}'.format(instance.project.folder, new_sedml_filename())
-	while os.path.isfile(filename):
-		filename = '{0}/simulations/{1}'.format(instance.project.folder, new_sedml_filename())
+	path = dirname(filename)
+	filename = basename(filename)
+	full_path = join(join(path, str(instance.project.folder)), "simulations")
+	full_filename = join(full_path, filename)
+
+	while os.path.isfile(full_filename):
+		full_filename = join(full_path, new_sedml_filename())
 	return filename
 
 

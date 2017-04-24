@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model metaid="_meta_id_236_" id="model_0" name="MAPK" substanceUnits="nmol" timeUnits="s" extentUnits="nmol">
+    <listOfUnitDefinitions>
+      <unitDefinition id="L" name="Litre">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol" name="Nanomoles">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_per_liter" name="Nanomoles per litre">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="s" name="Seconds">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="s_1" name="per Seconds">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_1" name="per Nanomoles ">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="dim_less" name="Dimensionless">
+        <listOfUnits>
+          <unit kind="dimensionless" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_nmol_per_seconds" name="per Nanomoles per Seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mnol_per_seconds" name="Nanomoles per seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_per_liter_per_seconds" name="Nanomoles per litre per seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_nmol_per_liter_per_seconds" name="per Nanomoles per liter per Seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+          <unit kind="litre" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment metaid="_meta_id_3_" id="cell" name="cell" spatialDimensions="3" size="1" units="L" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species metaid="_meta_id_43_" id="ras_gtp" name="Ras-GTP" compartment="cell" initialConcentration="64.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_45_" id="sos_ras_gtp" name="SOS-Ras-GTP" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_55_" id="raf" name="Raf" compartment="cell" initialConcentration="81" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_56_" id="raf_p" name="Raf-P" compartment="cell" initialConcentration="19" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_57_" id="mek" name="Mek" compartment="cell" initialConcentration="270" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_58_" id="mek_p" name="Mek-P" compartment="cell" initialConcentration="21.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_59_" id="mek_pp" name="Mek-PP" compartment="cell" initialConcentration="8.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_60_" id="mapk" name="Mapk" compartment="cell" initialConcentration="286" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_61_" id="mapk_p" name="Mapk-P" compartment="cell" initialConcentration="10.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_62_" id="mapk_pp" name="Mapk-PP" compartment="cell" initialConcentration="3.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_63_" id="total_mek_p" name="Total MEK activated" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_64_" id="total_mapk_activated" name="Total MAPK activated" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter metaid="_meta_id_22_" id="raf_activation_cat" name="Raf activation catalytic constant" value="0.0611" units="s_1" constant="true">
+        <notes>
+          <body xmlns="http://www.w3.org/1999/xhtml">0.0046</body>
+        </notes>
+      </parameter>
+      <parameter metaid="_meta_id_23_" id="raf_activation_mich" name="Raf activation michaelis constant" value="0.0362" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_24_" id="raf_inactivation_cat" name="Raf inactivation catalytic" value="0.25" units="nmol_per_liter_per_seconds" constant="true"/>
+      <parameter metaid="_meta_id_25_" id="raf_inactivation_michaelis" name="Raf inactivation michaelis constant" value="8" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_26_" id="mek_activation_cat" name="Mek activation catalytic constant" value="0.025" units="s_1" constant="true"/>
+      <parameter metaid="_meta_id_27_" id="mek_activation_michaelis" name="Mek activation michaelis" value="15" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_28_" id="mek_inactivation_cat" name="Mek inactivation catalytic constant" value="0.75" units="nmol_per_liter_per_seconds" constant="true"/>
+      <parameter metaid="_meta_id_29_" id="mek_inactivation_mich" name="Mek inactivation michaelis constant" value="15" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_30_" id="mapk_activation_cat" name="Mapk activation catalytic constant" value="0.025" units="s_1" constant="true"/>
+      <parameter metaid="_meta_id_31_" id="mapk_activation_mich" name="Mapk activation michaelis constant" value="15" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_32_" id="mapk_inactivation_cat" name="Mapk inactivation catalytic constant" value="0.5" units="nmol_per_liter_per_seconds" constant="true"/>
+      <parameter metaid="_meta_id_33_" id="mapk_inactivation_mich" name="Mapk inactivation michaelis constant" value="15" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_36_" id="parameter_31" name="Raf inactivation by ERK catalytic constant" value="1.64" units="s_1" constant="true"/>
+      <parameter metaid="_meta_id_37_" id="parameter_32" name="Raf inactivation by ERK michaelis constant" value="7.9" units="nmol_per_liter" constant="true"/>
+    </listOfParameters>
+    <listOfRules>
+      <assignmentRule metaid="_meta_id_233_" variable="total_mek_p">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <ci> mek_p </ci>
+            <ci> mek_pp </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule metaid="_meta_id_234_" variable="total_mapk_activated">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <ci> mapk_p </ci>
+            <ci> mapk_pp </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+    </listOfRules>
+    <listOfReactions>
+      <reaction metaid="_meta_id_135_" id="Raf_activation_by_Ras_GTP" name="Raf activation by Ras-GTP" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_136_" species="raf" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_138_" species="raf_p" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference metaid="_meta_id_140_" species="ras_gtp"/>
+        </listOfModifiers>
+        <kineticLaw metaid="_meta_id_141_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> raf </ci>
+                <ci> ras_gtp </ci>
+                <ci> cell </ci>
+                <ci> raf_activation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> raf </ci>
+                <ci> raf_activation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_143_" id="Raf_inactivation" name="Raf inactivation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_144_" species="raf_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_146_" species="raf" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw metaid="_meta_id_147_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> raf_p </ci>
+                <ci> cell </ci>
+                <ci> raf_inactivation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> raf_p </ci>
+                <ci> raf_inactivation_michaelis </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_149_" id="Mek_activation_1" name="Mek activation 1" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_150_" species="mek" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_152_" species="mek_p" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference metaid="_meta_id_154_" species="raf_p"/>
+        </listOfModifiers>
+        <kineticLaw metaid="_meta_id_155_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mek </ci>
+                <ci> raf_p </ci>
+                <ci> cell </ci>
+                <ci> mek_activation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mek </ci>
+                <ci> mek_activation_michaelis </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_157_" id="Mek_activation_2" name="Mek activation 2" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_158_" species="mek_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_160_" species="mek_pp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference metaid="_meta_id_162_" species="raf_p"/>
+        </listOfModifiers>
+        <kineticLaw metaid="_meta_id_163_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mek_p </ci>
+                <ci> raf_p </ci>
+                <ci> cell </ci>
+                <ci> mek_activation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mek_p </ci>
+                <ci> mek_activation_michaelis </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_165_" id="Mek_inactivation_1" name="Mek inactivation 1" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_166_" species="mek_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_168_" species="mek" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw metaid="_meta_id_169_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mek_p </ci>
+                <ci> cell </ci>
+                <ci> mek_inactivation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mek_p </ci>
+                <ci> mek_inactivation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_171_" id="Mek_inactivation_2" name="Mek inactivation 2" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_172_" species="mek_pp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_174_" species="mek_p" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw metaid="_meta_id_175_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mek_pp </ci>
+                <ci> cell </ci>
+                <ci> mek_inactivation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mek_pp </ci>
+                <ci> mek_inactivation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_177_" id="Mapk_activation_1" name="Mapk activation 1" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_178_" species="mapk" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_180_" species="mapk_p" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference metaid="_meta_id_182_" species="mek_pp"/>
+        </listOfModifiers>
+        <kineticLaw metaid="_meta_id_183_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mapk </ci>
+                <ci> mek_pp </ci>
+                <ci> cell </ci>
+                <ci> mapk_activation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mapk </ci>
+                <ci> mapk_activation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_185_" id="Mapk_activation_2" name="Mapk activation 2" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_186_" species="mapk_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_188_" species="mapk_pp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference metaid="_meta_id_190_" species="mek_pp"/>
+        </listOfModifiers>
+        <kineticLaw metaid="_meta_id_191_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mapk_p </ci>
+                <ci> mek_pp </ci>
+                <ci> cell </ci>
+                <ci> mapk_activation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mapk_p </ci>
+                <ci> mapk_activation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_193_" id="Mapk_inactivation_1" name="Mapk inactivation 1" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_194_" species="mapk_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_196_" species="mapk" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw metaid="_meta_id_197_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mapk_p </ci>
+                <ci> cell </ci>
+                <ci> mapk_inactivation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mapk_p </ci>
+                <ci> mapk_inactivation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_199_" id="Mapk_inactivation_2" name="Mapk inactivation 2" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_200_" species="mapk_pp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_202_" species="mapk_p" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw metaid="_meta_id_203_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mapk_pp </ci>
+                <ci> cell </ci>
+                <ci> mapk_inactivation_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> mapk_pp </ci>
+                <ci> mapk_inactivation_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_213_" id="RAF_inactivation_by_mapk" name="Ras inactivation by Mapk" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_214_" species="raf_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_216_" species="raf" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference metaid="_meta_id_218_" species="mapk_pp"/>
+        </listOfModifiers>
+        <kineticLaw metaid="_meta_id_219_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> mapk_pp </ci>
+                <ci> raf_p </ci>
+                <ci> cell </ci>
+                <ci> parameter_31 </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> raf_p </ci>
+                <ci> parameter_32 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

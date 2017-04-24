@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model metaid="_meta_id_66_" id="model_0" name="Ras" substanceUnits="nmol" timeUnits="s" extentUnits="nmol">
+    <listOfUnitDefinitions>
+      <unitDefinition id="L" name="Litre">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol" name="Nanomoles">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_per_liter" name="Nanomoles per litre">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="s" name="Seconds">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="s_1" name="per Seconds">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_1" name="per Nanomoles ">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="dim_less" name="Dimensionless">
+        <listOfUnits>
+          <unit kind="dimensionless" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_nmol_per_seconds" name="per Nanomoles per Seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mnol_per_seconds" name="Nanomoles per seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_per_liter_per_seconds" name="Nanomoles per litre per seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_nmol_per_liter_per_seconds" name="per Nanomoles per liter per Seconds">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+          <unit kind="litre" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment metaid="_meta_id_3_" id="cell" name="cell" spatialDimensions="3" size="1" units="L" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species metaid="_meta_id_41_" id="sos" name="SOS" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_42_" id="ras_gdp" name="Ras-GDP" compartment="cell" initialConcentration="265.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_43_" id="ras_gtp" name="Ras-GTP" compartment="cell" initialConcentration="64.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_44_" id="sos_ras_gdp" name="SOS-Ras-GDP" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_45_" id="sos_ras_gtp" name="SOS-Ras-GTP" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_46_" id="gap" name="GAP" compartment="cell" initialConcentration="125" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_50_" id="gef" name="GEF" compartment="cell" initialConcentration="333" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_53_" id="ras_n17" name="Ras-N17" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_54_" id="sos_ras_n17" name="SOS-Ras-N17" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_65_" id="gef_rasn17" name="GEF-RasN17" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter metaid="_meta_id_5_" id="sos_ras_gdp_comp" name="SOS-Ras-GDP complexification constant" value="0.00011255" units="per_nmol_per_liter_per_seconds" constant="true"/>
+      <parameter metaid="_meta_id_6_" id="sos_ras_gdp_decomp" name="SOS-Ras-GDP decomplexification constant" value="3" units="s_1" constant="true"/>
+      <parameter metaid="_meta_id_7_" id="parameter_3" name="Ras activation by SOS-Ras-GDP catalytic constant" value="0.003" units="s_1" constant="true"/>
+      <parameter metaid="_meta_id_8_" id="parameter_4" name="Ras activation by SOS-Ras-GDP michaelis constant" value="14600" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_9_" id="parameter_5" name="Ras activation by SOS-Ras-GTP catalytic constant" value="20" units="s_1" constant="true"/>
+      <parameter metaid="_meta_id_10_" id="parameter_6" name="Ras activation by SOS-Ras-GTP michaelis constant" value="2750" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_11_" id="ras_inactivation_by_gap_cat" name="Ras inactivation by GAP catalytic constant" value="0.1" units="s_1" constant="true"/>
+      <parameter metaid="_meta_id_12_" id="ras_inactivation_by_gap_mich" name="Ras inactivation by GAP michaelis constant" value="178" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_13_" id="sos_ras_gtp_comp" name="SOS-Ras-GTP complexification constant" value="0.0001" units="per_nmol_per_liter_per_seconds" constant="true"/>
+      <parameter metaid="_meta_id_14_" id="sos_ras_gtp_decomp" name="SOS-Ras-GTP decomplexification constant" value="0.4" units="s_1" constant="true"/>
+      <parameter metaid="_meta_id_15_" id="ras_activation_by_gef_cat" name="Ras activation by GEF catalytic constant" value="0.01" units="s_1" constant="true"/>
+      <parameter metaid="_meta_id_16_" id="ras_activation_by_gef_mich" name="Ras activation by GEF michaelis constant" value="0.0085" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_18_" id="sos_inactivation_by_ras_cat" name="SOS deactivation by Ras-GTP catalytic constant" value="0" units="s_1" constant="true">
+        <notes>
+          <body xmlns="http://www.w3.org/1999/xhtml">170</body>
+        </notes>
+      </parameter>
+      <parameter metaid="_meta_id_19_" id="parameter_18" name="SOS deactivation by Ras-GTP michaelis constant" value="3360000" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_20_" id="sos_ras_n17_comp" name="SOS-Ras-N17 complexification" value="1.5e-05" units="per_nmol_per_liter_per_seconds" constant="true"/>
+      <parameter metaid="_meta_id_21_" id="sos_ras_n17_decomp" name="SOS-Ras-N17 decomplexification" value="1.92e-05" units="s_1" constant="true"/>
+      <parameter metaid="_meta_id_38_" id="gef_rasn17_comp" name="GEF Ras-N17 complexification" value="0.002" units="per_nmol_per_liter_per_seconds" constant="true"/>
+      <parameter metaid="_meta_id_39_" id="gef_rasn17_decomp" name="GEF Ras-N17 decomplexification" value="1.92e-05" units="s_1" constant="true"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction metaid="_meta_id_67_" id="reaction_2" name="SOS-Ras-GDP Complexification" reversible="true" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_68_" species="sos" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_meta_id_69_" species="ras_gdp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_71_" species="sos_ras_gdp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw metaid="_meta_id_24_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cell </ci>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <cn type="integer"> -1 </cn>
+                  <ci> sos_ras_gdp </ci>
+                  <ci> sos_ras_gdp_decomp </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> ras_gdp </ci>
+                  <ci> sos </ci>
+                  <ci> sos_ras_gdp_comp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_74_" id="reaction_3" name="SOS-Ras-GTP Complexification" reversible="true" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_75_" species="sos" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_meta_id_76_" species="ras_gtp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_78_" species="sos_ras_gtp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw metaid="_meta_id_27_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cell </ci>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <cn type="integer"> -1 </cn>
+                  <ci> sos_ras_gtp </ci>
+                  <ci> sos_ras_gtp_decomp </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> ras_gtp </ci>
+                  <ci> sos </ci>
+                  <ci> sos_ras_gtp_comp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_81_" id="reaction_4" name="Ras activation by SOS-Ras-GDP" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_82_" species="ras_gdp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_84_" species="ras_gtp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference metaid="_meta_id_86_" species="sos_ras_gdp"/>
+        </listOfModifiers>
+        <kineticLaw metaid="_meta_id_31_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> ras_gdp </ci>
+                <ci> sos_ras_gdp </ci>
+                <ci> cell </ci>
+                <ci> parameter_3 </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> ras_gdp </ci>
+                <ci> parameter_4 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_89_" id="reaction_5" name="Ras activation by SOS-Ras-GTP" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_90_" species="ras_gdp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_92_" species="ras_gtp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference metaid="_meta_id_94_" species="sos_ras_gtp"/>
+        </listOfModifiers>
+        <kineticLaw metaid="_meta_id_35_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> ras_gdp </ci>
+                <ci> sos_ras_gtp </ci>
+                <ci> cell </ci>
+                <ci> parameter_5 </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> ras_gdp </ci>
+                <ci> parameter_6 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_97_" id="reaction_6" name="Ras inactivation by GAP" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_98_" species="ras_gtp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_100_" species="ras_gdp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference metaid="_meta_id_102_" species="gap"/>
+        </listOfModifiers>
+        <kineticLaw metaid="_meta_id_47_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> gap </ci>
+                <ci> ras_gtp </ci>
+                <ci> cell </ci>
+                <ci> ras_inactivation_by_gap_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> ras_gtp </ci>
+                <ci> ras_inactivation_by_gap_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_105_" id="reaction_9" name="Ras activation by GEF" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_106_" species="ras_gdp" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_108_" species="ras_gtp" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference metaid="_meta_id_110_" species="gef"/>
+        </listOfModifiers>
+        <kineticLaw metaid="_meta_id_52_">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> gef </ci>
+                <ci> ras_gdp </ci>
+                <ci> cell </ci>
+                <ci> ras_activation_by_gef_cat </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> ras_gdp </ci>
+                <ci> ras_activation_by_gef_mich </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="sosrasn17_comp" name="SOS-RasN17 complexification" reversible="true" fast="false">
+        <listOfReactants>
+          <speciesReference species="sos" stoichiometry="1" constant="true"/>
+          <speciesReference species="ras_n17" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="sos_ras_n17" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cell </ci>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <cn type="integer"> -1 </cn>
+                  <ci> sos_ras_n17 </ci>
+                  <ci> sos_ras_n17_decomp </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> ras_n17 </ci>
+                  <ci> sos </ci>
+                  <ci> sos_ras_n17_comp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="gefrasn17_comp" name="GEF-RasN17 complexification" reversible="true" fast="false">
+        <listOfReactants>
+          <speciesReference species="gef" stoichiometry="1" constant="true"/>
+          <speciesReference species="ras_n17" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="gef_rasn17" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cell </ci>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <cn type="integer"> -1 </cn>
+                  <ci> gef_rasn17 </ci>
+                  <ci> gef_rasn17_decomp </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> gef </ci>
+                  <ci> gef_rasn17_comp </ci>
+                  <ci> ras_n17 </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
