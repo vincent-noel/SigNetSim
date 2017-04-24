@@ -114,8 +114,11 @@ class SignUpView(TemplateView):
 
 				# For test runs
 				if 'HTTP_HOST' in request.META:
-					self.sendAdminEmail(request, self.form.username, self.form.email)
-
+					try:
+						self.sendAdminEmail(request, self.form.username, self.form.email)
+					except:
+						#Probably bad SMTP configuration... too bad
+						pass
 				return True
 		return False
 

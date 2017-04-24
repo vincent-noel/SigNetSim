@@ -25,7 +25,7 @@
 from django.views.generic import TemplateView
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from django.conf import settings
-from django.contrib.auth.models import User
+from signetsim.models import User
 from django.core.files import File
 
 from signetsim.models import Project, SbmlModel#, FittedSbmlModel

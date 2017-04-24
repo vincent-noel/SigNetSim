@@ -3,60 +3,17 @@
 A django web application for building, fitting, and analyzing mathematical models of molecular signaling networks.
 
 
+## Installation
 
-##Non-Python Dependencies
-You will need :
-
-- Apache 2 and apache's mod wsgi
-- MPI libraries to execute C code in parallel
-- Sundials library to perform numerical integration,
-- Git to download the non-linear optimization library and libSigNetSim,
-- Pip to download python dependencies
-- Npm, Node to download JS dependencies
-- Virtualenv to encapsulate signetsim within a virtual environment
-- GraphViz to generate PNGs from DOT files.
+	bash scripts/install.sh
 
 
+## Configure the apache server
 
-		apache2 libapache2-mod-wsgi \
-
-		libopenmpi-dev openmpi-bin \
-
-		libsundials-serial-dev libsundials-serial \
-
-		git python-pip npm nodejs-legacy \
-
-		virtualenv graphviz
+	bash scripts/configure_apache.sh
 
 
-
-##Python dependencies
-
-	pip install -r requirements.txt
-
-
-
-##Installation
-
-	bash scripts/build_dep_[xenial|precise]
-	bash scripts/make
-
-
-
-##Run the development server
-
-	bash scripts/run_env
-
-
-
-##Run the apache server
-
-	bash scripts/configure_apache_[xenial|precise]
-	sudo bash scripts/install_apache_[xenial|precise]
-
-
-
-##License
+## License
 
 	Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
 
