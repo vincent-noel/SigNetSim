@@ -31,3 +31,4 @@ from GetContinuationStatus import GetContinuationStatus
 from GetContinuationFigure import GetContinuationFigure
 from GetListOfObjectsFromSubmodels import GetListOfObjectsFromSubmodels
 from GetSpecies import GetSpecies
+from GetParameter import GetParameter

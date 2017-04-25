@@ -50,7 +50,7 @@ from views import GetSubmodels, GetListOfObjects, GetContinuationStatus
 from views import GetContinuationFigure, GetListOfObjectsFromSubmodels
 from views import SignUpView, SignUpSuccessView, ValidateEmailView
 from views import LoginView, ActivateAccountView, ProfileView, AdminView
-from views import GetSpecies
+from views import GetSpecies, GetParameter
 
 urlpatterns = [
 
@@ -120,6 +120,7 @@ urlpatterns = [
 	url(r'^json/get_continuation_status/$', GetContinuationStatus.as_view(), name='get_continuation_status'),
 	url(r'^json/get_continuation_figure/$', GetContinuationFigure.as_view(), name='get_continuation_figure'),
 	url(r'^json/get_species/$', GetSpecies.as_view(), name='get_species'),
+	url(r'^json/get_parameter/$', GetParameter.as_view(), name='get_parameter'),
 
 ]
 

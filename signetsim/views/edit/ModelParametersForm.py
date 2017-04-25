@@ -77,9 +77,6 @@ class ModelParametersForm(ModelParentForm):
 		except ModelException as e:
 			self.addError(e.message)
 
-
-
-
 	def read(self, request):
 
 		self.id = self.readInt(request, 'parameter_id',
@@ -102,3 +99,5 @@ class ModelParametersForm(ModelParentForm):
 
 		self.constant = self.readOnOff(request, 'parameter_constant',
 								"The constant property of the parameter")
+
+		self.printErrors()

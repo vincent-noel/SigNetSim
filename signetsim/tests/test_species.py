@@ -105,7 +105,7 @@ class TestSpecies(TestCase):
 			'action': 'save',
 			'species_id': 2,
 			'species_name': "New name",
-			'species_sbml_id': "ras_gtp",
+			'species_sbml_id': "new_name",
 			'species_value': 75,
 			'species_value_type': 0,
 			'species_compartment': 0,
@@ -119,13 +119,21 @@ class TestSpecies(TestCase):
 		sbml_doc = SbmlDocument()
 		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		sbml_model = sbml_doc.getModelInstance()
-		species = sbml_model.listOfSpecies.getBySbmlId('ras_gtp')
+		species = sbml_model.listOfSpecies.getBySbmlId('new_name')
 
+		self.assertTrue(species is not None)
 		self.assertEqual(species.getName(), "New name")
 		self.assertEqual(species.getValue(), 75)
 		self.assertEqual(species.hasOnlySubstanceUnits, True)
 		self.assertEqual(species.constant, True)
 		self.assertEqual(species.boundaryCondition, True)
+
+		response_delete_species = c.post('/edit/species/', {
+			'action': 'delete',
+			'species_id': sbml_model.listOfSpecies.values().index(species)
+		})
+		self.assertEqual(response_delete_species.status_code, 200)
+		self.assertEqual(response_delete_species.context['getErrors'], ['Species is used in reactions'])
 
 		response_save_new_species = c.post('/edit/species/', {
 			'action': 'save',

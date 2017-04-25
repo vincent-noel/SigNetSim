@@ -62,7 +62,7 @@ from analyse import AnalyseBifurcationsView
 from json import MathValidator, SbmlIdValidator, UnitIdValidator
 from json import GetSubmodels, GetListOfObjects, GetContinuationStatus
 from json import GetContinuationFigure, GetListOfObjectsFromSubmodels
-from json import GetSpecies
+from json import GetSpecies, GetParameter
 
 from SuccessView import SuccessView
 from HelpView import HelpView
