@@ -6,14 +6,17 @@ language: python
 
 python: 2.7
 
+env:
+  - DISTRIB=xenial
+
 before_install:
 - pip install coveralls
-- docker pull signetsim/signetsim:xenial
+- docker pull signetsim/signetsim:$DISTRIB
 
 install:
-- docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/signetsim:xenial bash
-- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/install.sh"
-- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/configure_apache.sh"
+- docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/signetsim:$DISTRIB bash
+- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/$DISTRIB/install.sh"
+- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/$DISTRIB/configure_apache.sh"
 
 
 script:
