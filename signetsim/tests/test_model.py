@@ -164,16 +164,3 @@ class TestModels(TestCase):
 
 		self.assertEqual(response_load_model.status_code, 200)
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 6)
-		# Request factory example
-		# rf = RequestFactory()
-		# post_request = rf.post('/models/', {'action': 'load_model'})
-		#
-		# middleware = SessionMiddleware()
-		# middleware.process_request(post_request)
-		# post_request.session.save()
-		#
-		# post_request.user = user
-		# post_request.session['project_id'] = project.id
-		# post_request.FILES['file'] = open(model_filename, 'r')
-		#
-		# response_load_model = ListOfModelsView.as_view()(post_request)

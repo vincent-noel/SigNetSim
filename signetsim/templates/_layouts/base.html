@@ -97,10 +97,41 @@
 
 	<script>
 
-	  function csrfSafeMethod(method) {
+		function csrfSafeMethod(method) {
 		// these HTTP methods do not require CSRF protection
 		return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-	  }
+		}
+
+
+		function ajax_call(ajax_method, csrf_token, ajax_url, ajax_data, ajax_done, ajax_fail)
+		{
+			$.ajaxSetup({
+				beforeSend: function(xhr, settings) {
+					if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+						xhr.setRequestHeader("X-CSRFToken", csrf_token);
+					}
+				}
+			});
+			$.ajax(
+			{
+				type: ajax_method,
+				url: ajax_url,
+				data: ajax_data
+
+			})
+			.done(ajax_done)
+			.fail(ajax_fail)
+		}
+
+
+		function toggle_slide(slide_id)
+		{
+			if ($('#' + slide_id).prop('checked') == true) {
+				$('#' + slide_id).prop("checked", false);
+			} else {
+				$('#' + slide_id).prop("checked", true);
+  			}
+		}
 
 	{% block js %}{% endblock js %}
 

@@ -1,38 +1,33 @@
-{#   _layout/base.html : This is the top template 							  #}
-
-{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
-
-{#   This program is free software: you can redistribute it and/or modify     #}
-{#   it under the terms of the GNU Affero General Public License as published #}
-{#   by the Free Software Foundation, either version 3 of the License, or     #}
-{#   (at your option) any later version. 									  #}
-
-{#   This program is distributed in the hope that it will be useful, 		  #}
-{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
-{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
-{#   GNU Affero General Public License for more details.					  #}
-
-{#   You should have received a copy of the GNU Affero General Public License #}
-{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
-
 {% load bootstrap3 %}
 {% load tags %}
 
+$('#species_value_type_dropdown li').on('click', function()
+{
+  $("#species_value_type_label").html($(this).text());
+  $('#species_value_type').val($(this).index());
+});
 
-$('#unit_list li').on('click', function(){
+$('#unit_list li').on('click', function()
+{
   $("#species_unit_label").html($(this).text());
   $('#species_unit').val($(this).index());
 });
 
-
-$('#species_compartment_dropdown li').on('click', function(){
+$('#species_compartment_dropdown li').on('click', function()
+{
   $("#species_compartment_label").html($(this).text());
   $('#species_compartment').val($(this).index());
 });
 
+$('#new_species_button').on('click', function()
+{
+    new_species();
+    $('#modal_species').modal('show');
 
-$('#new_species_button').on('click', function(){
+});
 
+function new_species()
+{
     $("#modal_title").html("New species");
     $("#species_id").attr("value", "");
     $("#species_name").attr("value", "");
@@ -49,17 +44,44 @@ $('#new_species_button').on('click', function(){
     $("#species_unit").attr("value", "");
     $("#species_constant").attr("value", 0);
     $("#species_boundary").attr("value", 0);
+}
+
+function view_species(sbml_id)
+{
+
+    $("#modal_title").html("Edit species");
+
+    ajax_call(
+        "POST", "{{csrf_token}}",
+        "{% url 'get_species' %}", {'sbml_id': sbml_id},
+        function(data)
+        {
+           $.each(data, function(index, element)
+           {
+               if (index == "id") { $("#species_id").attr("value", element); }
+               else if (index == "sbml_id") { $("#species_sbml_id").attr("value", element); }
+               else if (index == "name") { $("#species_name").attr("value", element); }
+               else if (index == "value") { $("#species_value").attr("value", element); }
+               else if (index == "compartment_name") { $("#species_compartment_label").html(element); }
+               else if (index == "compartment_id") { $("#species_compartment").attr("value", element); }
+               else if (index == "unit_name") { $("#species_unit_label").html(element); }
+               else if (index == "unit_id") { $("#species_unit").attr("value", element); }
+               else if (index == "constant") { $("#species_constant").attr("value", element); }
+               else if (index == "boundaryCondition") { $("#species_boundary").attr("value", element); }
+               else if (index == "isConcentration") {
+                   $("#species_value_type").attr("value", element);
+                   if (element == "1") { $("#species_value_type_label").html("Concentration");}
+                   else { $("#species_value_type_label").html("Amount");}
+               }
+           });
+        },
+        function() { console.log("failed"); }
+    )
+
     $('#modal_species').modal('show');
 
-});
-
-function toggle_slide(slide_id) {
-  if ($('#' + slide_id).prop('checked') == true) {
-    $('#' + slide_id).prop("checked", false);
-  } else {
-    $('#' + slide_id).prop("checked", true);
-  }
 }
+
 
 
 // SbmlId Validation
@@ -95,36 +117,20 @@ $("#species_sbml_id").on('change paste keyup', function()
   {
     setSbmlIdValidating();
 
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
-            }
-        }
-    });
-    $.ajax(
-    {
-        type: "POST",
-        url: '{% url 'sbml_id_validator' %}',
-        data: {
-            'sbml_id': new_sbml_id,
+    ajax_call(
+        "POST", "{{csrf_token}}",
+        "{% url 'sbml_id_validator' %}", {'sbml_id' : new_sbml_id},
+        function(data) {
+           $.each(data, function(index, element) {
+             if (index === 'valid' && element === 'true') {setSbmlIdValid();}
+             else {setSbmlIdInvalid();}
+           });
         },
-
-    })
-    .done(function(data)
-    {
-       $.each(data, function(index, element) {
-         if (index === 'valid' && element === 'true') {
-           setSbmlIdValid();
-         } else {
-           setSbmlIdInvalid();
-         }
-       });
-    })
-    .fail(function()
-    {
-      setSbmlIdInvalid();
-    })
+        function()
+        {
+          setSbmlIdInvalid();
+        }
+    )
   }
   else if (new_sbml_id === old_sbml_id)
   {
@@ -137,5 +143,9 @@ $("#species_sbml_id").on('change paste keyup', function()
 {% if form.hasErrors == True or form.isEditing == True %}
     $(window).on('load',function(){
         $('#modal_species').modal('show');
+
     });
 {% endif %}
+
+
+
