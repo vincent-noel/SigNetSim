@@ -41,33 +41,34 @@ class ModelSpeciesForm(ModelParentForm):
 		self.notes = None
 		self.isConcentration = None
 
-	def load(self, species):
-
-		self.isEditing = True
-
-		self.id = self.parent.listOfSpecies.index(species)
-		self.name = species.getName()
-		self.sbmlId = species.getSbmlId()
-		self.value = species.getValue()
-		self.isConcentration = not species.hasOnlySubstanceUnits
-		self.constant = species.constant
-		self.boundaryCondition = species.boundaryCondition
-		self.notes = species.getNotes()
-
-		if species.getUnits() is not None:
-			# self.parent.loadUnits()
-			self.unit = self.parent.listOfUnits.index(species.getUnits())
-
-		try:
-			if species.getCompartment() is not None:
-				self.compartment = self.parent.listOfCompartments.index(species.getCompartment())
-		except ValueError:
-			pass
+	# def load(self, species):
+	#
+	# 	self.isEditing = True
+	#
+	# 	self.id = self.parent.listOfSpecies.index(species)
+	# 	self.name = species.getName()
+	# 	self.sbmlId = species.getSbmlId()
+	# 	self.value = species.getValue()
+	# 	self.isConcentration = not species.hasOnlySubstanceUnits
+	# 	self.constant = species.constant
+	# 	self.boundaryCondition = species.boundaryCondition
+	# 	self.notes = species.getNotes()
+	#
+	# 	if species.getUnits() is not None:
+	# 		# self.parent.loadUnits()
+	# 		self.unit = self.parent.listOfUnits.index(species.getUnits())
+	#
+	# 	try:
+	# 		if species.getCompartment() is not None:
+	# 			self.compartment = self.parent.listOfCompartments.index(species.getCompartment())
+	# 	except ValueError:
+	# 		pass
 
 
 	def save(self, species):
 
-		self.isEditing = True
+		# self.isEditing = True
+
 		try:
 			if self.compartment is not None:
 				species.setCompartment(self.parent.listOfCompartments[self.compartment])
@@ -84,11 +85,9 @@ class ModelSpeciesForm(ModelParentForm):
 			else:
 				species.setUnits(None)
 
-
-
-
 			species.setNotes(self.notes)
-			self.isEditing = False
+		# self.isEditing = False
+
 		except ModelException as e:
 			self.addError(e.message)
 

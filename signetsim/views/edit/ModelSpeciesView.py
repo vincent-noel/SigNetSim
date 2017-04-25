@@ -76,8 +76,8 @@ class ModelSpeciesView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == "delete":
 				self.deleteSpecies(request)
 
-			elif request.POST['action'] == "edit":
-				self.editSpecies(request)
+			# elif request.POST['action'] == "edit":
+			# 	self.editSpecies(request)
 
 			elif request.POST['action'] == "save":
 				self.saveSpecies(request)
@@ -112,14 +112,12 @@ class ModelSpeciesView(TemplateView, HasWorkingModel, HasErrorMessages):
 		except ModelException as e:
 			self.addError(e.message)
 
-
-	def editSpecies(self, request):
-
-		species_id = self.readInt(request, 'species_id',
-								  "the identifier of the species",
-								  max_value=len(self.listOfSpecies))
-		self.form.load(self.listOfSpecies[species_id])
-
+	# def editSpecies(self, request):
+	#
+	# 	species_id = self.readInt(request, 'species_id',
+	# 							  "the identifier of the species",
+	# 							  max_value=len(self.listOfSpecies))
+	# 	self.form.load(self.listOfSpecies[species_id])
 
 	def saveSpecies(self, request):
 
@@ -135,12 +133,9 @@ class ModelSpeciesView(TemplateView, HasWorkingModel, HasErrorMessages):
 					t_species = self.getModel().listOfSpecies[self.listOfSpecies[self.form.id].objId]
 					self.form.save(t_species)
 
-
 			self.saveModel(request)
 			self.loadSpecies()
 			self.form.clear()
-
-
 
 	def loadSpecies(self):
 		self.listOfSpecies = self.getModel().listOfSpecies.values()

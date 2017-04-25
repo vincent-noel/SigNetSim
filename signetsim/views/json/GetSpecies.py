@@ -47,7 +47,7 @@ class GetSpecies(JsonView, HasWorkingModel):
 			'name': species.getName(),
 			'sbml_id': species.getSbmlId(),
 			'compartment_name': species.getCompartment().getName(),
-			'compartment': self.model.listOfCompartments.values().index(species.getCompartment()),
+			'compartment_id': self.model.listOfCompartments.values().index(species.getCompartment()),
 			'value': species.getValue(),
 			'isConcentration': 1 if not species.hasOnlySubstanceUnits else 0,
 			'constant': (1 if species.constant else 0),
