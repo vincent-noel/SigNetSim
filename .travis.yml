@@ -8,10 +8,7 @@ python: 2.7
 
 env:
   - DISTRIB=xenial
-  - DISTRIB=trusty
-  - DISTRIB=precise
-  - DISTRIB=jessie
-  - DISTRIB=wheezy
+
 
 before_install:
 - pip install coveralls
