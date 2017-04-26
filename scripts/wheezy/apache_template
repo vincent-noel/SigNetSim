@@ -9,7 +9,6 @@ Alias /___ROOT_DIR___/media/ ___INSTALL_DIR___/data/media/
 <Directory ___INSTALL_DIR___/data/media>
   Order allow,deny
   Allow from all
-  Require all granted
 </Directory>
 
 # Configure the static dir
@@ -17,7 +16,6 @@ Alias /___ROOT_DIR___/static/ ___INSTALL_DIR___/static/
 <Directory ___INSTALL_DIR___/static>
   Order allow,deny
   Allow from all
-  Require all granted
 </Directory>
 
 # Configuration WSGI
@@ -34,7 +32,6 @@ WSGIApplicationGroup %{GLOBAL}
  Options Indexes FollowSymLinks
  Order allow,deny
  Allow from all
- Require all granted
 </Files>
 </Directory>
 
