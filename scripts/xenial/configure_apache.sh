@@ -1,7 +1,7 @@
 EXEC_DIR=$PWD
 DIR=`dirname $PWD/$0`
-DIR=`dirname $DIR`
-INSTALL_DIR=`dirname $DIR`
+T_DIR=`dirname $DIR`
+INSTALL_DIR=`dirname $T_DIR`
 
 cp $DIR/apache_template $DIR/apache_conf
 sed -i "s|___ROOT_DIR___|signetsim|g" $DIR/apache_conf
