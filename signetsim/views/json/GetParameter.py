@@ -40,6 +40,7 @@ class GetParameter(JsonView, HasWorkingModel):
 	def post(self, request, *args, **kwargs):
 		self.load(request, *args, **kwargs)
 
+
 		parameter = None
 		if str(request.POST['reaction']) == "":
 			parameter = self.model.listOfParameters.getBySbmlId(str(request.POST['sbml_id']))
@@ -55,13 +56,13 @@ class GetParameter(JsonView, HasWorkingModel):
 			})
 
 		self.data.update({
-			'name': parameter.getName(),
+			'name': "" if parameter.getName() is None else parameter.getName(),
 			'sbml_id': parameter.getSbmlId(),
 			'value': parameter.getValue(),
 			'constant': (1 if parameter.constant else 0),
-			'unit_name': parameter.getUnits().getName(),
-			'unit_id': self.model.listOfUnitDefinitions.values().index(parameter.getUnits()),
-			'notes': parameter.getNotes()
+			'unit_name': "Choose a unit" if parameter.getUnits() is None else parameter.getUnits().getName(),
+			'unit_id': "" if parameter.getUnits() is None else self.model.listOfUnitDefinitions.values().index(parameter.getUnits()),
+			'notes': "" if parameter.getNotes() is None else parameter.getNotes()
 		})
 		return JsonView.post(self, request, *args, **kwargs)
 

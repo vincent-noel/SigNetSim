@@ -58,6 +58,7 @@ function setSbmlIdValidating()
   $("#sbmlid_validating").addClass("in");
 }
 
+var form_sbml_id_error = "";
 
 $("#species_sbml_id").on('paste keyup', function()
 {
@@ -71,8 +72,8 @@ $("#species_sbml_id").on('paste keyup', function()
         "{% url 'sbml_id_validator' %}", {'sbml_id' : new_sbml_id},
         function(data) {
            $.each(data, function(index, element) {
-             if (index === 'valid' && element === 'true') {setSbmlIdValid();}
-             else {setSbmlIdInvalid();}
+             if (index == 'error' && element == '') {setSbmlIdValid(); form_sbml_id_error = element.toString();}
+             else {setSbmlIdInvalid(); form_sbml_id_error = element.toString();}
            });
         },
         function()
@@ -134,6 +135,7 @@ function new_species()
     $("#species_boundary").attr("value", 0);
     setSbmlIdEmpty();
     reset_errors();
+    old_sbml_id = "";
     $("#general").tab('show');
 }
 
@@ -204,11 +206,11 @@ function save_species()
     reset_errors();
 
     if ($("#sbmlid_invalid").hasClass("in")){
-        add_error_modal("invalid_sbml_id", "Invalid SBML Id");
+        add_error_modal("invalid_sbml_id", "Species " + form_sbml_id_error);
         form_add_error_highlight("species_sbml_id");
         nb_errors++;
     }
-    console.log(form_value_error);
+
     if (form_value_error != ""){
         add_error_modal("invalid_value", "Species initial value " + form_value_error);
         form_add_error_highlight("species_value");

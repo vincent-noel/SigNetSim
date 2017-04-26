@@ -121,46 +121,43 @@ class TestModels(TestCase):
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)
-		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 2)
-		self.assertEqual(
-			response_load_model.context['getErrors'],
-			['This model is importing some models which were not found in the project folder. Please import them first']
-		)
-
-		model_filename = join(comp_files_folder, "modelcEvRcX.xml")
-		response_load_submodel_1 = c.post('/models/', {
-			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
-		})
-
-		self.assertEqual(response_load_submodel_1.status_code, 200)
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 3)
-
-		model_filename = join(comp_files_folder, "modelEHfev9.xml")
-		response_load_submodel_2 = c.post('/models/', {
-			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
-		})
-
-		self.assertEqual(response_load_submodel_2.status_code, 200)
-		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 4)
-
-
-		model_filename = join(comp_files_folder, "modelI1vrys.xml")
-		response_load_submodel_3 = c.post('/models/', {
-			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
-		})
-
-		self.assertEqual(response_load_submodel_3.status_code, 200)
-		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 5)
-
-		model_filename = join(comp_files_folder, "modelz9xdww.xml")
-
-		response_load_model = c.post('/models/', {
-			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
-		})
-
-		self.assertEqual(response_load_model.status_code, 200)
-		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 6)
+		self.assertEqual(response_load_model.context['getErrors'], [])
+		# 
+		# model_filename = join(comp_files_folder, "modelcEvRcX.xml")
+		# response_load_submodel_1 = c.post('/models/', {
+		# 	'action': 'load_model',
+		# 	'docfile': open(model_filename, 'r')
+		# })
+		# 
+		# self.assertEqual(response_load_submodel_1.status_code, 200)
+		# self.assertEqual(len(SbmlModel.objects.filter(project=project)), 3)
+		# 
+		# model_filename = join(comp_files_folder, "modelEHfev9.xml")
+		# response_load_submodel_2 = c.post('/models/', {
+		# 	'action': 'load_model',
+		# 	'docfile': open(model_filename, 'r')
+		# })
+		# 
+		# self.assertEqual(response_load_submodel_2.status_code, 200)
+		# self.assertEqual(len(SbmlModel.objects.filter(project=project)), 4)
+		# 
+		# 
+		# model_filename = join(comp_files_folder, "modelI1vrys.xml")
+		# response_load_submodel_3 = c.post('/models/', {
+		# 	'action': 'load_model',
+		# 	'docfile': open(model_filename, 'r')
+		# })
+		# 
+		# self.assertEqual(response_load_submodel_3.status_code, 200)
+		# self.assertEqual(len(SbmlModel.objects.filter(project=project)), 5)
+		# 
+		# model_filename = join(comp_files_folder, "modelz9xdww.xml")
+		# 
+		# response_load_model = c.post('/models/', {
+		# 	'action': 'load_model',
+		# 	'docfile': open(model_filename, 'r')
+		# })
+		# 
+		# self.assertEqual(response_load_model.status_code, 200)
+		# self.assertEqual(len(SbmlModel.objects.filter(project=project)), 6)

@@ -40,13 +40,13 @@ class SbmlIdValidator(JsonView, HasWorkingModel):
 		t_sbml_id = str(request.POST['sbml_id']).strip()
 
 		if self.model.listOfVariables.containsSbmlId(t_sbml_id):
-			self.data.update({'valid': 'false'})
+			self.data.update({'error': 'sbml id already exists'})
 
 		elif not SyntaxChecker.isValidSBMLSId(str(request.POST['sbml_id'])):
-			self.data.update({'valid': 'false'})
+			self.data.update({'error': 'sbml id is not valid'})
 
 		else:
-			self.data.update({'valid': 'true'})
+			self.data.update({'error': ''})
 
 		return JsonView.post(self, request, *args, **kwargs)
 

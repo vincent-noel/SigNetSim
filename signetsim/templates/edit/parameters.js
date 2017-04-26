@@ -1,21 +1,3 @@
-{#   _layout/base.html : This is the top template 							  #}
-
-{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
-
-{#   This program is free software: you can redistribute it and/or modify     #}
-{#   it under the terms of the GNU Affero General Public License as published #}
-{#   by the Free Software Foundation, either version 3 of the License, or     #}
-{#   (at your option) any later version. 									  #}
-
-{#   This program is distributed in the hope that it will be useful, 		  #}
-{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
-{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
-{#   GNU Affero General Public License for more details.					  #}
-
-{#   You should have received a copy of the GNU Affero General Public License #}
-{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
-
-
 $('#parameter_scope_dropdown li').on('click', function(){
   $("#parameter_scope_label").html($(this).text());
   $('#parameter_scope_').val($(this).index());
@@ -37,9 +19,40 @@ function toggle_slide(slide_id) {
 }
 
 
+// Value validator
+
+var form_value_error = "";
+
+$("#parameter_value").on('paste keyup', function()
+{
+    if ($("#parameter_value").val() != "")
+    {
+        ajax_call(
+            "POST", "{{csrf_token}}",
+            "{% url 'float_validator' %}", {'value' : $("#parameter_value").val()},
+            function(data) {
+               $.each(data, function(index, element) {
+                 if (index == "error") {form_value_error=element.toString();}
+               });
+            },
+            function(){}
+        );
+    }
+
+});
+
+
+
 // SbmlId Validation
 
-var old_sbml_id = "{% if form.isEditing == True and form.sbmlId != None %}{{form.sbmlId}}{% endif %}";
+var old_sbml_id = "";
+
+function setSbmlIdEmpty()
+{
+  $("#sbmlid_invalid").removeClass("in");
+  $("#sbmlid_validating").removeClass("in");
+  $("#sbmlid_valid").removeClass("in");
+}
 
 function setSbmlIdValid()
 {
@@ -62,44 +75,34 @@ function setSbmlIdValidating()
   $("#sbmlid_validating").addClass("in");
 }
 
+var form_sbml_id_error= "";
 
-$("#parameter_sbml_id").on('change paste keyup', function()
+$("#parameter_sbml_id").on('paste keyup', function()
 {
   new_sbml_id = $.trim($("#parameter_sbml_id").val());
   if (old_sbml_id === "" || new_sbml_id !== old_sbml_id)
   {
     setSbmlIdValidating();
-
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
-            }
-        }
-    });
-    $.ajax(
-    {
-        type: "POST",
-        url: '{% url 'sbml_id_validator' %}',
-        data: {
-            'sbml_id': new_sbml_id,
+    ajax_call(
+        "POST", "{{csrf_token}}",
+        "{% url 'sbml_id_validator' %}", {'sbml_id': new_sbml_id},
+        function(data)
+        {
+            $.each(data, function(index, element) {
+                if (index == 'error' && element == '') {
+                    setSbmlIdValid()
+                    form_sbml_id_error = "";
+                } else {
+                    setSbmlIdInvalid();
+                    form_sbml_id_error = element.toString();
+                }
+            });
         },
-
-    })
-    .done(function(data)
-    {
-       $.each(data, function(index, element) {
-         if (index === 'valid' && element === 'true') {
-           setSbmlIdValid();
-         } else {
-           setSbmlIdInvalid();
-         }
-       });
-    })
-    .fail(function()
-    {
-      setSbmlIdInvalid();
-    })
+        function()
+        {
+            setSbmlIdInvalid();
+        }
+    );
   }
   else if (new_sbml_id === old_sbml_id)
   {
@@ -107,24 +110,99 @@ $("#parameter_sbml_id").on('change paste keyup', function()
   }
 });
 
-$('#new_parameter_button').on('click', function(){
-
-    $("#modal_title").html("New parameter");
-    $("#parameter_name").attr("value", "");
-    $("#parameter_sbml_id").attr("value", "");
-    $("#parameter_value").attr("value", "");
-    $("#parameter_unit_label").html("Choose a unit");
-    $("#parameter_unit").attr("value", "");
-    $("#parameter_constant").attr("value", 1);
-    $("#parameter_id").attr("value", "");
-    $("#parameter_reaction_id").attr("value", "");
+$('#new_parameter_button').on('click', function()
+{
+    new_parameter();
     $('#modal_parameter').modal('show');
-    old_sbml_id = ""
 });
 
+function new_parameter()
+{
+    $("#modal_title").html("New parameter");
+    $("#parameter_name").val("");
+    $("#parameter_sbml_id").val("");
+    $("#parameter_value").val("");
+    $("#parameter_unit_label").html("Choose a unit");
+    $("#parameter_unit").val("");
+    $("#parameter_constant").val(1);
+    $("#parameter_id").val("");
+    $("#parameter_reaction_id").val("");
+    old_sbml_id = "";
+    setSbmlIdEmpty();
+    reset_errors();
+    $("#general").tab('show');
+}
 
-{% if form.hasErrors == True or form.isEditing == True %}
-    $(window).on('load',function(){
-        $('#modal_parameter').modal('show');
-    });
-{% endif %}
+
+function view_parameter(sbml_id, reaction)
+{
+
+    $("#modal_title").html("Edit parameter");
+
+    ajax_call(
+        "POST", "{{csrf_token}}",
+        "{% url 'get_parameter' %}", {'sbml_id': sbml_id, 'reaction': reaction},
+        function(data)
+        {
+           $.each(data, function(index, element)
+           {
+               if (index == "id") { $("#parameter_id").val(element.toString()); }
+               else if (index == "sbml_id") { $("#parameter_sbml_id").val(element.toString()); old_sbml_id=element; }
+               else if (index == "name") { $("#parameter_name").val(element.toString()); }
+
+               else if (index == "value") {
+                   if (element == null) { $("#parameter_value").val(""); }
+                   else { $("#parameter_value").val(element.toString()); }
+               }
+
+               else if (index == "unit_name") { $("#parameter_unit_label").html(element.toString()); }
+               else if (index == "unit_id") { $("#parameter_unit").val(element.toString()); }
+
+               else if (index == "constant") {
+                   if (element == "1") { $("#parameter_constant").prop('checked', true); }
+                   else { $("#parameter_constant").prop('checked', false); }
+               }
+               else if (index == "notes") {
+                   $("#parameter_notes").val(element.toString());
+
+               }
+           });
+
+           setSbmlIdEmpty();
+           reset_errors();
+        },
+        function() { console.log("failed"); }
+    )
+    $("#general").tab('show');
+    $('#modal_parameter').modal('show');
+
+}
+function reset_errors()
+{
+   form_remove_error_highlight("parameter_sbml_id");
+   form_remove_error_highlight("parameter_value");
+   $("#error_modal").empty();
+
+}
+
+function save_parameter()
+{
+    var nb_errors = 0;
+    reset_errors();
+
+    if ($("#sbmlid_invalid").hasClass("in")){
+        add_error_modal("invalid_sbml_id", "Parameter " + form_sbml_id_error);
+        form_add_error_highlight("species_sbml_id");
+        nb_errors++;
+    }
+
+    if (form_value_error != ""){
+        add_error_modal("invalid_value", "Parameter value " + form_value_error);
+        form_add_error_highlight("parameter_value");
+        nb_errors++;
+    }
+    if (nb_errors == 0)
+    {
+        $("#parameter_form").submit();
+    }
+}

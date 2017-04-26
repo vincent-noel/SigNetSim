@@ -56,7 +56,6 @@ class GetSpecies(JsonView, HasWorkingModel):
 			'unit_id': self.model.listOfUnitDefinitions.values().index(species.getUnits()),
 			'notes': "" if species.getNotes() is None else species.getNotes(),
 		})
-		print self.data
 		return JsonView.post(self, request, *args, **kwargs)
 
 
