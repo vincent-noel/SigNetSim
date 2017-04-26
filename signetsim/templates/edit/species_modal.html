@@ -91,10 +91,10 @@
               </table>
             </div>
             <div id="math" class="tab-pane fade in">
-              <table class="table table-striped">
+              <table id="species_value_group" class="table table-striped">
                 <thead>
                   <tr class="row">
-                    <th class="col-xs-8">Value</th>
+                    <th id="species_value_label" class="col-xs-8">Value</th>
                     <th class="col-xs-4">Type</th>
                   </tr>
                 </thead>
@@ -124,12 +124,12 @@
 
               <table class="table table-striped">
                 <thead>
-                  <tr class="row"  onclick="toggle_slide('constant_checkbox');">
+                  <tr class="row"  onclick="toggle_slide('species_constant');">
                     <th class="col-xs-10">Constant</th>
                     <th class="col-xs-2 text-right">
                       <span class="input-group col-xs-12">
                           <label class="switch">
-                            <input type="checkbox" name="species_constant" id="constant_checkbox">
+                            <input type="checkbox" name="species_constant" id="species_constant">
                             <div class="slider round"></div>
                           </label>
                       </span>
@@ -139,12 +139,12 @@
               </table>
               <table class="table table-striped">
                 <thead>
-                  <tr class="row"  onclick="toggle_slide('boundary_checkbox');">
+                  <tr class="row"  onclick="toggle_slide('species_boundary');">
                     <th class="col-xs-10">Boundary condition</th>
                     <th class="col-xs-2 text-right">
                       <span class="input-group col-xs-12">
                           <label class="switch">
-                            <input type="checkbox" name="species_boundary" id="boundary_checkbox">
+                            <input type="checkbox" name="species_boundary" id="species_boundary">
                             <div class="slider round"></div>
                           </label>
                       </span>

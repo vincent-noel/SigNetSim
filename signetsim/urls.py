@@ -45,7 +45,7 @@ from views import ListOfModelsView, ListOfProjectsView
 
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
 
-from views import MathValidator, SbmlIdValidator, UnitIdValidator
+from views import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
 from views import GetSubmodels, GetListOfObjects, GetContinuationStatus
 from views import GetContinuationFigure, GetListOfObjectsFromSubmodels
 from views import SignUpView, SignUpSuccessView, ValidateEmailView
@@ -110,6 +110,7 @@ urlpatterns = [
 	url(r'^analyse/bifurcations/$', AnalyseBifurcationsView.as_view(), name='bifurcations'),
 
 	# JSON requests
+	url(r'^json/float_validator/$', FloatValidator.as_view(), name='float_validator'),
 	url(r'^json/math_validator/$', MathValidator.as_view(), name='math_validator'),
 	url(r'^json/sbml_id_validator/$', SbmlIdValidator.as_view(), name='sbml_id_validator'),
 	url(r'^json/unit_id_validator/$', UnitIdValidator.as_view(), name='unit_id_validator'),

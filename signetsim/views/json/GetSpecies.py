@@ -44,18 +44,19 @@ class GetSpecies(JsonView, HasWorkingModel):
 
 		self.data.update({
 			'id': self.model.listOfSpecies.values().index(species),
-			'name': species.getName(),
+			'name': "" if species.getName() is None else species.getName(),
 			'sbml_id': species.getSbmlId(),
-			'compartment_name': species.getCompartment().getName(),
+			'compartment_name': "" if species.getCompartment().getName() is None else species.getCompartment().getName(),
 			'compartment_id': self.model.listOfCompartments.values().index(species.getCompartment()),
 			'value': species.getValue(),
 			'isConcentration': 1 if not species.hasOnlySubstanceUnits else 0,
 			'constant': (1 if species.constant else 0),
 			'boundaryCondition': (1 if species.boundaryCondition else 0),
-			'unit_name': species.getUnits().getName(),
+			'unit_name': "" if species.getUnits().getName() is None else species.getUnits().getName(),
 			'unit_id': self.model.listOfUnitDefinitions.values().index(species.getUnits()),
-			'notes': species.getNotes()
+			'notes': "" if species.getNotes() is None else species.getNotes(),
 		})
+		print self.data
 		return JsonView.post(self, request, *args, **kwargs)
 
 

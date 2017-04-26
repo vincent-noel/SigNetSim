@@ -30,7 +30,7 @@
         {% for species in list_of_species %}
         <tr class="row">
           <td class="col-sm-5 col-xs-5">{{species.getNameOrSbmlId}}</td>
-          <td class="col-sm-5 col-xs-4">{{species.getValue}} {% if unit != None %}({{ species.getUnits.getName }}){% endif %}</td>
+          <td class="col-sm-5 col-xs-4">{% if species.getValue != None %}{{species.getValue}}{% endif %} {% if unit != None %}({{ species.getUnits.getName }}){% endif %}</td>
           <td class="col-sm-2 col-xs-3">
             {% if user.is_authenticated %}
             <div class="pull-right">

@@ -22,7 +22,7 @@
 
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
-  padding-top: 50px;
+  padding-top: 60px;
 }
 
 /*
@@ -33,85 +33,75 @@ body {
   border: 0;
 }
 
-/*
- * Main content
+/* Main content
  */
 
 .main {
-  padding: 20px;
+  padding: 0px;
 }
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .main {
-	padding-right: 40px;
-	padding-left: 40px;
+	padding-right: 20px;
+	padding-left: 20px;
   }
 }
 .main .page-header {
   margin-top: 0px;
 }
 
+/* Waiting image */
+#loading {
+  display: none;
+  position:fixed;
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+  background:rgba(255, 255, 255, 0.9);
+  text-align:center;
+  color:#111;
+  z-index: 1100;
 
-
-.input-xs {
-   height: 22px;
-   padding: 2px 5px;
-   font-size: 12px;
-   line-height: 1.5; //If Placeholder of the input is moved up, rem/modify this.
-   border-radius: 3px;
-   }
-
-.table tbody>tr>td.vert-align
-{
-   vertical-align: middle;
 }
 
-.short-label{
-	width: 200px;
-	white-space: normal;
+#loading-image {
+  position: absolute;
+  width: 4%;
+  height:4%;
+  top: 48%;
+  left: 48%;
+  z-index: 1200;
 }
 
-.row_buttons {
-	padding-right: 25px;
+.loading-anim {
+  position: relative;
+  width: 20px;
+  height:20px;
 }
 
-.navbar .navbar-nav {
-  display: inline;
-  float: none;
+
+
+.dropdown-toggle {
+  width: 100%;
   vertical-align: top;
 }
 
-
-@media (min-width: 768px) {
-  .navbar .navbar-nav {
-	display: inline-block;
-	vertical-align: top;
-  }
-
+.dropdown-menu {
+  min-width: 100%;
 }
 
-.navbar .navbar-collapse {
-  text-align: center;
-}
 
-.navbar .navbar-collapse.collapse.in {
-  text-align: left;
-}
 
 /* Dropdowns style within top bar */
 .navbar-fixed-top .dropdown {
   position:relative;
   height: 50px;
-}
 
-.navbar .navbar-collapse.collapse.in .dropdown-menu {
-  float:left;
-  position: relative;
-  margin-bottom: 50px;
 }
 
 .navbar-fixed-top .dropdown-toggle {
   margin-top: 8px;
-  width: 140px;
+  width: 170px;
   height: 34px;
   vertical-align: bottom;
 }
@@ -120,7 +110,7 @@ body {
   overflow: hidden;
   white-space:nowrap;
   text-overflow:ellipsis;
-  width:100px;
+  width:130px;
   display:inline-block;
   vertical-align: bottom;
 }
@@ -130,7 +120,40 @@ body {
   background-color: #ffffff;
 }
 
+
+/* Position settings for dropdown in collapsed navbar */
+
+.navbar-fixed-top .navbar-collapse.collapse.in  .dropdown-toggle {
+  float:left;
+}
+.navbar-fixed-top .navbar-collapse.collapse.in .dropdown-menu {
+  float:left;
+  margin-left: -170px;
+  width: 170px;
+
+  margin-top: 0px;
+  position:relative;
+  margin-bottom: 50px;
+}
+
+/* Colors for dropdown in collapsed navbar */
+
+.navbar-fixed-top .navbar-collapse.collapse.in .dropdown-menu {
+  color: #000000;
+  background-color: #ffffff;
+}
+.navbar-fixed-top .navbar-collapse.collapse.in .dropdown-menu a {
+  color: #000000;
+}
+.navbar-fixed-top .navbar-collapse.collapse.in .dropdown-menu a:hover {
+  color: #666666;
+}
+
+
+/* black links in tables */
+
 table a {
+  margin:0;
   text-decoration: none;
   display:block;
   padding: 0px;
@@ -146,34 +169,122 @@ table a:focus {
 }
 
 
-
-.h3-link {
+/* Black links for h3 titles */
+.h4-link {
   text-decoration: none;
   color: #000;
 }
 
-.h3-link:hover,
-.h3-link:active,
-.h3-link:focus {
+.h4-link:hover,
+.h4-link:active,
+.h4-link:focus {
   color: #222;
 }
 
-
-#loading {
-  display:none;
-  position:fixed;
-  width:100%;
-  height:100%;
-  top:0;
-  left:0;
-  background:rgba(255, 255, 255, 0.9);
-  text-align:center;
-  color:#111;
+/* The switch - the box around the slider */
+.switch {
+ position: relative;
+ display: inline-block;
+ width: 32px;
+ height: 18px;
+ top:7px;
 }
 
-#loading-image {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 100000000000;
+/* Hide default HTML checkbox */
+.switch input {display:none}
+
+/* The slider */
+.slider {
+ position: absolute;
+ cursor: pointer;
+ top: 0;
+ left: 0;
+ right: 0;
+ bottom: 0;
+ background-color: #ccc;
+ -webkit-transition: .4s;
+ transition: .4s;
+}
+
+.slider:before {
+ position: absolute;
+ content: "";
+ height: 14px;
+ width: 14px;
+ left: 2px;
+ bottom: 2px;
+ background-color: white;
+ -webkit-transition: .4s;
+ transition: .4s;
+}
+
+
+input:checked + .slider {
+ background-color: #428bca;
+}
+
+input:focus + .slider {
+ box-shadow: 0 0 1px #428bca;
+}
+
+input:checked + .slider:before {
+ -webkit-transform: translateX(14px);
+ -ms-transform: translateX(14px);
+ transform: translateX(14px);
+}
+
+/* Rounded sliders */
+.slider.round {
+ border-radius: 18px;
+}
+
+.slider.round:before {
+ border-radius: 50%;
+}
+
+input[type=text] {
+	background-color: inherit;
+}
+
+input[type=text]:focus,  input[type=text]:active {
+	background-color: white;
+}
+
+textarea:enabled {
+	background-color: inherit;
+}
+
+textarea:focus {
+	background-color: white;
+}
+
+
+input.invisible_inputs {
+	background-color: inherit;
+	border:none;
+	box-shadow: none;
+}
+
+input:focus.invisible_inputs {
+	background-color: white;
+	border: 1px solid rgba(82,168,236,.8);
+	box-shadow: 0 0 8px rgba(82,168,236,.6);
+}
+
+input:active.invisible_inputs {
+	background-color: white;
+	border: 1px solid rgba(82,168,236,.8);
+	box-shadow: 0 0 8px rgba(82,168,236,.6);
+}
+
+#cy {
+  min-height: 500px;
+  width: 100%;
+  position: relative;
+}
+
+#stoichiometry_graph {
+  min-height: 500px;
+  width: 100%;
+  position: relative;
 }

@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-""" __init__.py
+""" MathValidator.py
 
 
-	Initialization of the module web/signetsim/views/json
+	This file...
+
 
 
 	Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
@@ -22,14 +23,26 @@
 
 """
 
+from signetsim.views.json.JsonView import JsonView
 
+class FloatValidator(JsonView):
 
-from GetContinuationFigure import GetContinuationFigure
-from GetContinuationStatus import GetContinuationStatus
-from GetListOfObjects import GetListOfObjects
-from GetListOfObjectsFromSubmodels import GetListOfObjectsFromSubmodels
-from GetParameter import GetParameter
-from GetSpecies import GetSpecies
-from GetSubmodels import GetSubmodels
+	def __init__(self):
+		JsonView.__init__(self)
 
-from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
+	def post(self, request, *args, **kwargs):
+		field = str(request.POST['value'])
+		self.data.update({'error': self.readFloat(field)})
+		return JsonView.post(self, request, *args, **kwargs)
+
+	def readFloat(self, field):
+
+		if field == "":
+			return "is empty"
+
+		else:
+			try:
+				t_float = float(field)
+				return ""
+			except ValueError:
+				return "isn't a float !"

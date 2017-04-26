@@ -144,7 +144,8 @@ class HasErrorMessages(object):
 		elif str(request.POST[field]) == "":
 			if required:
 				self.addError("%s is required !" % name, reportField, field)
-
+			else:
+				return None
 		else:
 			try:
 				t_float = float(request.POST[field])

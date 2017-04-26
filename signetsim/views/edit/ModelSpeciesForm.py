@@ -94,10 +94,12 @@ class ModelSpeciesForm(ModelParentForm):
 
 	def read(self, request):
 
+		print request.POST
 		self.id = self.readInt(request, 'species_id',
 								"The indice of the species",
 								required=False)
 
+		print self.id
 		self.name = self.readString(request, 'species_name',
 								"The name of the species", required=False)
 
@@ -105,7 +107,7 @@ class ModelSpeciesForm(ModelParentForm):
 								"The identifier of the species")
 
 		self.value = self.readFloat(request, 'species_value',
-								"The value of the species")
+								"The value of the species", required=False)
 
 		self.isConcentration = self.readTrueFalse(request, 'species_value_type',
 												  "the type of species")
@@ -124,3 +126,5 @@ class ModelSpeciesForm(ModelParentForm):
 
 		self.boundaryCondition = self.readOnOff(request, 'species_boundary',
 								"The boundary condition property of the species")
+
+		self.printErrors()
