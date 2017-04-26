@@ -8,7 +8,7 @@ sed -i "s|___ROOT_DIR___|signetsim|g" $DIR/apache_conf
 sed -i "s|___INSTALL_DIR___|$INSTALL_DIR|g" $DIR/apache_conf
 
 
-cp /etc/apache2/sites-available/default $DIR
+cp /etc/apache2/sites-available/000-default $DIR
 NB_LINES=`wc -l $DIR/000-default | cut -d' ' -f1`
 POS_ENDVH=`cat $DIR/000-default | grep -n /VirtualHost | cut -d: -f1`
 POS_INSERT=`expr $POS_ENDVH - 1`
