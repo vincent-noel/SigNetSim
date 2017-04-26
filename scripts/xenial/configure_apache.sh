@@ -1,4 +1,5 @@
 EXEC_DIR=$PWD
+DIR=`dirname $DIR`
 DIR=`dirname $PWD/$0`
 INSTALL_DIR=`dirname $DIR`
 

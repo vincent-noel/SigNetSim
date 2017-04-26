@@ -1,5 +1,6 @@
 EXEC_DIR=$PWD
 DIR=`dirname $PWD/$0`
+DIR=`dirname $DIR`
 INSTALL_DIR=`dirname $DIR`
 
 cp $DIR/apache_template $DIR/apache_conf
