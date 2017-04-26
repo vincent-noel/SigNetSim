@@ -8,7 +8,7 @@ sed -i "s|___ROOT_DIR___|signetsim|g" $DIR/apache_conf
 sed -i "s|___INSTALL_DIR___|$INSTALL_DIR|g" $DIR/apache_conf
 
 
-cp /etc/apache2/sites-available/000-default.conf $DIR
+cp /etc/apache/sites-available/000-default.conf $DIR
 NB_LINES=`wc -l $DIR/000-default.conf | cut -d' ' -f1`
 POS_ENDVH=`cat $DIR/000-default.conf | grep -n /VirtualHost | cut -d: -f1`
 POS_INSERT=`expr $POS_ENDVH - 1`
@@ -29,8 +29,7 @@ chmod -R 664 $INSTALL_DIR/data/
 find $INSTALL_DIR/data/ -type d  -exec chmod 775 {} \;
 
 
-mv $DIR/signetsim.conf /etc/apache2/sites-available/
-cd /etc/apache2/sites-enabled/
+mv $DIR/signetsim.conf /etc/apache/sites-available/
 a2dissite *
 a2enmod wsgi
 a2enmod rewrite

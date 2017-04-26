@@ -1,6 +1,6 @@
 EXEC_DIR=$PWD
-DIR=`dirname $DIR`
 DIR=`dirname $PWD/$0`
+DIR=`dirname $DIR`
 INSTALL_DIR=`dirname $DIR`
 
 cp $DIR/apache_template $DIR/apache_conf
@@ -30,7 +30,6 @@ find $INSTALL_DIR/data/ -type d  -exec chmod 775 {} \;
 
 
 mv $DIR/signetsim.conf /etc/apache2/sites-available/
-cd /etc/apache2/sites-enabled/
 a2dissite *
 a2enmod wsgi
 a2enmod rewrite
