@@ -30,6 +30,7 @@ find $INSTALL_DIR/data/ -type d  -exec chmod 775 {} \;
 
 
 mv $DIR/signetsim.conf /etc/apache2/sites-available/
+cd /etc/apache2/sites-enabled/
 a2dissite *
 a2enmod wsgi
 a2enmod rewrite
