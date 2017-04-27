@@ -14,6 +14,14 @@ A django web application for building, fitting, and analyzing mathematical model
 	bash scripts/configure_apache.sh
 
 
+## Running withing a docker
+
+	bash scripts/run_docker.sh
+
+
+The server will run on localhost:8080/signetsim, with a default Admin with admin:admin credentials.
+
+
 ## License
 
 	Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
