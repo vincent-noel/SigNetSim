@@ -8,6 +8,10 @@ python: 2.7
 
 env:
   - DISTRIB=xenial
+  - DISTRIB=trusty
+  - DISTRIB=precise
+  - DISTRIB=wheezy
+  - DISTRIB=jessie
 
 
 before_install:

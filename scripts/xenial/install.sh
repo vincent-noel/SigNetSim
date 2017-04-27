@@ -5,7 +5,7 @@ DIR=`dirname $DIR`
 INSTALL_DIR=`dirname $DIR`
 
 apt-get install -y libopenmpi-dev openmpi-bin libsundials-serial-dev libsundials-serial liblapack-dev libblas-dev libatlas-dev libfreetype6-dev libpng12-dev libatlas-base-dev python-dev python-pip python-setuptools git subversion gfortran g++ gcc make pkg-config unzip wget apache2 libapache2-mod-wsgi npm nodejs-legacy graphviz
-pip install -r requirements.txt
+pip install -r $INSTALL_DIR/requirements.txt
 
 cd $INSTALL_DIR
 
@@ -23,3 +23,5 @@ python manage.py makemigrations --noinput
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput > /dev/null
 echo "from signetsim.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'admin')" | python manage.py shell
+
+cd $EXEC_DIR
