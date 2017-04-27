@@ -32,5 +32,6 @@ from GetCompartment import GetCompartment
 from GetParameter import GetParameter
 from GetSpecies import GetSpecies
 from GetSubmodels import GetSubmodels
+from GetReactionKineticLaw import GetReactionKineticLaw
 
 from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator

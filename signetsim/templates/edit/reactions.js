@@ -462,11 +462,33 @@ function newReaction() {
 
 buildReactionDescription();
 
-{% if form.hasErrors == True or form.isEditing == True %}
-    $(window).on('load',function(){
-        $('#modal_reaction').modal('show');
-    });
-{% endif %}
+// {% if form.hasErrors == True or form.isEditing == True %}
+//     $(window).on('load',function(){
+//         $('#modal_reaction').modal('show');
+//     });
+// {% endif %}
+
+$(window).on('load',function()
+{
+    {% for reaction in list_of_reactions %}
+        load_reaction_kinetic_law({{forloop.counter0}});
+    {% endfor %}
+});
+
+
+function load_reaction_kinetic_law(reaction_id)
+{
+    ajax_call(
+        "POST", "{{csrf_token}}",
+        "{% url 'get_reaction_kinetic_law' %}", {'reaction_id': reaction_id.toString()},
+        function(data) {
+            $.each(data, function(index, element) {
+             if (index === 'kinetic_law') { $("#kinetic_law_" + reaction_id.toString()).html(element.toString());  }
+            });
+        },
+        function() {}
+    );
+}
 
 function csrfSafeMethod(method) {
   // these HTTP methods do not require CSRF protection

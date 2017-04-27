@@ -46,7 +46,7 @@
       {% for reaction in list_of_reactions %}
         <tr class="row">
           <td class="col-md-6 col-xs-9">{{reaction.getReactionDescription}}</td>
-          <td class="col-md-4 hidden-xs hidden-sm">{{list_of_kinetic_laws|my_lookup:forloop.counter0}}</td>
+          <td class="col-md-4 hidden-xs hidden-sm" id="kinetic_law_{{forloop.counter0}}"></td>
           <td class="col-md-2 col-xs-3">
             {% if user.is_authenticated %}
             <div class="pull-right">

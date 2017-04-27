@@ -158,7 +158,8 @@ class ModelReactionsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		self.listOfReactions = self.getModel().listOfReactions.values()
 
 	def loadKineticLaws(self):
-		self.listOfKineticLaws = [reaction.getReactionKineticLaw() for reaction in self.listOfReactions]
+		# self.listOfKineticLaws = [reaction.getReactionKineticLaw() for reaction in self.listOfReactions]
+		self.listOfKineticLaws = ["" for reaction in self.listOfReactions]
 
 	def loadSpecies(self):
 		self.listOfSpecies = self.getModel().listOfSpecies.values()
