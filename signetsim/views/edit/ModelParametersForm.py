@@ -40,21 +40,21 @@ class ModelParametersForm(ModelParentForm):
 		self.unit = None
 		self.notes = None
 
-
-	def load(self, parameter):
-
-		self.id = self.parent.listOfParameters.index(parameter)
-		self.name = parameter.getName()
-		self.sbmlId = parameter.getSbmlId()
-		self.value = parameter.getValue()
-		self.constant = parameter.constant
-
-		if parameter.getUnits() is not None:
-			self.unit = self.parent.listOfUnits.index(parameter.getUnits())
-
-		self.notes = parameter.getNotes()
-
-		self.isEditing = True
+	#
+	# def load(self, parameter):
+	#
+	# 	self.id = self.parent.listOfParameters.index(parameter)
+	# 	self.name = parameter.getName()
+	# 	self.sbmlId = parameter.getSbmlId()
+	# 	self.value = parameter.getValue()
+	# 	self.constant = parameter.constant
+	#
+	# 	if parameter.getUnits() is not None:
+	# 		self.unit = self.parent.listOfUnits.index(parameter.getUnits())
+	#
+	# 	self.notes = parameter.getNotes()
+	#
+	# 	self.isEditing = True
 
 
 	def save(self, parameter):

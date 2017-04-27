@@ -40,20 +40,20 @@ class GetSpecies(JsonView, HasWorkingModel):
 	def post(self, request, *args, **kwargs):
 		self.load(request, *args, **kwargs)
 
-		species = self.model.listOfSpecies.getBySbmlId(str(request.POST['sbml_id']))
+		species = self.getModel().listOfSpecies.getBySbmlId(str(request.POST['sbml_id']))
 
 		self.data.update({
-			'id': self.model.listOfSpecies.values().index(species),
+			'id': self.getModel().listOfSpecies.values().index(species),
 			'name': "" if species.getName() is None else species.getName(),
 			'sbml_id': species.getSbmlId(),
 			'compartment_name': "" if species.getCompartment().getName() is None else species.getCompartment().getName(),
-			'compartment_id': self.model.listOfCompartments.values().index(species.getCompartment()),
+			'compartment_id': self.getModel().listOfCompartments.values().index(species.getCompartment()),
 			'value': species.getValue(),
 			'isConcentration': 1 if not species.hasOnlySubstanceUnits else 0,
 			'constant': (1 if species.constant else 0),
 			'boundaryCondition': (1 if species.boundaryCondition else 0),
 			'unit_name': "" if species.getUnits().getName() is None else species.getUnits().getName(),
-			'unit_id': self.model.listOfUnitDefinitions.values().index(species.getUnits()),
+			'unit_id': self.getModel().listOfUnitDefinitions.values().index(species.getUnits()),
 			'notes': "" if species.getNotes() is None else species.getNotes(),
 		})
 		return JsonView.post(self, request, *args, **kwargs)

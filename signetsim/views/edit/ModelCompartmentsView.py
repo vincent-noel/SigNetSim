@@ -69,8 +69,8 @@ class ModelCompartmentsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			if HasWorkingModel.isChooseModel(self, request):
 				self.load(request, *args, **kwargs)
 
-			elif request.POST['action'] == "edit":
-				self.edit(request)
+			# elif request.POST['action'] == "edit":
+			# 	self.edit(request)
 
 			elif request.POST['action'] == "delete":
 				self.delete(request)
@@ -92,12 +92,12 @@ class ModelCompartmentsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 
 
-	def edit(self, request):
-
-		t_id = self.readInt(request, 'compartment_id',
-							"the identifier of the compartment",
-							max_value=len(self.listOfCompartments))
-		self.form.load(t_id)
+	# def edit(self, request):
+	#
+	# 	t_id = self.readInt(request, 'compartment_id',
+	# 						"the identifier of the compartment",
+	# 						max_value=len(self.listOfCompartments))
+	# 	self.form.load(t_id)
 
 
 	def delete(self, request):
@@ -131,3 +131,4 @@ class ModelCompartmentsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.saveModel(request)
 			self.listOfCompartments = self.getModel().listOfCompartments.values()
 			self.form.clear()
+

@@ -28,6 +28,7 @@ from GetContinuationFigure import GetContinuationFigure
 from GetContinuationStatus import GetContinuationStatus
 from GetListOfObjects import GetListOfObjects
 from GetListOfObjectsFromSubmodels import GetListOfObjectsFromSubmodels
+from GetCompartment import GetCompartment
 from GetParameter import GetParameter
 from GetSpecies import GetSpecies
 from GetSubmodels import GetSubmodels

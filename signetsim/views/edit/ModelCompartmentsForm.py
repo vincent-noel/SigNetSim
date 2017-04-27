@@ -74,7 +74,6 @@ class ModelCompartmentsForm(ModelParentForm):
 				compartment.setUnits(self.parent.listOfUnits[self.unit])
 			else:
 				compartment.setUnits(None)
-			print self.constant
 
 			compartment.constant = self.constant
 
@@ -104,3 +103,4 @@ class ModelCompartmentsForm(ModelParentForm):
 
 		self.constant = self.readOnOff(request, 'compartment_constant',
 								"The constant property of the compartment")
+

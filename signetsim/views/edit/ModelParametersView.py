@@ -77,8 +77,8 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == "delete":
 				self.deleteParameter(request)
 
-			elif request.POST['action'] == "edit":
-				self.editParameter(request)
+			# elif request.POST['action'] == "edit":
+			# 	self.editParameter(request)
 
 			elif request.POST['action'] == "save":
 				self.saveParameter(request)
@@ -119,13 +119,13 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.addError(e.message)
 
 
-	def editParameter(self, request):
-
-		parameter_id = self.readInt(request, 'parameter_id',
-									"the identifier of the parameter",
-									max_value=len(self.listOfParameters),
-									reportField=False)
-		self.form.load(self.listOfParameters[parameter_id])
+	# def editParameter(self, request):
+	# 
+	# 	parameter_id = self.readInt(request, 'parameter_id',
+	# 								"the identifier of the parameter",
+	# 								max_value=len(self.listOfParameters),
+	# 								reportField=False)
+	# 	self.form.load(self.listOfParameters[parameter_id])
 
 
 	def saveParameter(self, request):

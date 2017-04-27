@@ -30,7 +30,7 @@ from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.model.Model import Model
 from libsignetsim.model.ModelException import ModelException
 
-class GetParameter(JsonView, HasWorkingModel):
+class GetCompartment(JsonView, HasWorkingModel):
 
 	def __init__(self):
 		JsonView.__init__(self)
@@ -40,29 +40,16 @@ class GetParameter(JsonView, HasWorkingModel):
 	def post(self, request, *args, **kwargs):
 		self.load(request, *args, **kwargs)
 
-
-		parameter = None
-		if str(request.POST['reaction']) == "":
-			parameter = self.getModel().listOfParameters.getBySbmlId(str(request.POST['sbml_id']))
-			self.data.update({
-				"reaction_id": "", "reaction_name": "", "id": self.getModel().listOfParameters.values().index(parameter)
-			})
-		else:
-			reaction = self.getModel().listOfReactions[int(request.POST['reaction'])]
-			parameter = reaction.listOfLocalParameters.getBySbmlId(str(request.POST['sbml_id']))
-			self.data.update({
-				"reaction_id": int(request.POST['reaction']), "reaction_name": reaction.getName(),
-				"id": reaction.listOfLocalParameters.values().index(parameter)
-			})
-
+		compartment = self.getModel().listOfCompartments.getBySbmlId(str(request.POST['sbml_id']))
 		self.data.update({
-			'name': "" if parameter.getName() is None else parameter.getName(),
-			'sbml_id': parameter.getSbmlId(),
-			'value': parameter.getValue(),
-			'constant': (1 if parameter.constant else 0),
-			'unit_name': "Choose a unit" if parameter.getUnits() is None else parameter.getUnits().getName(),
-			'unit_id': "" if parameter.getUnits() is None else self.getModel().listOfUnitDefinitions.values().index(parameter.getUnits()),
-			'notes': "" if parameter.getNotes() is None else parameter.getNotes()
+			'id': self.getModel().listOfCompartments.values().index(compartment),
+			'name': "" if compartment.getName() is None else compartment.getName(),
+			'sbml_id': compartment.getSbmlId(),
+			'value': compartment.getValue(),
+			'constant': (1 if compartment.constant else 0),
+			'unit_name': "Choose a unit" if compartment.getUnits() is None else compartment.getUnits().getName(),
+			'unit_id': "" if compartment.getUnits() is None else self.getModel().listOfUnitDefinitions.values().index(compartment.getUnits()),
+			'notes': "" if compartment.getNotes() is None else compartment.getNotes()
 		})
 		return JsonView.post(self, request, *args, **kwargs)
 
