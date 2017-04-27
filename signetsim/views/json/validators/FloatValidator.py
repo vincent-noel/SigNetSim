@@ -38,7 +38,7 @@ class FloatValidator(JsonView):
 	def readFloat(self, field):
 
 		if field == "":
-			return "is empty"
+			return "is empty !"
 
 		else:
 			try:

@@ -39,7 +39,7 @@ class UnitIdValidator(JsonView, HasWorkingModel):
 
         unit_id = str(request.POST['unit_id'])
 
-        if not self.model.listOfUnits.isUnitIdAvailable(unit_id):
+        if not self.getModel().listOfUnitDefinitions.isUnitIdAvailable(unit_id):
             self.data.update({'valid': 'false'})
 
         elif not SyntaxChecker.isValidUnitSId(unit_id):

@@ -46,21 +46,21 @@ class ModelCompartmentsForm(ModelParentForm):
 
 		ModelParentForm.clear(self)
 
-	def load(self, compartment_id):
-
-		self.id = compartment_id
-
-		t_compartment = self.parent.listOfCompartments[self.id]
-
-		self.name = t_compartment.getName()
-		self.sbmlId = t_compartment.getSbmlId()
-		self.size = t_compartment.getSize()
-
-		if t_compartment.getUnits() is not None:
-			self.unit = self.parent.listOfUnits.index(t_compartment.getUnits())
-
-		self.constant = t_compartment.constant
-		self.isEditing = True
+	# def load(self, compartment_id):
+	#
+	# 	self.id = compartment_id
+	#
+	# 	t_compartment = self.parent.listOfCompartments[self.id]
+	#
+	# 	self.name = t_compartment.getName()
+	# 	self.sbmlId = t_compartment.getSbmlId()
+	# 	self.size = t_compartment.getSize()
+	#
+	# 	if t_compartment.getUnits() is not None:
+	# 		self.unit = self.parent.listOfUnits.index(t_compartment.getUnits())
+	#
+	# 	self.constant = t_compartment.constant
+	# 	self.isEditing = True
 
 
 	def save(self, compartment):
