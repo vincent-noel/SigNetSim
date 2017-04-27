@@ -45,6 +45,7 @@ $("#parameter_value").on('paste keyup', function()
 
 // SbmlId Validation
 
+var form_sbml_id_error= "";
 var old_sbml_id = "";
 
 function setSbmlIdEmpty()
@@ -74,8 +75,6 @@ function setSbmlIdValidating()
   $("#sbmlid_valid").removeClass("in");
   $("#sbmlid_validating").addClass("in");
 }
-
-var form_sbml_id_error= "";
 
 $("#parameter_sbml_id").on('paste keyup', function()
 {
