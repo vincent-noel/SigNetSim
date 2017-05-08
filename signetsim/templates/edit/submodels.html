@@ -166,8 +166,8 @@
                           <span class="caret"></span>
                         </button>
                         <ul id="submodel_type_dropdown" class="dropdown-menu">
-                          <li><a href="#">Internal model definition</a></li>
-                          <li><a href="#">External model definition</a></li>
+                          <li><a>Internal model definition</a></li>
+                          <li><a>External model definition</a></li>
                         </ul>
                       </div>
                     </td>
@@ -237,7 +237,7 @@
                         </button>
                         <ul id="submodel_source_dropdown" class="dropdown-menu">
                           {% for project_model in list_of_project_models %}
-                          <li><a href="#">{{project_model}}</a></li>
+                          <li><a>{{project_model}}</a></li>
                           {% endfor %}
                         </ul>
                       </div>
@@ -270,7 +270,7 @@
                             </button>
                             <ul id="submodel_submodel_ref_dropdown" class="dropdown-menu">
                               {% for submodel_ref in list_of_submodels_refs %}
-                              <li><a href="#">{{submodel_ref}}{% if form.submodelRef == 0%} (Main model){% endif %}</a></li>
+                              <li><a>{{submodel_ref}}{% if form.submodelRef == 0%} (Main model){% endif %}</a></li>
                               {% endfor %}
                             </ul>
                           </div>
@@ -298,10 +298,10 @@
                           <span class="caret"></span>
                         </button>
                         <ul id="time_conversion_factor_dropdown" class="dropdown-menu">
-                          <li><a href="#">None</a></li>
+                          <li><a>None</a></li>
                           <li role="separator" class="divider"></li>
                           {% for conv_factor in list_of_conversion_factors %}
-                          <li><a href="#">{{conv_factor}}</a></li>
+                          <li><a>{{conv_factor}}</a></li>
                           {% endfor %}
                         </ul>
                       </div>
@@ -325,10 +325,10 @@
                           <span class="caret"></span>
                         </button>
                         <ul id="extent_conversion_factor_dropdown" class="dropdown-menu">
-                          <li><a href="#">None</a></li>
+                          <li><a>None</a></li>
                           <li role="separator" class="divider"></li>
                         {% for conv_factor in list_of_conversion_factors %}
-                          <li><a href="#">{{conv_factor}}</a></li>
+                          <li><a>{{conv_factor}}</a></li>
                           {% endfor %}
                         </ul>
                       </div>
@@ -387,7 +387,7 @@
                           </button>
                           <ul id="objects_to_delete_dropdown" class="dropdown-menu">
                             {% for objects in form.listOfObjects %}
-                            <li><a href="#">{{objects}}</a></li>
+                            <li><a>{{objects}}</a></li>
                             {% endfor %}
                           </ul>
                         </div>
@@ -441,7 +441,7 @@
                     </button>
                     <ul id="substitution_type_dropdown" class="dropdown-menu">
                       {% for type in form_subs.types %}
-                      <li><a href="#">{{ type }}</a></li>
+                      <li><a>{{ type }}</a></li>
                       {% endfor %}
                     </ul>
                   </div>
@@ -466,7 +466,7 @@
                     </button>
                     <ul id="substitution_model_object_dropdown" class="dropdown-menu">
                       {% for object in list_of_objects %}
-                      <li><a href="#">{{object}}</a></li>
+                      <li><a>{{object}}</a></li>
                       {% endfor %}
                     </ul>
                   </div>
@@ -491,7 +491,7 @@
                     </button>
                     <ul id="substitution_submodel_dropdown" class="dropdown-menu">
                       {% for submodel in list_of_submodels %}
-                      <li><a href="#">{{submodel.getSbmlId}}</a></li>
+                      <li><a>{{submodel.getSbmlId}}</a></li>
                       {% endfor %}
                     </ul>
                   </div>
@@ -514,7 +514,7 @@
                       </button>
                       <ul id="substitution_submodel_object_dropdown" class="dropdown-menu">
                         {% for object in form_subs.listOfObjects %}
-                        <li><a href="#">{{ object }}</a></li>
+                        <li><a>{{ object }}</a></li>
                         {% endfor %}
                       </ul>
                     </div>

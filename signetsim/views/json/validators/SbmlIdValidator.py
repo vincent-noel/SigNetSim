@@ -39,7 +39,25 @@ class SbmlIdValidator(JsonView, HasWorkingModel):
 		self.load(request, *args, **kwargs)
 		t_sbml_id = str(request.POST['sbml_id']).strip()
 
-		if self.model.listOfVariables.containsSbmlId(t_sbml_id):
+		print request.POST
+		t_reaction_id = None
+		if ('reaction_id' in request.POST
+			and
+			request.POST['reaction_id'] != ""
+		):
+			t_reaction = self.getModel().listOfReactions[int(request.POST['reaction_id'])]
+			print t_reaction.listOfLocalParameters.sbmlIds()
+			if t_reaction.listOfLocalParameters.containsSbmlId(t_sbml_id):
+
+				self.data.update({'error': 'sbml id already exists in reaction %s' % t_reaction.getName()})
+			elif not SyntaxChecker.isValidSBMLSId(str(request.POST['sbml_id'])):
+				self.data.update({'error': 'sbml id is not valid'})
+
+			else:
+				self.data.update({'error': ''})
+
+
+		elif self.getModel().listOfVariables.containsSbmlId(t_sbml_id):
 			self.data.update({'error': 'sbml id already exists'})
 
 		elif not SyntaxChecker.isValidSBMLSId(str(request.POST['sbml_id'])):

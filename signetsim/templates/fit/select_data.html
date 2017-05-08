@@ -70,7 +70,7 @@
 				  </button>
 				  <ul id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_dropdown" class="dropdown-menu">
 					{% for species in list_of_species %}
-					  <li><a href="#">{{ species.name }}</a></li>
+					  <li><a>{{ species.name }}</a></li>
 					{% endfor %}
 				  </ul>
 				</div>
@@ -82,8 +82,8 @@
 					<span class="caret"></span>
 				  </button>
 				  <ul id="mapping_treatment_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_interpolation_dropdown" class="dropdown-menu">
-					<li><a href="#">False</a></li>
-					<li><a href="#">True</a></li>
+					<li><a>False</a></li>
+					<li><a>True</a></li>
 				  </ul>
 				</div>
 			  </td>
@@ -112,7 +112,7 @@
 				  </button>
 				  <ul id="mapping_observation_{{forloop.parentloop.counter0}}_{{forloop.counter0}}_dropdown" class="dropdown-menu">
 					{% for species in list_of_species %}
-					  <li><a href="#">{{ species.name }}</a></li>
+					  <li><a>{{ species.name }}</a></li>
 					{% endfor %}
 				  </ul>
 				</div>
@@ -149,7 +149,7 @@
 			</button>
 			<ul id="dataset_id_dropdown" class="dropdown-menu">
 			  {% for experiment in experimental_data_sets %}
-				<li><a href="#">{{ experiment.name }}</a></li>
+				<li><a>{{ experiment.name }}</a></li>
 			  {% endfor %}
 			</ul>
 		  </div>

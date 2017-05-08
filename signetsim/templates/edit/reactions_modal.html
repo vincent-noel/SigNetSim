@@ -122,7 +122,7 @@
                         </button>
                         <ul id="reaction_reactant_{{ forloop.counter0 }}_dropdown" class="dropdown-menu">
                           {% for species in list_of_species %}
-                          <li><a href="#">{{ species }}</a></li>
+                          <li><a>{{ species }}</a></li>
                           {% endfor %}
                         </ul>
                       </div>
@@ -165,7 +165,7 @@
                         </button>
                         <ul id="reaction_modifier_{{ forloop.counter0 }}_dropdown" class="dropdown-menu">
                             {% for species in list_of_species %}
-                            <li><a href="#">{{ species }}</a></li>
+                            <li><a>{{ species }}</a></li>
                             {% endfor %}
                         </ul>
                       </div>
@@ -208,7 +208,7 @@
                         </button>
                         <ul id="reaction_product_{{ forloop.counter0 }}_dropdown" class="dropdown-menu">
                             {% for species in list_of_species %}
-                            <li><a href="#">{{ species }}</a></li>
+                            <li><a>{{ species }}</a></li>
                             {% endfor %}
                         </ul>
                       </div>
@@ -249,7 +249,7 @@
                           </button>
                           <ul id="new_reaction_type_dropdown" class="dropdown-menu">
                               {% for reaction_type in reaction_types.values %}
-                              <li><a href="#">{{ reaction_type }}</a></li>
+                              <li><a>{{ reaction_type }}</a></li>
                               {% endfor %}
                           </ul>
                         </div>
@@ -351,7 +351,7 @@
                           </button>
                           <ul id="reaction_parameter_{{forloop.counter0}}_dropdown" class="dropdown-menu">
                               {% for t_parameter in list_of_parameters %}
-                              <li><a href="#">{{ t_parameter }}</a></li>
+                              <li><a>{{ t_parameter }}</a></li>
                               {% endfor %}
                           </ul>
                         </div>

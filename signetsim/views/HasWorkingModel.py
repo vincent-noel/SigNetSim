@@ -290,13 +290,14 @@ class HasWorkingModel(HasWorkingProject):
 
 
 	def __loadPickledModel(self, request):
-
+		# t0 = time.time()
+		# print request.session.get('loaded_model_doc')
 		t_doc = pickle.loads(request.session.get('loaded_model_doc'))
+		# print "> loaded pickled model in %.2gs" % (time.time()-t0)
 		self.model = t_doc.model
 		self.model_submodel = request.session['loaded_model_submodel']
 		self.model_name = self.model.getName()
 		self.model_filename = str(request.session['loaded_model_filename'])
-
 
 	def __clearPickledModel(self, request):
 

@@ -50,7 +50,7 @@
       <tbody>
         {% for parameter in list_of_parameters %}
         <tr class="row">
-          <td class="col-lg-4 col-md-7 col-xs-9">{{parameter.getNameOrSbmlId}}</td>
+          <td class="col-lg-4 col-md-7 col-xs-9">{{parameter.getNameOrSbmlId}}{% if parameter.reaction != None %}&nbsp;({{parameter.reaction.getName}}){% endif %}</td>
           <td class="col-lg-3 col-md-3 hidden-xs hidden-sm text-center">{{parameter.getValue}}</td>
           <td class="col-lg-4 hidden-xs hidden-sm hidden-md text-center">{% if parameter.getUnits != None %}{{ parameter.getUnits.getName}}{% endif %}</td>
           <td class="col-lg-1 col-md-2 col-xs-3">
@@ -59,7 +59,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="parameter_id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="view_parameter('{{parameter.getSbmlId}}', '{% if parameter.reaction != None %}{{parameter.reaction}}{% endif %}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" onclick="view_parameter('{{parameter.getSbmlId}}', '{% if parameter.reaction != None %}{{list_of_reactions|my_index:parameter.reaction}}{% endif %}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
               </form>
               </div>

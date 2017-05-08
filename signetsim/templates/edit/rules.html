@@ -98,7 +98,7 @@
               </button>
               <ul id="rule_type_dropdown" class="dropdown-menu col-xs-12">
                   {% for rule_type in rules_types %}
-                  <li><a href="#">{{ rule_type }}</a></li>
+                  <li><a>{{ rule_type }}</a></li>
                   {% endfor %}
               </ul>
             </div>
@@ -114,7 +114,7 @@
                 </button>
                 <ul id="dropdown_variables_list" class="dropdown-menu col-xs-12">
                     {% for variable in list_of_variables %}
-                    <li><a href="#">{{ variable }}</a></li>
+                    <li><a>{{ variable }}</a></li>
                     {% endfor %}
                 </ul>
                 <input type="hidden" id="dropdown_variable_id" name="variable_id" value="{% if form.isEditing == True %}{{form.variable}}{% endif %}">

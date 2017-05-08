@@ -62,7 +62,9 @@ class ModelParametersForm(ModelParentForm):
 
 		try:
 			parameter.setName(self.name)
+			print "Set sbml id : %s" % self.sbmlId
 			parameter.setSbmlId(self.sbmlId)
+			print parameter.getSbmlId()
 			parameter.setValue(self.value)
 			parameter.constant = self.constant
 
@@ -77,7 +79,11 @@ class ModelParametersForm(ModelParentForm):
 		except ModelException as e:
 			self.addError(e.message)
 
+			self.printErrors()
+
 	def read(self, request):
+
+		print request.POST
 
 		self.id = self.readInt(request, 'parameter_id',
 								"The indice of the parameter",
@@ -90,7 +96,8 @@ class ModelParametersForm(ModelParentForm):
 								"The identifier of the parameter")
 
 		self.value = self.readMath(request, 'parameter_value',
-								"The size of the parameter")
+								"The size of the parameter",
+								   required=False)
 
 		self.unit = self.readInt(request, 'parameter_unit',
 								"The indice of the unit of the parameter",
@@ -100,4 +107,9 @@ class ModelParametersForm(ModelParentForm):
 		self.constant = self.readOnOff(request, 'parameter_constant',
 								"The constant property of the parameter")
 
-		self.printErrors()
+
+		self.scope = self.readInt(request, 'parameter_scope',
+								  "The scope of the parameter",
+								  max_value=(len(self.parent.listOfReactions)+1))
+
+		print self.constant

@@ -32,7 +32,7 @@
     </button>
     <ul id="model_list" class="dropdown-menu">
         {% for sbml_model in sbml_models %}
-        <li><a href="#">{{ sbml_model.name }}</a></li>
+        <li><a>{{ sbml_model.name }}</a></li>
         {% endfor %}
     </ul>
   </div>
@@ -67,10 +67,10 @@
     </button>
     <ul id="submodel_dropdown" class="dropdown-menu">
         {% for submodel in model_submodels %}
-        <li><a href="#">{{ submodel }}</a></li>
+        <li><a>{{ submodel }}</a></li>
         {% endfor %}
         <li role="separator" class="divider"></li>
-        <li><a href="#">Flatten model</a></li>
+        <li><a>Flatten model</a></li>
     </ul>
   </div>
   <form class="form" method="POST" action="." id="choose_submodel" label="Choose submodel">

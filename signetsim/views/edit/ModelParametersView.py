@@ -104,10 +104,16 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 									max_value=len(self.listOfParameters),
 									reportField=False)
 
+		# print parameter_id
+		# print len(self.getModel().listOfParameters)
 		try:
 			t_parameter = self.listOfParameters[parameter_id]
-			if parameter_id > len(self.getModel().listOfParameters):
+
+			if parameter_id >= len(self.getModel().listOfParameters):
 				t_reaction = t_parameter.reaction
+
+				# print self.getModel().listOfVariables.sbmlIds()
+				# print self.getModel().listOfVariables.keys()
 				t_reaction.listOfLocalParameters.remove(t_parameter)
 			else:
 				self.getModel().listOfParameters.remove(t_parameter)
@@ -120,7 +126,7 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 
 	# def editParameter(self, request):
-	# 
+	#
 	# 	parameter_id = self.readInt(request, 'parameter_id',
 	# 								"the identifier of the parameter",
 	# 								max_value=len(self.listOfParameters),
@@ -134,16 +140,25 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 		if not self.form.hasErrors():
 
 			if self.form.isNew():
-				parameter = self.getModel().listOfParameters.new()
+				if (self.form.scope == 0):
+					parameter = self.getModel().listOfParameters.new()
+				else:
+					parameter = self.getModel().listOfReactions[self.form.scope-1].listOfLocalParameters.new()
 				self.form.save(parameter)
 
 			else:
-				t_param = self.listOfParameters[self.form.id]
-				self.form.save(t_param)
+				if (self.form.scope == 0):
+					parameter = self.getModel().listOfParameters[self.form.id]
+				else:
+					parameter = self.getModel().listOfReactions[self.form.scope-1].listOfLocalParameters[self.form.id]
+
+				self.form.save(parameter)
 
 			self.saveModel(request)
 			self.loadParameters()
 			self.form.clear()
+		else:
+			self.form.printErrors()
 
 
 	def loadParameters(self):

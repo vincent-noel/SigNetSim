@@ -24,11 +24,11 @@
     </button>
     <ul id="project_list" class="dropdown-menu">
         {% for project in projects %}
-        <li><a href="#">{{ project.name }}</a></li>
+        <li><a>{{ project.name }}</a></li>
         {% endfor %}
         {% if user.is_authenticated %}
         <li role="separator" class="divider"></li>
-        <li><a href="#">New project</a></li>
+        <li><a>New project</a></li>
         {% endif %}
     </ul>
   </div>

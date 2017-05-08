@@ -73,16 +73,16 @@
                 <tbody>
                   <tr class="row">
                     <td class="col-xs-12">
-                      <input type="hidden" name="parameter_scope" id="parameter_scope" value="">
+                      <input type="hidden" name="parameter_scope" id="parameter_scope" value="0">
                       <div class="dropdown">
                         <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
                           <span id="parameter_scope_label">Global</span>
                           <span class="caret"></span>
                         </button>
                         <ul id="parameter_scope_dropdown" class="dropdown-menu">
-                          <li><a href="#">Global</a></li>
+                          <li><a>Global</a></li>
                           {% for reaction in list_of_reactions %}
-                          <li><a href="#">{{reaction.name}}</a></li>
+                          <li><a>{{reaction.getName}}</a></li>
                           {% endfor %}
                         </ul>
                       </div>
@@ -92,10 +92,10 @@
               </table>
             </div>
             <div id="math" class="tab-pane fade in">
-              <table class="table table-striped" class="parameter_value_group">
+              <table class="table table-striped" id="parameter_value_group">
                 <thead>
                   <tr class="row">
-                    <th class="col-sm-12" class="parameter_value_label">Value</th>
+                    <th class="col-sm-12" id="parameter_value_label">Value</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -138,7 +138,7 @@
                         </button>
                         <ul id="unit_list" class="dropdown-menu">
                           {% for unit in list_of_units %}
-                          <li><a href="#">{{unit}}</a></li>
+                          <li><a>{{unit}}</a></li>
                           {% endfor %}
                         </ul>
                       </div>

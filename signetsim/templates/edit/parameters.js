@@ -1,6 +1,7 @@
 $('#parameter_scope_dropdown li').on('click', function(){
   $("#parameter_scope_label").html($(this).text());
-  $('#parameter_scope_').val($(this).index());
+  $('#parameter_scope').val($(this).index());
+  check_sbml_id_validity();
 });
 
 $('#unit_list li').on('click', function(){
@@ -78,36 +79,45 @@ function setSbmlIdValidating()
 
 $("#parameter_sbml_id").on('paste keyup', function()
 {
-  new_sbml_id = $.trim($("#parameter_sbml_id").val());
-  if (old_sbml_id === "" || new_sbml_id !== old_sbml_id)
-  {
-    setSbmlIdValidating();
-    ajax_call(
-        "POST", "{{csrf_token}}",
-        "{% url 'sbml_id_validator' %}", {'sbml_id': new_sbml_id},
-        function(data)
-        {
-            $.each(data, function(index, element) {
-                if (index == 'error' && element == '') {
-                    setSbmlIdValid()
-                    form_sbml_id_error = "";
-                } else {
-                    setSbmlIdInvalid();
-                    form_sbml_id_error = element.toString();
-                }
-            });
-        },
-        function()
-        {
-            setSbmlIdInvalid();
-        }
-    );
-  }
-  else if (new_sbml_id === old_sbml_id)
-  {
-    setSbmlIdValid();
-  }
+    check_sbml_id_validity();
 });
+
+
+function check_sbml_id_validity()
+{
+    new_sbml_id = $.trim($("#parameter_sbml_id").val());
+
+    reaction_id = "";
+    if (parseInt($("#parameter_scope").val()) > 0) {
+        reaction_id = parseInt($("#parameter_scope").val()) - 1;
+    }
+
+    if (old_sbml_id === "" || new_sbml_id !== old_sbml_id) {
+        setSbmlIdValidating();
+        ajax_call(
+            "POST", "{{csrf_token}}",
+            "{% url 'sbml_id_validator' %}", {'sbml_id': new_sbml_id, 'reaction_id': reaction_id},
+            function (data) {
+                $.each(data, function (index, element) {
+                    if (index == 'error' && element == '') {
+                        setSbmlIdValid()
+                        form_sbml_id_error = "";
+                    } else {
+                        setSbmlIdInvalid();
+                        form_sbml_id_error = element.toString();
+                    }
+                });
+            },
+            function () {
+                setSbmlIdInvalid();
+            }
+        );
+    }
+    else if (new_sbml_id === old_sbml_id) {
+        setSbmlIdValid();
+    }
+}
+
 
 $('#new_parameter_button').on('click', function()
 {
@@ -123,9 +133,11 @@ function new_parameter()
     $("#parameter_value").val("");
     $("#parameter_unit_label").html("Choose a unit");
     $("#parameter_unit").val("");
-    $("#parameter_constant").val(1);
+    $("#parameter_constant").prop('checked', true);
     $("#parameter_id").val("");
     $("#parameter_reaction_id").val("");
+    $("#parameter_scope").val(0);
+    $("#parameter_scope_label").html("Global");
     old_sbml_id = "";
     setSbmlIdEmpty();
     reset_errors();
@@ -146,6 +158,23 @@ function view_parameter(sbml_id, reaction)
            $.each(data, function(index, element)
            {
                if (index == "id") { $("#parameter_id").val(element.toString()); }
+               else if (index == "reaction_id") {
+                   if (element.toString() == ""){
+                       $("#parameter_scope").val(0);
+                       $("#parameter_scope_label").html("Global");
+                   } else {
+                       $("#parameter_scope").val(parseInt(element)+1);
+
+                       switch(element) {
+                           {% for reaction in list_of_reactions %}
+                           case {{forloop.counter0}}:
+                                $("#parameter_scope_label").html("{{reaction.getName}}");
+                                break;
+                           {% endfor %}
+                       }
+
+                   }
+               }
                else if (index == "sbml_id") { $("#parameter_sbml_id").val(element.toString()); old_sbml_id=element; }
                else if (index == "name") { $("#parameter_name").val(element.toString()); }
 
