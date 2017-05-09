@@ -40,25 +40,7 @@ class ModelParametersForm(ModelParentForm):
 		self.unit = None
 		self.notes = None
 
-	#
-	# def load(self, parameter):
-	#
-	# 	self.id = self.parent.listOfParameters.index(parameter)
-	# 	self.name = parameter.getName()
-	# 	self.sbmlId = parameter.getSbmlId()
-	# 	self.value = parameter.getValue()
-	# 	self.constant = parameter.constant
-	#
-	# 	if parameter.getUnits() is not None:
-	# 		self.unit = self.parent.listOfUnits.index(parameter.getUnits())
-	#
-	# 	self.notes = parameter.getNotes()
-	#
-	# 	self.isEditing = True
-
-
 	def save(self, parameter):
-
 
 		try:
 			parameter.setName(self.name)
@@ -73,14 +55,12 @@ class ModelParametersForm(ModelParentForm):
 
 			parameter.setNotes(self.notes)
 
-
 		except ModelException as e:
 			self.addError(e.message)
 
 			self.printErrors()
 
 	def read(self, request):
-
 
 		self.id = self.readInt(request, 'parameter_id',
 								"The indice of the parameter",
@@ -103,7 +83,6 @@ class ModelParametersForm(ModelParentForm):
 
 		self.constant = self.readOnOff(request, 'parameter_constant',
 								"The constant property of the parameter")
-
 
 		self.scope = self.readInt(request, 'parameter_scope',
 								  "The scope of the parameter",

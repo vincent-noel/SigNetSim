@@ -23,10 +23,13 @@
 """
 
 from django.views.generic import TemplateView
+
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from ModelParametersForm import ModelParametersForm
+from signetsim.views.edit.ModelParametersForm import ModelParametersForm
+
 from libsignetsim.model.ModelException import ModelException
+
 
 class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 
@@ -44,7 +47,6 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 		self.form = ModelParametersForm(self)
 
-
 	def get_context_data(self, **kwargs):
 
 		kwargs = HasWorkingModel.get_context_data(self, **kwargs)
@@ -53,18 +55,15 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 		kwargs['list_of_parameters'] = self.listOfParameters
 		kwargs['list_of_reactions'] = self.listOfReactions
 		kwargs['list_of_units'] = [unit.getNameOrSbmlId() for unit in self.listOfUnits]
-
 		kwargs['form'] = self.form
 
 		return kwargs
-
 
 	def get(self, request, *args, **kwargs):
 
 		self.load(request, *args, **kwargs)
 		self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
-
 
 	def post(self, request, *args, **kwargs):
 
@@ -76,9 +75,6 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 			elif request.POST['action'] == "delete":
 				self.deleteParameter(request)
-
-			# elif request.POST['action'] == "edit":
-			# 	self.editParameter(request)
 
 			elif request.POST['action'] == "save":
 				self.saveParameter(request)
@@ -96,24 +92,19 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.loadReactions()
 			self.loadUnits()
 
-
 	def deleteParameter(self, request):
 
-		parameter_id = self.readInt(request, 'parameter_id',
-									"the identifier of the parameter",
-									max_value=len(self.listOfParameters),
-									reportField=False)
+		parameter_id = self.readInt(
+			request,
+			'parameter_id', "the identifier of the parameter",
+			max_value=len(self.listOfParameters), reportField=False
+		)
 
-		# print parameter_id
-		# print len(self.getModel().listOfParameters)
 		try:
 			t_parameter = self.listOfParameters[parameter_id]
 
 			if parameter_id >= len(self.getModel().listOfParameters):
 				t_reaction = t_parameter.reaction
-
-				# print self.getModel().listOfVariables.sbmlIds()
-				# print self.getModel().listOfVariables.keys()
 				t_reaction.listOfLocalParameters.remove(t_parameter)
 			else:
 				self.getModel().listOfParameters.remove(t_parameter)
@@ -123,16 +114,6 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 		except ModelException as e:
 			self.addError(e.message)
-
-
-	# def editParameter(self, request):
-	#
-	# 	parameter_id = self.readInt(request, 'parameter_id',
-	# 								"the identifier of the parameter",
-	# 								max_value=len(self.listOfParameters),
-	# 								reportField=False)
-	# 	self.form.load(self.listOfParameters[parameter_id])
-
 
 	def saveParameter(self, request):
 
@@ -157,14 +138,12 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.saveModel(request)
 			self.loadParameters()
 			self.form.clear()
-		
 
 	def loadParameters(self):
 
 		self.listOfParameters = self.getModel().listOfParameters.values()
 		for reaction in self.getModel().listOfReactions.values():
 			self.listOfParameters += reaction.listOfLocalParameters.values()
-
 
 	def loadReactions(self):
 		self.listOfReactions = self.getModel().listOfReactions.values()
