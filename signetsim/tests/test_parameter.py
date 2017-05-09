@@ -106,6 +106,7 @@ class TestParameter(TestCase):
 			'parameter_value': 75,
 			'parameter_unit': 2,
 			'parameter_constant': "on",
+			'parameter_scope': 0,
 		})
 
 		self.assertEqual(response_save_parameter.status_code, 200)
@@ -138,6 +139,7 @@ class TestParameter(TestCase):
 			'parameter_value': 75,
 			'parameter_unit': 2,
 			'parameter_constant': "",
+			'parameter_scope': 0,
 		})
 
 		self.assertEqual(response_save_new_parameter.status_code, 200)

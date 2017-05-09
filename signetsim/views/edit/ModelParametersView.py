@@ -157,9 +157,7 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.saveModel(request)
 			self.loadParameters()
 			self.form.clear()
-		else:
-			self.form.printErrors()
-
+		
 
 	def loadParameters(self):
 

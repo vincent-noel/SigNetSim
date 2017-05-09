@@ -62,9 +62,7 @@ class ModelParametersForm(ModelParentForm):
 
 		try:
 			parameter.setName(self.name)
-			print "Set sbml id : %s" % self.sbmlId
 			parameter.setSbmlId(self.sbmlId)
-			print parameter.getSbmlId()
 			parameter.setValue(self.value)
 			parameter.constant = self.constant
 
@@ -83,7 +81,6 @@ class ModelParametersForm(ModelParentForm):
 
 	def read(self, request):
 
-		print request.POST
 
 		self.id = self.readInt(request, 'parameter_id',
 								"The indice of the parameter",
@@ -112,4 +109,4 @@ class ModelParametersForm(ModelParentForm):
 								  "The scope of the parameter",
 								  max_value=(len(self.parent.listOfReactions)+1))
 
-		print self.constant
+
