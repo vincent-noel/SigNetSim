@@ -157,8 +157,6 @@ class HasWorkingModel(HasWorkingProject):
 
 	def __setSubmodel(self, request):
 
-		print ">> Switching to submodel %s" % str(request.POST['submodel_id'])
-
 		t_id = str(request.POST['submodel_id'])
 
 		if t_id != "":

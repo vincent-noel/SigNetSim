@@ -31,7 +31,7 @@ from django.conf import settings
 from os.path import dirname, join
 from shutil import rmtree
 
-class TestSubmodels(TestCase):
+class TestSelectSubmodel(TestCase):
 
 	fixtures = ["user_with_project.json"]
 
@@ -182,37 +182,63 @@ class TestSubmodels(TestCase):
 		)
 
 
-		# response_choose_submodel = c.post('/edit/species/', {
-		# 	'action': 'choose_submodel',
-		# 	'submodel_id': 0
-		# })
-		# self.assertEqual(response_choose_submodel.status_code, 200)
-		# print [species.getNameOrSbmlId() for species in response_choose_model.context['list_of_species']]
-		#
-		# response_choose_submodel = c.post('/edit/species/', {
-		# 	'action': 'choose_submodel',
-		# 	'submodel_id': 1
-		# })
-		# self.assertEqual(response_choose_submodel.status_code, 200)
-		# print [species.getNameOrSbmlId() for species in response_choose_model.context['list_of_species']]
-		#
-		# response_choose_submodel = c.post('/edit/species/', {
-		# 	'action': 'choose_submodel',
-		# 	'submodel_id': 2
-		# })
-		# self.assertEqual(response_choose_submodel.status_code, 200)
-		# print [species.getNameOrSbmlId() for species in response_choose_model.context['list_of_species']]
-		#
-		# response_choose_submodel = c.post('/edit/species/', {
-		# 	'action': 'choose_submodel',
-		# 	'submodel_id': 3
-		# })
-		# self.assertEqual(response_choose_submodel.status_code, 200)
-		# print [species.getNameOrSbmlId() for species in response_choose_model.context['list_of_species']]
-		#
-		# response_choose_submodel = c.post('/edit/species/', {
-		# 	'action': 'choose_submodel',
-		# 	'submodel_id': 5
-		# })
-		# self.assertEqual(response_choose_submodel.status_code, 200)
-		# print [species.getNameOrSbmlId() for species in response_choose_model.context['list_of_species']]
+		response_choose_submodel = c.post('/edit/species/', {
+			'action': 'choose_submodel',
+			'submodel_id': 0
+		})
+		self.assertEqual(response_choose_submodel.status_code, 200)
+		self.assertEqual(
+			[species.getNameOrSbmlId() for species in response_choose_submodel.context['list_of_species']],
+			['SOS', 'Ras-GTP', 'SOS-Ras-GTP', 'ERK-PP', 'FGF2', 'Ras-N17', 'GEF']
+		)
+
+		response_choose_submodel = c.post('/edit/species/', {
+			'action': 'choose_submodel',
+			'submodel_id': 1
+		})
+		self.assertEqual(response_choose_submodel.status_code, 200)
+		self.assertEqual(
+			[species.getNameOrSbmlId() for species in response_choose_submodel.context['list_of_species']],
+			['SOS', 'SOS_inactive', 'FGF2', 'ERK-PP']
+		)
+
+		response_choose_submodel = c.post('/edit/species/', {
+			'action': 'choose_submodel',
+			'submodel_id': 2
+		})
+		self.assertEqual(response_choose_submodel.status_code, 200)
+		self.assertEqual(
+			[species.getNameOrSbmlId() for species in response_choose_submodel.context['list_of_species']],
+			[
+				'SOS', 'Ras-GDP', 'Ras-GTP', 'SOS-Ras-GDP', 'SOS-Ras-GTP',
+				'GAP', 'GEF', 'Ras-N17', 'SOS-Ras-N17', 'GEF-RasN17'
+			]
+		)
+
+		response_choose_submodel = c.post('/edit/species/', {
+			'action': 'choose_submodel',
+			'submodel_id': 3
+		})
+		self.assertEqual(response_choose_submodel.status_code, 200)
+		self.assertEqual(
+			[species.getNameOrSbmlId() for species in response_choose_submodel.context['list_of_species']],
+			[
+				'Ras-GTP', 'SOS-Ras-GTP', 'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP',
+				'Mapk', 'Mapk-P', 'Mapk-PP', 'Total MEK activated', 'Total MAPK activated'
+			]
+		)
+
+		response_choose_submodel = c.post('/edit/species/', {
+			'action': 'choose_submodel',
+			'submodel_id': 5
+		})
+		self.assertEqual(response_choose_submodel.status_code, 200)
+		self.assertEqual(
+			[species.getNameOrSbmlId() for species in response_choose_submodel.context['list_of_species']],
+			[
+				'SOS', 'Ras-GTP', 'SOS-Ras-GTP', 'ERK-PP', 'FGF2', 'Ras-N17', 'GEF', 'SOS_inactive',
+				'Ras-GDP', 'SOS-Ras-GDP', 'SOS-Ras-GTP', 'GAP', 'SOS-Ras-N17', 'GEF-RasN17', 'SOS-Ras-GTP',
+				'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP', 'Mapk', 'Mapk-P',
+				'Total MEK activated', 'Total MAPK activated'
+			]
+		)
