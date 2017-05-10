@@ -47,41 +47,41 @@ class ModelReactionsForm(ModelParentForm):
 		self.KineticLaw = None
 		self.editKineticLawErrors = None
 
+	# 
+	# def clear(self):
+	# 
+	# 	ModelParentForm.clear(self)
+	# 
+	# 	self.name = None
+	# 	self.sbmlId = None
+	# 
+	# 	self.listOfReactants = []
+	# 	self.listOfModifiers = []
+	# 	self.listOfProducts = []
+	# 
+	# 	self.reactionType = None
+	# 	self.reversible = 0
+	# 	self.listOfParameters = None
+	# 	self.reactionKineticLaw = None
+	# 	self.editKineticLawErrors = None
 
-	def clear(self):
-
-		ModelParentForm.clear(self)
-
-		self.name = None
-		self.sbmlId = None
-
-		self.listOfReactants = []
-		self.listOfModifiers = []
-		self.listOfProducts = []
-
-		self.reactionType = None
-		self.reversible = 0
-		self.listOfParameters = None
-		self.reactionKineticLaw = None
-		self.editKineticLawErrors = None
-
-
-	def load(self, reaction):
-
-		self.id = self.parent.listOfReactions.index(reaction)
-		self.sbmlId = reaction.getSbmlId()
-		self.name = reaction.getName()
-		self.reactionType = reaction.getReactionType()
-		self.reactionTypeName = self.parent.reactionTypes[self.reactionType]
-		self.reversible = reaction.reversible
-		self.kineticLaw = reaction.kineticLaw.getPrettyPrintMathFormula()
-		self.loadReactants(reaction)
-		self.loadModifiers(reaction)
-		self.loadProducts(reaction)
-		if self.reactionType != KineticLaw.UNDEFINED:
-			self.loadParameters(reaction)
-
-		self.isEditing = True
+	#
+	# def load(self, reaction):
+	#
+	# 	self.id = self.parent.listOfReactions.index(reaction)
+	# 	self.sbmlId = reaction.getSbmlId()
+	# 	self.name = reaction.getName()
+	# 	self.reactionType = reaction.getReactionType()
+	# 	self.reactionTypeName = self.parent.reactionTypes[self.reactionType]
+	# 	self.reversible = reaction.reversible
+	# 	self.kineticLaw = reaction.kineticLaw.getPrettyPrintMathFormula()
+	# 	self.loadReactants(reaction)
+	# 	self.loadModifiers(reaction)
+	# 	self.loadProducts(reaction)
+	# 	if self.reactionType != KineticLaw.UNDEFINED:
+	# 		self.loadParameters(reaction)
+	#
+	# 	self.isEditing = True
 
 
 	def save(self, reaction):
@@ -99,8 +99,6 @@ class ModelReactionsForm(ModelParentForm):
 				reaction.setKineticLaw(self.reactionType, self.reversible, math=self.kineticLaw)
 			else:
 				t_parameters = [self.parent.listOfParameters[param] for param in self.listOfParameters]
-				print "saving"
-				print t_parameters
 				reaction.setKineticLaw(self.reactionType, self.reversible, parameters=t_parameters)
 
 			self.isEditing = False
@@ -126,7 +124,6 @@ class ModelReactionsForm(ModelParentForm):
 		self.readProducts(request)
 		self.readModifiers(request)
 
-		print self.listOfReactants
 
 		self.reactionType = self.readInt(request, 'reaction_type',
 								"the type of the kinetic law",
@@ -134,8 +131,6 @@ class ModelReactionsForm(ModelParentForm):
 
 		if self.reactionType != KineticLaw.UNDEFINED:
 			self.readParameters(request)
-			print "parameters"
-			print self.listOfParameters
 		else:
 
 			self.kineticLaw = self.readString(request, 'reaction_kinetic_law',
@@ -146,42 +141,42 @@ class ModelReactionsForm(ModelParentForm):
 
 
 
-
-	def loadReactants(self, reaction):
-
-		self.listOfReactants = []
-		for sr in reaction.listOfReactants.values():
-			self.listOfReactants.append(
-					(self.parent.listOfSpecies.index(sr.getSpecies()),
-					sr.stoichiometry.getValueMathFormula()))
-
-
-	def loadModifiers(self, reaction):
-
-		self.listOfModifiers = []
-		for sr in reaction.listOfModifiers.values():
-			self.listOfModifiers.append(
-					(self.parent.listOfSpecies.index(sr.getSpecies()),
-					sr.stoichiometry.getValueMathFormula()))
-
-
-	def loadProducts(self, reaction):
-
-		self.listOfProducts = []
-		for sr in reaction.listOfProducts.values():
-			self.listOfProducts.append(
-					(self.parent.listOfSpecies.index(sr.getSpecies()),
-					sr.stoichiometry.getValueMathFormula()))
-
-
-	def loadParameters(self, reaction):
-
-		self.listOfParameters = []
-
-		if reaction.getReactionParameters() is not None:
-			for t_param in reaction.getReactionParameters():
-				self.listOfParameters.append(
-						self.parent.listOfParameters.index(t_param))
+	#
+	# def loadReactants(self, reaction):
+	#
+	# 	self.listOfReactants = []
+	# 	for sr in reaction.listOfReactants.values():
+	# 		self.listOfReactants.append(
+	# 				(self.parent.listOfSpecies.index(sr.getSpecies()),
+	# 				sr.stoichiometry.getValueMathFormula()))
+	#
+	#
+	# def loadModifiers(self, reaction):
+	#
+	# 	self.listOfModifiers = []
+	# 	for sr in reaction.listOfModifiers.values():
+	# 		self.listOfModifiers.append(
+	# 				(self.parent.listOfSpecies.index(sr.getSpecies()),
+	# 				sr.stoichiometry.getValueMathFormula()))
+	#
+	#
+	# def loadProducts(self, reaction):
+	#
+	# 	self.listOfProducts = []
+	# 	for sr in reaction.listOfProducts.values():
+	# 		self.listOfProducts.append(
+	# 				(self.parent.listOfSpecies.index(sr.getSpecies()),
+	# 				sr.stoichiometry.getValueMathFormula()))
+	#
+	#
+	# def loadParameters(self, reaction):
+	#
+	# 	self.listOfParameters = []
+	#
+	# 	if reaction.getReactionParameters() is not None:
+	# 		for t_param in reaction.getReactionParameters():
+	# 			self.listOfParameters.append(
+	# 					self.parent.listOfParameters.index(t_param))
 
 	def readReactants(self, request):
 

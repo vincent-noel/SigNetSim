@@ -19,15 +19,16 @@
 {% load bootstrap3 %}
 {% load tags %}
 
-<div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="{% if form.isEditing == True %}Edit{% else %}New{% endif %} reaction" id="modal_reaction">
+<div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New reaction" id="modal_reaction">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form class="form" method="POST" action="" label="Save reaction">
+      <form class="form" method="POST" action="" label="Save reaction" id="save_reaction_form">
         {% csrf_token %}
-        <input type="hidden" id="reaction_id" name="reaction_id" value="{% if form.isEditing == True and form.id != None %}{{form.id}}{% endif %}">
+        <input type="hidden" id="reaction_id" name="reaction_id" value="">
+        <input type="hidden" name="action" value="save">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">{% if form.isEditing == True %}Edit{% else %}New{% endif %} reaction</h4>
+          <h4 class="modal-title">New reaction</h4>
         </div>
         <div class="modal-body">
 
@@ -62,7 +63,7 @@
                 <tbody>
                   <tr class="row">
                     <td class="col-xs-12">
-                      <input type="text" class="form-control input-sm" placeholder="<Input reaction name>" id="edit_reaction_name" name="reaction_name" value="{% if form.name != None %}{{form.name}}{% endif %}">
+                      <input type="text" class="form-control input-sm" placeholder="<Input reaction name>" id="reaction_name" name="reaction_name" value="">
                     </td>
                   </tr>
                 </tbody>
@@ -78,7 +79,7 @@
                 <tbody>
                   <tr class="row">
                     <td class="col-xs-11 text-center">
-                      <input type="text" class="form-control input-sm" placeholder="<Input reaction identifier>" id="edit_reaction_id" name="reaction_sbml_id" value="{% if form.sbmlId != None %}{{form.sbmlId}}{% endif %}">
+                      <input type="text" class="form-control input-sm" placeholder="<Input reaction identifier>" id="reaction_sbml_id" name="reaction_sbml_id" value="">
                     </td>
                     <td class="col-xs-1" style="vertical-align:middle">
                       <div id="sbmlid_validating" class="pull-right collapse">
@@ -108,37 +109,7 @@
                   </tr>
                 </thead>
                 <tbody id="body_reactants">
-                {% for t_reactant in form.listOfReactants %}
-                  <tr class="row" id="reaction_reactant_{{forloop.counter0}}_tr">
-                    <td class="col-xs-2">
-                      <input type="text" class="form-control input-sm text-center" placeholder="Input stoichiometry" name="reaction_reactant_{{ forloop.counter0 }}_stoichiometry" value="{{t_reactant.1}}">
-                    </td>
-                    <td class="col-xs-8">
-                      <input type="hidden" id="reaction_reactant_{{ forloop.counter0 }}" name="reaction_reactant_{{ forloop.counter0 }}" value="{{t_reactant.0}}">
-                      <div class="dropdown">
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                          <span id="reaction_reactant_{{ forloop.counter0 }}_label">{% if t_reactant.0 != None %}{{ list_of_species|my_lookup:t_reactant.0}}{% else %}Choose a specie {% endif %}</span>
-                          <span class="caret"></span>
-                        </button>
-                        <ul id="reaction_reactant_{{ forloop.counter0 }}_dropdown" class="dropdown-menu">
-                          {% for species in list_of_species %}
-                          <li><a>{{ species }}</a></li>
-                          {% endfor %}
-                        </ul>
-                      </div>
-                    </td>
-                    <td class="col-xs-2 text-right">
-                      <button type="button" onclick="remove_reactant({{forloop.counter0}});" class="btn btn-danger btn-xs">{% bootstrap_icon "remove" %}</button>
-                    </td>
-                    <script>
-                      $('#reaction_reactant_{{ forloop.counter0}}_dropdown li').on('click', function(){
-                        $("#reaction_reactant_{{ forloop.counter0}}_label").html($(this).text());
-                        $('#reaction_reactant_{{ forloop.counter0}}').val($(this).index());
-                        buildReactionDescription();
-                      });
-                    </script>
-                  </tr>
-                {% endfor %}
+
                 </tbody>
               </table>
 
@@ -151,37 +122,7 @@
                   </tr>
                 </thead>
                 <tbody id="body_modifiers">
-                {% for t_modifier in form.listOfModifiers %}
-                  <tr class="row" id="reaction_modifier_{{forloop.counter0}}_tr">
-                    <td class="col-xs-2">
-                      <input type="text" class="form-control input-sm text-center" placeholder="1" name="reaction_modifier_{{ forloop.counter0 }}_stoichiometry" value="{{t_modifier.1}}">
-                    </td>
-                    <td class="col-xs-8">
-                      <input type="hidden" id="reaction_modifier_{{ forloop.counter0 }}" name="reaction_modifier_{{ forloop.counter0 }}" value="{{t_modifier.0}}">
-                      <div class="dropdown">
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                          <span id="reaction_modifier_{{ forloop.counter0 }}_label">{% if t_modifier.0 != None %}{{ list_of_species|my_lookup:t_modifier.0 }}{% else %}Choose a specie {% endif %}</span>
-                          <span class="caret"></span>
-                        </button>
-                        <ul id="reaction_modifier_{{ forloop.counter0 }}_dropdown" class="dropdown-menu">
-                            {% for species in list_of_species %}
-                            <li><a>{{ species }}</a></li>
-                            {% endfor %}
-                        </ul>
-                      </div>
-                    </td>
-                    <td class="col-xs-2 text-right">
-                      <button type="button" onclick="remove_modifier({{forloop.counter0}});" class="btn btn-danger btn-xs">{% bootstrap_icon "remove" %}</button>
-                    </td>
-                    <script>
-                      $('#reaction_modifier_{{ forloop.counter0}}_dropdown li').on('click', function(){
-                        $("#reaction_modifier_{{ forloop.counter0}}_label").html($(this).text());
-                        $('#reaction_modifier_{{ forloop.counter0}}').val($(this).index());
-                        buildReactionDescription();
-                      });
-                    </script>
-                  </tr>
-                {% endfor %}
+
                 </tbody>
               </table>
 
@@ -194,37 +135,7 @@
                   </tr>
                 </thead>
                 <tbody id="body_products">
-                {% for t_product in form.listOfProducts %}
-                  <tr class="row" id="reaction_product_{{forloop.counter0}}_tr">
-                    <td class="col-xs-2">
-                      <input type="text" class="form-control input-sm text-center" placeholder="1" name="reaction_product_{{ forloop.counter0 }}_stoichiometry" value="{{t_product.1}}">
-                    </td>
-                    <td class="col-xs-8">
-                      <input type="hidden" id="reaction_product_{{ forloop.counter0 }}" name="reaction_product_{{ forloop.counter0 }}" value="{{t_product.0}}">
-                      <div class="dropdown">
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                          <span id="reaction_product_{{ forloop.counter0 }}_label">{% if t_product.0 != None %}{{ list_of_species|my_lookup:t_product.0 }}{% else %}Choose a specie {% endif %}</span>
-                          <span class="caret"></span>
-                        </button>
-                        <ul id="reaction_product_{{ forloop.counter0 }}_dropdown" class="dropdown-menu">
-                            {% for species in list_of_species %}
-                            <li><a>{{ species }}</a></li>
-                            {% endfor %}
-                        </ul>
-                      </div>
-                    </td>
-                    <td class="col-xs-2 text-right">
-                      <button type="button" onclick="remove_product({{ forloop.counter0}});" class="btn btn-danger btn-xs">{% bootstrap_icon "remove" %}</button>
-                    </td>
-                    <script>
-                      $('#reaction_product_{{ forloop.counter0}}_dropdown li').on('click', function(){
-                        $("#reaction_product_{{ forloop.counter0}}_label").html($(this).text());
-                        $('#reaction_product_{{ forloop.counter0}}').val($(this).index());
-                        buildReactionDescription();
-                      });
-                    </script>
-                  </tr>
-                {% endfor %}
+
                 </tbody>
               </table>
             </div>
@@ -240,11 +151,11 @@
                 <tbody>
                   <tr>
                     <td class="col-xs-12">
-                      <input type="hidden" id="new_reaction_type" name="reaction_type" value="{% if form.isEditing == True %}{{form.reactionType}}{% else %}0{% endif %}">
+                      <input type="hidden" id="new_reaction_type" name="reaction_type" value="">
                       <div class="input-group col-xs-12">
                         <div class="dropdown">
                           <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                            <span id="new_reaction_type_label">{% if form.isEditing == True %}{{reaction_types|my_lookup:form.reactionType}}{% else %}{{reaction_types|my_lookup:0}}{% endif %}</span>
+                            <span id="new_reaction_type_label"></span>
                             <span class="caret"></span>
                           </button>
                           <ul id="new_reaction_type_dropdown" class="dropdown-menu">
@@ -258,15 +169,7 @@
                         $('#new_reaction_type_dropdown li').on('click', function(){
                           $("#new_reaction_type_label").html($(this).text());
                           $('#new_reaction_type').val($(this).index());
-                          updateReversibleToggle($(this).index());
-                          updateParameters($(this).index(), ($('#reaction_reversible').prop('checked') == true));
-                          if ($(this).index() == 2) {
-                            $("#input_parameters").removeClass("in");
-                            $("#input_kinetic_law").addClass("in");
-                          } else {
-                            $("#input_kinetic_law").removeClass("in");
-                            $("#input_parameters").addClass("in");
-                          }
+                          select_reaction_type($(this).index());
                         });
                       </script>
                     </td>
@@ -281,7 +184,7 @@
                     <th class="col-xs-4 text-right">
                       <span class="col-xs-12 input-group">
                         <label class="switch">
-                          <input type="checkbox" name="reaction_reversible" id="reaction_reversible" {% if form.reversible == True %}checked{% endif %}>
+                          <input type="checkbox" name="reaction_reversible" id="reaction_reversible">
                           <div class="slider round"></div>
                         </label>
                       </span>
@@ -289,7 +192,7 @@
                   </tr>
                 </thead>
               </table>
-              <div id="input_kinetic_law" class="collapse {% if form.isEditing == True and form.reactionType == 2 %}in{% endif %}">
+              <div id="input_kinetic_law" class="collapse">
                 <table class="table table-striped">
                   <thead>
                     <tr class="row">
@@ -300,7 +203,7 @@
                   <tbody>
                     <tr class="row">
                       <td class="col-xs-11 text-center">
-                          <input type="text" class="form-control input-sm" placeholder="<Input kinetic law>" id="kineticlaw_input" name="reaction_kinetic_law" value="{% if form.kineticLaw != None %}{{form.kineticLaw}}{% endif %}">
+                          <input type="text" class="form-control input-sm" placeholder="<Input kinetic law>" id="kineticlaw_input" name="reaction_kinetic_law" value="">
                       </td>
                       <td class="col-xs-1" style="vertical-align:middle">
                         <div id="kineticlaw_validating" class="pull-right collapse">
@@ -318,7 +221,7 @@
                 </table>
               </div>
 
-              <div id="input_parameters" class="collapse {% if form.isEditing == True and form.reactionType != 2 %}in{% endif %}">
+              <div id="input_parameters" class="collapse">
                 <table class="table table-striped">
                   <thead>
                     <tr>
@@ -327,45 +230,7 @@
                     </tr>
                   </thead>
                   <tbody id="body_parameters">
-                    {% if form.isEditing == True and form.reactionType != 2 %}
-                    {% for parameter in parameters_list|my_lookup:form.reactionType|my_lookup:form.reversible %}
-                    <tr>
-                      <td class="col-sm-6"><span id="reaction_parameter_{{forloop.counter0}}_name">{{parameter}}</span></td>
-                      <td class="col-sm-6">
-                        {% if form.listOfParameters != None %}
-                        {% with form.listOfParameters|my_lookup:forloop.counter0 as t_id %}
-                        <input type="hidden" id="reaction_parameter_{{forloop.counter0}}" name="reaction_parameter_{{forloop.counter0}}" value="{{t_id}}">
-                        <div class="dropdown">
-                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                            <span id="reaction_parameter_{{forloop.counter0}}_label">{{ list_of_parameters|my_lookup:t_id }}</span>
-
-                        {% endwith %}
-                        {% else %}
-                        <input type="hidden" id="reaction_parameter_{{forloop.counter0}}" name="reaction_parameter_{{forloop.counter0}}" value="">
-                        <div class="dropdown">
-                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                            <span id="reaction_parameter_{{forloop.counter0}}_label">Choose a parameter</span>
-
-                        {% endif %}
-                            <span class="caret"></span>
-                          </button>
-                          <ul id="reaction_parameter_{{forloop.counter0}}_dropdown" class="dropdown-menu">
-                              {% for t_parameter in list_of_parameters %}
-                              <li><a>{{ t_parameter }}</a></li>
-                              {% endfor %}
-                          </ul>
-                        </div>
-                      </td>
-                    </tr>
-                    <script>
-                        $('#reaction_parameter_{{ forloop.counter0}}_dropdown li').on('click', function(){
-                          $("#reaction_parameter_{{ forloop.counter0}}_label").html($(this).text());
-                          $('#reaction_parameter_{{ forloop.counter0}}').val($(this).index());
-                        });
-                    </script>
-                    {% endfor %}
-                    {% endif %}
-                  </tbody>
+                   </tbody>
                 </table>
               </div>
 
@@ -382,7 +247,7 @@
                   <tr class="row">
                     <td class="col-xs-12">
                       <div class="form-group">
-                        <textarea class="form-control" id="reaction_notes" name="reaction_notes" rows="10">{% if form.isEditing == True and form.notes != None %}{{form.notes}}{% endif %}</textarea>
+                        <textarea class="form-control" id="reaction_notes" name="reaction_notes" rows="10"></textarea>
                       </div>
                     </td>
                   </tr>
@@ -395,7 +260,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="submit" name="action" value="save" class="btn btn-primary">Save changes</button>
+          <button type="button" onclick="save_reaction()" class="btn btn-primary">Save changes</button>
         </div>
       </form>
     </div>

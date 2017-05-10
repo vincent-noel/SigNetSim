@@ -82,14 +82,8 @@ class ModelReactionsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			if HasWorkingModel.isChooseModel(self, request):
 				self.load(request, *args, **kwargs)
 
-			elif request.POST['action'] == "new_reaction":
-				self.form.new(request)
-
 			elif request.POST['action'] == "delete":
 				self.deleteReaction(request)
-
-			elif request.POST['action'] == "edit":
-				self.editReaction(request)
 
 			elif request.POST['action'] == "save":
 				self.saveReaction(request)
@@ -130,14 +124,6 @@ class ModelReactionsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.addError(e.message)
 
 
-	def editReaction(self, request):
-
-		t_id = self.readInt(request, 'reaction_id',
-								  "the identifier of the reaction",
-								  max_value=len(self.listOfReactions),
-								  reportField=False)
-		self.form.load(self.listOfReactions[t_id])
-
 	def saveReaction(self, request):
 
 		self.form.read(request)
@@ -152,13 +138,11 @@ class ModelReactionsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 			self.saveModel(request)
 			self.loadReactions()
-			self.form.clear()
 
 	def loadReactions(self):
 		self.listOfReactions = self.getModel().listOfReactions.values()
 
 	def loadKineticLaws(self):
-		# self.listOfKineticLaws = [reaction.getReactionKineticLaw() for reaction in self.listOfReactions]
 		self.listOfKineticLaws = ["" for reaction in self.listOfReactions]
 
 	def loadSpecies(self):

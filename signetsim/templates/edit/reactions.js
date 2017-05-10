@@ -17,9 +17,9 @@
 
 {% load tags %}
 
-var nb_reactants = {{form.listOfReactants|length}} - 1;
-var nb_modifiers = {{form.listOfModifiers|length}} - 1;
-var nb_products = {{form.listOfProducts|length}} - 1;
+var nb_reactants = -1;
+var nb_modifiers = -1;
+var nb_products = -1;
 
 function updateReactantsForm()
 {
@@ -241,6 +241,7 @@ function removeReactants()
   $("#body_reactants").children("tr").each(function() {
     $(this).remove();
   });
+  nb_reactants = -1;
 }
 
 function removeModifiers()
@@ -248,6 +249,7 @@ function removeModifiers()
   $("#body_modifiers").children("tr").each(function() {
     $(this).remove();
   });
+  nb_modifiers = -1;
 }
 
 function removeProducts()
@@ -255,15 +257,91 @@ function removeProducts()
   $("#body_products").children("tr").each(function() {
     $(this).remove();
   });
+  nb_products = -1;
 }
 
+function buildReactionDescription() {
 
-function toggle_reversible() {
+  result_reactants = "";
+  $("#body_reactants").children("tr").each(function(index)
+  {
+    if ($("#reaction_reactant_" + index.toString()).val() != "") {
+      if (result_reactants != "") {
+        result_reactants += " + "
+      }
+      result_reactants += $("#reaction_reactant_" + index.toString() + "_label").html()
+    }
+  });
 
-    if ($('#reaction_reversible').prop('disabled') == false) {
+  result_modifiers = "";
+  $("#body_modifiers").children("tr").each(function(index)
+  {
+    if ($("#reaction_modifier_" + index.toString()).val() != "") {
+      if (result_modifiers != "") {
+        result_modifiers += " + "
+      }
+      result_modifiers += $("#reaction_modifier_" + index.toString() + "_label").html()
+    }
+  });
 
-        if ($('#reaction_reversible').prop('checked') == true)
-        {
+  result_products = ""
+  $("#body_products").children("tr").each(function(index)
+  {
+    if ($("#reaction_product_" + index.toString() + "").val() != "") {
+      if (result_products != "") {
+        result_products += " + "
+      }
+      result_products += $("#reaction_product_" + index.toString() + "_label").html()
+    }
+  });
+
+  result = result_reactants;
+  if (result_modifiers != ""){
+    if (result_reactants === ""){
+      result += result_modifiers;
+    } else {
+      result += " + " + result_modifiers;
+    }
+  }
+
+  if ($("#reaction_reversible").prop("checked") == true) {
+    result += " <-> ";
+
+  } else {
+    result += " -> ";
+  }
+
+  if (result_modifiers != ""){
+    if (result_products === ""){
+      result += result_modifiers;
+    } else {
+      result += result_modifiers + " + ";
+    }
+  }
+  result += result_products;
+
+  $("#reaction_summary").html(result);
+
+}
+
+function select_reaction_type (type_id)
+{
+    updateReversibleToggle(type_id);
+    updateParameters(type_id, ($('#reaction_reversible').prop('checked') == true));
+    if (type_id == 2) {
+        $("#input_parameters").removeClass("in");
+        $("#input_kinetic_law").addClass("in");
+    } else {
+        $("#input_kinetic_law").removeClass("in");
+        $("#input_parameters").addClass("in");
+    }
+
+}
+function toggle_reversible()
+{
+    if ($('#reaction_reversible').prop('disabled') == false)
+    {
+        if ($('#reaction_reversible').prop('checked') == true) {
             $('#reaction_reversible').prop("checked", false);
         } else {
             $('#reaction_reversible').prop("checked", true);
@@ -355,84 +433,7 @@ function removeParameter(id) {
 
 }
 
-function buildReactionDescription() {
 
-  result_reactants = "";
-  $("#body_reactants").children("tr").each(function(index)
-  {
-
-
-    if (!$("#reaction_reactant_" + index.toString() + "").val()) {
-
-    } else {
-      if (result_reactants != "") {
-        result_reactants += " + "
-      }
-      result_reactants += $("#reaction_reactant_" + index.toString() + "_label").html()
-    }
-
-  });
-
-  result_modifiers = "";
-  $("#body_modifiers").children("tr").each(function(index)
-  {
-
-
-    if (!$("#reaction_modifier_" + index.toString() + "").val()) {
-    } else {
-
-      if (result_modifiers != "") {
-        result_modifiers += " + "
-      }
-      result_modifiers += $("#reaction_modifier_" + index.toString() + "_label").html()
-    }
-
-  });
-
-  result_products = ""
-  $("#body_products").children("tr").each(function(index)
-  {
-
-    if (!$("#reaction_product_" + index.toString() + "").val()) {
-    } else {
-
-      if (result_products != "") {
-        result_products += " + "
-      }
-
-      result_products += $("#reaction_product_" + index.toString() + "_label").html()
-    }
-
-  });
-
-  result = result_reactants;
-  if (result_modifiers != ""){
-    if (result_reactants === ""){
-      result += result_modifiers;
-    } else {
-      result += " + " + result_modifiers;
-    }
-  }
-
-  if ($("#reaction_reversible").prop("checked") == true) {
-    result += " <-> ";
-
-  } else {
-    result += " -> ";
-  }
-
-  if (result_modifiers != ""){
-    if (result_products === ""){
-      result += result_modifiers;
-    } else {
-      result += result_modifiers + " + ";
-    }
-  }
-  result += result_products;
-
-  $("#reaction_summary").html(result);
-
-}
 
 function clearForm()
 {
@@ -454,19 +455,126 @@ function clearForm()
   $("#reaction_notes").val("");
 }
 
+function get_species_name(species_id)
+{
+    switch(species_id)
+    {
+        {% for species in list_of_species %}
+        case {{forloop.counter0}}:
+            return "{{species}}";
+        {% endfor %}
+    }
+
+}
+
+function get_parameter_name(parameter_id)
+{
+    switch(parameter_id)
+    {
+        {% for t_parameter in list_of_parameters %}
+        case {{forloop.counter0}}:
+            return "{{ t_parameter }}";
+        {% endfor %}
+    }
+}
+function view_reaction(sbml_id)
+{
+
+    $("#modal_title").html("Edit reaction");
+    $("#summary").tab('show');
+
+    removeReactants();
+    removeModifiers();
+    removeProducts();
+
+    ajax_call(
+        "POST", "{{csrf_token}}",
+        "{% url 'get_reaction' %}", {'sbml_id': sbml_id},
+        function(data)
+        {
+            $.each(data, function(index, element)
+            {
+                if (index === "id") { $("#reaction_id").val(element.toString()); }
+                else if (index === "sbml_id") { $("#reaction_sbml_id").val(element.toString()); old_sbml_id=element; }
+                else if (index === "name") { $("#reaction_name").val(element.toString()); }
+                else if (index === "list_of_reactants") {
+                    $.each(element, function(index, subelement) {
+                        add_reactant();
+                        $("#reaction_reactant_" + nb_reactants.toString() + "_stoichiometry").val(subelement[1]);
+                        $("#reaction_reactant_" + nb_reactants.toString()).val(subelement[0]);
+                        $("#reaction_reactant_" + nb_reactants.toString() + "_label").html(get_species_name(subelement[0]));
+                    });
+                }
+                else if (index === "list_of_modifiers") {
+                    $.each(element, function (index, subelement) {
+                        add_modifier();
+                        $("#reaction_modifier_" + nb_modifiers.toString() + "_stoichiometry").val(subelement[1]);
+                        $("#reaction_modifier_" + nb_modifiers.toString()).val(subelement[0]);
+                        $("#reaction_modifier_" + nb_modifiers.toString() + "_label").html(get_species_name(subelement[0]));
+                    });
+                }
+                else if (index === "list_of_products") {
+                    $.each(element, function(index, subelement) {
+
+                        add_product();
+                        $("#reaction_product_" + nb_products.toString() + "_stoichiometry").val(subelement[1]);
+                        $("#reaction_product_" + nb_products.toString()).val(subelement[0]);
+                        $("#reaction_product_" + nb_products.toString() + "_label").html(get_species_name(subelement[0]));
+                    });
+                }
+                else if (index === "reaction_type") {
+                    $("#new_reaction_type").val(element);
+                    select_reaction_type(element);
+                }
+                else if (index === "reaction_type_name"){
+                    $("#new_reaction_type_label").html(element);
+                }
+                else if (index === "reversible") {
+                    if (element == 0) {
+                        $('#reaction_reversible').prop('checked', false);
+                        updateParameters(parseInt($("#new_reaction_type").val()), false);
+                    } else {
+                        $('#reaction_reversible').prop('checked', true);
+                        updateParameters(parseInt($("#new_reaction_type").val()), true);
+                    }
+
+                }
+
+                else if (index === "kinetic_law"){
+                    $("#kineticlaw_input").val(element);
+                }
+                else if (index == "notes") {
+                    $("#specie_notes").val(element.toString());
+
+                }
+            });
+
+           $.each(data, function(index, element) {
+               if (index === "list_of_parameters") {
+                   $.each(element, function (index, subelement) {
+                       $("#reaction_parameter_" + index.toString()).val(subelement);
+                       $("#reaction_parameter_" + index.toString() + "_label").html(get_parameter_name(subelement));
+                   });
+               }
+           });
+           buildReactionDescription();
+           setSbmlIdEmpty();
+           setKineticLawEmpty();
+           // reset_errors();
+        },
+        function() { console.log("failed"); }
+    );
+
+    $('#modal_reaction').modal('show');
+
+}
+
+
 function newReaction() {
   clearForm();
   $('#modal_reaction').modal('show');
 
 }
-
-buildReactionDescription();
-
-// {% if form.hasErrors == True or form.isEditing == True %}
-//     $(window).on('load',function(){
-//         $('#modal_reaction').modal('show');
-//     });
-// {% endif %}
 
 $(window).on('load',function()
 {
@@ -490,99 +598,120 @@ function load_reaction_kinetic_law(reaction_id)
     );
 }
 
-function csrfSafeMethod(method) {
-  // these HTTP methods do not require CSRF protection
-  return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-
-$("#kineticlaw_input").on('change paste keyup', function()
+function setKineticLawEmpty()
 {
-  $("#kineticlaw_invalid").removeClass("in");
+$("#kineticlaw_invalid").removeClass("in");
+  $("#kineticlaw_valid").removeClass("in");
+  $("#kineticlaw_validating").removeClass("in");
+
+}
+function setKineticLawValidating()
+{
+$("#kineticlaw_invalid").removeClass("in");
   $("#kineticlaw_valid").removeClass("in");
   $("#kineticlaw_validating").addClass("in");
-  $.ajaxSetup({
-      beforeSend: function(xhr, settings) {
-          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-              xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
-          }
-      }
-  });
-  $.ajax(
-  {
-      type: "POST",
-      url: '{% url 'math_validator' %}',
-      data: {
-          'math': $("#kineticlaw_input").val(),
-      },
 
-  })
-  .done(function(data)
-  {
-     $.each(data, function(index, element) {
-       if (index === 'valid' && element === 'true') {
-         $("#kineticlaw_invalid").removeClass("in");
-         $("#kineticlaw_validating").removeClass("in");
-         $("#kineticlaw_valid").addClass("in");
-       } else {
-         $("#kineticlaw_validating").removeClass("in");
-         $("#kineticlaw_valid").removeClass("in");
-         $("#kineticlaw_invalid").addClass("in");
-       }
-     });
-  })
-  .fail(function()
-  {
+}
+function setKineticLawValid()
+{
+    $("#kineticlaw_invalid").removeClass("in");
+    $("#kineticlaw_validating").removeClass("in");
+    $("#kineticlaw_valid").addClass("in");
+}
+function setKineticLawInvalid()
+{
     $("#kineticlaw_validating").removeClass("in");
     $("#kineticlaw_valid").removeClass("in");
     $("#kineticlaw_invalid").addClass("in");
-  })
+}
+$("#kineticlaw_input").on('change paste keyup', function()
+{
+  setKineticLawValidating();
+  ajax_call(
+      "POST", "{{csrf_token}}",
+      "{% url 'math_validator' %}", 
+      {
+          'math': $("#kineticlaw_input").val(),
+      },
+      function(data)
+      {
+        $.each(data, function(index, element) {
+            if (index === 'valid' && element === 'true') {
+                setKineticLawValid();
+            } else {
+                setKineticLawInvalid();
+            }
+        });
+      }, 
+      function()
+      {
+        setKineticLawInvalid();
+      });
+
 });
 
-var old_sbml_id = "{% if form.isEditing == True and form.sbmlId != None %}{{form.sbmlId}}{% endif %}";
+// SbmlId Validation
 
-$("#edit_reaction_id").on('change paste keyup', function()
+var old_sbml_id = "";
+
+function setSbmlIdEmpty()
 {
+    $("#sbmlid_invalid").removeClass("in");
+    $("#sbmlid_validating").removeClass("in");
+    $("#sbmlid_valid").removeClass("in");
+}
 
-  if (old_sbml_id === "" || $("#edit_reaction_id").val() !== old_sbml_id)
-  {
+function setSbmlIdValid()
+{
+    $("#sbmlid_invalid").removeClass("in");
+    $("#sbmlid_validating").removeClass("in");
+    $("#sbmlid_valid").addClass("in");
+}
+
+function setSbmlIdInvalid()
+{
+    $("#sbmlid_validating").removeClass("in");
+    $("#sbmlid_valid").removeClass("in");
+    $("#sbmlid_invalid").addClass("in");
+}
+
+function setSbmlIdValidating()
+{
     $("#sbmlid_invalid").removeClass("in");
     $("#sbmlid_valid").removeClass("in");
     $("#sbmlid_validating").addClass("in");
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
-            }
-        }
-    });
-    $.ajax(
-    {
-        type: "POST",
-        url: '{% url 'sbml_id_validator' %}',
-        data: {
-            'sbml_id': $("#edit_reaction_id").val(),
-        },
+}
 
-    })
-    .done(function(data)
-    {
-       $.each(data, function(index, element) {
-         if (index === 'valid' && element === 'true') {
-           $("#sbmlid_invalid").removeClass("in");
-           $("#sbmlid_validating").removeClass("in");
-           $("#sbmlid_valid").addClass("in");
-         } else {
-           $("#sbmlid_validating").removeClass("in");
-           $("#sbmlid_valid").removeClass("in");
-           $("#sbmlid_invalid").addClass("in");
-         }
-       });
-    })
-    .fail(function()
-    {
-      $("#sbmlid_validating").removeClass("in");
-      $("#sbmlid_valid").removeClass("in");
-      $("#sbmlid_invalid").addClass("in");
-    })
+$("#reaction_sbml_id").on('change paste keyup', function()
+{
+
+  if (old_sbml_id === "" || $("#reaction_sbml_id").val() !== old_sbml_id)
+  {
+
+    setSbmlIdValidating();
+    ajax_call(
+        "POST", "{{csrf_token}}",
+        "{% url 'sbml_id_validator' %}",
+        {'sbml_id': $("#reaction_sbml_id").val()},
+        function(data)
+        {
+           $.each(data, function(index, element) {
+             if (index === 'error' && element === '') {
+                setSbmlIdValid();
+             } else {
+                setSbmlIdInvalid();
+             }
+           });
+        },
+        function()
+        {
+            setSbmlIdInvalid();
+        }
+    );
   }
 });
+
+function save_reaction()
+{
+    $("#save_reaction_form").submit();
+}

@@ -50,7 +50,7 @@ from views import GetSubmodels, GetListOfObjects, GetContinuationStatus
 from views import GetContinuationFigure, GetListOfObjectsFromSubmodels
 from views import SignUpView, SignUpSuccessView, ValidateEmailView
 from views import LoginView, ActivateAccountView, ProfileView, AdminView
-from views import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw
+from views import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw
 
 urlpatterns = [
 
@@ -123,6 +123,7 @@ urlpatterns = [
 	url(r'^json/get_species/$', GetSpecies.as_view(), name='get_species'),
 	url(r'^json/get_parameter/$', GetParameter.as_view(), name='get_parameter'),
 	url(r'^json/get_compartment/$', GetCompartment.as_view(), name='get_compartment'),
+	url(r'^json/get_reaction/$', GetReaction.as_view(), name='get_reaction'),
 	url(r'^json/get_reaction_kinetic_law/$', GetReactionKineticLaw.as_view(), name='get_reaction_kinetic_law'),
 
 ]
