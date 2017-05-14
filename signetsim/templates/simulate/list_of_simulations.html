@@ -33,25 +33,58 @@
         </tr>
       </thead>
       <tbody>
+      {% for name, path in list_of_simulations %}
         <tr class="row">
            <td class="col-xs-10 col-sm-10">
-             <a href=""></a>
+             <a href="{% url 'sedml_simulation' forloop.counter0 %}">{{name}}</a>
            </td>
            <td class="col-xs-2 col-sm-2">
              <div class="pull-right">
                <form class="form-inline" method="post" enctype="multipart/form-data">
                  {% csrf_token %}
-                 <button type="button" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+                 <input type="hidden" name="id" value="{{ forloop.counter0 }}">
+                 <a href="../../media/{{ path }}" style="display: inline-block">
+                   <button type="button" class="btn btn-xs btn-default" title="Download">{% bootstrap_icon "download-alt" %}</button>
+                 </a>
+                 <button type="submit" name="action" value="delete_simulation" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
                </form>
              </div>
            </td>
         </tr>
+      {% endfor %}
       </tbody>
     </table>
   </div>
   <hr/>
   <div class="container-fluid">
-    <button type="button" class="btn btn-primary btn-sm">{% bootstrap_icon "folder-open" %}&nbsp;&nbsp;Load SEDML file</button>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#load_sedml">{% bootstrap_icon "folder-open" %}&nbsp;&nbsp;Load SEDML file</button>
   </div>
 </div>
 {% endblock view_content %}
+
+{% block view_modal %}
+
+<div class="modal fade in" id="load_sedml" tabindex="1" role="dialog" aria-labelledby="Load SED-ML archive">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method="post" class="form-inline" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="load_simulation">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel_2">Load SED-ML archive</h4>
+        </div>
+        <div class="modal-body">
+          {% csrf_token %}
+          {% bootstrap_form load_simulation_form layout=inline %}
+          {% buttons %}
+          {% endbuttons %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Load SED-ML archive</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock view_modal %}

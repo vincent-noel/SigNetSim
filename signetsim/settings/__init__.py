@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-""" admin.py
+""" __init__.py
 
 
-	This file ...
+	Initialization of the module settings
 
 
 	Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
@@ -21,24 +21,3 @@
 	along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 """
-
-from django.contrib import admin
-
-# Register your models here.
-from .models import User, Project, SbmlModel, SEDMLSimulation, CombineArchiveModel
-from .models import Optimization, ContinuationComputation
-from .models import Experiment, Condition, Observation, Treatment
-
-admin.site.register(User)
-admin.site.register(Project)
-admin.site.register(SbmlModel)
-admin.site.register(SEDMLSimulation)
-admin.site.register(CombineArchiveModel)
-admin.site.register(Optimization)
-admin.site.register(ContinuationComputation)
-
-
-admin.site.register(Experiment)
-admin.site.register(Condition)
-admin.site.register(Observation)
-admin.site.register(Treatment)

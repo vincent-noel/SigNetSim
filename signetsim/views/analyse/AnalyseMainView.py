@@ -111,85 +111,85 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 		t1 = time()
 		print "> build() executed in %.2gs" % (t1-t0)
 
-		function_subs = {}
-		symbol_names = {}
-		for variable in self.modelInstance.listOfVariables.values():
-
-			is_concentration = False
-			t_symbol = variable.symbol.getFinalMathFormula(forcedConcentration=True)
-			if isinstance(t_symbol.func, SympyUndefinedFunction):
-				t_suffix = "(t)"
-				t_name = str(t_symbol.func)
-				is_concentration = (t_name.startswith('[') and t_name.endswith(']'))
-				if is_concentration:
-					t_name = t_name[1:-1]
-
-				function_subs.update({t_symbol: SympySymbol(str(t_symbol.func))})
-				t_symbol = SympySymbol(str(t_symbol.func))
-			else:
-				t_suffix = ""
-				t_name = str(t_symbol)
-
-			first = t_name.find('_',1)
-			first += 1
-
-			while t_name.find('_', first) > 0:
-				first = t_name.find('_', first)
-				t_name = t_name[:first] + t_name[first+1:]
-
-
-			if t_name.find('_') > 0:
-				start, end = t_name.split('_')
-				t_name = "%s_{%s}" % (start, end)
-
-			if is_concentration:
-				t_name = "[%s]" % t_name
-
-			t_name += t_suffix
-
-			symbol_names.update({t_symbol: t_name})
-
-
-		t2 = time()
-		print "> symbols dictionnary built in %.2gs" % (t2-t1)
-
-
-		self.latex_odes = []
-		t_ode_concentrations = self.modelInstance.getODE_concentrations(forcedConcentration=True)
-		t20 = time()
-		for ode in t_ode_concentrations:
-			ode_latex = latex(ode.subs(function_subs), mul_symbol='dot', symbol_names=symbol_names)
-			self.latex_odes.append(ode_latex)
-
-		t3 = time()
-		print "> got ODEs in %.2gs (%.2gs, %.2gs)" % ((t3-t2), (t20-t2), (t3-t20))
-
-
-		self.latex_conslaws = []
-		if self.modelInstance.hasConservationLaws():
-			for conslaw in self.modelInstance.getConservationLaws(forcedConcentration=True):
-				cs_latex = latex(conslaw.subs(function_subs), mul_symbol='dot', symbol_names=symbol_names)
-				self.latex_conslaws.append(cs_latex)
-
-		t4 = time()
-		print "> got conservation laws in %.2gs" % (t4-t3)
-
-
-		self.latex_cfes = []
-		if self.modelInstance.hasCFEs():
-			for cfe in self.modelInstance.getCFEs(forcedConcentration=True):
-				cfe_latex = latex(cfe.subs(function_subs), mul_symbol='dot', symbol_names=symbol_names)
-				self.latex_cfes.append(cfe_latex)
-
-		t5 = time()
-		print "> got exact solutions in %.2gs" % (t5-t4)
-
-
-		self.latex_daes = []
-		if self.modelInstance.hasDAEs:
-			for dae in self.modelInstance.getDAE_concentrations(forcedConcentration=True):
-				dae_latex = latex(dae.subs(function_subs), mul_symbol='dot', symbol_names=symbol_names)
-				self.latex_daes.append(dae_latex)
-
-		t6 = time()
-		print "> got DAEs in %.2gs" % (t6-t5)
+		# function_subs = {}
+		# symbol_names = {}
+		# for variable in self.modelInstance.listOfVariables.values():
+		# 
+		# 	is_concentration = False
+		# 	t_symbol = variable.symbol.getFinalMathFormula(forcedConcentration=True)
+		# 	if isinstance(t_symbol.func, SympyUndefinedFunction):
+		# 		t_suffix = "(t)"
+		# 		t_name = str(t_symbol.func)
+		# 		is_concentration = (t_name.startswith('[') and t_name.endswith(']'))
+		# 		if is_concentration:
+		# 			t_name = t_name[1:-1]
+		# 
+		# 		function_subs.update({t_symbol: SympySymbol(str(t_symbol.func))})
+		# 		t_symbol = SympySymbol(str(t_symbol.func))
+		# 	else:
+		# 		t_suffix = ""
+		# 		t_name = str(t_symbol)
+		# 
+		# 	first = t_name.find('_',1)
+		# 	first += 1
+		# 
+		# 	while t_name.find('_', first) > 0:
+		# 		first = t_name.find('_', first)
+		# 		t_name = t_name[:first] + t_name[first+1:]
+		# 
+		# 
+		# 	if t_name.find('_') > 0:
+		# 		start, end = t_name.split('_')
+		# 		t_name = "%s_{%s}" % (start, end)
+		# 
+		# 	if is_concentration:
+		# 		t_name = "[%s]" % t_name
+		# 
+		# 	t_name += t_suffix
+		# 
+		# 	symbol_names.update({t_symbol: t_name})
+		# 
+		# 
+		# t2 = time()
+		# print "> symbols dictionnary built in %.2gs" % (t2-t1)
+		# 
+		# 
+		# self.latex_odes = []
+		# t_ode_concentrations = self.modelInstance.getODE_concentrations(forcedConcentration=True)
+		# t20 = time()
+		# for ode in t_ode_concentrations:
+		# 	ode_latex = latex(ode.subs(function_subs), mul_symbol='dot', symbol_names=symbol_names)
+		# 	self.latex_odes.append(ode_latex)
+		# 
+		# t3 = time()
+		# print "> got ODEs in %.2gs (%.2gs, %.2gs)" % ((t3-t2), (t20-t2), (t3-t20))
+		# 
+		# 
+		# self.latex_conslaws = []
+		# if self.modelInstance.hasConservationLaws():
+		# 	for conslaw in self.modelInstance.getConservationLaws(forcedConcentration=True):
+		# 		cs_latex = latex(conslaw.subs(function_subs), mul_symbol='dot', symbol_names=symbol_names)
+		# 		self.latex_conslaws.append(cs_latex)
+		# 
+		# t4 = time()
+		# print "> got conservation laws in %.2gs" % (t4-t3)
+		# 
+		# 
+		# self.latex_cfes = []
+		# if self.modelInstance.hasCFEs():
+		# 	for cfe in self.modelInstance.getCFEs(forcedConcentration=True):
+		# 		cfe_latex = latex(cfe.subs(function_subs), mul_symbol='dot', symbol_names=symbol_names)
+		# 		self.latex_cfes.append(cfe_latex)
+		# 
+		# t5 = time()
+		# print "> got exact solutions in %.2gs" % (t5-t4)
+		# 
+		# 
+		# self.latex_daes = []
+		# if self.modelInstance.hasDAEs:
+		# 	for dae in self.modelInstance.getDAE_concentrations(forcedConcentration=True):
+		# 		dae_latex = latex(dae.subs(function_subs), mul_symbol='dot', symbol_names=symbol_names)
+		# 		self.latex_daes.append(dae_latex)
+		# 
+		# t6 = time()
+		# print "> got DAEs in %.2gs" % (t6-t5)

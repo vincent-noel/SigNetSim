@@ -20,6 +20,34 @@
 var nb_reactants = -1;
 var nb_modifiers = -1;
 var nb_products = -1;
+var nb_local_parameters = -1;
+var nb_parameters = {{ list_of_parameters|length }};
+var local_parameters = [];
+var selected_parameters = [];
+
+
+function get_species_name(species_id)
+{
+    switch(species_id)
+    {
+        {% for species in list_of_species %}
+        case {{forloop.counter0}}:
+            return "{{species}}";
+        {% endfor %}
+    }
+
+}
+
+function get_parameter_name(parameter_id)
+{
+    switch(parameter_id)
+    {
+        {% for t_parameter in list_of_parameters %}
+        case {{forloop.counter0}}:
+            return "{{ t_parameter }}";
+        {% endfor %}
+    }
+}
 
 function updateReactantsForm()
 {
@@ -367,6 +395,7 @@ function updateReversibleToggle(reaction_type){
   {% endfor %}
   }
 }
+
 function updateParameters(reaction_type, reversible){
 
   removeParameters();
@@ -408,14 +437,15 @@ function addParameter(id, name) {
           <span class=\"caret\"></span>\
         </button>\
         <ul id=\"reaction_parameter_" + id.toString() + "_dropdown\" class=\"dropdown-menu\">\
-            {% for t_parameter in list_of_parameters %}<li><a href=\"#\">{{ t_parameter }}</a></li>{% endfor %}\
         </ul>\
       </div>\
     </td>\
   </tr>\
   ");
+
   $("<script>").attr("type", "text/javascript").text("\
       $('#reaction_parameter_" + id.toString() + "_dropdown li').on('click', function(){\
+        selected_parameters[" + id.toString() + "] = $(this).index();\
         $('#reaction_parameter_" + id.toString() + "_label').html($(this).text());\
         $('#reaction_parameter_" + id.toString() + "').val($(this).index());});")
     .appendTo('#reaction_parameter_' + id.toString() + '_tr');
@@ -427,10 +457,108 @@ function removeParameters () {
   });
 
 }
+
+function updateParametersLists()
+{
+  var p_id = 0;
+
+  $("#body_parameters").children("tr").each(function()
+  {
+    $("#reaction_parameter_" + p_id.toString() + "_dropdown").empty();
+    if (local_parameters.length > 0) {
+        $.each(local_parameters, function (index, element) {
+            $("#reaction_parameter_" + p_id.toString() + "_dropdown").append("<li><a>" + element[0] + "</a></li>")
+        });
+        $("#reaction_parameter_" + p_id.toString() + "_dropdown").append("<li role='separator' class='divider'></li>");
+
+    }
+    for (var counter = 0; counter < nb_parameters; counter++) { $("#reaction_parameter_" + p_id.toString() + "_dropdown").append("<li><a>" + get_parameter_name(counter) + "</a></li>")}
+
+    p_id = p_id + 1;
+  });
+}
+
 function removeParameter(id) {
 
   $("#reaction_parameter_" + id.toString()).remove();
 
+}
+
+function changed_local_parameter_name(parameter_id)
+{
+  local_parameters[parameter_id][0] = $("#local_parameter_" + parameter_id.toString() + "_name").val();
+  updateParametersLists();
+}
+
+function changed_local_parameter_value(parameter_id)
+{
+  local_parameters[parameter_id][1] = $("#local_parameter_" + parameter_id.toString() + "_value").val();
+  updateParametersLists();
+}
+
+function add_local_parameter(name, value){
+    nb_local_parameters = nb_local_parameters + 1;
+    $("#table_local_parameters").append("\
+    <tr class=\"row\" id=\"local_parameter_" + nb_local_parameters.toString() + "_tr\">\
+        <td class=\"col-xs-6\">\
+          <input type=\"text\" class=\"form-control input-sm\" placeholder=\"<Input parameter's name>\"\
+                 id=\"local_parameter_" + nb_local_parameters.toString() + "_name\" name=\"local_parameter_" + nb_local_parameters.toString() + "_name\" value=\"" + name + "\"\
+          ></td>\
+        <td class=\"col-xs-4\">\
+          <input type=\"text\" class=\"form-control input-sm\" placeholder=\"<Input parameter's value>\"\
+                 id=\"local_parameter_" + nb_local_parameters.toString() + "_value\" name=\"local_parameter_" + nb_local_parameters.toString() + "_value\" value=\"" + value + "\"\
+          ></td>\
+        <td class=\"col-xs-2 text-right\">\
+          <button type=\"button\" onclick=\"remove_local_parameter(" + nb_local_parameters.toString() + ");\" class=\"btn btn-danger btn-xs\">\
+            <span class=\"glyphicon glyphicon-remove\"></span>\
+          </button>\
+        </td>\
+      </tr>\
+    ");
+    $("<script>").attr("type", "text/javascript").text("\
+       $('#local_parameter_" + nb_local_parameters.toString() + "_name').on('paste keyup', function() { changed_local_parameter_name(" + nb_local_parameters.toString() + ");});\
+       $('#local_parameter_" + nb_local_parameters.toString() + "_value').on('paste keyup', function() { changed_local_parameter_value(" + nb_local_parameters.toString() + ");});\
+    ")
+    .appendTo('#local_parameter_' + nb_local_parameters.toString() + '_tr');
+    local_parameters.push([name, value]);
+    updateLocalParametersForm();
+    updateParametersLists();
+}
+
+function remove_local_parameter(parameter_id)
+{
+    $("#local_parameter_" + parameter_id + "_tr").remove();
+    updateLocalParametersForm();
+    updateParametersLists();
+}
+
+function removeLocalParameters(parameter_id)
+{
+    $("#table_local_parameters").empty();
+    nb_local_parameters = -1;
+}
+function updateLocalParametersForm()
+{
+    var m_id = 0;
+
+    $("#table_local_parameters").children("tr").each(function()
+    {
+        $('input', $(this)).each(function()
+        {
+            var id = new RegExp('^local_parameter_[0-9]+_name$');
+            if (id.test($(this).attr('name')))
+            {
+              $(this).attr('name', 'local_parameter_' + m_id.toString() + '_name');
+            }
+
+            var exp = new RegExp('^local_parameter_[0-9]+_expression$');
+            if (exp.test($(this).attr('name')))
+            {
+                $(this).attr('name', 'local_parameter_' + m_id.toString() + '_value');
+            }
+        });
+        m_id = m_id + 1;
+    });
 }
 
 
@@ -451,42 +579,18 @@ function clearForm()
   updateParameters(0, true);
   $("#input_parameters").addClass('in');
   $("#reaction_reversible").prop('checked', true);
-
   $("#reaction_notes").val("");
 }
 
-function get_species_name(species_id)
-{
-    switch(species_id)
-    {
-        {% for species in list_of_species %}
-        case {{forloop.counter0}}:
-            return "{{species}}";
-        {% endfor %}
-    }
-
-}
-
-function get_parameter_name(parameter_id)
-{
-    switch(parameter_id)
-    {
-        {% for t_parameter in list_of_parameters %}
-        case {{forloop.counter0}}:
-            return "{{ t_parameter }}";
-        {% endfor %}
-    }
-}
 function view_reaction(sbml_id)
 {
-
-    $("#modal_title").html("Edit reaction");
-    $("#summary").tab('show');
-
+    $("#modal_reaction-title").html("Edit reaction");
+    $("#loading_wait").addClass("in");
+    $("#loading_done").removeClass("in");
     removeReactants();
     removeModifiers();
     removeProducts();
-
+    removeLocalParameters();
     ajax_call(
         "POST", "{{csrf_token}}",
         "{% url 'get_reaction' %}", {'sbml_id': sbml_id},
@@ -522,6 +626,7 @@ function view_reaction(sbml_id)
                         $("#reaction_product_" + nb_products.toString() + "_label").html(get_species_name(subelement[0]));
                     });
                 }
+
                 else if (index === "reaction_type") {
                     $("#new_reaction_type").val(element);
                     select_reaction_type(element);
@@ -543,6 +648,14 @@ function view_reaction(sbml_id)
                 else if (index === "kinetic_law"){
                     $("#kineticlaw_input").val(element);
                 }
+                else if (index == "list_of_local_parameters"){
+
+                    local_parameters = [];
+                    $.each(element, function(index, subelement) {
+                        add_local_parameter(subelement[0], subelement[1]);
+                    });
+                }
+
                 else if (index == "notes") {
                     $("#specie_notes").val(element.toString());
 
@@ -552,14 +665,21 @@ function view_reaction(sbml_id)
            $.each(data, function(index, element) {
                if (index === "list_of_parameters") {
                    $.each(element, function (index, subelement) {
+                       selected_parameters.push(element);
                        $("#reaction_parameter_" + index.toString()).val(subelement);
                        $("#reaction_parameter_" + index.toString() + "_label").html(get_parameter_name(subelement));
                    });
+                   updateParametersLists();
+
                }
            });
            buildReactionDescription();
            setSbmlIdEmpty();
            setKineticLawEmpty();
+           $("#loading_wait").removeClass("in");
+           $("#loading_done").addClass("in");
+           $("#summary").tab('show');
+
            // reset_errors();
         },
         function() { console.log("failed"); }
@@ -579,7 +699,7 @@ function newReaction() {
 $(window).on('load',function()
 {
     {% for reaction in list_of_reactions %}
-        load_reaction_kinetic_law({{forloop.counter0}});
+        // load_reaction_kinetic_law({{forloop.counter0}});
     {% endfor %}
 });
 

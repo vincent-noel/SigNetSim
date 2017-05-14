@@ -1,0 +1,46 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% load bootstrap3 %}
+{% load static from staticfiles %}
+
+{% block view_name %}Sedml simulation{% endblock view_name %}
+{% block view_sidebar %}{% include 'simulate/menu.html' %}{% endblock view_sidebar %}
+{% block view_content %}
+{% block header_js %}<script src="{% static "chart.js/dist/Chart.js" %}"></script>{% endblock header_js %}
+
+<div class="container-fluid" id="view">
+  <h4>SED-ML simulation</h4>
+  <br/>
+  <div class="container-fluid">
+
+  {% for plot_2d in plots_2d %}
+  <br/><br/><br/>
+  <div>
+      <canvas id="canvas_{{forloop.counter0}}"></canvas>
+  </div>
+  {% endfor %}
+
+  <script>
+  {% include 'simulate/plot2D_graph.js' %}
+  </script>
+
+  </div>
+  <hr/>
+</div>
+{% endblock view_content %}

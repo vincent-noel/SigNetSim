@@ -40,8 +40,8 @@ from views import ListOfOptimizationsView, OptimizationResultView
 from views import DataOptimizationView, DataOptimizationView0, ModelOptimizationView
 
 from views import TimeSeriesSimulationView, SteadyStateSimulationView
-from views import ListOfSimulationsView
-from views import ListOfModelsView, ListOfProjectsView
+from views import ListOfSimulationsView, SedmlSimulationView
+from views import ListOfModelsView, ListOfProjectsView, GenerateCombineArchive
 
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
 
@@ -65,6 +65,7 @@ urlpatterns = [
 
 	# Model import/export
 	url(r'^project/([^/]+)/$', ListOfModelsView.as_view(), name='project'),
+	url(r'^project_archive/([^/]+)/$', GenerateCombineArchive.as_view(), name='project_archive'),
 	url(r'^models/$', ListOfModelsView.as_view(), name='models'),
 
 	# Authentication
@@ -92,6 +93,7 @@ urlpatterns = [
 	url(r'^simulate/timeseries/$', TimeSeriesSimulationView.as_view(), name='simulate_model'),
 	url(r'^simulate/steady_states/$', SteadyStateSimulationView.as_view(), name='simulate_steady_states'),
 	url(r'^simulate/stored/$', ListOfSimulationsView.as_view(), name='list_of_simulations'),
+	url(r'^simulate/stored/([^/]+)/$', SedmlSimulationView.as_view(), name='sedml_simulation'),
 
 	# Optimization
 	url(r'^fit/model/$', ModelOptimizationView.as_view(), name='optimize_model'),

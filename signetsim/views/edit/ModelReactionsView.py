@@ -150,7 +150,3 @@ class ModelReactionsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 	def loadParameters(self):
 		self.listOfParameters = self.getModel().listOfParameters.values()
-
-	def loadLocalParameters(self, reaction_id):
-		t_reaction = self.getModel().listOfReactions[reaction_id]
-		self.listOfParameters += t_reaction.listOfLocalParameters.values()

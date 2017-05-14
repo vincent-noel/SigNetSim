@@ -40,6 +40,7 @@ from edit import ModelSubmodelsView
 from simulate import TimeSeriesSimulationView
 from simulate import SteadyStateSimulationView
 from simulate import ListOfSimulationsView
+from simulate import SedmlSimulationView
 
 from fit import ListOfOptimizationsView
 from fit import OptimizationResultView
@@ -68,6 +69,7 @@ from SuccessView import SuccessView
 from HelpView import HelpView
 from ListOfModelsView import ListOfModelsView
 from ListOfProjectsView import ListOfProjectsView
+from GenerateCombineArchive import GenerateCombineArchive
 
 from auth import SignUpView, SignUpSuccessView, ValidateEmailView
 from auth import ActivateAccountView, LoginView, ProfileView

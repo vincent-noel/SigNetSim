@@ -16,6 +16,7 @@
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
 {% load tags %}
+{% if sbml_models|length > 0 %}
 <table class="table">
   <thead>
     <tr>
@@ -49,6 +50,7 @@
     });
   </script>
 </div>
+{% endif %}
 {% if model_has_submodels and show_submodels == True %}
 <br/>
 <table class="table">

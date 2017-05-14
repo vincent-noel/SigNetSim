@@ -44,45 +44,9 @@ class ModelReactionsForm(ModelParentForm):
 		self.reactionType = None
 		self.reversible = 0
 		self.listOfParameters = None
+		self.listOfLocalParameters = None
 		self.KineticLaw = None
 		self.editKineticLawErrors = None
-
-	# 
-	# def clear(self):
-	# 
-	# 	ModelParentForm.clear(self)
-	# 
-	# 	self.name = None
-	# 	self.sbmlId = None
-	# 
-	# 	self.listOfReactants = []
-	# 	self.listOfModifiers = []
-	# 	self.listOfProducts = []
-	# 
-	# 	self.reactionType = None
-	# 	self.reversible = 0
-	# 	self.listOfParameters = None
-	# 	self.reactionKineticLaw = None
-	# 	self.editKineticLawErrors = None
-
-	#
-	# def load(self, reaction):
-	#
-	# 	self.id = self.parent.listOfReactions.index(reaction)
-	# 	self.sbmlId = reaction.getSbmlId()
-	# 	self.name = reaction.getName()
-	# 	self.reactionType = reaction.getReactionType()
-	# 	self.reactionTypeName = self.parent.reactionTypes[self.reactionType]
-	# 	self.reversible = reaction.reversible
-	# 	self.kineticLaw = reaction.kineticLaw.getPrettyPrintMathFormula()
-	# 	self.loadReactants(reaction)
-	# 	self.loadModifiers(reaction)
-	# 	self.loadProducts(reaction)
-	# 	if self.reactionType != KineticLaw.UNDEFINED:
-	# 		self.loadParameters(reaction)
-	#
-	# 	self.isEditing = True
-
 
 	def save(self, reaction):
 
@@ -102,6 +66,13 @@ class ModelReactionsForm(ModelParentForm):
 				reaction.setKineticLaw(self.reactionType, self.reversible, parameters=t_parameters)
 
 			self.isEditing = False
+			if self.listOfLocalParameters != []:
+
+				reaction.listOfLocalParameters.clear()
+				for (param_name, param_value) in self.listOfLocalParameters:
+					t_parameter = Parameter(self.parent.getModel())
+					t_parameter.new(param_name, param_value)
+					reaction.listOfLocalParameters.add(t_parameter)
 
 		except ModelException as e:
 			self.addError(e.message)
@@ -123,7 +94,7 @@ class ModelReactionsForm(ModelParentForm):
 		self.readReactants(request)
 		self.readProducts(request)
 		self.readModifiers(request)
-
+		self.readLocalParameters(request)
 
 		self.reactionType = self.readInt(request, 'reaction_type',
 								"the type of the kinetic law",
@@ -141,42 +112,6 @@ class ModelReactionsForm(ModelParentForm):
 
 
 
-	#
-	# def loadReactants(self, reaction):
-	#
-	# 	self.listOfReactants = []
-	# 	for sr in reaction.listOfReactants.values():
-	# 		self.listOfReactants.append(
-	# 				(self.parent.listOfSpecies.index(sr.getSpecies()),
-	# 				sr.stoichiometry.getValueMathFormula()))
-	#
-	#
-	# def loadModifiers(self, reaction):
-	#
-	# 	self.listOfModifiers = []
-	# 	for sr in reaction.listOfModifiers.values():
-	# 		self.listOfModifiers.append(
-	# 				(self.parent.listOfSpecies.index(sr.getSpecies()),
-	# 				sr.stoichiometry.getValueMathFormula()))
-	#
-	#
-	# def loadProducts(self, reaction):
-	#
-	# 	self.listOfProducts = []
-	# 	for sr in reaction.listOfProducts.values():
-	# 		self.listOfProducts.append(
-	# 				(self.parent.listOfSpecies.index(sr.getSpecies()),
-	# 				sr.stoichiometry.getValueMathFormula()))
-	#
-	#
-	# def loadParameters(self, reaction):
-	#
-	# 	self.listOfParameters = []
-	#
-	# 	if reaction.getReactionParameters() is not None:
-	# 		for t_param in reaction.getReactionParameters():
-	# 			self.listOfParameters.append(
-	# 					self.parent.listOfParameters.index(t_param))
 
 	def readReactants(self, request):
 
@@ -247,7 +182,27 @@ class ModelReactionsForm(ModelParentForm):
 
 			self.listOfParameters.append(t_parameter)
 			parameter_id += 1
-			# print self.listOfParameters
+
+	def readLocalParameters(self, request):
+
+		parameter_id = 0
+		self.listOfLocalParameters = []
+
+		while self.existField(request, "local_parameter_%d_name" % parameter_id):
+			t_parameter_name = self.readString(
+				request,
+				'local_parameter_%d_name' % parameter_id,
+				"the name of the local parameter #%d" % parameter_id
+			)
+			t_parameter_value = self.readFloat(
+				request,
+				'local_parameter_%d_value' % parameter_id,
+				"the value of the local parameter #%d" % parameter_id,
+				required=False
+			)
+
+			self.listOfLocalParameters.append((t_parameter_name, t_parameter_value))
+			parameter_id += 1
 
 
 	def saveReactants(self, reaction):

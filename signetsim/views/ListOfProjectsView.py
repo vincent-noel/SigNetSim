@@ -28,13 +28,16 @@ from django.conf import settings
 from signetsim.models import User
 from django.core.files import File
 
-from signetsim.models import Project, SbmlModel#, FittedSbmlModel
+from signetsim.models import Project, SbmlModel, SEDMLSimulation, CombineArchiveModel
 from signetsim.models import Optimization, ContinuationComputation
 from signetsim.models import Experiment, Condition, Observation, Treatment
 
 from signetsim.forms import DocumentForm
-
+from libsignetsim.combine.CombineArchive import CombineArchive
+from libsignetsim.combine.CombineException import CombineException
 from libsignetsim.model.Model import Model
+from libsignetsim.model.SbmlDocument import SbmlDocument
+from libsignetsim.sedml.SedmlDocument import SedmlDocument
 from libsignetsim.model.ModelException import ModelException
 
 from os.path import join, isfile, isdir, basename
@@ -55,6 +58,7 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 		self.createFolderError = None
 		self.sendFolderShow = None
 		self.sendFolderError = None
+		self.fileUploadForm = DocumentForm()
 
 	def get_context_data(self, **kwargs):
 
@@ -65,7 +69,7 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 		kwargs['send_folder_error'] = self.sendFolderError
 		kwargs['send_folder_show'] = self.sendFolderShow
-
+		kwargs['load_project_form'] = self.fileUploadForm
 		return kwargs
 
 
@@ -94,6 +98,9 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 			elif request.POST['action'] == "send_folder":
 				self.sendFolder(request)
+
+			elif request.POST['action'] == "load_folder":
+				self.loadFolder(request)
 
 		return TemplateView.get(self, request, *args, **kwargs)
 
@@ -147,7 +154,7 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 			self.__deleteProjectData(project)
 			self.__deleteProjectOptimizations(project)
 			self.__deleteProjectEquilibriumCurve(project)
-
+			self.__deleteProjectArchives(project)
 			if isdir(join(settings.MEDIA_ROOT, str(project.folder))):
 				rmtree(join(settings.MEDIA_ROOT, str(project.folder)))
 			project.delete()
@@ -197,6 +204,14 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 		for cont in ContinuationComputation.objects.filter(project=project):
 			cont.delete()
 
+
+	def __deleteProjectArchives(self, project):
+
+		for archive in CombineArchiveModel.objects.filter(project=project):
+			filename = join(settings.MEDIA_ROOT, str(archive.archive_file))
+			if isfile(filename):
+				remove(filename)
+			archive.delete()
 
 	def copyProjectModels(self, project, new_project):
 
@@ -274,7 +289,83 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 			self.sendFolderShow = True
 			self.sendFolderError = "Username %s does not exist" % t_username
 
+	def loadFolder(self, request):
 
+		self.fileUploadForm = DocumentForm(request.POST, request.FILES)
+		if self.fileUploadForm.is_valid():
+
+			new_folder = Project(user=request.user)
+			new_folder.save()
+			mkdir(join(settings.MEDIA_ROOT, str(new_folder.folder)))
+
+			new_archive = CombineArchiveModel(project=new_folder, archive_file=request.FILES['docfile'])
+			new_archive.save()
+
+			new_combine_archive = CombineArchive()
+			filename = join(settings.MEDIA_ROOT, str(new_archive.archive_file))
+			t_name = basename(str(new_archive.archive_file))
+			new_folder.name = t_name.split('.')[0]
+			new_folder.save()
+
+			try:
+				new_combine_archive.readArchive(filename)
+
+				for sbml_file in new_combine_archive.getAllSbmls():
+					t_file = File(open(sbml_file, 'r'))
+
+					sbml_model = SbmlModel(project=new_folder, sbml_file=t_file)
+					sbml_model.save()
+
+					try:
+						doc = SbmlDocument()
+
+						doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(sbml_model.sbml_file)))
+
+						sbml_model.name = doc.model.getName()
+						sbml_model.save()
+					except ModelException:
+						name = os.path.splitext(str(sbml_model.sbml_file))[0]
+						sbml_model.name = name
+						sbml_model.save()
+
+
+				for sedml_filename in new_combine_archive.getAllSedmls():
+					sedml_archive = SEDMLSimulation(project=new_folder, sedml_file=File(open(sedml_filename, 'r')))
+					sedml_archive.name = basename(sedml_filename).split('.')[0]
+					sedml_archive.save()
+
+					# Now everything is in the same folder
+					sedml_doc = SedmlDocument()
+					sedml_doc.readSedmlFromFile(join(settings.MEDIA_ROOT, str(sedml_archive.sedml_file)))
+					sedml_doc.listOfModels.removePaths()
+
+					sbml_files = sedml_doc.listOfModels.makeLocalSources()
+
+					for sbml_file in sbml_files:
+
+						if len(SbmlModel.objects.filter(project=new_folder, sbml_file=join(join(str(new_folder.folder), "models"), basename(sbml_file)))) == 0:
+
+							t_file = File(open(sbml_file, 'r'))
+							sbml_model = SbmlModel(project=new_folder, sbml_file=t_file)
+							sbml_model.save()
+							try:
+								doc = SbmlDocument()
+
+								doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(sbml_model.sbml_file)))
+
+								sbml_model.name = doc.model.getName()
+								sbml_model.save()
+							except ModelException:
+								name = os.path.splitext(str(sbml_model.sbml_file))[0]
+								sbml_model.name = name
+								sbml_model.save()
+
+					sedml_doc.writeSedmlToFile(join(settings.MEDIA_ROOT, str(sedml_archive.sedml_file)))
+
+
+
+			except CombineException as e:
+				print e.message
 
 	def loadFolders(self, request):
 		self.listOfFolders = Project.objects.filter(user=request.user)

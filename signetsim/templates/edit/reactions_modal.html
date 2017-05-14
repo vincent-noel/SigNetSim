@@ -28,235 +28,256 @@
         <input type="hidden" name="action" value="save">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">New reaction</h4>
+          <h4 class="modal-title" id="modal_reaction-title">New reaction</h4>
         </div>
         <div class="modal-body">
+          <div id="loading_wait" class="collapse text-center">
+            <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+          </div>
+          <div id="loading_done" class="collapse in">
+            <ul class="nav nav-tabs text-center">
+              <li class="active"><a data-toggle="tab" href="#summary">Summary</a></li>
+              <li><a data-toggle="tab" href="#species">Species</a></li>
+              <li><a data-toggle="tab" href="#kinetic_law">Kinetic law</a></li>
+              <li><a data-toggle="tab" href="#local_parameters">Local parameters</a></li>
+              <li><a data-toggle="tab" href="#annotation">Annotation</a></li>
 
-          <ul class="nav nav-tabs text-center">
-            <li class="active"><a data-toggle="tab" href="#summary">Summary</a></li>
-            <li><a data-toggle="tab" href="#species">Species</a></li>
-            <li><a data-toggle="tab" href="#kinetic_law">Kinetic law</a></li>
-            <li><a data-toggle="tab" href="#annotation">Annotation</a></li>
-
-          </ul>
-          <div class="tab-content">
-            <div id="summary" class="tab-pane fade in active">
-              <br/>
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Summary</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="col-xs-12 text-center"><span id="reaction_summary">N/A</span></td>
-                  </tr>
-                </tbody>
-              </table>
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-12">Reaction name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-12">
-                      <input type="text" class="form-control input-sm" placeholder="<Input reaction name>" id="reaction_name" name="reaction_name" value="">
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-11">Reaction identifier</th>
-                    <th class="col-xs-1"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-11 text-center">
-                      <input type="text" class="form-control input-sm" placeholder="<Input reaction identifier>" id="reaction_sbml_id" name="reaction_sbml_id" value="">
-                    </td>
-                    <td class="col-xs-1" style="vertical-align:middle">
-                      <div id="sbmlid_validating" class="pull-right collapse">
-                        <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
-                      </div>
-                      <div id="sbmlid_valid" class="pull-right collapse">
-                        <span class="glyphicon glyphicon-ok" style="color:#5cb85c;font-size: 1.5em"></span>
-                      </div>
-                      <div id="sbmlid_invalid" class="pull-right collapse">
-                      <span class="glyphicon glyphicon-remove" style="color:#d9534f; vertical-align:bottom; font-size: 1.5em"></span>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-
-            </div>
-            <div id="species" class="tab-pane fade in">
-              <br/>
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-2 text-center">Stoichiometry</th>
-                    <th class="col-xs-8 text-center">Reactants</th>
-                    <th class="col-xs-2 text-right"><button type="button" onclick="add_reactant();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
-                  </tr>
-                </thead>
-                <tbody id="body_reactants">
-
-                </tbody>
-              </table>
-
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-2 text-center">Stoichiometry</th>
-                    <th class="col-xs-8 text-center">Modifiers</th>
-                    <th class="col-xs-2 text-right"><button type="button" onclick="add_modifier();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
-                  </tr>
-                </thead>
-                <tbody id="body_modifiers">
-
-                </tbody>
-              </table>
-
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-2 text-center">Stoichiometry</th>
-                    <th class="col-xs-8 text-center">Products</th>
-                    <th class="col-xs-2 text-right"><button type="button" onclick="add_product();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
-                  </tr>
-                </thead>
-                <tbody id="body_products">
-
-                </tbody>
-              </table>
-            </div>
-            <div id="kinetic_law" class="tab-pane fade in">
-              <br/>
-
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Kinetic law</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="col-xs-12">
-                      <input type="hidden" id="new_reaction_type" name="reaction_type" value="">
-                      <div class="input-group col-xs-12">
-                        <div class="dropdown">
-                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                            <span id="new_reaction_type_label"></span>
-                            <span class="caret"></span>
-                          </button>
-                          <ul id="new_reaction_type_dropdown" class="dropdown-menu">
-                              {% for reaction_type in reaction_types.values %}
-                              <li><a>{{ reaction_type }}</a></li>
-                              {% endfor %}
-                          </ul>
-                        </div>
-                      </div>
-                      <script>
-                        $('#new_reaction_type_dropdown li').on('click', function(){
-                          $("#new_reaction_type_label").html($(this).text());
-                          $('#new_reaction_type').val($(this).index());
-                          select_reaction_type($(this).index());
-                        });
-                      </script>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <table class="table table-striped">
-                <thead>
-                  <tr onclick="toggle_reversible();" >
-                    <th class="col-xs-8">Reversible</th>
-                    <th class="col-xs-4 text-right">
-                      <span class="col-xs-12 input-group">
-                        <label class="switch">
-                          <input type="checkbox" name="reaction_reversible" id="reaction_reversible">
-                          <div class="slider round"></div>
-                        </label>
-                      </span>
-                  </th>
-                  </tr>
-                </thead>
-              </table>
-              <div id="input_kinetic_law" class="collapse">
+            </ul>
+            <div class="tab-content">
+              <div id="summary" class="tab-pane fade in active">
+                <br/>
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Summary</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="col-xs-12 text-center"><span id="reaction_summary">N/A</span></td>
+                    </tr>
+                  </tbody>
+                </table>
                 <table class="table table-striped">
                   <thead>
                     <tr class="row">
-                      <th class="col-xs-11">Kinetic law</th>
+                      <th class="col-xs-12">Reaction name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="row">
+                      <td class="col-xs-12">
+                        <input type="text" class="form-control input-sm" placeholder="<Input reaction name>" id="reaction_name" name="reaction_name" value="">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <table class="table table-striped">
+                  <thead>
+                    <tr class="row">
+                      <th class="col-xs-11">Reaction identifier</th>
                       <th class="col-xs-1"></th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr class="row">
                       <td class="col-xs-11 text-center">
-                          <input type="text" class="form-control input-sm" placeholder="<Input kinetic law>" id="kineticlaw_input" name="reaction_kinetic_law" value="">
+                        <input type="text" class="form-control input-sm" placeholder="<Input reaction identifier>" id="reaction_sbml_id" name="reaction_sbml_id" value="">
                       </td>
                       <td class="col-xs-1" style="vertical-align:middle">
-                        <div id="kineticlaw_validating" class="pull-right collapse">
+                        <div id="sbmlid_validating" class="pull-right collapse">
                           <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
                         </div>
-                        <div id="kineticlaw_valid" class="pull-right collapse">
+                        <div id="sbmlid_valid" class="pull-right collapse">
                           <span class="glyphicon glyphicon-ok" style="color:#5cb85c;font-size: 1.5em"></span>
                         </div>
-                        <div id="kineticlaw_invalid" class="pull-right collapse">
+                        <div id="sbmlid_invalid" class="pull-right collapse">
                         <span class="glyphicon glyphicon-remove" style="color:#d9534f; vertical-align:bottom; font-size: 1.5em"></span>
                         </div>
                       </td>
                     </tr>
                   </tbody>
                 </table>
-              </div>
 
-              <div id="input_parameters" class="collapse">
+
+              </div>
+              <div id="species" class="tab-pane fade in">
+                <br/>
+                <table class="table table-striped">
+                  <thead>
+                    <tr class="row">
+                      <th class="col-xs-3 text-center">Stoichiometry</th>
+                      <th class="col-xs-7 text-center">Reactants</th>
+                      <th class="col-xs-2 text-right"><button type="button" onclick="add_reactant();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
+                    </tr>
+                  </thead>
+                  <tbody id="body_reactants">
+
+                  </tbody>
+                </table>
+
+                <table class="table table-striped">
+                  <thead>
+                    <tr class="row">
+                      <th class="col-xs-3 text-center">Stoichiometry</th>
+                      <th class="col-xs-7 text-center">Modifiers</th>
+                      <th class="col-xs-2 text-right"><button type="button" onclick="add_modifier();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
+                    </tr>
+                  </thead>
+                  <tbody id="body_modifiers">
+
+                  </tbody>
+                </table>
+
+                <table class="table table-striped">
+                  <thead>
+                    <tr class="row">
+                      <th class="col-xs-3 text-center">Stoichiometry</th>
+                      <th class="col-xs-7 text-center">Products</th>
+                      <th class="col-xs-2 text-right"><button type="button" onclick="add_product();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
+                    </tr>
+                  </thead>
+                  <tbody id="body_products">
+
+                  </tbody>
+                </table>
+              </div>
+              <div id="kinetic_law" class="tab-pane fade in">
+                <br/>
+
                 <table class="table table-striped">
                   <thead>
                     <tr>
-                      <th>Parameters</th>
-                      <th></th>
+                      <th>Kinetic law</th>
                     </tr>
                   </thead>
-                  <tbody id="body_parameters">
-                   </tbody>
+                  <tbody>
+                    <tr>
+                      <td class="col-xs-12">
+                        <input type="hidden" id="new_reaction_type" name="reaction_type" value="">
+                        <div class="input-group col-xs-12">
+                          <div class="dropdown">
+                            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                              <span id="new_reaction_type_label"></span>
+                              <span class="caret"></span>
+                            </button>
+                            <ul id="new_reaction_type_dropdown" class="dropdown-menu">
+                                {% for reaction_type in reaction_types.values %}
+                                <li><a>{{ reaction_type }}</a></li>
+                                {% endfor %}
+                            </ul>
+                          </div>
+                        </div>
+                        <script>
+                          $('#new_reaction_type_dropdown li').on('click', function(){
+                            $("#new_reaction_type_label").html($(this).text());
+                            $('#new_reaction_type').val($(this).index());
+                            select_reaction_type($(this).index());
+                          });
+                        </script>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <table class="table table-striped">
+                  <thead>
+                    <tr onclick="toggle_reversible();" >
+                      <th class="col-xs-8">Reversible</th>
+                      <th class="col-xs-4 text-right">
+                        <span class="col-xs-12 input-group">
+                          <label class="switch">
+                            <input type="checkbox" name="reaction_reversible" id="reaction_reversible">
+                            <div class="slider round"></div>
+                          </label>
+                        </span>
+                    </th>
+                    </tr>
+                  </thead>
+                </table>
+                <div id="input_kinetic_law" class="collapse">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr class="row">
+                        <th class="col-xs-11">Kinetic law</th>
+                        <th class="col-xs-1"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="row">
+                        <td class="col-xs-11 text-center">
+                            <input type="text" class="form-control input-sm" placeholder="<Input kinetic law>" id="kineticlaw_input" name="reaction_kinetic_law" value="">
+                        </td>
+                        <td class="col-xs-1" style="vertical-align:middle">
+                          <div id="kineticlaw_validating" class="pull-right collapse">
+                            <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+                          </div>
+                          <div id="kineticlaw_valid" class="pull-right collapse">
+                            <span class="glyphicon glyphicon-ok" style="color:#5cb85c;font-size: 1.5em"></span>
+                          </div>
+                          <div id="kineticlaw_invalid" class="pull-right collapse">
+                          <span class="glyphicon glyphicon-remove" style="color:#d9534f; vertical-align:bottom; font-size: 1.5em"></span>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div id="input_parameters" class="collapse">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Parameters</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="body_parameters">
+                     </tbody>
+                  </table>
+                </div>
+              </div>
+              <div id="local_parameters" class="tab-pane fade in">
+                <br/>
+                <table class="table table-striped">
+                  <thead>
+                    <tr class="row">
+                      <th class="col-xs-6">Name</th>
+                      <th class="col-xs-4">Value</th>
+                      <th class="col-xs-2 text-right">
+                        <button type="button" onclick="add_local_parameter('', '');"
+                                class="btn btn-primary btn-xs"
+                        >{% bootstrap_icon "plus" %}</button>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="table_local_parameters">
+                  </tbody>
                 </table>
               </div>
-
+              <div id="annotation" class="tab-pane fade in">
+                <br/>
+                <table class="table table-striped">
+                  <thead>
+                    <tr class="row">
+                      <th class="col-xs-12">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="row">
+                      <td class="col-xs-12">
+                        <div class="form-group">
+                          <textarea class="form-control" id="reaction_notes" name="reaction_notes" rows="10"></textarea>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div id="annotation" class="tab-pane fade in">
-              <br/>
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-12">Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-12">
-                      <div class="form-group">
-                        <textarea class="form-control" id="reaction_notes" name="reaction_notes" rows="10"></textarea>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            {% include 'commons/error_modal.html' %}
           </div>
-          {% include 'commons/error_modal.html' %}
-
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

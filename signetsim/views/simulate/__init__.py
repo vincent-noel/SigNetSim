@@ -25,3 +25,4 @@
 from TimeSeriesSimulationView import TimeSeriesSimulationView
 from SteadyStatesSimulationView import SteadyStateSimulationView
 from ListOfSimulationsView import ListOfSimulationsView
+from SedmlSimulationView import SedmlSimulationView

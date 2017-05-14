@@ -38,6 +38,10 @@ def new_sedml_filename():
 	rand_string = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(6))
 	return "simulation{0}.xml".format(rand_string)
 
+def new_archive_filename():
+	rand_string = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(6))
+	return "archive{0}.omex".format(rand_string)
+
 def new_project_folder():
 	rand_string = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(6))
 	while os.path.isdir(os.path.join(settings.MEDIA_ROOT, rand_string)):
@@ -45,26 +49,42 @@ def new_project_folder():
 	return rand_string
 
 
-def model_filename(instance, filename):
+def archive_filename(instance, filename):
 
 	path = dirname(filename)
 	filename = basename(filename)
-	full_path = join(join(path, str(instance.project.folder)), "models")
+	# full_path = join(join(path, str(instance.project.folder)), "models")
+	full_path = join(str(instance.project.folder), "models")
 	full_filename = join(full_path, filename)
 
+	while os.path.isfile(full_filename):
+		full_filename = join(full_path, new_archive_filename())
+	return full_filename
+
+
+def model_filename(instance, filename):
+	print filename
+	path = dirname(filename)
+	filename = basename(filename)
+	# full_path = join(join(path, str(instance.project.folder)), "models")
+	full_path = join(str(instance.project.folder), "models")
+	full_filename = join(full_path, filename)
+	# print full_filename
 	while os.path.isfile(full_filename):
 		full_filename = join(full_path, new_model_filename())
 	return full_filename
 
 def sedml_filename(instance, filename):
+	print filename
 	path = dirname(filename)
 	filename = basename(filename)
-	full_path = join(join(path, str(instance.project.folder)), "simulations")
+	# full_path = join(join(path, str(instance.project.folder)), "models")
+	full_path = join(str(instance.project.folder), "models")
 	full_filename = join(full_path, filename)
 
 	while os.path.isfile(full_filename):
 		full_filename = join(full_path, new_sedml_filename())
-	return filename
+	return full_filename
 
 
 class User(AbstractUser):
@@ -99,8 +119,12 @@ class SbmlModel(models.Model):
 	sbml_file = models.FileField(upload_to=model_filename)
 
 
+class CombineArchiveModel(models.Model):
+	project = models.ForeignKey(Project)
+	archive_file = models.FileField(upload_to=archive_filename)
+
 class SEDMLSimulation(models.Model):
-	sbml_model = models.ForeignKey(SbmlModel)
+	project = models.ForeignKey(Project)
 	name = models.CharField(max_length=255, null=True)
 	sedml_file = models.FileField(upload_to=sedml_filename)
 

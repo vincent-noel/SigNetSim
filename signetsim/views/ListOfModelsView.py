@@ -148,9 +148,6 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 
 	def loadModel(self, request):
 
-		# print request.FILES
-		# print request.POST
-
 		self.fileUploadForm = DocumentForm(request.POST, request.FILES)
 		if self.fileUploadForm.is_valid():
 

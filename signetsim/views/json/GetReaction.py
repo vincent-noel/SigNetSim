@@ -82,6 +82,10 @@ class GetReaction(JsonView, HasWorkingModel):
 			'list_of_parameters': [
 				list_of_parameters.index(t_param) for t_param in reaction.getReactionParameters()
 			],
+			'list_of_local_parameters': [
+				[param.getNameOrSbmlId(), "" if param.getValue() is None else param.getValue()] for param in reaction.listOfLocalParameters.values()
+			]
+			,
 			'notes': "" if reaction.getNotes() is None else reaction.getNotes(),
 
 		})
