@@ -16,7 +16,7 @@
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
 {% load tags %}
-{% for t,y in sim_results %}
+{% for t,y, name in sim_results %}
 var config_{{forloop.counter0}}=
 {
     type: 'line',
@@ -68,12 +68,7 @@ var config_{{forloop.counter0}}=
         ],
     },
 
-    title:
-    {
-      display: true,
-      text: " Condition #{{forloop.counter0}}",
 
-    },
 
 
     legend:
@@ -112,7 +107,13 @@ var config_{{forloop.counter0}}=
                     suggestedMax: {{y_max}},
                 }
             }],
-        }
+        },
+        title:
+        {
+          display: true,
+          text: " Condition #{{forloop.counter0}} : {{name}}",
+
+        },
     }
 };
 {% endfor %}

@@ -40,6 +40,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.simulate.SteadyStatesSimulationForm import SteadyStateSimulationForm
 from signetsim.models import SbmlModel
+from signetsim.settings.Settings import Settings
 # from re import split
 
 class SteadyStateSimulationView(TemplateView, HasWorkingModel):
@@ -95,7 +96,7 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 		kwargs['t_unit'] = self.t_unit
 		kwargs['y_unit'] = self.y_unit
 		kwargs['y_max'] = self.y_max
-		kwargs['colors'] = ["#FFB300",   "#803E75",   "#FF6800",   "#A6BDD7",   "#C10020",   "#CEA262",   "#817066",   "#007D34",   "#F6768E",   "#00538A",   "#FF7A5C",   "#53377A",   "#FF8E00",   "#B32851",   "#F4C800",  "#7F180D",   "#93AA00",   "#593315",   "#F13A13",   "#232C16"]
+		kwargs['colors'] = Settings.default_colors
 
 		kwargs['simulation_results_loaded'] = self.simulationResultsLoaded
 

@@ -63,7 +63,7 @@ def archive_filename(instance, filename):
 
 
 def model_filename(instance, filename):
-	print filename
+	# print filename
 	path = dirname(filename)
 	filename = basename(filename)
 	# full_path = join(join(path, str(instance.project.folder)), "models")
@@ -75,7 +75,7 @@ def model_filename(instance, filename):
 	return full_filename
 
 def sedml_filename(instance, filename):
-	print filename
+	# print filename
 	path = dirname(filename)
 	filename = basename(filename)
 	# full_path = join(join(path, str(instance.project.folder)), "models")

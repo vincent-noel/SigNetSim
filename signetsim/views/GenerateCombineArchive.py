@@ -28,6 +28,7 @@ from signetsim.models import Project, SbmlModel, SEDMLSimulation, CombineArchive
 from libsignetsim.combine.CombineArchive import CombineArchive
 from django.conf import settings
 from os.path import join, basename, isfile
+from os import remove
 from django.shortcuts import redirect
 from django.core.files import File
 
@@ -62,7 +63,6 @@ class GenerateCombineArchive(TemplateView):
 
 		combine_archive = CombineArchive()
 		for sbml_model in SbmlModel.objects.filter(project=project):
-			print join(settings.MEDIA_ROOT, str(sbml_model.sbml_file))
 			combine_archive.addFile(join(settings.MEDIA_ROOT, str(sbml_model.sbml_file)))
 
 		for sedml_model in SEDMLSimulation.objects.filter(project=project):
