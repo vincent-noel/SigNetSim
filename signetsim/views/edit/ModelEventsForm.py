@@ -70,7 +70,7 @@ class ModelEventsForm(ModelParentForm):
 
 			t_pos = assignment.getVariable()
 			t_var_pos = self.parent.listOfVariables.index(t_pos)
-			self.assignments.append((t_var_pos, assignment.getAssignment()))
+			self.assignments.append((t_var_pos, assignment.getDefinition().getPrettyPrintMathFormula()))
 		self.isEditing = True
 
 	def save(self, event):

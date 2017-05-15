@@ -50,6 +50,15 @@ class GetReaction(JsonView, HasWorkingModel):
 		for parameter in reaction.listOfLocalParameters.values():
 			list_of_parameters.append(parameter)
 
+		t_reaction_type = reaction.getReactionType()
+		t_reaction_parameters = reaction.getReactionParameters()
+		t_reaction_parameters_index = []
+		if t_reaction_parameters is not None:
+			for t_param in t_reaction_parameters:
+				t_reaction_parameters_index.append(list_of_parameters.index(t_param))
+		else:
+			t_reaction_type = KineticLaw.UNDEFINED
+
 		self.data.update({
 			'id': self.getModel().listOfReactions.values().index(reaction),
 			'name': "" if reaction.getName() is None else reaction.getName(),
@@ -76,12 +85,11 @@ class GetReaction(JsonView, HasWorkingModel):
 				for product in reaction.listOfProducts.values()
 			],
 			'kinetic_law': reaction.kineticLaw.getPrettyPrintMathFormula(),
-			'reaction_type': reaction.getReactionType(),
-			'reaction_type_name': KineticLaw.reactionTypes[reaction.getReactionType()],
+			'reaction_type': t_reaction_type,
+			'reaction_type_name': KineticLaw.reactionTypes[t_reaction_type],
 			'reversible': 1 if reaction.reversible else 0,
-			'list_of_parameters': [
-				list_of_parameters.index(t_param) for t_param in reaction.getReactionParameters()
-			],
+			'list_of_parameters': [] if t_reaction_parameters is None else t_reaction_parameters_index
+			,
 			'list_of_local_parameters': [
 				[param.getNameOrSbmlId(), "" if param.getValue() is None else param.getValue()] for param in reaction.listOfLocalParameters.values()
 			]

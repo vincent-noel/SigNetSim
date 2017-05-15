@@ -90,7 +90,7 @@ class ModelEventsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		if self.isModelLoaded():
 			self.listOfEvents = self.getModel().listOfEvents.values()
 			self.getModel().listOfVariables.classifyVariables()
-			self.listOfVariables = [var for var in self.getModel().listOfVariables.values() if var.isConstant() or var.isAssignment()]
+			self.listOfVariables = [var for var in self.getModel().listOfVariables.values()]# if var.isConstant() or var.isAssignment()]
 
 	def delete(self, request):
 
