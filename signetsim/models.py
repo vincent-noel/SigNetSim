@@ -91,7 +91,7 @@ class User(AbstractUser):
 	"""
 	Custom user class.
 	"""
-	fullname = models.CharField(max_length=255, null=True)
+	organization = models.CharField(max_length=255, null=True)
 	max_cores = models.IntegerField(null=2)
 
 

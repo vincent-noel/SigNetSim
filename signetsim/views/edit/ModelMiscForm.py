@@ -75,7 +75,7 @@ class ModelMiscForm(ModelParentForm):
 		if self.parent.getModel().getConversionFactor() is not None:
 			self.scalingFactor = self.parent.listOfParameters.index(self.parent.getModel().getConversionFactor())
 
-		self.sbmlLevel = self.parent.getModel().getLevels().index(self.parent.getModel().sbmlLevel)
+		self.sbmlLevel = self.parent.getModel().getSbmlLevels().index(self.parent.getModel().sbmlLevel)
 
 
 

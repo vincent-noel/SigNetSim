@@ -257,7 +257,39 @@
                 </table>
               </div>
               <div id="annotation" class="tab-pane fade in">
-                <br/>
+                <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-10">SBO term</th>
+                    <th class="col-xs-2"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-10 text-center">
+                      <div class="collapse in" id="edit_SBO_term_off">
+                        <a id="sboterm_link" target="_blank">
+                          <span id="sboterm_name"></span>
+                        </a>
+                      </div>
+                      <div class="collapse out" id="edit_SBO_term_on">
+                        <input type="text" class="form-control input-sm" placeholder="<Input SBO term>" id="sboterm" name="reaction_sboterm" value="">
+                      </div>
+                    </td>
+                    <td class="col-xs-2">
+                      {% if user.is_authenticated %}
+                      <div class="pull-right collapse in" id="edit_SBO_term_on_actions">
+                          <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_SBO_term">{% bootstrap_icon "pencil" %}</button>
+                      </div>
+                      <div class="pull-right collapse" id="edit_SBO_term_off_actions">
+                        <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_SBO_term_cancel">{% bootstrap_icon "remove" %}</button>
+                        <button type="button" onclick="resolve_sbo();" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
+                      </div>
+                      {% endif %}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
                 <table class="table table-striped">
                   <thead>
                     <tr class="row">
@@ -268,7 +300,7 @@
                     <tr class="row">
                       <td class="col-xs-12">
                         <div class="form-group">
-                          <textarea class="form-control" id="reaction_notes" name="reaction_notes" rows="10"></textarea>
+                          <textarea class="form-control" id="reaction_notes" name="reaction_notes" rows="5"></textarea>
                         </div>
                       </td>
                     </tr>

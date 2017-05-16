@@ -47,6 +47,7 @@ class ModelReactionsForm(ModelParentForm):
 		self.listOfLocalParameters = None
 		self.KineticLaw = None
 		self.editKineticLawErrors = None
+		self.SBOTerm = None
 
 	def save(self, reaction):
 
@@ -74,6 +75,8 @@ class ModelReactionsForm(ModelParentForm):
 					t_parameter.new(param_name, param_value)
 					reaction.listOfLocalParameters.add(t_parameter)
 
+			if self.SBOTerm is not None:
+				reaction.getAnnotation().setSBOTerm(self.SBOTerm)
 		except ModelException as e:
 			self.addError(e.message)
 
@@ -110,7 +113,9 @@ class ModelReactionsForm(ModelParentForm):
 		self.reversible = self.readOnOff(request, 'reaction_reversible',
 									"the reversible status of the reaction")
 
-
+		self.SBOTerm = self.readInt(request, 'reaction_sboterm',
+									"The SBO term of the reaction",
+									required=False)
 
 
 	def readReactants(self, request):

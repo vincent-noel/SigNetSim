@@ -57,3 +57,4 @@ function form_remove_error_highlight(form_id)
     $("#" + form_id + "_group").removeClass("has-error");
 
 }
+

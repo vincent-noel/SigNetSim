@@ -40,6 +40,8 @@ class ModelSpeciesForm(ModelParentForm):
 		self.unit = None
 		self.notes = None
 		self.isConcentration = None
+		self.SBOTerm = None
+
 
 	def save(self, species):
 
@@ -60,6 +62,8 @@ class ModelSpeciesForm(ModelParentForm):
 				species.setUnits(None)
 
 			species.setNotes(self.notes)
+			if self.SBOTerm is not None:
+				species.getAnnotation().setSBOTerm(self.SBOTerm)
 
 		except ModelException as e:
 			self.addError(e.message)
@@ -98,3 +102,6 @@ class ModelSpeciesForm(ModelParentForm):
 		self.boundaryCondition = self.readOnOff(request, 'species_boundary',
 								"The boundary condition property of the species")
 
+		self.SBOTerm = self.readInt(request, 'species_sboterm',
+								"The SBO term of the species",
+								 required=False)

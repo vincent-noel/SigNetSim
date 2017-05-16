@@ -51,6 +51,12 @@ class GetCompartment(JsonView, HasWorkingModel):
 			'unit_id': "" if compartment.getUnits() is None else self.getModel().listOfUnitDefinitions.values().index(compartment.getUnits()),
 			'notes': "" if compartment.getNotes() is None else compartment.getNotes()
 		})
+		if compartment.getAnnotation().getSBOTerm() is not None:
+			self.data.update({
+				'sboterm': compartment.getAnnotation().getSBOTerm(),
+				'sboterm_name': compartment.getAnnotation().getSBOTermDescription()
+			})
+
 		return JsonView.post(self, request, *args, **kwargs)
 
 

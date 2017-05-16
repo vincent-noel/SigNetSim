@@ -51,7 +51,7 @@
                 <input type="hidden" name="id" value="{{ project.id }}">
                 <button type="button" class="btn btn-xs btn-primary" id="send_{{project.folder}}" title="Send folder">{% bootstrap_icon "send" %}</button>
                 <button type="submit" name="action" value="copy_folder" class="btn btn-xs btn-primary" tite="Duplicate folder">{% bootstrap_icon "duplicate" %}</button>
-                <a href="{% url 'project_archive' forloop.counter0 %}" style="display: inline-block">
+                <a href="{% url 'project_archive' forloop.counter0 %}" style="display: inline-block" target="_blank">
                   <button type="button" class="btn btn-xs btn-default" title="Download as COMBINE archive">{% bootstrap_icon "download-alt" %}</button>
                 </a>
                 <button type="submit" name="action" value="delete_folder" class="btn btn-primary btn-xs btn-danger" title="Remove folder">{% bootstrap_icon "trash" %}</button>

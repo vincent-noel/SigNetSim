@@ -60,6 +60,11 @@ class GetSpecies(JsonView, HasWorkingModel):
 				'unit_name': "" if species.getUnits().getName() is None else species.getUnits().getName(),
 				'unit_id': self.getModel().listOfUnitDefinitions.values().index(species.getUnits()),
 			})
+		if species.getAnnotation().getSBOTerm() is not None:
+			self.data.update({
+				'sboterm': species.getAnnotation().getSBOTerm(),
+				'sboterm_name': species.getAnnotation().getSBOTermDescription()
+			})
 
 		return JsonView.post(self, request, *args, **kwargs)
 

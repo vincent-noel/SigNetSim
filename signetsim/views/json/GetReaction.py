@@ -97,6 +97,12 @@ class GetReaction(JsonView, HasWorkingModel):
 			'notes': "" if reaction.getNotes() is None else reaction.getNotes(),
 
 		})
+		if reaction.getAnnotation().getSBOTerm() is not None:
+			self.data.update({
+				'sboterm': reaction.getAnnotation().getSBOTerm(),
+				'sboterm_name': reaction.getAnnotation().getSBOTermDescription()
+			})
+
 		return JsonView.post(self, request, *args, **kwargs)
 
 

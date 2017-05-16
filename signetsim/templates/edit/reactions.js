@@ -660,6 +660,11 @@ function view_reaction(sbml_id)
                     $("#specie_notes").val(element.toString());
 
                 }
+                else if (index == "sboterm") {
+                   $("#sboterm").val(element.toString());
+                   $("#sboterm_link").attr("href", "http://www.ebi.ac.uk/sbo/main/display?nodeId=" + element.toString());
+                }
+                else if (index == "sboterm_name") { $("#sboterm_name").html(element.toString()); }
             });
 
            $.each(data, function(index, element) {
@@ -835,3 +840,4 @@ function save_reaction()
 {
     $("#save_reaction_form").submit();
 }
+

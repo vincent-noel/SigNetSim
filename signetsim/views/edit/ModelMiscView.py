@@ -25,6 +25,7 @@
 from django.views.generic import TemplateView
 from django.core.urlresolvers import reverse
 
+from libsignetsim.uris.URI import URI
 from libsignetsim.settings.Settings import Settings
 
 from signetsim.models import SbmlModel
@@ -45,7 +46,8 @@ class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 		self.listOfUnits = None
 		self.listOfParameters = None
 		self.sbmlLevels = None
-
+		self.modelHistory = None
+		self.modelPublication = None
 		self.form = ModelMiscForm(self)
 
 
@@ -59,7 +61,8 @@ class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 		kwargs['list_of_units'] = [unit.getName() for unit in self.listOfUnits]
 		kwargs['list_of_parameters'] = [parameter.getNameOrSbmlId() for parameter in self.listOfParameters]
 		kwargs['sbml_levels'] = self.sbmlLevels
-
+		kwargs['model_history'] = self.modelHistory
+		kwargs['model_publication'] = self.modelPublication
 		kwargs['form'] = self.form
 
 
@@ -120,6 +123,8 @@ class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == "choose_sbml_level":
 				self.saveSbmlLevel(request)
 
+			elif request.POST['action'] == "set_model_publication":
+				self.setModelPublication(request)
 
 		self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
@@ -136,9 +141,11 @@ class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 		if self.isModelLoaded():
 			self.listOfUnits = self.getModel().listOfUnitDefinitions.values()
 			self.listOfParameters = self.getModel().listOfParameters.values()
-			self.sbmlLevels = self.getModel().getLevels()
+			self.sbmlLevels = self.getModel().getSbmlLevels()
 			self.form.load()
-
+			self.modelHistory = self.getModel().modelHistory
+			if len(self.getModel().getAnnotation().getIsDescribedBy()) > 0:
+				self.modelPublication = self.getModel().getAnnotation().getIsDescribedBy()[0]
 
 	def saveTimeUnit(self, request):
 		self.form.readTimeUnit(request)
@@ -201,3 +208,18 @@ class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 		self.form.readSbmlLevel(request)
 		self.form.saveSbmlLevel()
 		self.saveModel(request)
+
+	def setModelPublication(self, request):
+
+		if str(request.POST['model_publication_pubmed_id']) != "":
+			t_uri = URI()
+			t_uri.setPubmed(request.POST['model_publication_pubmed_id'])
+			self.getModel().getAnnotation().addIsDesribedBy(t_uri)
+		else:
+			self.getModel().getAnnotation().clearIsDescribedBy()
+
+		self.saveModel(request)
+		if len(self.getModel().getAnnotation().getIsDescribedBy()) > 0:
+			self.modelPublication = self.getModel().getAnnotation().getIsDescribedBy()[0]
+		else:
+			self.modelPublication = None

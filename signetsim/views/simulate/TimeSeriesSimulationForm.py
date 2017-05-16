@@ -42,13 +42,6 @@ class TimeSeriesSimulationForm(HasErrorMessages):
 		self.timeMax = None
 		self.showObservations = None
 
-	# For SED-ML later
-	# def load(self):
-	#     pass
-	#
-	# def save(self):
-	#     pass
-
 
 	def read(self, request):
 
@@ -63,6 +56,7 @@ class TimeSeriesSimulationForm(HasErrorMessages):
 									"the list of species to print",
 									required=False,
 									max_value=len(self.parent_view.listOfVariables))
+
 
 	def read_selected_reactions(self, request):
 

@@ -64,6 +64,12 @@ class GetParameter(JsonView, HasWorkingModel):
 			'unit_id': "" if parameter.getUnits() is None else self.getModel().listOfUnitDefinitions.values().index(parameter.getUnits()),
 			'notes': "" if parameter.getNotes() is None else parameter.getNotes()
 		})
+		if parameter.getAnnotation().getSBOTerm() is not None:
+			self.data.update({
+				'sboterm': parameter.getAnnotation().getSBOTerm(),
+				'sboterm_name': parameter.getAnnotation().getSBOTermDescription()
+			})
+
 		return JsonView.post(self, request, *args, **kwargs)
 
 

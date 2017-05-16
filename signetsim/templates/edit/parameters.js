@@ -194,6 +194,11 @@ function view_parameter(sbml_id, reaction)
                    $("#parameter_notes").val(element.toString());
 
                }
+                else if (index == "sboterm") {
+                   $("#sboterm").val(element.toString());
+                   $("#sboterm_link").attr("href", "http://www.ebi.ac.uk/sbo/main/display?nodeId=" + element.toString());
+                }
+                else if (index == "sboterm_name") { $("#sboterm_name").html(element.toString()); }
            });
 
            setSbmlIdEmpty();

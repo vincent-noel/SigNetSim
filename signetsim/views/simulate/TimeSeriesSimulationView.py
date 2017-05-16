@@ -39,6 +39,7 @@ from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.models import SbmlModel, Experiment, Condition, Observation, Treatment, SEDMLSimulation
 from signetsim.settings.Settings import Settings
 from TimeSeriesSimulationForm import TimeSeriesSimulationForm
+from django.shortcuts import redirect
 
 from libsignetsim.sedml.SedmlDocument import SedmlDocument
 from os.path import basename, join
@@ -125,6 +126,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel):
 
 			elif request.POST['action'] == "save_simulation":
 				self.saveSimulation(request)
+				redirect('list_of_simulations')
 
 		return TemplateView.get(self, request, *args, **kwargs)
 
@@ -136,8 +138,6 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel):
 			self.loadVariables()
 			self.loadReactions()
 			self.loadExperiments(request)
-
-
 
 
 	def simulate_timeseries(self, request):
@@ -182,9 +182,10 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel):
 					t_name = self.listOfReactions[var].getNameOrSbmlId()
 					y_filtered.update({t_name:t_y[t_sbml_id]})
 
-			self.simResults.append((t_t, y_filtered, self.experiment.listOfConditions[i].name))
-
-
+			if self.experiment is not None:
+				self.simResults.append((t_t, y_filtered, self.experiment.listOfConditions[i].name))
+			else:
+				self.simResults.append((t_t, y_filtered, ""))
 		tmax=0
 		for time, y_values,_ in self.simResults:
 			for key, value in y_values.items():
@@ -258,39 +259,93 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel):
 			simulation.getAlgorithm().setCVODE()
 
 
+			if self.form.experimentId is not None:
 
-			self.loadExperiments(request)
-			t_experiment_id = self.experiments[self.form.experimentId].id
-			experiment = Experiment.objects.get(id=t_experiment_id)
-			conditions = Condition.objects.filter(experiment=experiment)
+				self.loadExperiments(request)
+				t_experiment_id = self.experiments[self.form.experimentId].id
+				experiment = Experiment.objects.get(id=t_experiment_id)
+				conditions = Condition.objects.filter(experiment=experiment)
 
-			self.nbConditions = len(conditions)
-			self.experimentName = experiment.name
-			self.experiment = SigNetSimExperiment()
-			self.conditionNames = []
-			self.observations = []
+				self.nbConditions = len(conditions)
+				self.experimentName = experiment.name
+				self.experiment = SigNetSimExperiment()
+				self.conditionNames = []
+				self.observations = []
 
-			for i, condition in enumerate(conditions):
-				input_data = Treatment.objects.filter(condition=condition)
+				for i, condition in enumerate(conditions):
+					input_data = Treatment.objects.filter(condition=condition)
+
+					model = sedml_doc.listOfModels.createModel()
+					model.setLanguageSbml()
+					model.setSource(self.model_filename)
+
+					for data in input_data:
+
+						var = None
+						if self.getModel().listOfSpecies.containsName(data.species):
+							var = self.getModel().listOfSpecies.getByName(data.species)
+						elif self.getModel().listOfParameters.containsName(data.species):
+							var = self.getModel().listOfParameters.getByName(data.species)
+						elif self.getModel().listOfCompartments.containsName(data.species):
+							var = self.getModel().listOfCompartments.getByName(data.species)
+
+						if var is not None:
+							change = model.listOfChanges.createChangeAttribute()
+							change.setTarget(var)
+							change.setNewValue(data.value)
+
+					task = sedml_doc.listOfTasks.createTask()
+					task.setModel(model)
+					task.setSimulation(simulation)
+
+					data_time = sedml_doc.listOfDataGenerators.createDataGenerator()
+					data_time.setName("Time")
+					var_time = data_time.listOfVariables.createVariable("time_%d" % i)
+					var_time.setTask(task)
+					var_time.setModel(model)
+					var_time.setSymbolTime()
+					data_time.getMath().setInternalMathFormula(var_time.getSympySymbol())
+
+					plot2D = sedml_doc.listOfOutputs.createPlot2D()
+
+					plot2D.setName(str(condition.name))
+					i_var = 0
+					if self.form.selectedSpeciesIds is not None:
+						for id_var in self.form.selectedSpeciesIds:
+							i_var += 1
+							data = sedml_doc.listOfDataGenerators.createDataGenerator("data_%d_%d" % (i, i_var))
+							data.setName(self.listOfVariables[id_var].getNameOrSbmlId())
+							var = data.listOfVariables.createVariable("var_%d_%d" % (i, i_var))
+							var.setTask(task)
+							var.setModel(model)
+							var.setTarget(self.listOfVariables[id_var])
+							data.getMath().setInternalMathFormula(var.getSympySymbol())
+
+							curve = plot2D.listOfCurves.createCurve("curve_%d_%d" % (i, i_var))
+							curve.setXData(data_time)
+							curve.setYData(data)
+
+
+					if self.form.selectedReactionsIds is not None:
+						for id_var in self.form.selectedReactionsIds:
+							i_var += 1
+							data = sedml_doc.listOfDataGenerators.createDataGenerator("data_%d_%d" % (i, i_var))
+							data.setName(self.listOfVariables[id_var].getNameOrSbmlId())
+							var = data.listOfVariables.createVariable("var_%d_%d" % (i, i_var))
+							var.setTask(task)
+							var.setModel(model)
+							var.setTarget(self.listOfVariables[id_var])
+							data.getMath().setInternalMathFormula(var.getSympySymbol())
+
+							curve = plot2D.listOfCurves.createCurve("curve_%d_%d" % (i, i_var))
+							curve.setXData(data_time)
+							curve.setYData(data)
+
+			else:
 
 				model = sedml_doc.listOfModels.createModel()
 				model.setLanguageSbml()
 				model.setSource(self.model_filename)
-
-				for data in input_data:
-
-					var = None
-					if self.getModel().listOfSpecies.containsName(data.species):
-						var = self.getModel().listOfSpecies.getByName(data.species)
-					elif self.getModel().listOfParameters.containsName(data.species):
-						var = self.getModel().listOfParameters.getByName(data.species)
-					elif self.getModel().listOfCompartments.containsName(data.species):
-						var = self.getModel().listOfCompartments.getByName(data.species)
-
-					if var is not None:
-						change = model.listOfChanges.createChangeAttribute()
-						change.setTarget(var)
-						change.setNewValue(data.value)
 
 				task = sedml_doc.listOfTasks.createTask()
 				task.setModel(model)
@@ -298,7 +353,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel):
 
 				data_time = sedml_doc.listOfDataGenerators.createDataGenerator()
 				data_time.setName("Time")
-				var_time = data_time.listOfVariables.createVariable("time_%d" % i)
+				var_time = data_time.listOfVariables.createVariable("time")
 				var_time.setTask(task)
 				var_time.setModel(model)
 				var_time.setSymbolTime()
@@ -306,40 +361,37 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel):
 
 				plot2D = sedml_doc.listOfOutputs.createPlot2D()
 
-				plot2D.setName(str(condition.name))
+				plot2D.setName("Simulation")
 				i_var = 0
 				if self.form.selectedSpeciesIds is not None:
-					for i_var in self.form.selectedSpeciesIds:
+					for id_var in self.form.selectedSpeciesIds:
 						i_var += 1
-						data = sedml_doc.listOfDataGenerators.createDataGenerator("data_%d_%d" % (i, i_var))
-						data.setName(self.listOfVariables[i_var].getNameOrSbmlId())
-						var = data.listOfVariables.createVariable("var_%d_%d" % (i, i_var))
+						data = sedml_doc.listOfDataGenerators.createDataGenerator("data_%d" % i_var)
+						data.setName(self.listOfVariables[id_var].getNameOrSbmlId())
+						var = data.listOfVariables.createVariable("var_%d" % i_var)
 						var.setTask(task)
 						var.setModel(model)
-						var.setTarget(self.listOfVariables[i_var])
+						var.setTarget(self.listOfVariables[id_var])
 						data.getMath().setInternalMathFormula(var.getSympySymbol())
 
-						curve = plot2D.listOfCurves.createCurve("curve_%d_%d" % (i, i_var))
+						curve = plot2D.listOfCurves.createCurve("curve_%d" % i_var)
 						curve.setXData(data_time)
 						curve.setYData(data)
-
 
 				if self.form.selectedReactionsIds is not None:
-					for i_var in self.form.selectedReactionsIds:
+					for id_var in self.form.selectedReactionsIds:
 						i_var += 1
-						data = sedml_doc.listOfDataGenerators.createDataGenerator("data_%d_%d" % (i, i_var))
-						data.setName(self.listOfVariables[i_var].getNameOrSbmlId())
-						var = data.listOfVariables.createVariable("var_%d_%d" % (i, i_var))
+						data = sedml_doc.listOfDataGenerators.createDataGenerator("data_%d" % i_var)
+						data.setName(self.listOfVariables[id_var].getNameOrSbmlId())
+						var = data.listOfVariables.createVariable("var_%d" % i_var)
 						var.setTask(task)
 						var.setModel(model)
-						var.setTarget(self.listOfVariables[i_var])
+						var.setTarget(self.listOfVariables[id_var])
 						data.getMath().setInternalMathFormula(var.getSympySymbol())
 
-						curve = plot2D.listOfCurves.createCurve("curve_%d_%d" % (i, i_var))
+						curve = plot2D.listOfCurves.createCurve("curve_%d" % i_var)
 						curve.setXData(data_time)
 						curve.setYData(data)
-
-
 
 			open("simulation.xml", "a")
 
@@ -354,13 +406,13 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel):
 
 
 	def loadExperiments(self, request):
-		self.experiments = Experiment.objects.filter(project = self.project)
+		self.experiments = Experiment.objects.filter(project=self.project)
 
 	def loadVariables(self):
-		self.listOfVariables = [obj for obj in self.getModelInstance().listOfVariables.values() if not obj.constant and (obj.isSpecies() or obj.isParameter() or obj.isCompartment())]
+		self.listOfVariables = [obj for obj in self.getModel().listOfVariables.values() if not obj.constant and (obj.isSpecies() or obj.isParameter() or obj.isCompartment())]
 
 	def loadReactions(self):
-		self.listOfReactions = [obj for obj in self.getModelInstance().listOfVariables.values() if obj.isReaction()]
+		self.listOfReactions = [obj for obj in self.getModel().listOfVariables.values() if obj.isReaction()]
 
 
 	def buildExperiment(self, request):

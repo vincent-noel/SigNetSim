@@ -31,7 +31,7 @@ from os.path import join, basename, isfile
 from os import remove
 from django.shortcuts import redirect
 from django.core.files import File
-
+from libsignetsim.settings.Settings import Settings
 
 class GenerateCombineArchive(TemplateView):
 
@@ -69,12 +69,12 @@ class GenerateCombineArchive(TemplateView):
 			combine_archive.addFile(join(settings.MEDIA_ROOT, str(sedml_model.sedml_file)))
 
 		filename = ''.join(e for e in project.name if e.isalnum()) + ".omex"
-		filename = join(join(join(settings.MEDIA_ROOT, str(project.folder)), "models"), filename)
+		filename = join(Settings.tempDirectory, filename)
 		combine_archive.writeArchive(filename)
 
 		archive = None
 		if len(CombineArchiveModel.objects.filter(project=project)) == 0:
-			archive = CombineArchiveModel(project=project, archive_file=File(open(filename)))
+			archive = CombineArchiveModel(project=project, archive_file=File(open(filename, 'r')))
 			archive.name = project.name
 			archive.save()
 		else:

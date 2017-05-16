@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-""" __init__.py
+""" GetSpecies.py
 
 
-	Initialization of the module web/signetsim/views/json
-
+	This file...
 
 	Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
 
@@ -23,16 +22,23 @@
 """
 
 
+from signetsim.views.json.JsonView import JsonView
+from libsignetsim.uris.URI import URI
 
-from GetContinuationFigure import GetContinuationFigure
-from GetContinuationStatus import GetContinuationStatus
-from GetListOfObjects import GetListOfObjects
-from GetListOfObjectsFromSubmodels import GetListOfObjectsFromSubmodels
-from GetCompartment import GetCompartment
-from GetParameter import GetParameter
-from GetSpecies import GetSpecies
-from GetSubmodels import GetSubmodels
-from GetReaction import GetReaction
-from GetReactionKineticLaw import GetReactionKineticLaw
-from GetSBOName import GetSBOName
-from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
+class GetSBOName(JsonView):
+
+	def __init__(self):
+		JsonView.__init__(self)
+
+
+	def post(self, request, *args, **kwargs):
+
+		uri = URI()
+		uri.setSBO(int(request.POST['sboterm']))
+		name = uri.getName()
+
+		self.data.update({
+			'name': "" if name is None else name,
+		})
+
+		return JsonView.post(self, request, *args, **kwargs)

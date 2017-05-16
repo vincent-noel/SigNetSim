@@ -51,6 +51,7 @@ from views import GetContinuationFigure, GetListOfObjectsFromSubmodels
 from views import SignUpView, SignUpSuccessView, ValidateEmailView
 from views import LoginView, ActivateAccountView, ProfileView, AdminView
 from views import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw
+from views import GetSBOName
 
 urlpatterns = [
 
@@ -65,6 +66,7 @@ urlpatterns = [
 
 	# Model import/export
 	url(r'^project/([^/]+)/$', ListOfModelsView.as_view(), name='project'),
+	url(r'^project_archive/$', GenerateCombineArchive.as_view(), name='project_archive_generic'),
 	url(r'^project_archive/([^/]+)/$', GenerateCombineArchive.as_view(), name='project_archive'),
 	url(r'^models/$', ListOfModelsView.as_view(), name='models'),
 
@@ -127,6 +129,7 @@ urlpatterns = [
 	url(r'^json/get_compartment/$', GetCompartment.as_view(), name='get_compartment'),
 	url(r'^json/get_reaction/$', GetReaction.as_view(), name='get_reaction'),
 	url(r'^json/get_reaction_kinetic_law/$', GetReactionKineticLaw.as_view(), name='get_reaction_kinetic_law'),
+	url(r'^json/get_sbo_name/$', GetSBOName.as_view(), name='get_sbo_name'),
 
 ]
 

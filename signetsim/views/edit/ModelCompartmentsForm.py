@@ -41,26 +41,7 @@ class ModelCompartmentsForm(ModelParentForm):
 		self.size = 1
 		self.unit = None
 		self.constant = True
-
-	def clear(self):
-
-		ModelParentForm.clear(self)
-
-	# def load(self, compartment_id):
-	#
-	# 	self.id = compartment_id
-	#
-	# 	t_compartment = self.parent.listOfCompartments[self.id]
-	#
-	# 	self.name = t_compartment.getName()
-	# 	self.sbmlId = t_compartment.getSbmlId()
-	# 	self.size = t_compartment.getSize()
-	#
-	# 	if t_compartment.getUnits() is not None:
-	# 		self.unit = self.parent.listOfUnits.index(t_compartment.getUnits())
-	#
-	# 	self.constant = t_compartment.constant
-	# 	self.isEditing = True
+		self.SBOTerm = None
 
 
 	def save(self, compartment):
@@ -76,6 +57,8 @@ class ModelCompartmentsForm(ModelParentForm):
 				compartment.setUnits(None)
 
 			compartment.constant = self.constant
+			if self.SBOTerm is not None:
+				compartment.getAnnotation().setSBOTerm(self.SBOTerm)
 
 		except ModelException as e:
 			self.addError(e.message)
@@ -104,3 +87,6 @@ class ModelCompartmentsForm(ModelParentForm):
 		self.constant = self.readOnOff(request, 'compartment_constant',
 								"The constant property of the compartment")
 
+		self.SBOTerm = self.readInt(request, 'compartment_sboterm',
+								"The SBO term of the compartment",
+								required=False)

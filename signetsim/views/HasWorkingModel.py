@@ -36,6 +36,9 @@ import pickle
 import codecs
 from sbml_diff import generate_dot, sbml_diff
 import sys
+from libsbml import Date
+import datetime
+
 class HasWorkingModel(HasWorkingProject):
 
 	def __init__(self):
@@ -116,7 +119,32 @@ class HasWorkingModel(HasWorkingProject):
 		if self.model is not None:
 			self.savePickledModel(request)
 			if self.model_filename is not None:
+				self.saveModelHistory(request)
 				self.model.parentDoc.writeSbmlToFile(self.model_filename)
+
+
+	def saveModelHistory(self, request):
+		if self.model.sbmlLevel == 3:
+
+			if str(request.user.email) not in self.model.modelHistory.getListOfCreatorsEmails():
+				creator = self.model.modelHistory.createCreator()
+				creator.setGivenName(request.user.first_name.encode('utf-8'))
+				creator.setEmail(request.user.email.encode('utf-8'))
+				creator.setOrganization(request.user.organization.encode('utf-8'))
+				creator.setFamilyName(request.user.last_name.encode('utf-8'))
+
+			date = Date()
+			now = datetime.datetime.now()
+			date.setYear(now.year)
+			date.setMonth(now.month)
+			date.setDay(now.day)
+			date.setHour(now.hour)
+			date.setMinute(now.minute)
+			date.setSecond(now.second)
+			if self.model.modelHistory.getDateCreated() is None:
+				self.model.modelHistory.setDateCreated(date)
+
+			self.model.modelHistory.addModifiedDate(date)
 
 
 	def reloadModel(self):

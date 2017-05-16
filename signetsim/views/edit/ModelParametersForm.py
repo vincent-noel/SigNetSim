@@ -39,6 +39,7 @@ class ModelParametersForm(ModelParentForm):
 		self.constant = True
 		self.unit = None
 		self.notes = None
+		self.SBOTerm = None
 
 	def save(self, parameter):
 
@@ -54,6 +55,9 @@ class ModelParametersForm(ModelParentForm):
 				parameter.setUnits(None)
 
 			parameter.setNotes(self.notes)
+
+			if self.SBOTerm is not None:
+				parameter.getAnnotation().setSBOTerm(self.SBOTerm)
 
 		except ModelException as e:
 			self.addError(e.message)
@@ -88,4 +92,6 @@ class ModelParametersForm(ModelParentForm):
 								  "The scope of the parameter",
 								  max_value=(len(self.parent.listOfReactions)+1))
 
-
+		self.SBOTerm = self.readInt(request, 'parameter_sboterm',
+									"The SBO term of the parameter",
+									required=False)
