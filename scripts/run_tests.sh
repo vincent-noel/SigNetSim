@@ -1,3 +1,1 @@
-OMIT=--omit=*/venv/*,*/virtualenv/*,*/dist-packages/*
-
-coverage run -a $OMIT manage.py test || exit 1;
+coverage run -a manage.py test || exit 1;

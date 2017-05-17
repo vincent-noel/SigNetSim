@@ -29,24 +29,48 @@
     <table class="table table-striped">
       <thead>
         <tr class="row">
-          <th class="col-xs-11">Full name</th>
+          <th class="col-xs-11">First name</th>
           <th class="col-xs-2"></th>
         </tr>
       </thead>
       <tbody>
         <tr class="row">
           <td class="col-xs-11 text-center">
-            <input type="text" class="form-control input-sm invisible_inputs" placeholder="<Input full name>" id="fullname_input" name="fullname" value="{% if user.fullname != None %}{{user.fullname}}{% endif %}">
+            <input type="text" class="form-control input-sm invisible_inputs" placeholder="<Input first name>" id="firstname_input" name="first_name" value="{% if user.first_name != None %}{{user.first_name}}{% endif %}">
           </td>
           <td class="col-xs-1">
-            <div class="pull-right collapse" id="save_fullname_input">
-              <button type="submit" name="action" value="change_fullname" class="btn btn-primary btn-xs btn-success" title="Save changes to full name">{% bootstrap_icon "ok" %}</button>
+            <div class="pull-right collapse" id="save_first_name_input">
+              <button type="submit" name="action" value="change_first_name" class="btn btn-primary btn-xs btn-success" title="Save changes to first name">{% bootstrap_icon "ok" %}</button>
             </div>
           </td>
         </tr>
       </tbody>
     </table>
   </form>
+   <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <table class="table table-striped">
+      <thead>
+        <tr class="row">
+          <th class="col-xs-11">Last name</th>
+          <th class="col-xs-2"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row">
+         <td class="col-xs-11 text-center">
+            <input type="text" class="form-control input-sm invisible_inputs" placeholder="<Input last name>" id="lastname_input" name="last_name" value="{% if user.last_name != None %}{{user.last_name}}{% endif %}">
+          </td>
+          <td class="col-xs-1">
+            <div class="pull-right collapse" id="save_last_name_input">
+              <button type="submit" name="action" value="change_last_name" class="btn btn-primary btn-xs btn-success" title="Save changes to last name">{% bootstrap_icon "ok" %}</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <table class="table table-striped">
@@ -70,6 +94,31 @@
       </tbody>
     </table>
   </form>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <table class="table table-striped">
+      <thead>
+        <tr class="row">
+          <th class="col-xs-11">Organization</th>
+          <th class="col-xs-2"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row">
+          <td class="col-xs-11 text-center">
+            <input type="text" class="form-control input-sm invisible_inputs" placeholder="<Input organization>" id="organization_input" name="organization" value="{% if user.organization != None %}{{user.organization}}{% endif %}">
+          </td>
+          <td class="col-xs-1">
+            <div class="pull-right collapse" id="save_organization_input">
+              <button type="submit" name="action" value="change_organization" class="btn btn-primary btn-xs btn-success" title="Save changes to organization">{% bootstrap_icon "ok" %}</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <table class="table table-striped">

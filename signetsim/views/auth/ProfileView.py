@@ -47,21 +47,39 @@ class ProfileView(TemplateView, HasErrorMessages):
 	def post(self, request, *args, **kwargs):
 
 		if "action" in request.POST:
-			if request.POST['action'] == "change_fullname":
-				self.changeFullname(request)
+			if request.POST['action'] == "change_first_name":
+				self.changeFirstname(request)
+
+			elif request.POST['action'] == "change_last_name":
+				self.changeLastname(request)
 
 			elif request.POST['action'] == "change_email":
 				self.changeEmail(request)
+
+			elif request.POST['action'] == "change_organization":
+				self.changeOrganization(request)
 
 			elif request.POST['action'] == "change_password":
 				self.changePassword(request)
 
 		return TemplateView.get(self, request, *args, **kwargs)
 
-	def changeFullname(self, request):
-		t_fullname = self.readUnicodeString(request, 'fullname', "the full name")
-		if t_fullname is not None:
-			request.user.fullname = t_fullname
+	def changeFirstname(self, request):
+		t_firstname = self.readUnicodeString(request, 'first_name', "the first name")
+		if t_firstname is not None:
+			request.user.first_name = t_firstname
+			request.user.save()
+
+	def changeLastname(self, request):
+		t_lastname = self.readUnicodeString(request, 'last_name', "the last name")
+		if t_lastname is not None:
+			request.user.last_name = t_lastname
+			request.user.save()
+
+	def changeOrganization(self, request):
+		t_organization = self.readUnicodeString(request, 'organization', "the organization")
+		if t_organization is not None:
+			request.user.organization = t_organization
 			request.user.save()
 
 	def changeEmail(self, request):
