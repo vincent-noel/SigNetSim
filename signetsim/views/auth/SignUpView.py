@@ -42,16 +42,20 @@ class SignUpForm(HasErrorMessages):
 
 		self.parent_view = parent_view
 		self.username = None
-		self.fullname = None
+		self.firstname = None
+		self.lastname = None
 		self.email = None
+		self.organisation = None
 		self.password1 = None
 		self.password2 = None
 
 	def read(self, request):
 
 		self.username = self.readString(request, 'username', 'the username')
-		self.fullname = self.readUnicodeString(request, 'fullname', 'the full name', required=False)
+		self.firstname = self.readUnicodeString(request, 'first_name', 'the first name', required=False)
+		self.lastname = self.readUnicodeString(request, 'last_name', 'the last name', required=False)
 		self.email = self.readString(request, 'email', 'the email address')
+		self.organisation = self.readString(request, 'organization', 'the organisation')
 		self.password1 = self.readString(request, 'password1', 'the password')
 		self.password2 = self.readString(request, 'password2', 'the password confirmation')
 
@@ -106,7 +110,9 @@ class SignUpView(TemplateView):
 				return False
 			else:
 				user = User.objects.create_user(self.form.username, self.form.email, self.form.password1)
-				user.fullname = self.form.fullname
+				user.first_name = self.form.firstname
+				user.last_name = self.form.lastname
+				user.organization = self.form.organisation
 				user.is_active = False
 				user.save()
 				request.session['signup_username'] = self.form.username

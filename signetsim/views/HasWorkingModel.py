@@ -124,8 +124,10 @@ class HasWorkingModel(HasWorkingProject):
 
 
 	def saveModelHistory(self, request):
-		if self.model.sbmlLevel == 3:
+		if self.model.sbmlLevel >= 2:
 
+
+			creator = self.model.modelHistory.createCreator()
 			if str(request.user.email) not in self.model.modelHistory.getListOfCreatorsEmails():
 				creator = self.model.modelHistory.createCreator()
 				creator.setGivenName(request.user.first_name.encode('utf-8'))

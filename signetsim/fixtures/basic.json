@@ -11,7 +11,7 @@
     "last_login": null,
     "groups": [],
     "user_permissions": [],
-    "fullname": null,
+    "organization": null,
     "password": "pbkdf2_sha256$20000$F4Yugl8u5wNo$gp4ZZw/crqtPny2/766vGt5A3VjthGrhDrbVxz00lqg=",
     "email": "admin@example.com",
     "date_joined": "2017-04-23T20:21:41.851Z"

@@ -85,11 +85,11 @@ class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 			if HasWorkingModel.isChooseModel(self, request):
 				self.load(request, *args, **kwargs)
 
-			elif request.POST['action'] == "edit_model_name":
-				self.saveName(request)
-
-			elif request.POST['action'] == "edit_model_notes":
-				self.saveNotes(request)
+			# elif request.POST['action'] == "edit_model_name":
+			# 	self.saveName(request)
+			#
+			# elif request.POST['action'] == "edit_model_notes":
+			# 	self.saveNotes(request)
 
 
 			elif request.POST['action'] == "choose_time_unit":
@@ -123,8 +123,8 @@ class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == "choose_sbml_level":
 				self.saveSbmlLevel(request)
 
-			elif request.POST['action'] == "set_model_publication":
-				self.setModelPublication(request)
+			# elif request.POST['action'] == "set_model_publication":
+			# 	self.setModelPublication(request)
 
 		self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
@@ -143,9 +143,9 @@ class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.listOfParameters = self.getModel().listOfParameters.values()
 			self.sbmlLevels = self.getModel().getSbmlLevels()
 			self.form.load()
-			self.modelHistory = self.getModel().modelHistory
-			if len(self.getModel().getAnnotation().getIsDescribedBy()) > 0:
-				self.modelPublication = self.getModel().getAnnotation().getIsDescribedBy()[0]
+			# self.modelHistory = self.getModel().modelHistory
+			# if len(self.getModel().getAnnotation().getIsDescribedBy()) > 0:
+			# 	self.modelPublication = self.getModel().getAnnotation().getIsDescribedBy()[0]
 
 	def saveTimeUnit(self, request):
 		self.form.readTimeUnit(request)
@@ -190,36 +190,36 @@ class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 		self.form.saveScalingFactor()
 		self.saveModel(request)
 
-
-	def saveNotes(self, request):
-		self.form.readNotes(request)
-		self.form.saveNotes()
-		self.saveModel(request)
-
-
-	def saveName(self, request):
-		self.form.readName(request)
-		self.form.saveName()
-		self.saveModel(request)
-		self.saveModelName(self.form.name)
+	#
+	# def saveNotes(self, request):
+	# 	self.form.readNotes(request)
+	# 	self.form.saveNotes()
+	# 	self.saveModel(request)
+	#
+	#
+	# def saveName(self, request):
+	# 	self.form.readName(request)
+	# 	self.form.saveName()
+	# 	self.saveModel(request)
+	# 	self.saveModelName(self.form.name)
 
 
 	def saveSbmlLevel(self, request):
 		self.form.readSbmlLevel(request)
 		self.form.saveSbmlLevel()
 		self.saveModel(request)
-
-	def setModelPublication(self, request):
-
-		if str(request.POST['model_publication_pubmed_id']) != "":
-			t_uri = URI()
-			t_uri.setPubmed(request.POST['model_publication_pubmed_id'])
-			self.getModel().getAnnotation().addIsDesribedBy(t_uri)
-		else:
-			self.getModel().getAnnotation().clearIsDescribedBy()
-
-		self.saveModel(request)
-		if len(self.getModel().getAnnotation().getIsDescribedBy()) > 0:
-			self.modelPublication = self.getModel().getAnnotation().getIsDescribedBy()[0]
-		else:
-			self.modelPublication = None
+	#
+	# def setModelPublication(self, request):
+	#
+	# 	if str(request.POST['model_publication_pubmed_id']) != "":
+	# 		t_uri = URI()
+	# 		t_uri.setPubmed(request.POST['model_publication_pubmed_id'])
+	# 		self.getModel().getAnnotation().addIsDesribedBy(t_uri)
+	# 	else:
+	# 		self.getModel().getAnnotation().clearIsDescribedBy()
+	#
+	# 	self.saveModel(request)
+	# 	if len(self.getModel().getAnnotation().getIsDescribedBy()) > 0:
+	# 		self.modelPublication = self.getModel().getAnnotation().getIsDescribedBy()[0]
+	# 	else:
+	# 		self.modelPublication = None

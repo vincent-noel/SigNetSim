@@ -31,127 +31,7 @@
   <hr/><br/>
   {% if model_id != None %}
   <div class="container-fluid">
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="edit_model_name">
-      <input type="hidden" name="model_id" value="{{ model_id }}">
-      <table class="table table-striped">
-        <thead>
-          <tr class="row">
-            <th class="col-xs-10">Model name</th>
-            <th class="col-xs-2 text-right">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="row">
-            <td class="col-xs-10 text-center">
-              <div class="collapse in" id="edit_reaction_off">{% if form.name != None %}{{form.name}}{% endif %}</div>
-              <div class="collapse out" id="edit_reaction_on">
-                <input type="text" class="form-control input-sm" placeholder="<Input name>" id="model_name_input" name="model_name" value="{% if form.name != None %}{{form.name}}{% endif %}">
-              </div>
-            </td>
-            <td class="col-xs-2">
-              {% if user.is_authenticated %}
-                <div class="pull-right collapse in" id="edit_reaction_off_actions">
-                  <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_name">{% bootstrap_icon "pencil" %}</button>
-                </div>
-                <div class="pull-right collapse out" id="edit_reaction_on_actions">
-                  <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_name_cancel">{% bootstrap_icon "remove" %}</button>
-                  <button type="submit" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
-                </div>
-              {% endif %}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
 
-    <form action="." class="form" method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="edit_model_notes">
-      <input type="hidden" name="model_id" value="{{ model_id }}">
-      <table class="table table-striped">
-        <thead>
-          <tr class="row">
-            <th class="col-xs-10">Notes</th>
-            <th class="col-xs-2"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="row">
-            <td class="col-xs-10 text-center">
-              <div class="collapse in" id="edit_notes_off">{% if form.notes != None %}{% autoescape off %}{{form.notes}}{% endautoescape %}{% endif %}</div>
-              <div class="collapse out" id="edit_notes_on">
-                <textarea class="form-control" name="model_notes" rows="10">{% if form.notes != None %}{{form.notes}}{% endif %}</textarea>
-              </div>
-            </td>
-            <td class="col-xs-2">
-              {% if user.is_authenticated %}
-              <div class="pull-right collapse in" id="edit_notes_off_actions">
-                  <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_notes">{% bootstrap_icon "pencil" %}</button>
-              </div>
-              <div class="pull-right collapse out" id="edit_notes_on_actions">
-                  <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_notes_cancel">{% bootstrap_icon "remove" %}</button>
-                  <button type="submit" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
-              </div>
-              {% endif %}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
-
-    {% if model_history != None %}
-    <table class="table table-striped">
-      <thead>
-        <tr class="row">
-          <th class="col-xs-12">Model creators</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for creator in model_history.getListOfCreators %}
-        <tr class="row">
-          <td class="col-xs-12 text-center">{{creator.getGivenName}} {{creator.getFamilyName}}{% if creator.getOrganisation != None %}, {{creator.getOrganisation}}{% endif %} ({{creator.getEmail}})</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% endif %}
-    <form class="form" method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="set_model_publication">
-      <table class="table table-striped">
-        <thead>
-          <tr class="row">
-            <th class="col-xs-10">Model publication</th>
-            <th class="col-xs-2"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="row">
-            <td class="col-xs-10 text-center">
-              <div class="collapse in" id="edit_publi_off">
-                {% if model_publication != None %}<a href="https://www.ncbi.nlm.nih.gov/pubmed/{{model_publication.getId}}" target="_blank">{{model_publication.getName}}</a>{% endif %}
-              </div>
-              <div class="collapse out" id="edit_publi_on">
-                <input type="text" class="form-control input-sm" placeholder="<Input PUBMED Id>" id="model_publication_pubmed_id" name="model_publication_pubmed_id" value="{% if model_publication != None %}{{model_publication.getId}}{% endif %}">
-              </div>
-            </td>
-            <td class="col-xs-2">
-              {% if user.is_authenticated %}
-              <div class="pull-right collapse in" id="edit_publi_off_actions">
-                  <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_publi">{% bootstrap_icon "pencil" %}</button>
-              </div>
-              <div class="pull-right collapse out" id="edit_publi_on_actions">
-                  <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_publi_cancel">{% bootstrap_icon "remove" %}</button>
-                  <button type="submit" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
-              </div>
-              {% endif %}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
     <table class="table table-striped">
       <thead>
         <tr class="row">
@@ -344,27 +224,6 @@
 {% block js %}
 {{ block.super }}
 
-$('#edit_model_name').on('click', function(){
-    $("#edit_reaction_on").addClass("in");
-    $("#edit_reaction_on").removeClass("out");
-    $("#edit_reaction_off").addClass("out");
-    $("#edit_reaction_off").removeClass("in");
-    $("#edit_reaction_on_actions").addClass("in");
-    $("#edit_reaction_on_actions").removeClass("out");
-    $("#edit_reaction_off_actions").addClass("out");
-    $("#edit_reaction_off_actions").removeClass("in");
-});
-
-$('#edit_model_name_cancel').on('click', function(){
-  $("#edit_reaction_off").addClass("in");
-  $("#edit_reaction_off").removeClass("out");
-  $("#edit_reaction_on").addClass("out");
-  $("#edit_reaction_on").removeClass("in");
-  $("#edit_reaction_off_actions").addClass("in");
-  $("#edit_reaction_off_actions").removeClass("out");
-  $("#edit_reaction_on_actions").addClass("out");
-  $("#edit_reaction_on_actions").removeClass("in");
-});
 
 $('#time_unit_list li').on('click', function(){
   $("#time_unit_label").html($(this).text());
@@ -402,51 +261,6 @@ $('#sbml_version_list li').on('click', function(){
   $("#sbml_version_label").html($(this).text());
   $('#sbml_version_id').val($(this).index());
   $('#choose_sbml_version').submit();
-});
-
-$('#edit_model_notes').on('click', function(){
-    $("#edit_notes_on").addClass("in");
-    $("#edit_notes_on").removeClass("out");
-    $("#edit_notes_off").addClass("out");
-    $("#edit_notes_off").removeClass("in");
-    $("#edit_notes_on_actions").addClass("in");
-    $("#edit_notes_on_actions").removeClass("out");
-    $("#edit_notes_off_actions").addClass("out");
-    $("#edit_notes_off_actions").removeClass("in");
-});
-
-$('#edit_model_notes_cancel').on('click', function(){
-  $("#edit_notes_off").addClass("in");
-  $("#edit_notes_off").removeClass("out");
-  $("#edit_notes_on").addClass("out");
-  $("#edit_notes_on").removeClass("in");
-  $("#edit_notes_off_actions").addClass("in");
-  $("#edit_notes_off_actions").removeClass("out");
-  $("#edit_notes_on_actions").addClass("out");
-  $("#edit_notes_on_actions").removeClass("in");
-});
-
-
-$('#edit_model_publi').on('click', function(){
-    $("#edit_publi_on").addClass("in");
-    $("#edit_publi_on").removeClass("out");
-    $("#edit_publi_off").addClass("out");
-    $("#edit_publi_off").removeClass("in");
-    $("#edit_publi_on_actions").addClass("in");
-    $("#edit_publi_on_actions").removeClass("out");
-    $("#edit_publi_off_actions").addClass("out");
-    $("#edit_publi_off_actions").removeClass("in");
-});
-
-$('#edit_model_publi_cancel').on('click', function(){
-  $("#edit_publi_off").addClass("in");
-  $("#edit_publi_off").removeClass("out");
-  $("#edit_publi_on").addClass("out");
-  $("#edit_publi_on").removeClass("in");
-  $("#edit_publi_off_actions").addClass("in");
-  $("#edit_publi_off_actions").removeClass("out");
-  $("#edit_publi_on_actions").addClass("out");
-  $("#edit_publi_on_actions").removeClass("in");
 });
 
 

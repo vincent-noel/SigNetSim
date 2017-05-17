@@ -36,6 +36,7 @@ from edit import ModelUnitsView
 from edit import ModelEventsView
 from edit import ModelMiscView
 from edit import ModelSubmodelsView
+from edit import ModelAnnotationsView
 
 from simulate import TimeSeriesSimulationView
 from simulate import SteadyStateSimulationView

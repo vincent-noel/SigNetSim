@@ -106,6 +106,7 @@ class TestParameter(TestCase):
 			'compartment_size': 75,
 			'compartment_unit': 2,
 			'compartment_constant': "on",
+			'compartment_sboterm': "",
 		})
 
 		self.assertEqual(response_save_compartment.status_code, 200)
@@ -138,6 +139,7 @@ class TestParameter(TestCase):
 			'compartment_size': 75,
 			'compartment_unit': "",
 			'compartment_constant': "on",
+			'compartment_sboterm': "",
 		})
 
 		self.assertEqual(response_save_new_compartment.status_code, 200)

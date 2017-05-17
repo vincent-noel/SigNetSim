@@ -35,8 +35,8 @@ class ModelMiscForm(ModelParentForm):
 	def __init__(self, parent):
 
 		ModelParentForm.__init__(self, parent)
-		self.name = None
-		self.notes = None
+		# self.name = None
+		# self.notes = None
 
 		self.timeUnit = None
 		self.substanceUnit = None
@@ -48,8 +48,8 @@ class ModelMiscForm(ModelParentForm):
 	def clear(self):
 
 		ModelParentForm.clear(self)
-		self.name = None
-		self.notes = None
+		# self.name = None
+		# self.notes = None
 
 		self.timeUnit = None
 		self.substanceUnit = None
@@ -60,8 +60,8 @@ class ModelMiscForm(ModelParentForm):
 
 	def load(self):
 
-		self.name = self.parent.getModel().getName()
-		self.notes = self.parent.getModel().getNotes()
+		# self.name = self.parent.getModel().getName()
+		# self.notes = self.parent.getModel().getNotes()
 
 		t_list = self.parent.listOfUnits
 
@@ -165,25 +165,25 @@ class ModelMiscForm(ModelParentForm):
 		self.scalingFactor = None
 
 
-	###########################################################################
-	# Name
-	def readName(self, request):
+	# ###########################################################################
+	# # Name
+	# def readName(self, request):
+	#
+	# 	self.name = self.readString(request,
+	# 						'model_name', "The name of the model")
+	#
+	# def saveName(self):
+	# 	self.parent.getModel().setName(self.name)
 
-		self.name = self.readString(request,
-							'model_name', "The name of the model")
 
-	def saveName(self):
-		self.parent.getModel().setName(self.name)
-
-
-	###########################################################################
-	# Notes
-	def readNotes(self, request):
-
-		self.notes = self.readString(request,
-							'model_notes', "The notes of the model")
-	def saveNotes(self):
-		self.parent.getModel().setNotes(self.notes)
+	# ###########################################################################
+	# # Notes
+	# def readNotes(self, request):
+	#
+	# 	self.notes = self.readString(request,
+	# 						'model_notes', "The notes of the model")
+	# def saveNotes(self):
+	# 	self.parent.getModel().setNotes(self.notes)
 
 
 	###########################################################################

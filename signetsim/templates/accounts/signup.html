@@ -35,17 +35,29 @@
            <p id="hint_id_username" class="help-block">Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only.</p>
          </div>
        </div>
-       <div id="div_id_fullname" class="form-group">
-         <label for="id_fullname" class="control-label">Full name</label>
+       <div id="div_id_firstname" class="form-group">
+         <label for="id_firstname" class="control-label">First name</label>
          <div class="controls ">
-           <input class="textinput textInput form-control" id="id_fullname" maxlength="30" name="fullname" type="text" value="{% if form.fullname != None %}{{form.fullname}}{% endif %}"/>
+           <input class="textinput textInput form-control" id="id_firstname" maxlength="30" name="firstname" type="text" value="{% if form.firstname != None %}{{form.firstname}}{% endif %}"/>
+         </div>
+       </div>
+       <div id="div_id_lastname" class="form-group">
+         <label for="id_lastname" class="control-label">Last name</label>
+         <div class="controls ">
+           <input class="textinput textInput form-control" id="id_lastname" maxlength="30" name="lastname" type="text" value="{% if form.lastname != None %}{{form.lastname}}{% endif %}"/>
          </div>
        </div>
        <div id="div_id_email" class="form-group">
          <label for="id_email" class="control-label requiredField">Email<span class="asteriskField">*</span></label>
          <div class="controls ">
            <input class="textinput textInput form-control" id="id_email" maxlength="30" name="email" type="text" value="{% if form.email != None %}{{form.email}}{% endif %}"/>
-           <p id="hint_id_username" class="help-block">Please enter a valid email. An activation email will be sent</p>
+           <p id="hint_id_email" class="help-block">Please enter a valid email. An activation email will be sent</p>
+         </div>
+       </div>
+       <div id="div_id_organisation" class="form-group">
+         <label for="id_organisation" class="control-label">Organisation</label>
+         <div class="controls ">
+           <input class="textinput textInput form-control" id="id_organisation" maxlength="30" name="organisation" type="text" value="{% if form.organisation != None %}{{form.organisation}}{% endif %}"/>
          </div>
        </div>
 

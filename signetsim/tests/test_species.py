@@ -112,6 +112,7 @@ class TestSpecies(TestCase):
 			'species_unit': 2,
 			'species_constant': "on",
 			'species_boundary': "on",
+			'species_sboterm': "",
 		})
 
 		self.assertEqual(response_save_species.status_code, 200)
@@ -146,6 +147,7 @@ class TestSpecies(TestCase):
 			'species_unit': 2,
 			'species_constant': "off",
 			'species_boundary': "off",
+			'species_sboterm': "",
 		})
 
 		self.assertEqual(response_save_new_species.status_code, 200)
