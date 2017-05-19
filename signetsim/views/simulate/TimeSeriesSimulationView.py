@@ -282,12 +282,12 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel):
 					for data in input_data:
 
 						var = None
-						if self.getModel().listOfSpecies.containsName(data.species):
-							var = self.getModel().listOfSpecies.getByName(data.species)
-						elif self.getModel().listOfParameters.containsName(data.species):
-							var = self.getModel().listOfParameters.getByName(data.species)
-						elif self.getModel().listOfCompartments.containsName(data.species):
-							var = self.getModel().listOfCompartments.getByName(data.species)
+						if self.getModelInstance().listOfSpecies.containsName(data.species):
+							var = self.getModelInstance().listOfSpecies.getByName(data.species)
+						elif self.getModelInstance().listOfParameters.containsName(data.species):
+							var = self.getModelInstance().listOfParameters.getByName(data.species)
+						elif self.getModelInstance().listOfCompartments.containsName(data.species):
+							var = self.getModelInstance().listOfCompartments.getByName(data.species)
 
 						if var is not None:
 							change = model.listOfChanges.createChangeAttribute()
@@ -409,10 +409,10 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel):
 		self.experiments = Experiment.objects.filter(project=self.project)
 
 	def loadVariables(self):
-		self.listOfVariables = [obj for obj in self.getModel().listOfVariables.values() if not obj.constant and (obj.isSpecies() or obj.isParameter() or obj.isCompartment())]
+		self.listOfVariables = [obj for obj in self.getModelInstance().listOfVariables.values() if not obj.constant and (obj.isSpecies() or obj.isParameter() or obj.isCompartment())]
 
 	def loadReactions(self):
-		self.listOfReactions = [obj for obj in self.getModel().listOfVariables.values() if obj.isReaction()]
+		self.listOfReactions = [obj for obj in self.getModelInstance().listOfVariables.values() if obj.isReaction()]
 
 
 	def buildExperiment(self, request):

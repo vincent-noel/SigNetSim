@@ -41,7 +41,7 @@ MathJax.Hub.Config({
 {% block view_sidebar %}{% include 'analyse/menu.html' %}{% endblock view_sidebar %}
 {% block view_content %}
 {% load bootstrap3 %}
-
+{% load tags %}
 
 <div class="container-fluid" id="view">
   <h4>Analysis</h4>
@@ -49,36 +49,44 @@ MathJax.Hub.Config({
   {% if model_id != None %}
   {% include 'commons/error_page.html' %}
   <div class="container-fluid text-right">
-    <a href="#" onclick="$('#modal_latex').modal('show');" class="btn btn-default">Show LaTeX code</a>
+    <form class="form-inline" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <button type="submit" name="action" value="show_reduced" class="btn btn-default">Show reduced model</button>
+      <a onclick="$('#modal_latex').modal('show');" class="btn btn-default">Show LaTeX code</a>
+    </form>
   </div>
   <div class="container-fluid text-left">
-  <br/>
+  {% if latex_odes|length > 0 %}
   ODEs
   <hr/>
     {% for ode in latex_odes %}
       ${{ode}}$ <br/><br/>
     {% endfor %}
   <br/>
-
+  {% endif %}
+  {% if latex_daes|length > 0 %}
   DAEs
   <hr/>
     {% for dae in latex_daes %}
       ${{dae}}$ <br/><br/>
     {% endfor %}
   <br/>
-
+  {% endif %}
+  {% if latex_cfes|length > 0 %}
   Exact solutions
   <hr/>
     {% for cfe in latex_cfes %}
       ${{cfe}}$ <br/><br/>
     {% endfor %}
   <br/>
-
+  {% endif %}
+  {% if latex_conslaws|length > 0 %}
   Conservation laws
   <hr/>
     {% for conslaw in latex_conslaws %}
       ${{conslaw}}$ <br/><br/>
     {% endfor %}
+  {% endif %}
   {% endif %}
 </div>
 
