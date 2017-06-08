@@ -151,7 +151,7 @@ class ListOfOptimizationsView(TemplateView, HasWorkingModel):
 				if isfile(optim_path + "/model.sbml"):
 					try:
 						t_document = SbmlDocument()
-						t_document.readSbml(str(optim_path + "/model.sbml"))
+						t_document.readSbmlFromFile(str(optim_path + "/model.sbml"))
 						t_model_name = t_document.model.getName()
 					except ModelException as e:
 						t_model_name = "Unknown"

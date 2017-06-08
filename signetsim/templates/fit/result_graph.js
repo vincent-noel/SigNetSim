@@ -211,7 +211,7 @@ window.onload = function() {
   {% for condition in experiment %}
 
   var ctx_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}} = document.getElementById("optim_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}}").getContext("2d");
-  ctx_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}}.canvas.height = ctx_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}}.canvas.width*0.5;
+  ctx_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}}.canvas.height = ctx_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}}.canvas.width*0.3;
   ctx_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}}.scale(10, 10);
 
   window.myLine_{{forloop.parentloop.counter0}}_{{forloop.counter0}} = new Chart(ctx_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}},config_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}});
