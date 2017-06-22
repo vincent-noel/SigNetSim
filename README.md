@@ -1,6 +1,6 @@
 # SigNetSim : The Signaling Network Simulator
 [![Build Status](https://travis-ci.org/vincent-noel/SigNetSim.svg?branch=master)](https://travis-ci.org/vincent-noel/SigNetSim) [![Coverage Status](https://coveralls.io/repos/github/vincent-noel/SigNetSim/badge.svg?branch=develop)](https://coveralls.io/github/vincent-noel/SigNetSim?branch=develop) [![DOI](https://zenodo.org/badge/20701382.svg)](https://zenodo.org/badge/latestdoi/20701382)
-
+![CETICS](https://raw.githubusercontent.com/vincent-noel/signetsim/master/docs/logos/cetics.png)
 
 
 A django web application for building, fitting, and analyzing mathematical models of molecular signaling networks.
@@ -44,5 +44,5 @@ The server will run on localhost:8080/signetsim, with a default Admin with admin
 ## Financial support
 
 	This program was developed within the CeTICS project, at the Instituto Butantan.
-	![CETICS](https://raw.githubusercontent.com/vincent-noel/signetsim/raw/master/docs/logos/cetics.png)
+
 	![BUTANTAN](https://raw.githubusercontent.com/vincent-noel/signetsim/master/docs/logos/butantan.png)
