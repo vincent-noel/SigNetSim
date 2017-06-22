@@ -70,7 +70,7 @@ class GetListOfObjects(JsonView, HasWorkingModel):
 			t_model = list_of_project_models[int(request.POST['model_id'])]
 			t_filename = join(settings.MEDIA_ROOT, str(t_model.sbml_file))
 			doc = SbmlDocument()
-			doc.readSbml(t_filename)
+			doc.readSbmlFromFile(t_filename)
 
 			self.listOfObjects = []
 			for t_object in doc.model.listOfSbmlObjects.values():

@@ -65,6 +65,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 		self.latex_cfes = []
 		self.latex_daes = []
 
+
 	def get_context_data(self, **kwargs):
 
 		kwargs = HasWorkingModel.get_context_data(self, **kwargs)
@@ -78,7 +79,6 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 	def get(self, request, *args, **kwargs):
 
 		self.load(request, *args, **kwargs)
-
 		self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
@@ -102,14 +102,16 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 
 		HasWorkingModel.load(self, request, *args, **kwargs)
 		self.modelInstance = self.getModelInstance()
+		print "> LoadSystem()"
 		self.loadSystem()
+		print "> LoadSystemComponents()"
 		self.loadSystemComponents()
 
 	def loadSystem(self):
-		self.getModelInstance().build()
+		self.modelInstance.build()
 
 	def loadReducedSystem(self):
-		self.getModelInstance().buildReducedModel()
+		self.modelInstance.buildReducedModel()
 
 	def loadSystemComponents(self):
 		t1 = time()
@@ -159,7 +161,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 
 
 		self.latex_odes = []
-		for ode in self.getModelInstance().getMathModel().listOfODEs:
+		for ode in self.modelInstance.getMathModel().listOfODEs:
 
 			ode_formula = ode.getFormula(rawFormula=False)
 			ode_latex = latex(unevaluatedSubs(expand(ode_formula), function_subs), mul_symbol='dot', symbol_names=symbol_names)
@@ -170,7 +172,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 
 
 		self.latex_conslaws = []
-		for conslaw in self.getModelInstance().getMathModel().listOfConservationLaws:
+		for conslaw in self.modelInstance.getMathModel().listOfConservationLaws:
 			conslaw_formula = conslaw.getFormula()#rawFormula=False)
 			cs_latex = latex(unevaluatedSubs(expand(conslaw_formula), function_subs), mul_symbol='dot', symbol_names=symbol_names)
 			self.latex_conslaws.append(cs_latex)
@@ -180,7 +182,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 
 
 		self.latex_cfes = []
-		for cfe in self.getModelInstance().getMathModel().listOfCFEs:
+		for cfe in self.modelInstance.getMathModel().listOfCFEs:
 			cfe_formula = cfe.getFormula()#rawFormula=False)
 			cfe_latex = latex(unevaluatedSubs(expand(cfe_formula), function_subs), mul_symbol='dot', symbol_names=symbol_names)
 			self.latex_cfes.append(cfe_latex)
@@ -190,7 +192,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 
 
 		self.latex_daes = []
-		for dae in self.getModelInstance().getMathModel().listOfDAEs:
+		for dae in self.modelInstance.getMathModel().listOfDAEs:
 			dae_formula = dae.getFormula()#rawFormula=False)
 			dae_latex = latex(unevaluatedSubs(expand(dae_formula), function_subs), mul_symbol='dot', symbol_names=symbol_names)
 			self.latex_daes.append(dae_latex)
