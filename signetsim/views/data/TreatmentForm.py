@@ -50,8 +50,8 @@ class TreatmentForm(ParentForm):
 
 		t_treatment_id = self.readInt(request, 'id',
 									"The identifier of the treatment")
-		print request.POST['id']
-		print t_treatment_id
+		# print request.POST['id']
+		# print t_treatment_id
 
 		self.printErrors()
 		if t_treatment_id is not None:
@@ -61,7 +61,7 @@ class TreatmentForm(ParentForm):
 			self.time = treatment.time
 			self.value = treatment.value
 			self.isEditing = True
-			print self.isEditing
+			# print self.isEditing
 
 
 	def save(self):
@@ -69,7 +69,7 @@ class TreatmentForm(ParentForm):
 		if self.isNew():
 			treatment = Treatment(condition=self.parent.condition)
 		else:
-			treatment = Treatment.get(id=self.id)
+			treatment = Treatment.objects.get(id=self.id)
 
 		treatment.species = self.name
 		treatment.time = self.time

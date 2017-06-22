@@ -132,7 +132,7 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 			folder = Project.objects.get(user=request.user, id=folder_id)
 			new_folder = Project(user=request.user, name=(str(folder.name) + " (Copy)"))
-
+			new_folder.save()
 			self.copyProjectModels(folder, new_folder)
 			self.copyProjectExperiments(folder, new_folder)
 
@@ -231,13 +231,13 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 			new_experiment = Experiment(project=new_project,
 											name=str(experiment.name),
 											notes=str(experiment.notes))
-
+			new_experiment.save()
 			t_conditions = Condition.objects.filter(experiment=experiment)
 			for condition in t_conditions:
 				new_condition = Condition(experiment=new_experiment,
 											name=str(condition.name),
 											notes=str(condition.notes))
-
+				new_condition.save()
 
 				t_observations = Observation.objects.filter(condition=condition)
 				for t_observation in t_observations:

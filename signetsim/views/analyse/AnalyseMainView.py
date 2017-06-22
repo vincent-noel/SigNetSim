@@ -79,6 +79,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 	def get(self, request, *args, **kwargs):
 
 		self.load(request, *args, **kwargs)
+		self.loadSystemComponents()
 		self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
@@ -102,10 +103,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 
 		HasWorkingModel.load(self, request, *args, **kwargs)
 		self.modelInstance = self.getModelInstance()
-		print "> LoadSystem()"
 		self.loadSystem()
-		print "> LoadSystemComponents()"
-		self.loadSystemComponents()
 
 	def loadSystem(self):
 		self.modelInstance.build()
@@ -118,43 +116,6 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 
 		function_subs = {}
 		symbol_names = {}
-		# for variable in self.getModelInstance().getMathModel().listOfVariables.values():
-		#
-		# 	is_concentration = False
-		# 	t_symbol = variable.symbol.getDeveloppedInternalMathFormula()
-		# 	# if isinstance(t_symbol.func, SympyUndefinedFunction):
-		# 	# 	t_suffix = "(t)"
-		# 	# 	t_name = str(t_symbol.func)
-		# 	# 	is_concentration = (t_name.startswith('[') and t_name.endswith(']'))
-		# 	# 	if is_concentration:
-		# 	# 		t_name = t_name[1:-1]
-		# 	#
-		# 	# 	function_subs.update({t_symbol: SympySymbol(str(t_symbol.func))})
-		# 	# 	t_symbol = SympySymbol(str(t_symbol.func))
-		# 	# else:
-		# 	t_suffix = ""
-		# 	t_name = str(t_symbol)
-		#
-		# 	first = t_name.find('_', 1)
-		# 	first += 1
-		#
-		# 	while t_name.find('_', first) > 0:
-		# 		first = t_name.find('_', first)
-		# 		t_name = t_name[:first] + t_name[first+1:]
-		#
-		#
-		# 	if t_name.find('_') > 0:
-		# 		start, end = t_name.split('_')
-		# 		t_name = "%s_{%s}" % (start, end)
-		#
-		# 	if is_concentration:
-		# 		t_name = "[%s]" % t_name
-		#
-		# 	t_name += t_suffix
-		#
-		# 	if simplify(t_symbol - SympySymbol(t_name)) != SympyInteger(0):
-		# 		symbol_names.update({t_symbol: t_name})
-
 
 		t2 = time()
 		print "> symbols dictionnary built in %.2gs" % (t2-t1)
@@ -163,7 +124,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 		self.latex_odes = []
 		for ode in self.modelInstance.getMathModel().listOfODEs:
 
-			ode_formula = ode.getFormula(rawFormula=False)
+			ode_formula = ode.getFormula()#rawFormula=False)
 			ode_latex = latex(unevaluatedSubs(expand(ode_formula), function_subs), mul_symbol='dot', symbol_names=symbol_names)
 			self.latex_odes.append(ode_latex)
 

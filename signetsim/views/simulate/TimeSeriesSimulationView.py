@@ -30,7 +30,7 @@ from libsignetsim.data.ExperimentalCondition import ExperimentalCondition
 from libsignetsim.data.ExperimentalData import ExperimentalData
 from libsignetsim.data.ListOfExperimentalData import ListOfExperimentalData
 from libsignetsim.data.Experiment import Experiment as SigNetSimExperiment
-
+from libsignetsim.LibSigNetSimException import UnknownObservationException, UnknownTreatmentException
 from django.views.generic import TemplateView
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
@@ -221,14 +221,6 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel):
 			if self.form.experimentId is not None:
 				self.buildExperiment(request)
 
-			t_simulation = TimeseriesSimulation(
-				list_of_models=[self.getModelInstance()],
-				experiment=self.experiment,
-				time_min=self.form.timeMin,
-				time_max=self.form.timeMax,
-				time_ech=self.form.timeEch)
-
-			t_simulation.run()
 			try:
 				results = self.simulate_timeseries(request)
 				self.read_timeseries(results)
@@ -239,7 +231,11 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel):
 			except ModelException as e:
 				self.form.addError(e.message)
 
+			except UnknownObservationException as e:
+				self.form.addError(e.message)
 
+			except UnknownTreatmentException as e:
+				self.form.addError(e.message)
 
 
 

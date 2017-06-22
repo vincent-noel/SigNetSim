@@ -123,7 +123,7 @@ $(window).on('load', function() {
 
 {% for t,y in sim_results %}
   var ctx_{{forloop.counter0}} = document.getElementById("canvas_{{forloop.counter0}}").getContext("2d");
-  ctx_{{forloop.counter0}}.canvas.height = ctx_{{forloop.counter0}}.canvas.width*0.8;
+  ctx_{{forloop.counter0}}.canvas.height = ctx_{{forloop.counter0}}.canvas.width*0.5;
   ctx_{{forloop.counter0}}.scale(10, 10);
   window.myLine_{{forloop.counter0}} = new Chart(ctx_{{forloop.counter0}}, config_{{forloop.counter0}});
 {% endfor %}
