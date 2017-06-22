@@ -43,6 +43,6 @@ The server will run on localhost:8080/signetsim, with a default Admin with admin
 
 ## Financial support
 
-	This program was developed as a part of the CeTICS project, at the Instituto Butantan.
-	![CETICS](https://github.com/vincent-noel/signetsim/raw/master/docs/logos/cetics.png)
-	![BUTANTAN](https://github.com/vincent-noel/signetsim/raw/master/docs/logos/butantan.png)
+	This program was developed within the CeTICS project, at the Instituto Butantan.
+	![CETICS](https://raw.githubusercontent.com/vincent-noel/signetsim/raw/master/docs/logos/cetics.png)
+	![BUTANTAN](https://raw.githubusercontent.com/vincent-noel/signetsim/master/docs/logos/butantan.png)
