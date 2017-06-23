@@ -25,7 +25,7 @@
 from django.views.generic import TemplateView
 from signetsim.models import User
 from signetsim.views.HasErrorMessages import HasErrorMessages
-
+from signetsim.manager import deleteUser
 
 class AdminView(TemplateView, HasErrorMessages):
 	template_name = 'admin/admin.html'
@@ -35,24 +35,33 @@ class AdminView(TemplateView, HasErrorMessages):
 		TemplateView.__init__(self, **kwargs)
 		HasErrorMessages.__init__(self)
 
+		self.users = None
+
+
 	def get_context_data(self, **kwargs):
 		kwargs = HasErrorMessages.get_context_data(self, **kwargs)
+		kwargs['users'] = self.users
 		return kwargs
 
 	def get(self, request, *args, **kwargs):
+		self.load(request, *args, **kwargs)
 		return TemplateView.get(self, request, *args, **kwargs)
 
 	def post(self, request, *args, **kwargs):
-
+		self.load(request, *args, **kwargs)
 		if "action" in request.POST:
-			pass
-			# if request.POST['action'] == "change_fullname":
-			#     self.changeFullname(request)
-			#
-			# elif request.POST['action'] == "change_email":
-			#     self.changeEmail(request)
-			#
-			# elif request.POST['action'] == "change_password":
-			#     self.changePassword(request)
+			if request.POST['action'] == "delete":
+				self.deleteUser(request)
 
 		return TemplateView.get(self, request, *args, **kwargs)
+
+	def load(self, request, *args, **kwargs):
+		self.users = User.objects.all()
+
+	def deleteUser(self, request):
+
+		if User.objects.filter(id=int(request.POST['id'])).exists():
+
+			user = User.objects.get(id=int(request.POST['id']))
+			deleteUser(user)
+

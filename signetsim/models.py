@@ -63,22 +63,22 @@ def archive_filename(instance, filename):
 
 
 def model_filename(instance, filename):
-	# print filename
+
 	path = dirname(filename)
 	filename = basename(filename)
-	# full_path = join(join(path, str(instance.project.folder)), "models")
+
 	full_path = join(str(instance.project.folder), "models")
 	full_filename = join(full_path, filename)
-	# print full_filename
+
 	while os.path.isfile(full_filename):
 		full_filename = join(full_path, new_model_filename())
 	return full_filename
 
 def sedml_filename(instance, filename):
-	# print filename
+
 	path = dirname(filename)
 	filename = basename(filename)
-	# full_path = join(join(path, str(instance.project.folder)), "models")
+
 	full_path = join(str(instance.project.folder), "models")
 	full_filename = join(full_path, filename)
 
@@ -92,8 +92,10 @@ class User(AbstractUser):
 	Custom user class.
 	"""
 	organization = models.CharField(max_length=255, null=True)
+	used_cores = models.IntegerField(null=0)
 	max_cores = models.IntegerField(null=2)
-
+	used_cpu_time = models.IntegerField(null=0)
+	max_cpu_time = models.IntegerField(null=1000)
 
 class Project(models.Model):
 	user = models.ForeignKey(User)
