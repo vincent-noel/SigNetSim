@@ -23,9 +23,11 @@
 
 """
 
-from signetsim.views.json.JsonView import JsonView
-from signetsim.views.HasWorkingModel import HasWorkingModel
 from libsbml import SyntaxChecker
+
+from signetsim.json import JsonView
+from signetsim.views.HasWorkingModel import HasWorkingModel
+
 
 class UnitIdValidator(JsonView, HasWorkingModel):
 

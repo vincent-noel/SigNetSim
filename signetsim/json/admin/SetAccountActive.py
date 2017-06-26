@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" GetSpecies.py
+""" SetAccountActive.py
 
 
 	This file...
@@ -21,24 +21,32 @@
 
 """
 
+from signetsim.json.JsonView import JsonView
+from signetsim.models import User
 
-from signetsim.views.json.JsonView import JsonView
-from libsignetsim.uris.URI import URI
-
-class GetSBOName(JsonView):
+class SetAccountActive(JsonView):
 
 	def __init__(self):
 		JsonView.__init__(self)
 
-
 	def post(self, request, *args, **kwargs):
 
-		uri = URI()
-		uri.setSBO(int(request.POST['sboterm']))
-		name = uri.getName()
+		if 'username' in request.POST and 'status' in request.POST:
+			username = request.POST['username']
+			status = request.POST['status']
 
-		self.data.update({
-			'name': "" if name is None else name,
-		})
+			if User.objects.filter(username=username).exists():
+
+				user = User.objects.get(username=username)
+				user.is_active = (status == 'true')
+				user.save()
+
+				self.data.update({'result': 'ok'})
+			else:
+				self.data.update({'result': 'err'})
+		else:
+			self.data.update({'result': 'err'})
 
 		return JsonView.post(self, request, *args, **kwargs)
+
+

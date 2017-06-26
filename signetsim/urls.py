@@ -22,36 +22,31 @@
 
 """
 
-from django.conf.urls import include, url
-from django.contrib.auth.views import logout
-from django.contrib import admin
-from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls import include, url
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.contrib.auth.views import logout
 
-from views import HelpView, SuccessView
-from views import DataView, ExperimentView, ConditionView
-
-from views import ModelCompartmentsView, ModelOverviewView, ModelAnnotationsView
-from views import ModelSpeciesView, ModelParametersView
-from views import ModelReactionsView, ModelRulesView, ModelSubmodelsView
-from views import ModelUnitsView, ModelEventsView, ModelMiscView
-
-from views import ListOfOptimizationsView, OptimizationResultView
-from views import DataOptimizationView, DataOptimizationView0, ModelOptimizationView
-
-from views import TimeSeriesSimulationView, SteadyStateSimulationView
-from views import ListOfSimulationsView, SedmlSimulationView
-from views import ListOfModelsView, ListOfProjectsView, GenerateCombineArchive
-
+from signetsim.json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
+from signetsim.json import GetContinuationFigure, GetListOfObjectsFromSubmodels
+from signetsim.json import GetSBOName, SetAccountActive, SetAccountStaff
+from signetsim.json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction
+from signetsim.json import GetSubmodels, GetListOfObjects, GetContinuationStatus
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
-
-from views import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
-from views import GetSubmodels, GetListOfObjects, GetContinuationStatus
-from views import GetContinuationFigure, GetListOfObjectsFromSubmodels
-from views import SignUpView, SignUpSuccessView, ValidateEmailView
+from views import DataOptimizationView, DataOptimizationView0, ModelOptimizationView
+from views import DataView, ExperimentView, ConditionView
+from views import HelpView, SuccessView
+from views import ListOfModelsView, ListOfProjectsView, GenerateCombineArchive
+from views import ListOfOptimizationsView, OptimizationResultView
+from views import ListOfSimulationsView, SedmlSimulationView
 from views import LoginView, ActivateAccountView, ProfileView, AdminView
-from views import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw
-from views import GetSBOName
+from views import ModelCompartmentsView, ModelOverviewView, ModelAnnotationsView
+from views import ModelReactionsView, ModelRulesView, ModelSubmodelsView
+from views import ModelSpeciesView, ModelParametersView
+from views import ModelUnitsView, ModelEventsView, ModelMiscView
+from views import SignUpView, SignUpSuccessView, ValidateEmailView
+from views import TimeSeriesSimulationView, SteadyStateSimulationView
 
 urlpatterns = [
 
@@ -131,6 +126,8 @@ urlpatterns = [
 	url(r'^json/get_reaction/$', GetReaction.as_view(), name='get_reaction'),
 	url(r'^json/get_reaction_kinetic_law/$', GetReactionKineticLaw.as_view(), name='get_reaction_kinetic_law'),
 	url(r'^json/get_sbo_name/$', GetSBOName.as_view(), name='get_sbo_name'),
+	url(r'^json/set_account_active/$', SetAccountActive.as_view(), name='set_account_active'),
+	url(r'^json/set_account_staff/$', SetAccountStaff.as_view(), name='set_account_staff'),
 
 ]
 

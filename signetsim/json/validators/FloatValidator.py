@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" GetContinuationStatus.py
+""" MathValidator.py
 
 
 	This file...
@@ -23,35 +23,26 @@
 
 """
 
-from signetsim.views.json.JsonView import JsonView
-from signetsim.views.HasWorkingModel import HasWorkingModel
+from signetsim.json import JsonView
 
-from signetsim.models import SbmlModel, ContinuationComputation
-
-class GetContinuationStatus(JsonView, HasWorkingModel):
+class FloatValidator(JsonView):
 
 	def __init__(self):
 		JsonView.__init__(self)
-		HasWorkingModel.__init__(self)
-		self.listOfComputations = None
-
 
 	def post(self, request, *args, **kwargs):
-
-		self.load(request, *args, **kwargs)
-
-		t_str = request.POST['continuation_id']
-
-		if t_str != "":
-			t_id = int(t_str)
-			t_computation = self.listOfComputations[t_id]
-			self.data.update({'status': str(t_computation.status)})
-
+		field = str(request.POST['value'])
+		self.data.update({'error': self.readFloat(field)})
 		return JsonView.post(self, request, *args, **kwargs)
 
+	def readFloat(self, field):
 
-	def load(self, request, *args, **kwargs):
+		if field == "":
+			return "is empty !"
 
-		HasWorkingModel.load(self, request, *args, **kwargs)
-		t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
-		self.listOfComputations = ContinuationComputation.objects.filter(project=self.project, model=t_model)
+		else:
+			try:
+				t_float = float(field)
+				return ""
+			except ValueError:
+				return "isn't a float !"

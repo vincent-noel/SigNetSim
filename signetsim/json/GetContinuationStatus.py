@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" MathValidator.py
+""" GetContinuationStatus.py
 
 
 	This file...
@@ -23,34 +23,35 @@
 
 """
 
-from signetsim.views.json.JsonView import JsonView
+from signetsim.json import JsonView
+from signetsim.models import SbmlModel, ContinuationComputation
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from libsignetsim.model.math.MathFormula import MathFormula
-from libsignetsim.model.ModelException import ModelException
 
-class MathValidator(JsonView, HasWorkingModel):
+
+class GetContinuationStatus(JsonView, HasWorkingModel):
 
 	def __init__(self):
 		JsonView.__init__(self)
 		HasWorkingModel.__init__(self)
+		self.listOfComputations = None
 
-	def get(self, request, *args, **kwargs):
-		self.load(request, *args, **kwargs)
-		self.data.update({self.model.getSbmlId(): self.model.getName()})
-		return JsonView.get(self, request, *args, **kwargs)
 
 	def post(self, request, *args, **kwargs):
+
 		self.load(request, *args, **kwargs)
 
-		try:
-			t_math = MathFormula(self.model)
-			t_math.setPrettyPrintMathFormula(str(request.POST['math']))
-			self.data.update({'valid': 'true'})
+		t_str = request.POST['continuation_id']
 
-		except ModelException as e:
-			self.data.update({'valid': 'false'})
+		if t_str != "":
+			t_id = int(t_str)
+			t_computation = self.listOfComputations[t_id]
+			self.data.update({'status': str(t_computation.status)})
 
 		return JsonView.post(self, request, *args, **kwargs)
 
+
 	def load(self, request, *args, **kwargs):
+
 		HasWorkingModel.load(self, request, *args, **kwargs)
+		t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
+		self.listOfComputations = ContinuationComputation.objects.filter(project=self.project, model=t_model)

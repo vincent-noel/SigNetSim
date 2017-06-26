@@ -61,11 +61,6 @@ from analyse import AnalyseBifurcationsView
 # from graphs import ObservationGraph
 # from graphs import TreatmentGraph
 
-from json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
-from json import GetSubmodels, GetListOfObjects, GetContinuationStatus
-from json import GetContinuationFigure, GetListOfObjectsFromSubmodels
-from json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction
-from json import GetSBOName
 
 from SuccessView import SuccessView
 from HelpView import HelpView

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" GetListOfObjectsFromSubmodels.py
+""" GetListOfObjects.py
 
 
 	This file...
@@ -24,14 +24,15 @@
 """
 
 from django.conf import settings
+from libsignetsim.model.SbmlDocument import SbmlDocument
+from libsignetsim.model.Variable import Variable
 from os.path import join
 
-from signetsim.views.json.JsonView import JsonView
+from signetsim.json import JsonView
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from libsignetsim.model.Variable import Variable
-from libsignetsim.model.SbmlDocument import SbmlDocument
 
-class GetListOfObjectsFromSubmodels(JsonView, HasWorkingModel):
+
+class GetListOfObjects(JsonView, HasWorkingModel):
 
 	def __init__(self):
 		JsonView.__init__(self)
@@ -63,19 +64,14 @@ class GetListOfObjectsFromSubmodels(JsonView, HasWorkingModel):
 			# print [pm.id for pm in self.getProjectModels(request)]
 			# print self.model_name
 			# print self.model_id
-			list_of_project_models = self.getModelSBMLSubmodels(request)
-			# print "list of models : %s" % [pm.name for pm in list_of_project_models]
+			list_of_project_models = [pm for pm in self.getProjectModels(request) if pm.id != self.model_id]
+			print "list of models : %s" % [pm.name for pm in list_of_project_models]
 			# print "selected model : %s" % str(list_of_project_models[int(request.POST['model_id'])].name)
 
-			# t_model = list_of_project_models[int(request.POST['model_id'])]
-			# t_filename = join(settings.MEDIA_ROOT, str(t_model.sbml_file))
-			# doc = SbmlDocument()
-			# doc.readSbml(t_filename)
-
-			# t_model = list_of_project_models[int(request.POST['model_id'])]
-			# t_filename = join(settings.MEDIA_ROOT, str(t_model.sbml_file))
-			# doc = SbmlDocument()
-			doc = list_of_project_models[int(request.POST['model_id'])]
+			t_model = list_of_project_models[int(request.POST['model_id'])]
+			t_filename = join(settings.MEDIA_ROOT, str(t_model.sbml_file))
+			doc = SbmlDocument()
+			doc.readSbmlFromFile(t_filename)
 
 			self.listOfObjects = []
 			for t_object in doc.model.listOfSbmlObjects.values():

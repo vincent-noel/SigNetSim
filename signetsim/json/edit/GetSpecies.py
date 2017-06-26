@@ -22,13 +22,14 @@
 """
 
 from django.conf import settings
-from os.path import join
-
-from signetsim.views.json.JsonView import JsonView
-from signetsim.views.HasWorkingModel import HasWorkingModel
-from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.model.Model import Model
 from libsignetsim.model.ModelException import ModelException
+from libsignetsim.model.SbmlDocument import SbmlDocument
+from os.path import join
+
+from signetsim.json import JsonView
+from signetsim.views.HasWorkingModel import HasWorkingModel
+
 
 class GetSpecies(JsonView, HasWorkingModel):
 

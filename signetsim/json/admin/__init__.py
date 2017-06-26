@@ -2,7 +2,7 @@
 """ __init__.py
 
 
-	Initialization of the module web/signetsim/views/json
+	Initialization of the module signetsim.views.json.validators
 
 
 	Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
@@ -22,17 +22,5 @@
 
 """
 
-
-
-from GetContinuationFigure import GetContinuationFigure
-from GetContinuationStatus import GetContinuationStatus
-from GetListOfObjects import GetListOfObjects
-from GetListOfObjectsFromSubmodels import GetListOfObjectsFromSubmodels
-from GetCompartment import GetCompartment
-from GetParameter import GetParameter
-from GetSpecies import GetSpecies
-from GetSubmodels import GetSubmodels
-from GetReaction import GetReaction
-from GetReactionKineticLaw import GetReactionKineticLaw
-from GetSBOName import GetSBOName
-from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
+from SetAccountStaff import SetAccountStaff
+from SetAccountActive import SetAccountActive

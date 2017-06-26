@@ -1,10 +1,8 @@
 #!/usr/bin/env python
-""" GetContinuationFigure.py
+""" GetSpecies.py
 
 
 	This file...
-
-
 
 	Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
 
@@ -23,36 +21,26 @@
 
 """
 
-from signetsim.views.json.JsonView import JsonView
-from signetsim.views.HasWorkingModel import HasWorkingModel
 
-from signetsim.models import SbmlModel, ContinuationComputation
+from libsignetsim.uris.URI import URI
+
+from signetsim.json import JsonView
 
 
-class GetContinuationFigure(JsonView, HasWorkingModel):
+class GetSBOName(JsonView):
 
 	def __init__(self):
 		JsonView.__init__(self)
-		HasWorkingModel.__init__(self)
-		self.listOfComputations = None
 
 
 	def post(self, request, *args, **kwargs):
 
-		self.load(request, *args, **kwargs)
+		uri = URI()
+		uri.setSBO(int(request.POST['sboterm']))
+		name = uri.getName()
 
-		t_str = request.POST['continuation_id']
-
-		if t_str != "":
-			t_id = int(t_str)
-			t_computation = self.listOfComputations[t_id]
-			self.data.update({'status': str(t_computation.figure)})
+		self.data.update({
+			'name': "" if name is None else name,
+		})
 
 		return JsonView.post(self, request, *args, **kwargs)
-
-
-	def load(self, request, *args, **kwargs):
-
-		HasWorkingModel.load(self, request, *args, **kwargs)
-		t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
-		self.listOfComputations = ContinuationComputation.objects.filter(project=self.project, model=t_model)

@@ -39,21 +39,21 @@
         <tr>
            <td class="col-md-9 col-xs-8">{{ user.username }}</td>
 
-           <td class="col-md-1 col-xs-1 text-center">
+           <td class="col-md-1 col-xs-1 text-center" onclick="toggle_slide('is_active_{{forloop.counter0}}');">
              {% if user.is_superuser != True %}
               <span class="input-group col-xs-12">
                 <label class="switch">
-                  <input type="checkbox" name="parameter_constant" id="parameter_constant" {% if user.is_active %}checked{% endif %}>
+                  <input type="checkbox" name="is_active_{{forloop.counter0}}" id="is_active_{{forloop.counter0}}" {% if user.is_active %}checked{% endif %}>
                   <div class="slider round"></div>
                 </label>
               </span>
              {% endif %}
            </td>
-          <td class="col-md-1 col-xs-1 text-center">
+          <td class="col-md-1 col-xs-1 text-center" onclick="toggle_slide('is_staff_{{forloop.counter0}}');">
              {% if user.is_superuser != True %}
               <span class="input-group col-xs-12">
                 <label class="switch">
-                  <input type="checkbox" name="parameter_constant" id="parameter_constant" {% if user.is_admin %}checked{% endif %}>
+                  <input type="checkbox" name="is_staff_{{forloop.counter0}}" id="is_staff_{{forloop.counter0}}" {% if user.is_staff %}checked{% endif %}>
                   <div class="slider round"></div>
                 </label>
               </span>
@@ -77,3 +77,9 @@
     </table>
   </div>
 {% endblock view_content %}
+
+
+{% block js %}
+{{ block.super }}
+{% include 'admin/admin.js' %}
+{% endblock js %}

@@ -22,14 +22,15 @@
 """
 
 from django.conf import settings
+from libsignetsim.model.Model import Model
+from libsignetsim.model.ModelException import ModelException
+from libsignetsim.model.SbmlDocument import SbmlDocument
+from libsignetsim.model.sbml.KineticLaw import KineticLaw
 from os.path import join
 
-from signetsim.views.json.JsonView import JsonView
+from signetsim.json import JsonView
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.Model import Model
-from libsignetsim.model.sbml.KineticLaw import KineticLaw
-from libsignetsim.model.ModelException import ModelException
+
 
 class GetReaction(JsonView, HasWorkingModel):
 

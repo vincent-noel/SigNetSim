@@ -23,11 +23,13 @@
 
 """
 
-from signetsim.views.json.JsonView import JsonView
-from signetsim.views.HasWorkingModel import HasWorkingModel
-from libsignetsim.model.math.MathFormula import MathFormula
-from libsignetsim.model.ModelException import ModelException
 from libsbml import SyntaxChecker
+from libsignetsim.model.ModelException import ModelException
+from libsignetsim.model.math.MathFormula import MathFormula
+
+from signetsim.json import JsonView
+from signetsim.views.HasWorkingModel import HasWorkingModel
+
 
 class SbmlIdValidator(JsonView, HasWorkingModel):
 
