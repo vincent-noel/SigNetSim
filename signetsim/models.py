@@ -92,10 +92,10 @@ class User(AbstractUser):
 	Custom user class.
 	"""
 	organization = models.CharField(max_length=255, null=True)
-	used_cores = models.IntegerField(null=0)
-	max_cores = models.IntegerField(null=2)
-	used_cpu_time = models.IntegerField(null=0)
-	max_cpu_time = models.IntegerField(null=1000)
+	used_cores = models.IntegerField(null=False, default=0)
+	max_cores = models.IntegerField(null=False, default=2)
+	used_cpu_time = models.IntegerField(null=False, default=0)
+	max_cpu_time = models.IntegerField(null=False, default=1000)
 
 class Project(models.Model):
 	user = models.ForeignKey(User)
@@ -191,8 +191,8 @@ class Observation(models.Model):
 	value = models.FloatField()
 	stddev = models.FloatField()
 	steady_state = models.BooleanField()
-	min_steady_state = models.FloatField(null = True)
-	max_steady_state = models.FloatField(null = True)
+	min_steady_state = models.FloatField(null=True)
+	max_steady_state = models.FloatField(null=True)
 
 	def create(cls, species, time, value, stddev, steady_state, min_steady_state, max_steady_state):
 		data_point = cls(species=species, time=time, value=value, stddev=stddev,
