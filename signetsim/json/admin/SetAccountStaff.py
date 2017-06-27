@@ -21,13 +21,13 @@
 
 """
 
-from signetsim.json.JsonView import JsonView
+from signetsim.json.JsonRequest import JsonRequest
 from signetsim.models import User
 
-class SetAccountStaff(JsonView):
+class SetAccountStaff(JsonRequest):
 
 	def __init__(self):
-		JsonView.__init__(self)
+		JsonRequest.__init__(self)
 
 	def post(self, request, *args, **kwargs):
 
@@ -47,6 +47,6 @@ class SetAccountStaff(JsonView):
 		else:
 			self.data.update({'result': 'err'})
 
-		return JsonView.post(self, request, *args, **kwargs)
+		return JsonRequest.post(self, request, *args, **kwargs)
 
 

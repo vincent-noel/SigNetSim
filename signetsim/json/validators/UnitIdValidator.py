@@ -25,14 +25,14 @@
 
 from libsbml import SyntaxChecker
 
-from signetsim.json import JsonView
+from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 
-class UnitIdValidator(JsonView, HasWorkingModel):
+class UnitIdValidator(JsonRequest, HasWorkingModel):
 
     def __init__(self):
-        JsonView.__init__(self)
+        JsonRequest.__init__(self)
         HasWorkingModel.__init__(self)
 
 
@@ -50,7 +50,7 @@ class UnitIdValidator(JsonView, HasWorkingModel):
         else:
             self.data.update({'valid': 'true'})
 
-        return JsonView.post(self, request, *args, **kwargs)
+        return JsonRequest.post(self, request, *args, **kwargs)
 
 
     def load(self, request, *args, **kwargs):

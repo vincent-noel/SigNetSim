@@ -1,8 +1,10 @@
 #!/usr/bin/env python
-""" SetAccountActive.py
+""" GetProject.py
 
 
 	This file...
+
+
 
 	Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
 
@@ -21,31 +23,27 @@
 
 """
 
-from signetsim.json.JsonRequest import JsonRequest
-from signetsim.models import User
+from signetsim.json import JsonRequest
+from signetsim.views.HasUserLoggedIn import HasUserLoggedIn
+from signetsim.models import Project
 
-class SetAccountActive(JsonRequest):
+class GetProject(JsonRequest, HasUserLoggedIn):
 
 	def __init__(self):
 		JsonRequest.__init__(self)
+		HasUserLoggedIn.__init__(self)
+
 
 	def post(self, request, *args, **kwargs):
 
-		if 'username' in request.POST and 'status' in request.POST:
-			username = request.POST['username']
-			status = request.POST['status']
+		if self.isUserLoggedIn(request):
 
-			if User.objects.filter(username=username).exists():
-
-				user = User.objects.get(username=username)
-				user.is_active = (status == 'true')
-				user.save()
-
-				self.data.update({'result': 'ok'})
-			else:
-				self.data.update({'result': 'err'})
-		else:
-			self.data.update({'result': 'err'})
+			if Project.objects.filter(id=int(request.POST['id'])).exists():
+				project = Project.objects.get(id=int(request.POST['id']))
+				self.data.update({
+					'name': project.name,
+					'public': 1 if project.access == "PU" else 0
+				})
 
 		return JsonRequest.post(self, request, *args, **kwargs)
 

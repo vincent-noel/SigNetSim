@@ -26,7 +26,7 @@
 from django.http import JsonResponse
 from django.views.generic import View
 
-class JsonView(View):
+class JsonRequest(View):
 
 	def __init__(self):
 		View.__init__(self)

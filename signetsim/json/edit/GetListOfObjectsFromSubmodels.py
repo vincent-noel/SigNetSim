@@ -28,14 +28,14 @@ from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.model.Variable import Variable
 from os.path import join
 
-from signetsim.json import JsonView
+from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 
-class GetListOfObjectsFromSubmodels(JsonView, HasWorkingModel):
+class GetListOfObjectsFromSubmodels(JsonRequest, HasWorkingModel):
 
 	def __init__(self):
-		JsonView.__init__(self)
+		JsonRequest.__init__(self)
 		HasWorkingModel.__init__(self)
 
 
@@ -49,7 +49,7 @@ class GetListOfObjectsFromSubmodels(JsonView, HasWorkingModel):
 		# print t_list
 		# print ""
 
-		return JsonView.post(self, request, *args, **kwargs)
+		return JsonRequest.post(self, request, *args, **kwargs)
 
 
 	def load(self, request, *args, **kwargs):

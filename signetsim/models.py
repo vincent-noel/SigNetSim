@@ -131,14 +131,6 @@ class SEDMLSimulation(models.Model):
 	sedml_file = models.FileField(upload_to=sedml_filename)
 
 
-# class FittedSbmlModel(models.Model):
-#
-#     project = models.ForeignKey(Project)
-#     optimization_id = models.CharField(max_length=255)
-#     name = models.CharField(max_length=255)
-#     sbml_file = models.FileField(upload_to=fitted_model_filename)
-
-
 class Optimization(models.Model):
 	project = models.ForeignKey(Project)
 	model = models.ForeignKey(SbmlModel)

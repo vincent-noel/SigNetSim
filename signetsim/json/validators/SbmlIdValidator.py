@@ -27,14 +27,14 @@ from libsbml import SyntaxChecker
 from libsignetsim.model.ModelException import ModelException
 from libsignetsim.model.math.MathFormula import MathFormula
 
-from signetsim.json import JsonView
+from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 
-class SbmlIdValidator(JsonView, HasWorkingModel):
+class SbmlIdValidator(JsonRequest, HasWorkingModel):
 
 	def __init__(self):
-		JsonView.__init__(self)
+		JsonRequest.__init__(self)
 		HasWorkingModel.__init__(self)
 
 	def post(self, request, *args, **kwargs):
@@ -67,7 +67,7 @@ class SbmlIdValidator(JsonView, HasWorkingModel):
 		else:
 			self.data.update({'error': ''})
 
-		return JsonView.post(self, request, *args, **kwargs)
+		return JsonRequest.post(self, request, *args, **kwargs)
 
 	def load(self, request, *args, **kwargs):
 		HasWorkingModel.load(self, request, *args, **kwargs)

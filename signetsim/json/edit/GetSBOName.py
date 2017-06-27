@@ -24,13 +24,13 @@
 
 from libsignetsim.uris.URI import URI
 
-from signetsim.json import JsonView
+from signetsim.json import JsonRequest
 
 
-class GetSBOName(JsonView):
+class GetSBOName(JsonRequest):
 
 	def __init__(self):
-		JsonView.__init__(self)
+		JsonRequest.__init__(self)
 
 
 	def post(self, request, *args, **kwargs):
@@ -43,4 +43,4 @@ class GetSBOName(JsonView):
 			'name': "" if name is None else name,
 		})
 
-		return JsonView.post(self, request, *args, **kwargs)
+		return JsonRequest.post(self, request, *args, **kwargs)

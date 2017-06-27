@@ -32,7 +32,7 @@ from signetsim.json import FloatValidator, MathValidator, SbmlIdValidator, UnitI
 from signetsim.json import GetContinuationFigure, GetListOfObjectsFromSubmodels
 from signetsim.json import GetSBOName, SetAccountActive, SetAccountStaff
 from signetsim.json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction
-from signetsim.json import GetSubmodels, GetListOfObjects, GetContinuationStatus
+from signetsim.json import GetSubmodels, GetListOfObjects, GetContinuationStatus, GetProject
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
 from views import DataOptimizationView, DataOptimizationView0, ModelOptimizationView
 from views import DataView, ExperimentView, ConditionView
@@ -128,6 +128,7 @@ urlpatterns = [
 	url(r'^json/get_sbo_name/$', GetSBOName.as_view(), name='get_sbo_name'),
 	url(r'^json/set_account_active/$', SetAccountActive.as_view(), name='set_account_active'),
 	url(r'^json/set_account_staff/$', SetAccountStaff.as_view(), name='set_account_staff'),
+	url(r'^json/get_project/$', GetProject.as_view(), name='get_project'),
 
 ]
 

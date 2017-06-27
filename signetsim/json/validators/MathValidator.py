@@ -26,20 +26,20 @@
 from libsignetsim.model.ModelException import ModelException
 from libsignetsim.model.math.MathFormula import MathFormula
 
-from signetsim.json import JsonView
+from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 
-class MathValidator(JsonView, HasWorkingModel):
+class MathValidator(JsonRequest, HasWorkingModel):
 
 	def __init__(self):
-		JsonView.__init__(self)
+		JsonRequest.__init__(self)
 		HasWorkingModel.__init__(self)
 
 	def get(self, request, *args, **kwargs):
 		self.load(request, *args, **kwargs)
 		self.data.update({self.model.getSbmlId(): self.model.getName()})
-		return JsonView.get(self, request, *args, **kwargs)
+		return JsonRequest.get(self, request, *args, **kwargs)
 
 	def post(self, request, *args, **kwargs):
 		self.load(request, *args, **kwargs)
@@ -52,7 +52,7 @@ class MathValidator(JsonView, HasWorkingModel):
 		except ModelException as e:
 			self.data.update({'valid': 'false'})
 
-		return JsonView.post(self, request, *args, **kwargs)
+		return JsonRequest.post(self, request, *args, **kwargs)
 
 	def load(self, request, *args, **kwargs):
 		HasWorkingModel.load(self, request, *args, **kwargs)

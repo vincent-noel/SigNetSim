@@ -42,7 +42,7 @@ class TestAccounts(TestCase):
 
 		response_create_project = c.post('/', {
 			'action': 'new_folder',
-			'folder_name': 'Project 1'
+			'project_name': 'Project 1'
 		})
 
 		self.assertEqual(response_create_project.status_code, 200)

@@ -29,14 +29,14 @@ from libsignetsim.model.ModelException import ModelException
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from os.path import join
 
-from signetsim.json import JsonView
+from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 
-class GetSubmodels(JsonView, HasWorkingModel):
+class GetSubmodels(JsonRequest, HasWorkingModel):
 
 	def __init__(self):
-		JsonView.__init__(self)
+		JsonRequest.__init__(self)
 		HasWorkingModel.__init__(self)
 
 
@@ -46,7 +46,7 @@ class GetSubmodels(JsonView, HasWorkingModel):
 		t_list = self.getSubmodelList(request)
 		self.data.update({'list': t_list})
 
-		return JsonView.post(self, request, *args, **kwargs)
+		return JsonRequest.post(self, request, *args, **kwargs)
 
 
 	def load(self, request, *args, **kwargs):

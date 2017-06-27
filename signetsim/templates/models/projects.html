@@ -49,13 +49,20 @@
               <form class="form-inline" action="." method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="id" value="{{ project.id }}">
-                <button type="button" class="btn btn-xs btn-primary" id="send_{{project.folder}}" title="Send folder">{% bootstrap_icon "send" %}</button>
-                <button type="submit" name="action" value="copy_folder" class="btn btn-xs btn-primary" tite="Duplicate folder">{% bootstrap_icon "duplicate" %}</button>
-                <a href="{% url 'project_archive' forloop.counter0 %}" style="display: inline-block" target="_blank">
+                <button type="button" class="btn btn-xs btn-primary" onclick="view_project({{project.id}});" title="Edit project">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" class="btn btn-xs btn-primary" id="send_{{project.id}}" title="Send project">{% bootstrap_icon "send" %}</button>
+                <button type="submit" name="action" value="copy_folder" class="btn btn-xs btn-primary" title="Duplicate project">{% bootstrap_icon "duplicate" %}</button>
+                <a href="{% url 'project_archive' project.id %}" style="display: inline-block" target="_blank">
                   <button type="button" class="btn btn-xs btn-default" title="Download as COMBINE archive">{% bootstrap_icon "download-alt" %}</button>
                 </a>
-                <button type="submit" name="action" value="delete_folder" class="btn btn-primary btn-xs btn-danger" title="Remove folder">{% bootstrap_icon "trash" %}</button>
+                <button type="submit" name="action" value="delete_folder" class="btn btn-primary btn-xs btn-danger" title="Remove project">{% bootstrap_icon "trash" %}</button>
               </form>
+            </div>
+            {% else %}
+            <div class="pull-right">
+              <a href="{% url 'project_archive' project.id %}" style="display: inline-block" target="_blank">
+                <button type="button" class="btn btn-xs btn-default" title="Download as COMBINE archive">{% bootstrap_icon "download-alt" %}</button>
+              </a>
             </div>
             {% endif %}
           </td>
@@ -67,7 +74,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#new_folder">{% bootstrap_icon "file" %} Create new project</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="new_project();">{% bootstrap_icon "file" %} Create new project</button>
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#load_folder">{% bootstrap_icon "folder-open" %}&nbsp;&nbsp;Load combine archive</button>
  </div>
   {% endif %}
@@ -79,20 +86,39 @@
 {% block view_modal %}
 
 <!-- Modal -->
-<div class="modal fade in" id="new_folder" tabindex="1" role="dialog" aria-labelledby="New project">
+<div class="modal fade in" id="modal_project" tabindex="1" role="dialog" aria-labelledby="New project">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form action="." method="post" class="form-inline" enctype="multipart/form-data">
+      <form method="post" class="form-inline" enctype="multipart/form-data" id="form_project">
         {% csrf_token %}
+        <input type="hidden" name="action" value="save_project">
+        <input type="hidden" name="project_id" id="modal_project_id" value="">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Create a new project</h4>
+          <h4 class="modal-title" id="modal_project_title">Create a new project</h4>
         </div>
         <div class="modal-body">
             <div class="input-group" style="width:100%">
-              <span class="input-group-addon" id="model_name_id">Project name</span>
-              <input type="text" class="form-control" placeholder="Name" name="folder_name">
+              <span class="input-group-addon">Project name</span>
+              <input type="text" class="form-control" placeholder="Name" name="project_name" id="modal_project_name">
             </div>
+             <table class="table table-striped">
+                <thead>
+                  <tr class="row" onclick="toggle_slide('modal_project_access');">
+                    <th class="col-xs-10">Public</th>
+                    <th class="col-xs-2 text-right">
+                      <span class="input-group col-xs-12">
+                          <label class="switch">
+                            <input type="checkbox" name="project_access" id="modal_project_access">
+                            <div class="slider round"></div>
+                          </label>
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+              </table>
+
+
             {% if create_folder_error != None %}
             <br/><br/>
             <div class="alert alert-danger">
@@ -101,7 +127,7 @@
             {% endif %}
         </div>
         <div class="modal-footer">
-          <button type="submit"  name="action" value="new_folder" class="btn btn-primary">Submit</button>
+          <button type="button" onclick="save_project();" class="btn btn-primary">Save</button>
         </div>
       </form>
     </div>
@@ -109,7 +135,6 @@
 </div>
 
 
-<!-- Modal -->
 <div class="modal fade in" id="send_folder" tabindex="1" role="dialog" aria-labelledby="Send project">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -164,40 +189,13 @@
     </div>
   </div>
 </div>
+<!-- End Modal -->
+
 {% endblock view_modal %}
 
 
 {% block js %}
 
 {{ block.super }}
-
-{% if create_folder_show != None %}
-
-  $(window).on('load',function(){
-    $('#new_folder').modal('show');
-
-  });
-
-{% endif %}
-
-{% if send_folder_show != None %}
-
-  $(window).on('load',function(){
-    $('#send_folder').modal('show');
-
-  });
-
-{% endif %}
-
-{% for project in projects %}
-
-$('#send_{{project.id}}').on('click', function(){
-    $('#send_id').val("{{project.id}}");
-    $('#send_folder').modal('show');
-
-
-});
-
-{% endfor %}
-
+{% include 'models/projects.js' %}
 {% endblock js %}

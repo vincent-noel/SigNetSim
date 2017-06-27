@@ -58,8 +58,7 @@ class GenerateCombineArchive(TemplateView):
 
 	def generateCombineArchive(self, request, project_id):
 
-		projects = Project.objects.filter(user=request.user)
-		project = projects[int(project_id)]
+		project = Project.objects.get(id=int(project_id))
 
 		combine_archive = CombineArchive()
 		for sbml_model in SbmlModel.objects.filter(project=project):

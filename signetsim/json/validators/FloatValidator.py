@@ -23,17 +23,17 @@
 
 """
 
-from signetsim.json import JsonView
+from signetsim.json import JsonRequest
 
-class FloatValidator(JsonView):
+class FloatValidator(JsonRequest):
 
 	def __init__(self):
-		JsonView.__init__(self)
+		JsonRequest.__init__(self)
 
 	def post(self, request, *args, **kwargs):
 		field = str(request.POST['value'])
 		self.data.update({'error': self.readFloat(field)})
-		return JsonView.post(self, request, *args, **kwargs)
+		return JsonRequest.post(self, request, *args, **kwargs)
 
 	def readFloat(self, field):
 

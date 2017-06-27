@@ -22,7 +22,7 @@
 
 """
 
-from JsonView import JsonView
+from JsonRequest import JsonRequest
 
 from admin import SetAccountStaff, SetAccountActive
 from edit import GetListOfObjects, GetListOfObjectsFromSubmodels
@@ -31,3 +31,4 @@ from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdVal
 
 from GetContinuationFigure import GetContinuationFigure
 from GetContinuationStatus import GetContinuationStatus
+from GetProject import GetProject

@@ -26,9 +26,6 @@ $('#constant_list li').on('click', function(){
   $('#compartment_constant').val($(this).index());
 });
 
-
-
-
 // Value validator
 
 var form_value_error = "";
@@ -51,8 +48,6 @@ $("#compartment_size").on('paste keyup', function()
     else { form_value_error = "";}
 
 });
-
-
 
 
 // SbmlId Validation

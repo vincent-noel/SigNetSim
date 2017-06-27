@@ -31,7 +31,7 @@ from django.core.files import File
 from signetsim.models import Project, SbmlModel, SEDMLSimulation, CombineArchiveModel
 from signetsim.models import Optimization, ContinuationComputation
 from signetsim.models import Experiment, Condition, Observation, Treatment
-
+from signetsim.manager import deleteProject, copyProject
 from signetsim.forms import DocumentForm
 from libsignetsim.combine.CombineArchive import CombineArchive
 from libsignetsim.combine.CombineException import CombineException
@@ -40,7 +40,7 @@ from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.sedml.SedmlDocument import SedmlDocument
 from libsignetsim.model.ModelException import ModelException
 
-from os.path import join, isfile, isdir, basename
+from os.path import join, isfile, isdir, basename, splitext
 from os import remove, mkdir
 from shutil import rmtree, copy
 
@@ -102,6 +102,9 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 			elif request.POST['action'] == "load_folder":
 				self.loadFolder(request)
 
+			elif request.POST['action'] == "save_project":
+				self.saveProject(request)
+
 		return TemplateView.get(self, request, *args, **kwargs)
 
 
@@ -113,17 +116,25 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 	def newFolder(self, request):
 
-		folder_name = str(request.POST['folder_name'])
+		name = str(request.POST['project_name'])
+		access = False
+		if 'project_access' in request.POST and request.POST['project_access'] == "on":
+			access = True
 
-		if not Project.objects.filter(user=request.user, name=folder_name).exists():
-			new_folder = Project(user=request.user, name=folder_name)
+		if not Project.objects.filter(user=request.user, name=name).exists():
+			new_folder = Project(user=request.user, name=name)
+			if access:
+				new_folder.access = 'PU'
+			else:
+				new_folder.access = 'PR'
+
 			new_folder.save()
 			mkdir(join(settings.MEDIA_ROOT, str(new_folder.folder)))
 
 			self.loadFolders(request)
 		else:
 			self.createFolderShow = True
-			self.createFolderError = "Project %s already exists !" % folder_name
+			self.createFolderError = "Project %s already exists !" % name
 
 	def copyFolder(self, request):
 
@@ -132,11 +143,7 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 			folder = Project.objects.get(user=request.user, id=folder_id)
 			new_folder = Project(user=request.user, name=(str(folder.name) + " (Copy)"))
-			new_folder.save()
-			self.copyProjectModels(folder, new_folder)
-			self.copyProjectExperiments(folder, new_folder)
-
-			new_folder.save()
+			copyProject(folder, new_folder)
 
 
 	def deleteFolder(self, request):
@@ -149,126 +156,12 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 		if Project.objects.filter(user=request.user, id=folder_id).exists():
 
 			project = Project.objects.get(user=request.user, id=folder_id)
-
-			self.__deleteProjectModels(project)
-			self.__deleteProjectData(project)
-			self.__deleteProjectOptimizations(project)
-			self.__deleteProjectEquilibriumCurve(project)
-			self.__deleteProjectArchives(project)
-			if isdir(join(settings.MEDIA_ROOT, str(project.folder))):
-				rmtree(join(settings.MEDIA_ROOT, str(project.folder)))
-			project.delete()
-
-
-	def __deleteProjectModels(self, project):
-
-		for model in SbmlModel.objects.filter(project=project):
-			filename = join(settings.MEDIA_ROOT, str(model.sbml_file))
-			if isfile(filename):
-				remove(filename)
-			model.delete()
-
-
-		# for fitted_model in FittedSbmlModel.objects.filter(project=project):
-		#     filename = join(settings.MEDIA_ROOT, str(fitted_model.sbml_file))
-		#     if isfile(filename):
-		#         remove(filename)
-		#     fitted_model.delete()
-
-
-	def __deleteProjectData(self, project):
-
-
-		for experiment in Experiment.objects.filter(project=project):
-			for condition in Condition.objects.filter(experiment=experiment):
-				for observation in Observation.objects.filter(condition=condition):
-					observation.delete()
-				for treatment in Treatment.objects.filter(condition=condition):
-					treatment.delete()
-				condition.delete()
-			experiment.delete()
-
-
-	def __deleteProjectOptimizations(self, project):
-
-		for optim in Optimization.objects.filter(project=project):
-			subdirectory = "optimization_%s" % optim.optimization_id
-			directory = join(settings.MEDIA_ROOT, project.folder, "optimizations", subdirectory)
-			if isdir(directory):
-				rmtree(directory)
-			optim.delete()
-
-
-	def __deleteProjectEquilibriumCurve(self, project):
-
-		for cont in ContinuationComputation.objects.filter(project=project):
-			cont.delete()
-
-
-	def __deleteProjectArchives(self, project):
-
-		for archive in CombineArchiveModel.objects.filter(project=project):
-			filename = join(settings.MEDIA_ROOT, str(archive.archive_file))
-			if isfile(filename):
-				remove(filename)
-			archive.delete()
-
-	def copyProjectModels(self, project, new_project):
-
-		t_models = SbmlModel.objects.filter(project=project)
-		for model in t_models:
-			t_file = File(open(join(settings.MEDIA_ROOT, str(model.sbml_file))))
-
-			new_model = SbmlModel(project=new_project, name=model.name,
-									sbml_file=t_file)
-			new_model.save()
-
-	def copyProjectExperiments(self, project, new_project):
-
-		t_experiments = Experiment.objects.filter(project=project)
-		for experiment in t_experiments:
-
-			new_experiment = Experiment(project=new_project,
-											name=str(experiment.name),
-											notes=str(experiment.notes))
-			new_experiment.save()
-			t_conditions = Condition.objects.filter(experiment=experiment)
-			for condition in t_conditions:
-				new_condition = Condition(experiment=new_experiment,
-											name=str(condition.name),
-											notes=str(condition.notes))
-				new_condition.save()
-
-				t_observations = Observation.objects.filter(condition=condition)
-				for t_observation in t_observations:
-					new_observation = Observation(condition=new_condition,
-										species=t_observation.species,
-										time=t_observation.time,
-										value=t_observation.value,
-										stddev=t_observation.stddev,
-										steady_state=t_observation.steady_state,
-										min_steady_state=t_observation.min_steady_state,
-										max_steady_state=t_observation.max_steady_state)
-
-					new_observation.save()
-
-				t_treatments = Treatment.objects.filter(condition=condition)
-				for t_treatment in t_treatments:
-					new_treatment = Treatment(condition=new_condition,
-										species=t_treatment.species,
-										time=t_treatment.time,
-										value=t_treatment.value)
-
-					new_treatment.save()
-
-				new_condition.save()
-			new_experiment.save()
+			deleteProject(project)
 
 
 	def sendFolder(self, request):
 
 		folder_id = str(request.POST['id'])
-		# print "Folder %s" % folder_id
 		t_username = str(request.POST['username'])
 		try :
 			t_user = User.objects.get(username=t_username)
@@ -276,18 +169,30 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 				folder = Project.objects.get(user=request.user, id=folder_id)
 				new_folder = Project(user=t_user, name=str(folder.name))
-
-				self.copyProjectModels(folder, new_folder)
-				self.copyProjectExperiments(folder, new_folder)
-
-				new_folder.save()
-
-
+				copyProject(folder, new_folder)
 
 
 		except User.DoesNotExist:
 			self.sendFolderShow = True
 			self.sendFolderError = "Username %s does not exist" % t_username
+
+	def saveProject(self, request):
+
+		if 'project_name' in request.POST and 'project_id' in request.POST:
+			id = request.POST['project_id']
+			name = request.POST['project_name']
+			access = False
+			if 'project_access' in request.POST and request.POST['project_access'] == "on":
+				access = True
+
+			if Project.objects.filter(id=id).exists():
+				project = Project.objects.get(id=id)
+				project.name = name
+				if access:
+					project.access = 'PU'
+				else:
+					project.access = 'PR'
+				project.save()
 
 	def loadFolder(self, request):
 
@@ -324,7 +229,7 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 						sbml_model.name = doc.model.getName()
 						sbml_model.save()
 					except ModelException:
-						name = os.path.splitext(str(sbml_model.sbml_file))[0]
+						name = splitext(str(sbml_model.sbml_file))[0]
 						sbml_model.name = name
 						sbml_model.save()
 
@@ -356,7 +261,7 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 								sbml_model.name = doc.model.getName()
 								sbml_model.save()
 							except ModelException:
-								name = os.path.splitext(str(sbml_model.sbml_file))[0]
+								name = splitext(str(sbml_model.sbml_file))[0]
 								sbml_model.name = name
 								sbml_model.save()
 
@@ -369,3 +274,103 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 	def loadFolders(self, request):
 		self.listOfFolders = Project.objects.filter(user=request.user)
+
+
+	#
+	# def __deleteProjectModels(self, project):
+	#
+	# 	for model in SbmlModel.objects.filter(project=project):
+	# 		filename = join(settings.MEDIA_ROOT, str(model.sbml_file))
+	# 		if isfile(filename):
+	# 			remove(filename)
+	# 		model.delete()
+	#
+	#
+	#
+	# def __deleteProjectData(self, project):
+	#
+	#
+	# 	for experiment in Experiment.objects.filter(project=project):
+	# 		for condition in Condition.objects.filter(experiment=experiment):
+	# 			for observation in Observation.objects.filter(condition=condition):
+	# 				observation.delete()
+	# 			for treatment in Treatment.objects.filter(condition=condition):
+	# 				treatment.delete()
+	# 			condition.delete()
+	# 		experiment.delete()
+	#
+	#
+	# def __deleteProjectOptimizations(self, project):
+	#
+	# 	for optim in Optimization.objects.filter(project=project):
+	# 		subdirectory = "optimization_%s" % optim.optimization_id
+	# 		directory = join(settings.MEDIA_ROOT, project.folder, "optimizations", subdirectory)
+	# 		if isdir(directory):
+	# 			rmtree(directory)
+	# 		optim.delete()
+	#
+	#
+	# def __deleteProjectEquilibriumCurve(self, project):
+	#
+	# 	for cont in ContinuationComputation.objects.filter(project=project):
+	# 		cont.delete()
+	#
+	#
+	# def __deleteProjectArchives(self, project):
+	#
+	# 	for archive in CombineArchiveModel.objects.filter(project=project):
+	# 		filename = join(settings.MEDIA_ROOT, str(archive.archive_file))
+	# 		if isfile(filename):
+	# 			remove(filename)
+	# 		archive.delete()
+
+	# def copyProjectModels(self, project, new_project):
+	#
+	# 	t_models = SbmlModel.objects.filter(project=project)
+	# 	for model in t_models:
+	# 		t_file = File(open(join(settings.MEDIA_ROOT, str(model.sbml_file))))
+	#
+	# 		new_model = SbmlModel(project=new_project, name=model.name,
+	# 								sbml_file=t_file)
+	# 		new_model.save()
+	#
+	# def copyProjectExperiments(self, project, new_project):
+	#
+	# 	t_experiments = Experiment.objects.filter(project=project)
+	# 	for experiment in t_experiments:
+	#
+	# 		new_experiment = Experiment(project=new_project,
+	# 										name=str(experiment.name),
+	# 										notes=str(experiment.notes))
+	# 		new_experiment.save()
+	# 		t_conditions = Condition.objects.filter(experiment=experiment)
+	# 		for condition in t_conditions:
+	# 			new_condition = Condition(experiment=new_experiment,
+	# 										name=str(condition.name),
+	# 										notes=str(condition.notes))
+	# 			new_condition.save()
+	#
+	# 			t_observations = Observation.objects.filter(condition=condition)
+	# 			for t_observation in t_observations:
+	# 				new_observation = Observation(condition=new_condition,
+	# 									species=t_observation.species,
+	# 									time=t_observation.time,
+	# 									value=t_observation.value,
+	# 									stddev=t_observation.stddev,
+	# 									steady_state=t_observation.steady_state,
+	# 									min_steady_state=t_observation.min_steady_state,
+	# 									max_steady_state=t_observation.max_steady_state)
+	#
+	# 				new_observation.save()
+	#
+	# 			t_treatments = Treatment.objects.filter(condition=condition)
+	# 			for t_treatment in t_treatments:
+	# 				new_treatment = Treatment(condition=new_condition,
+	# 									species=t_treatment.species,
+	# 									time=t_treatment.time,
+	# 									value=t_treatment.value)
+	#
+	# 				new_treatment.save()
+	#
+	# 			new_condition.save()
+	# 		new_experiment.save()

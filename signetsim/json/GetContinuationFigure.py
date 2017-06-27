@@ -23,15 +23,15 @@
 
 """
 
-from signetsim.json import JsonView
+from signetsim.json import JsonRequest
 from signetsim.models import SbmlModel, ContinuationComputation
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 
-class GetContinuationFigure(JsonView, HasWorkingModel):
+class GetContinuationFigure(JsonRequest, HasWorkingModel):
 
 	def __init__(self):
-		JsonView.__init__(self)
+		JsonRequest.__init__(self)
 		HasWorkingModel.__init__(self)
 		self.listOfComputations = None
 
@@ -47,7 +47,7 @@ class GetContinuationFigure(JsonView, HasWorkingModel):
 			t_computation = self.listOfComputations[t_id]
 			self.data.update({'status': str(t_computation.figure)})
 
-		return JsonView.post(self, request, *args, **kwargs)
+		return JsonRequest.post(self, request, *args, **kwargs)
 
 
 	def load(self, request, *args, **kwargs):

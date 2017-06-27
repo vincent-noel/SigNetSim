@@ -27,14 +27,14 @@ from libsignetsim.model.ModelException import ModelException
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from os.path import join
 
-from signetsim.json import JsonView
+from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 
-class GetParameter(JsonView, HasWorkingModel):
+class GetParameter(JsonRequest, HasWorkingModel):
 
 	def __init__(self):
-		JsonView.__init__(self)
+		JsonRequest.__init__(self)
 		HasWorkingModel.__init__(self)
 
 
@@ -71,7 +71,7 @@ class GetParameter(JsonView, HasWorkingModel):
 				'sboterm_name': parameter.getAnnotation().getSBOTermDescription()
 			})
 
-		return JsonView.post(self, request, *args, **kwargs)
+		return JsonRequest.post(self, request, *args, **kwargs)
 
 
 	def load(self, request, *args, **kwargs):

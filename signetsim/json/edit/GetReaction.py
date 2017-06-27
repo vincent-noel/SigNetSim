@@ -28,14 +28,14 @@ from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.model.sbml.KineticLaw import KineticLaw
 from os.path import join
 
-from signetsim.json import JsonView
+from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 
-class GetReaction(JsonView, HasWorkingModel):
+class GetReaction(JsonRequest, HasWorkingModel):
 
 	def __init__(self):
-		JsonView.__init__(self)
+		JsonRequest.__init__(self)
 		HasWorkingModel.__init__(self)
 
 
@@ -104,7 +104,7 @@ class GetReaction(JsonView, HasWorkingModel):
 				'sboterm_name': reaction.getAnnotation().getSBOTermDescription()
 			})
 
-		return JsonView.post(self, request, *args, **kwargs)
+		return JsonRequest.post(self, request, *args, **kwargs)
 
 
 	def load(self, request, *args, **kwargs):

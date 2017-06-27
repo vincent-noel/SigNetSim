@@ -1,141 +1,79 @@
-{#   _layout/base.html : This is the top template 							  #}
+{% if create_folder_show != None %}
 
-{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+  $(window).on('load',function(){
+    $('#new_folder').modal('show');
 
-{#   This program is free software: you can redistribute it and/or modify     #}
-{#   it under the terms of the GNU Affero General Public License as published #}
-{#   by the Free Software Foundation, either version 3 of the License, or     #}
-{#   (at your option) any later version. 									  #}
+  });
 
-{#   This program is distributed in the hope that it will be useful, 		  #}
-{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
-{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
-{#   GNU Affero General Public License for more details.					  #}
-
-{#   You should have received a copy of the GNU Affero General Public License #}
-{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
-
-{% load bootstrap3 %}
-{% load tags %}
-
-
-$('#unit_list li').on('click', function(){
-  $("#species_unit_label").html($(this).text());
-  $('#species_unit').val($(this).index());
-});
-
-
-$('#species_compartment_dropdown li').on('click', function(){
-  $("#species_compartment_label").html($(this).text());
-  $('#species_compartment').val($(this).index());
-});
-
-
-$('#new_species_button').on('click', function(){
-
-    $("#modal_title").html("New species");
-    $("#species_id").attr("value", "");
-    $("#species_name").attr("value", "");
-    $("#species_sbml_id").attr("value", "");
-    $("#species_value").attr("value", "");
-    {% if list_of_compartments|my_len == 1 %}
-    $("#species_compartment_label").html("{{list_of_compartments|my_lookup:0}}");
-    $("#species_compartment").attr("value", "0");
-    {% else %}
-    $("#species_compartment_label").html("Choose a compartment");
-    $("#species_compartment").attr("value", "");
-    {% endif %}
-    $("#species_unit_label").html("Choose a unit");
-    $("#species_unit").attr("value", "");
-    $("#species_constant").attr("value", 0);
-    $("#species_boundary").attr("value", 0);
-    $('#modal_species').modal('show');
-
-});
-
-function toggle_slide(slide_id) {
-  if ($('#' + slide_id).prop('checked') == true) {
-    $('#' + slide_id).prop("checked", false);
-  } else {
-    $('#' + slide_id).prop("checked", true);
-  }
-}
-
-
-// SbmlId Validation
-
-var old_sbml_id = "{% if form.isEditing == True and form.sbmlId != None %}{{form.sbmlId}}{% endif %}";
-
-function setSbmlIdValid()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").addClass("in");
-}
-
-function setSbmlIdInvalid()
-{
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_invalid").addClass("in");
-}
-
-function setSbmlIdValidating()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_validating").addClass("in");
-}
-
-
-$("#species_sbml_id").on('change paste keyup', function()
-{
-  new_sbml_id = $.trim($("#species_sbml_id").val());
-  if (old_sbml_id === "" || new_sbml_id !== old_sbml_id)
-  {
-    setSbmlIdValidating();
-
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
-            }
-        }
-    });
-    $.ajax(
-    {
-        type: "POST",
-        url: '{% url 'sbml_id_validator' %}',
-        data: {
-            'sbml_id': new_sbml_id,
-        },
-
-    })
-    .done(function(data)
-    {
-       $.each(data, function(index, element) {
-         if (index === 'valid' && element === 'true') {
-           setSbmlIdValid();
-         } else {
-           setSbmlIdInvalid();
-         }
-       });
-    })
-    .fail(function()
-    {
-      setSbmlIdInvalid();
-    })
-  }
-  else if (new_sbml_id === old_sbml_id)
-  {
-    setSbmlIdValid();
-  }
-});
-
-
-
-{% if form.hasErrors == True or form.isEditing == True %}
-    $(window).on('load',function(){
-        $('#modal_species').modal('show');
-    });
 {% endif %}
+
+{% if send_folder_show != None %}
+
+  $(window).on('load',function(){
+    $('#send_folder').modal('show');
+
+  });
+
+{% endif %}
+
+{% for project in projects %}
+
+$('#send_{{project.id}}').on('click', function(){
+    $('#send_id').val("{{project.id}}");
+    $('#send_folder').modal('show');
+
+
+});
+
+{% endfor %}
+
+function new_project()
+{
+    $("#modal_project_title").html("New project");
+    $("#modal_project_id").val("");
+    $("#modal_project_name").val("");
+    $("#modal_project_access").prop('checked', false);
+
+    $('#modal_project').modal('show');
+
+}
+
+function view_project(project_id)
+{
+
+    $("#modal_project_title").html("Edit project");
+
+    ajax_call(
+        "POST", "{{csrf_token}}",
+        "{% url 'get_project' %}", {'id': project_id},
+        function(data)
+        {
+           $.each(data, function(index, element)
+           {
+               if (index == "name") { $("#modal_project_name").val(element.toString()); }
+               else if (index == "public")
+               {
+                   if (element == "1") {
+                       $("#modal_project_access").prop('checked', true);
+                   }
+                   else {
+                       $("#modal_project_access").prop('checked', false);
+                   }
+               }
+           });
+
+           $("#modal_project_id").val(project_id);
+
+
+        },
+        function(){}
+    );
+
+    $('#modal_project').modal('show');
+}
+
+
+function save_project()
+{
+    $("#form_project").submit();
+}

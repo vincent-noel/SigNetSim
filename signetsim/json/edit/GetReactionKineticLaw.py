@@ -27,14 +27,14 @@ from libsignetsim.model.ModelException import ModelException
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from os.path import join
 
-from signetsim.json import JsonView
+from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 
-class GetReactionKineticLaw(JsonView, HasWorkingModel):
+class GetReactionKineticLaw(JsonRequest, HasWorkingModel):
 
 	def __init__(self):
-		JsonView.__init__(self)
+		JsonRequest.__init__(self)
 		HasWorkingModel.__init__(self)
 
 
@@ -44,7 +44,7 @@ class GetReactionKineticLaw(JsonView, HasWorkingModel):
 		reaction = self.getModel().listOfReactions[int(request.POST['reaction_id'])]
 
 		self.data.update({'kinetic_law': reaction.getReactionKineticLaw()})
-		return JsonView.post(self, request, *args, **kwargs)
+		return JsonRequest.post(self, request, *args, **kwargs)
 
 
 	def load(self, request, *args, **kwargs):

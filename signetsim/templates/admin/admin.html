@@ -60,13 +60,12 @@
              {% endif %}
            </td>
            <td class="col-md-1 col-xs-2 text-right">
-              <button type="submit" name="action" value="edit" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
-            &nbsp;
+
             <div class="pull-right">
               <form class="form-inline" role="form" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="id" value="{{ user.id }}">
-                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+                <button type="submit" name="action" value="delete" title="Delete user" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
                </form>
 
              </div>
@@ -77,6 +76,44 @@
     </table>
   </div>
 {% endblock view_content %}
+
+{% block view_modal %}
+
+<!-- Modal -->
+<div class="modal fade in" id="quotas" tabindex="1" role="dialog" aria-labelledby="User's quotas">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="." method="post" class="form-inline" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">User's quotas</h4>
+        </div>
+        <div class="modal-body">
+            <div class="input-group" style="width:100%">
+              <span class="input-group-addon" id="users_cores">Cores</span>
+              <input type="text" class="form-control" placeholder="Name" name="folder_name">
+            </div>
+            <div class="input-group" style="width:100%">
+              <span class="input-group-addon" id="users_cpu_time">CPU Time</span>
+              <input type="text" class="form-control" placeholder="Name" name="folder_name">
+            </div>
+            {% if create_folder_error != None %}
+            <br/><br/>
+            <div class="alert alert-danger">
+              <strong>Error :</strong> {{ create_folder_error }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="modal-footer">
+          <button type="submit"  name="action" value="new_folder" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock view_modal %}
 
 
 {% block js %}
