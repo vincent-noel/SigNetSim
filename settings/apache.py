@@ -50,7 +50,7 @@ EMAIL_HOST_USER = 'whatever@gmail.com'
 EMAIL_HOST_PASSWORD = 'PASSW0RD'
 EMAIL_PORT = 587
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = (

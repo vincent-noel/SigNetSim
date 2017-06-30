@@ -1,8 +1,8 @@
 ### Beginning of SigNetSim configuration
 
 # To prevent bugs if you don't write the trailing slash
-RewriteEngine on
-RewriteRule ^/___ROOT_DIR___$ /___ROOT_DIR___/ [R]
+#RewriteEngine on
+#RewriteRule ^/___ROOT_DIR___$ /___ROOT_DIR___/ [R]
 
 # Configure the media dir
 Alias /___ROOT_DIR___/media/ ___INSTALL_DIR___/data/media/
@@ -24,7 +24,7 @@ Alias /___ROOT_DIR___/static/ ___INSTALL_DIR___/static/
 WSGIDaemonProcess signetsim python-path=/usr/local/lib/python2.7/site-packages
 WSGIScriptAlias /___ROOT_DIR___ ___INSTALL_DIR___/settings/wsgi.py
 WSGIApplicationGroup %{GLOBAL}
-<Location /___ROOT_DIR___/>
+<Location /___ROOT_DIR___>
   WSGIProcessGroup signetsim
 </Location>
 
