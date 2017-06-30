@@ -4,12 +4,13 @@ T_DIR=`dirname $DIR`
 INSTALL_DIR=`dirname $T_DIR`
 ROOT_DIR=$1
 
+#What we need to do is to make it "" or "/truc".
 #if [ ${ROOT_DIR: -1} -ne "/" ];
 #then
 #    ROOT_DIR=${ROOT_DIR}/
 #fi
 
-sed "s|BASE_URL = \"/\"|BASE_URL = \"/$1/\"|" ${INSTALL_DIR}/settings/apache.py > ${INSTALL_DIR}/settings/apache.py
+sed -i "s|BASE_URL = \"/\"|BASE_URL = \"/$1/\"|" ${INSTALL_DIR}/settings/apache.py > ${INSTALL_DIR}/settings/apache.py
 
 cp $DIR/apache_template $DIR/apache_conf
 sed -i "s|___ROOT_DIR___|$ROOT_DIR|g" $DIR/apache_conf
