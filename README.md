@@ -12,16 +12,16 @@ A django web application for building, fitting, and analyzing mathematical model
 
 ## Configure the apache server
 
-	bash scripts/configure_apache.sh
+	bash scripts/configure_apache.sh [folder]
 
-The server will run on localhost/signetsim, with a default Admin with admin:admin credentials.
+The server will run on localhost/[folder], with a default Admin with admin:admin credentials.
 
 
 ## Running withing a docker
 
 	bash scripts/run_docker.sh
 
-The server will run on localhost:8080/signetsim, with a default Admin with admin:admin credentials.
+The server will run on localhost:8080, with a default Admin with admin:admin credentials.
 
 
 ## License
