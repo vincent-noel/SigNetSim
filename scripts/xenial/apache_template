@@ -1,7 +1,5 @@
 ### Beginning of SigNetSim configuration
 
-# To prevent bugs if you don't write the trailing slash
-
 # Configure the media dir
 Alias ___ROOT_DIR___/media/ ___INSTALL_DIR___/data/media/
 <Directory ___INSTALL_DIR___/data/media>
