@@ -60,7 +60,7 @@
              {% endif %}
            </td>
            <td class="col-md-1 col-xs-2 text-right">
-
+            {% if user.is_superuser != True %}
             <div class="pull-right">
               <form class="form-inline" role="form" method="post">
                 {% csrf_token %}
@@ -69,6 +69,7 @@
                </form>
 
              </div>
+               {% endif %}
            </td>
         </tr>
         {% endfor %}

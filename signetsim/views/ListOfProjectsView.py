@@ -179,20 +179,24 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 	def saveProject(self, request):
 
 		if 'project_name' in request.POST and 'project_id' in request.POST:
-			id = request.POST['project_id']
-			name = request.POST['project_name']
-			access = False
-			if 'project_access' in request.POST and request.POST['project_access'] == "on":
-				access = True
+			if request.POST['project_id'] != "":
+				id = request.POST['project_id']
+				name = request.POST['project_name']
+				access = False
+				if 'project_access' in request.POST and request.POST['project_access'] == "on":
+					access = True
 
-			if Project.objects.filter(id=id).exists():
-				project = Project.objects.get(id=id)
-				project.name = name
-				if access:
-					project.access = 'PU'
-				else:
-					project.access = 'PR'
-				project.save()
+				if Project.objects.filter(id=id).exists():
+					project = Project.objects.get(id=id)
+					project.name = name
+					if access:
+						project.access = 'PU'
+					else:
+						project.access = 'PR'
+					project.save()
+
+			else:
+				self.newFolder(request)
 
 	def loadFolder(self, request):
 

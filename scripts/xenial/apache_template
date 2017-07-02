@@ -3,7 +3,7 @@
 # To prevent bugs if you don't write the trailing slash
 
 # Configure the media dir
-Alias /___ROOT_DIR___/media/ ___INSTALL_DIR___/data/media/
+Alias ___ROOT_DIR___/media/ ___INSTALL_DIR___/data/media/
 <Directory ___INSTALL_DIR___/data/media>
   Order allow,deny
   Allow from all
@@ -11,7 +11,7 @@ Alias /___ROOT_DIR___/media/ ___INSTALL_DIR___/data/media/
 </Directory>
 
 # Configure the static dir
-Alias /___ROOT_DIR___/static/ ___INSTALL_DIR___/static/
+Alias ___ROOT_DIR___/static/ ___INSTALL_DIR___/static/
 <Directory ___INSTALL_DIR___/static>
   Order allow,deny
   Allow from all
@@ -20,9 +20,9 @@ Alias /___ROOT_DIR___/static/ ___INSTALL_DIR___/static/
 
 # Configuration WSGI
 WSGIDaemonProcess signetsim python-path=/usr/local/lib/python2.7/site-packages
-WSGIScriptAlias /___ROOT_DIR___ ___INSTALL_DIR___/settings/wsgi.py
+WSGIScriptAlias ___ROOT_DIR2___ ___INSTALL_DIR___/settings/wsgi.py
 WSGIApplicationGroup %{GLOBAL}
-<Location /___ROOT_DIR___>
+<Location ___ROOT_DIR2___>
   WSGIProcessGroup signetsim
 </Location>
 

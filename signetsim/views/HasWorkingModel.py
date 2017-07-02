@@ -383,8 +383,10 @@ class HasWorkingModel(HasWorkingProject):
 
 			dotfile.close()
 			from subprocess import check_call
-			check_call(['dot','-Tpng',dotfile_filename,'-o',os.path.join(model_folder, "{0}.png".format(model_short_filename))])
-
+			try:
+				check_call(['dot','-Tpng',dotfile_filename,'-o',os.path.join(model_folder, "{0}.png".format(model_short_filename))])
+			except:
+				pass
 	def getSimpleGraph(self):
 		model_short_filename = os.path.splitext(os.path.basename(self.model_filename))[0]
 		model_folder = os.path.join(str(self.project.folder), "models/")
