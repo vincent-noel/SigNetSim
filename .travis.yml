@@ -22,8 +22,8 @@ before_install:
 install:
 - docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/signetsim:$DISTRIB bash
 - docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/$DISTRIB/install.sh"
-- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/$DISTRIB/generate_apache.sh signetsim"
-- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/$DISTRIB/install_apache.sh"
+- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/apache/generate_apache.sh signetsim"
+- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/apache/install_apache.sh"
 
 
 script:
