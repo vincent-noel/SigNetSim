@@ -1,9 +1,9 @@
 #!/bin/bash
 
-RETURN_APACHE=`wget -q -O - localhost:80/signetsim/success | tail -n 1`
+RETURN_APACHE=`wget -q -O - localhost:80/success | tail -n 1`
 echo "> Apache returned : ${RETURN_APACHE}"
 RES=`expr $RETURN_APACHE == SUCCESS`
-RETURN_APACHE_STATIC=`wget -q -O - localhost:80/signetsim/static/success | tail -n 1`
+RETURN_APACHE_STATIC=`wget -q -O - localhost:80/static/success | tail -n 1`
 echo "> Apache returned : ${RETURN_APACHE_STATIC}"
 RES_STATIC=`expr $RETURN_APACHE_STATIC == SUCCESS`
 

@@ -30,3 +30,4 @@ sed -i "s|___ROOT_DIR___|$ROOT_DIR|g" $DIR/apache_conf
 sed -i "s|___ROOT_DIR2___|$ROOT_DIR2|g" $DIR/apache_conf
 sed -i "s|___INSTALL_DIR___|$INSTALL_DIR|g" $DIR/apache_conf
 
+sed -i "s|BASE_URL = \"/\"|BASE_URL = \"$ROOT_DIR/\"|" $INSTALL_DIR/settings/apache.py

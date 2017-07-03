@@ -38,5 +38,4 @@ fi
 chgrp -R www-data $INSTALL_DIR/data/
 chmod -R 664 $INSTALL_DIR/data/
 find $INSTALL_DIR/data/ -type d  -exec chmod 775 {} \;
-sed -i "s|BASE_URL = \"/\"|BASE_URL = \"$ROOT_DIR/\"|" $INSTALL_DIR/settings/apache.py
 
