@@ -12,7 +12,8 @@ A django web application for building, fitting, and analyzing mathematical model
 
 ## Configure the apache server
 
-	bash scripts/configure_apache.sh [folder]
+	bash scripts/generate_apache.sh [folder]
+    sudo bash scripts/install_apache.sh
 
 The server will run on localhost/[folder], with a default Admin with admin:admin credentials.
 
@@ -26,32 +27,24 @@ The server will run on localhost:8080, with a default Admin with admin:admin cre
 
 ## License
 
-	Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
+Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU Affero General Public License as published
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU Affero General Public License
-	along with this program. If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Affero General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ## Financial support
 
-	This program was developed within the CeTICS project, at the Butantan Institute.
+This program was developed within the CeTICS project, at the Butantan Institute.
 
 <p align="center">
 	<a href="http://cetics.butantan.gov.br"><img src="docs/logos/cetics.png" align="middle" hspace="50"></a>
 	<a href="http://www.butantan.gov.br"><img src="docs/logos/butantan.png" width="300" align="middle" hspace="50"></a>
 </p>
 
-	The work was supported by grants #12/20186-9, #13/07467-1, and #13/24212-7
-	of the São Paulo Research Foundation (FAPESP) and fellowships from CNPq.
+The work was supported by grants #12/20186-9, #13/07467-1, and #13/24212-7 of the São Paulo Research Foundation (FAPESP) and fellowships from CNPq.
 
 
 <p align="center">
