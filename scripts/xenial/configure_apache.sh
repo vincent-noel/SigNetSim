@@ -22,7 +22,7 @@ else
     ROOT_DIR2=${ROOT_DIR}
 fi
 
-sed -i "s|BASE_URL = \"/\"|BASE_URL = \"/$ROOT_DIR\"|" $INSTALL_DIR/settings/apache.py
+sed -i "s|BASE_URL = \"/\"|BASE_URL = \"$ROOT_DIR/\"|" $INSTALL_DIR/settings/apache.py
 
 cp $DIR/apache_template $DIR/apache_conf
 sed -i "s|___ROOT_DIR___|$ROOT_DIR|g" $DIR/apache_conf
