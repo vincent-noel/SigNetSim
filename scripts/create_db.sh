@@ -4,10 +4,11 @@ DIR=`dirname $PWD/$0`
 DIR=`dirname $DIR`
 INSTALL_DIR=`dirname $DIR`
 
-cd $INSTALL_DIR
-
-mkdir -p data/db
-mkdir -p data/media
+cd ${INSTALL_DIR}
+pwd
+ls -al
+mkdir -p ${INSTALL_DIR}data/db
+mkdir -p ${INSTALL_DIR}data/media
 python manage.py makemigrations --noinput
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput > /dev/null
