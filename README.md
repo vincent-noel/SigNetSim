@@ -12,19 +12,19 @@ A django web application for building, fitting, and analyzing mathematical model
 Installs are available for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretch]
 
 
-## Database initialization
-
-    bash scripts/create_db
-
-Database and data folders will be created, with a default Admin with admin:admin credentials.
-
-
 ## Configure the apache server
 
 	bash scripts/apache/generate_apache.sh [folder]
     sudo bash scripts/apache/install_apache.sh
 
 The server will run on localhost/[folder].
+
+
+## Database initialization
+
+    bash scripts/create_db
+
+Database and data folders will be created, with a default Admin with admin:admin credentials.
 
 
 ## Running within a docker
