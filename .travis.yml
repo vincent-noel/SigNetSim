@@ -24,6 +24,7 @@ install:
 - docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/$DISTRIB/install.sh"
 - docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/apache/generate_apache.sh"
 - docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/apache/install_apache.sh"
+- docker exec test_env /bin/bash -c "cd /home/travis/build/vincent-noel/SigNetSim; bash scripts/create_db.sh"
 
 
 script:
