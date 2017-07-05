@@ -16,13 +16,4 @@ mkdir -p signetsim/static/mpld3
 cp -r /usr/local/lib/python2.7/dist-packages/mpld3/js/d3.v3.min.js signetsim/static/mpld3/
 cp -r /usr/local/lib/python2.7/dist-packages/mpld3/js/mpld3.v0.3.min.js signetsim/static/mpld3/
 
-
-
-mkdir -p data/db
-mkdir -p data/media
-
-python manage.py makemigrations --noinput
-python manage.py migrate --noinput
-python manage.py collectstatic --noinput > /dev/null
-
 cd $EXEC_DIR
