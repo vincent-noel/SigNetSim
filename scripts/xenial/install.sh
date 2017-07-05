@@ -9,7 +9,6 @@ pip install -r $INSTALL_DIR/requirements.txt
 
 cd $INSTALL_DIR
 
-
 bower --allow-root install
 
 mkdir -p signetsim/static/mpld3

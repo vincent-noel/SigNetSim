@@ -35,7 +35,7 @@ else
     echo "More than one active configuration in apache."
 fi
 
-chgrp -R www-data $INSTALL_DIR/data/
-chmod -R 664 $INSTALL_DIR/data/
-find $INSTALL_DIR/data/ -type d  -exec chmod 775 {} \;
+#chgrp -R www-data $INSTALL_DIR/data/
+#chmod -R 664 $INSTALL_DIR/data/
+#find $INSTALL_DIR/data/ -type d  -exec chmod 775 {} \;
 

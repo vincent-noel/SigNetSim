@@ -25,6 +25,8 @@ else
 
 fi
 
-chown -R www-data:www-data data
+chgrp -R www-data data
+chmod -R 664 data
+find data -type d  -exec chmod 775 {} \;
 
 cd $EXEC_DIR
