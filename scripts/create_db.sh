@@ -13,4 +13,6 @@ python manage.py migrate --noinput
 python manage.py collectstatic --noinput > /dev/null
 echo "from signetsim.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'admin')" | python manage.py shell
 
+chown -R www-data:www-data data
+
 cd $EXEC_DIR
