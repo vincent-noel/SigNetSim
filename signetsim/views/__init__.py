@@ -22,36 +22,18 @@
 
 """
 
-from data import DataView
-from data import ExperimentView
-from data import ConditionView
+from data import DataView, ExperimentView, ConditionView
 
-from edit import ModelCompartmentsView
-from edit import ModelOverviewView
-from edit import ModelParametersView
-from edit import ModelReactionsView
-from edit import ModelRulesView
-from edit import ModelSpeciesView
-from edit import ModelUnitsView
-from edit import ModelEventsView
-from edit import ModelMiscView
-from edit import ModelSubmodelsView
-from edit import ModelAnnotationsView
+from edit import ModelCompartmentsView, ModelOverviewView, ModelOverviewView_v2
+from edit import ModelParametersView, ModelReactionsView, ModelRulesView, ModelSpeciesView
+from edit import ModelUnitsView, ModelEventsView, ModelMiscView, ModelSubmodelsView, ModelAnnotationsView
 
-from simulate import TimeSeriesSimulationView
-from simulate import SteadyStateSimulationView
-from simulate import ListOfSimulationsView
-from simulate import SedmlSimulationView
+from simulate import TimeSeriesSimulationView, SteadyStateSimulationView, ListOfSimulationsView, SedmlSimulationView
 
-from fit import ListOfOptimizationsView
-from fit import OptimizationResultView
-from fit import DataOptimizationView
-from fit import DataOptimizationView0
+from fit import ListOfOptimizationsView, OptimizationResultView, DataOptimizationView, DataOptimizationView0
 from fit import ModelOptimizationView
 
-from analyse import AnalyseMainView
-from analyse import AnalyseSensitivityView
-from analyse import AnalyseBifurcationsView
+from analyse import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
 
 # from graphs import TimeseriesGraph
 # from graphs import SteadyStatesGraph

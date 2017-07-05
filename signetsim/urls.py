@@ -41,7 +41,7 @@ from views import ListOfModelsView, ListOfProjectsView, GenerateCombineArchive
 from views import ListOfOptimizationsView, OptimizationResultView
 from views import ListOfSimulationsView, SedmlSimulationView
 from views import LoginView, ActivateAccountView, ProfileView, AdminView
-from views import ModelCompartmentsView, ModelOverviewView, ModelAnnotationsView
+from views import ModelCompartmentsView, ModelOverviewView, ModelOverviewView_v2, ModelAnnotationsView
 from views import ModelReactionsView, ModelRulesView, ModelSubmodelsView
 from views import ModelSpeciesView, ModelParametersView
 from views import ModelUnitsView, ModelEventsView, ModelMiscView
@@ -76,6 +76,7 @@ urlpatterns = [
 	# Model editing
 	url(r'^edit/model/([^/]+)/$', ModelOverviewView.as_view(), name='edit_model'),
 	url(r'^edit/overview/$', ModelOverviewView.as_view(), name='edit_overview'),
+	url(r'^edit/overview_v2/$', ModelOverviewView_v2.as_view(), name='edit_overview_v2'),
 	url(r'^edit/annotations/$', ModelAnnotationsView.as_view(), name='edit_annotations'),
 	url(r'^edit/species/$', ModelSpeciesView.as_view(), name='edit_species'),
 	url(r'^edit/parameters/$', ModelParametersView.as_view(), name='edit_parameters'),

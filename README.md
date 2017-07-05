@@ -7,22 +7,32 @@ A django web application for building, fitting, and analyzing mathematical model
 
 ## Installation
 
-	bash scripts/install.sh
+	bash scripts/<distribution>/install.sh
+
+Installs are available for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretch]
+
+
+## Database initialization
+
+    bash scripts/create_db
+
+Database and data folders will be created, with a default Admin with admin:admin credentials.
 
 
 ## Configure the apache server
 
-	bash scripts/generate_apache.sh [folder]
-    sudo bash scripts/install_apache.sh
+	bash scripts/apache/generate_apache.sh [folder]
+    sudo bash scripts/apache/install_apache.sh
 
-The server will run on localhost/[folder], with a default Admin with admin:admin credentials.
+The server will run on localhost/[folder].
 
 
-## Running withing a docker
+## Running within a docker
 
-	bash scripts/run_docker.sh
+	bash scripts/run_docker.sh [local data folder]
 
 The server will run on localhost:8080, with a default Admin with admin:admin credentials.
+If you inform a local data folder, it will be use to locally store persistent data.
 
 
 ## License
@@ -34,6 +44,7 @@ This program is free software: you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 
 ## Financial support
 

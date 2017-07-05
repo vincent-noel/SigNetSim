@@ -30,6 +30,11 @@
           <a href="{% url 'edit_overview' %}">Overview</a>
         </td>
       </tr>
+      <tr{% if page == "overview_v2" %}  class="item_active"{% endif %}>
+        <td>
+          <a href="{% url 'edit_overview_v2' %}">Overview v2</a>
+        </td>
+      </tr>
       <tr{% if page == "annotations" %}  class="item_active"{% endif %}>
         <td>
           <a href="{% url 'edit_annotations' %}">Annotations</a>
