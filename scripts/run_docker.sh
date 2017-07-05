@@ -12,4 +12,4 @@ else
     docker run -d --name signetsim_container -p 8080:80 -v ${DATA_DIR}:/SigNetSim/data signetsim:xenial usr/sbin/apache2ctl -D FOREGROUND
 fi
 
-docker exec -d signetsim_container /bin/bash /SigNetSim/scripts/create_db.sh
+docker exec signetsim_container /bin/bash /SigNetSim/scripts/create_db.sh
