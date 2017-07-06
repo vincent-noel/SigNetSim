@@ -26,8 +26,8 @@
 import os, json
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print BASE_DIR
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -93,7 +93,7 @@ TEMPLATES = [
 	},
 ]
 
-WSGI_APPLICATION = 'settings.wsgi.application'
+WSGI_APPLICATION = 'signetsim.settings.wsgi.application'
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
@@ -106,7 +106,7 @@ DATABASES = {
 		'NAME': os.path.join(BASE_DIR, 'data/db/db.sqlite3'),
 	}
 }
-
+print os.path.join(BASE_DIR, 'data/db/db.sqlite3')
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 

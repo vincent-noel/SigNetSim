@@ -27,9 +27,9 @@ import os, sys
 
 from django.core.wsgi import get_wsgi_application
 
-root_path = os.path.dirname((os.path.abspath(os.path.split(__file__)[0])))
+root_path = os.path.dirname(os.path.dirname((os.path.abspath(os.path.split(__file__)[0]))))
 sys.path.insert(0, root_path)
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings.apache")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "signetsim.settings.apache")
 
 application = get_wsgi_application()

@@ -30,6 +30,9 @@ else
 
 fi
 
+mkdir -p settings
+cp signetsim/settings/settings.json settings/settings.json
+
 chgrp -R www-data data
 chmod -R 664 data
 find data -type d  -exec chmod 775 {} \;
