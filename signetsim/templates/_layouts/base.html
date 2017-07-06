@@ -38,7 +38,7 @@
 			<li class="{% block models_item %}{% endblock models_item %}"><a href="{% url 'models' %}">Models</a></li>
 			<li class="{% block data_item %}{% endblock data_item %}"><a href="{% url 'experimental_data' %}">Data</a></li>
 			<li class="{% block edit_item %}{% endblock edit_item %}"><a href="{% url 'edit_overview' %}">Edition</a></li>
-			<li class="{% block sim_item %}{% endblock sim_item %}"><a href="{% url 'simulate_model' %}">Simulation</a></li>
+			<li class="{% block sim_item %}{% endblock sim_item %}"><a href="{% url 'list_of_simulations' %}">Simulation</a></li>
 			{% if user.is_authenticated %}
 			<li class="{% block fit_item %}{% endblock fit_item %}"><a href="{% url 'list_of_optimizations' %}">Fitting</a></li>
 			<li class="{% block analyse_item %}{% endblock analyse_item %}"><a href="{% url 'analyse' %}">Analysis</a></li>

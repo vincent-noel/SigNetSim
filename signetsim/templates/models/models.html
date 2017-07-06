@@ -50,13 +50,14 @@
                 <form class="form-inline" method="post" enctype="multipart/form-data">
                   {% csrf_token %}
                   <input type="hidden" name="id" value="{{ id }}">
+              {% endif %}
                   <a href="../media/{{ path }}" style="display: inline-block" target="_blank">
                     <button type="button" class="btn btn-xs btn-default" title="Download">{% bootstrap_icon "download-alt" %}</button>
                   </a>
+              {% if user.is_authenticated %}
                   <button type="submit" name="action" value="duplicate_model" class="btn btn-xs btn-primary" tite="Duplicate">{% bootstrap_icon "duplicate" %}</button>
                   <button type="submit" name="action" value="delete_model" class="btn btn-primary btn-xs btn-danger" title="Remove">{% bootstrap_icon "trash" %}</button>
                 </form>
-
               {% endif %}
             </div>
           </td>

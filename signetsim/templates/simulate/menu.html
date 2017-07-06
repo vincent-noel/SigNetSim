@@ -18,8 +18,9 @@
 
 
     <br/>
+    {% if user.is_authenticated %}
     {% include 'commons/select_model.html' %}
-    <br/><br/>
+    {% endif %}
     <table class="table">
       <thead>
         <tr>
@@ -27,6 +28,7 @@
         </tr>
       </thead>
       <tbody>
+        {% if user.is_authenticated %}
         <tr>
           <td>
             <a href="{% url 'simulate_model' %}">Timeseries</a>
@@ -37,6 +39,7 @@
             <a href="{% url 'simulate_steady_states' %}">Steady states</a>
           </td>
         </tr>
+        {% endif %}
         <tr>
           <td>
             <a href="{% url 'list_of_simulations' %}">Stored simulations</a>

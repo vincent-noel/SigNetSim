@@ -46,7 +46,9 @@
                  <a href="../../media/{{ path }}" style="display: inline-block">
                    <button type="button" class="btn btn-xs btn-default" title="Download">{% bootstrap_icon "download-alt" %}</button>
                  </a>
-                 <button type="submit" name="action" value="delete_simulation" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+                 {% if user.is_authenticated %}
+                   <button type="submit" name="action" value="delete_simulation" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+                 {% endif %}
                </form>
              </div>
            </td>
