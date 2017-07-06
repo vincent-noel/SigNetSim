@@ -11,8 +11,8 @@ if [[ -z ${ROOT_DIR} ]];
 then
     ROOT_DIR=""
     ROOT_DIR2="/"
-else
 
+else
     if [ ${ROOT_DIR:0:1} != "/" ]
     then
         ROOT_DIR=/${ROOT_DIR}
@@ -30,4 +30,4 @@ sed -i "s|___ROOT_DIR___|$ROOT_DIR|g" $DIR/apache_conf
 sed -i "s|___ROOT_DIR2___|$ROOT_DIR2|g" $DIR/apache_conf
 sed -i "s|___INSTALL_DIR___|$INSTALL_DIR|g" $DIR/apache_conf
 
-sed -i "s|BASE_URL = \"/\"|BASE_URL = \"$ROOT_DIR/\"|" $INSTALL_DIR/settings/apache.py
+sed -i "s|  \"base_url\": \"/\"|  \"base_url\": \"$ROOT_DIR/\"|" $INSTALL_DIR/settings/settings.json
