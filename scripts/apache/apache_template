@@ -39,7 +39,7 @@ WSGIApplicationGroup %{GLOBAL}
 </Location>
 
 # Giving access to the WSGI file
-<Directory ___INSTALL_DIR___/settings>
+<Directory ___INSTALL_DIR___/signetsim/settings>
 <Files wsgi.py>
     Options Indexes FollowSymLinks
     # Apache 2.4
