@@ -7,9 +7,9 @@ A django web application for building, fitting, and analyzing mathematical model
 
 ## Installation
 
-	bash scripts/<distribution>/install.sh
+	bash scripts/install.sh
 
-Installs are available for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretch]
+Installs are tested for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretch]
 
 
 ## Configure the apache server

@@ -23,36 +23,32 @@
 
 """
 
-import os
-
-SIGNETSIM_MODE = 'development'
+import os, json
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_URL = "/"
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'f*sw2e+*k_wn@*g38b18-a4rqm&xa3ze#p3)my*3i+pis$%)2*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ADMINS = [('admin', 'whatever@gmail.com')]
+
+settings = json.loads(open('settings/settings.json').read())
+BASE_URL = str(settings['base_url'])
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = str(settings['secret_key'])
+
+ADMINS = [(str(settings['admin_login']), str(settings['admin_email']))]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'whatever@gmail.com'
-EMAIL_HOST_PASSWORD = 'PASSW0RD'
-EMAIL_PORT = 587
+EMAIL_HOST = str(settings['email_host'])
+EMAIL_PORT = int(settings['email_port'])
+EMAIL_HOST_USER = str(settings['email_user'])
+EMAIL_HOST_PASSWORD = str(settings['email_password'])
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = settings['allowed_hosts']
 
-# Application definition
 
 # Application definition
 INSTALLED_APPS = (
