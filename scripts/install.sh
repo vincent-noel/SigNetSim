@@ -1,7 +1,6 @@
 #!/bin/bash
 EXEC_DIR=$PWD
 DIR=`dirname $PWD/$0`
-DIR=`dirname $DIR`
 INSTALL_DIR=`dirname $DIR`
 
 apt-get install -y  \
@@ -25,10 +24,9 @@ curl -sL https://deb.nodesource.com/setup_6.x | bash -
 apt-get install nodejs
 npm install -g bower
 
-pip install -r $INSTALL_DIR/requirements.txt
-
 cd $INSTALL_DIR
 
+pip install -r requirements.txt
 bower --allow-root install
 
 cd $EXEC_DIR
