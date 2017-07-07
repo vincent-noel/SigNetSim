@@ -34,7 +34,7 @@ import os
 import time
 import pickle
 import codecs
-from sbml_diff import generate_dot, sbml_diff
+# from sbml_diff import generate_dot, sbml_diff
 import sys
 from libsbml import Date
 import datetime
@@ -359,35 +359,35 @@ class HasWorkingModel(HasWorkingProject):
 				return (doc.listOfModelDefinitions.getListOfModelDefinitions()
 						+doc.listOfExternalModelDefinitions.getListOfModelDefinitions())
 
-	def updateSimpleGraph(self):
-
-		if self.model_filename is not None:
-
-			all_colors = ["#FF7F00",  "#32FF00", "#19B2FF", "#654CFF",  "#E51932", "#FFFF32"]
-			output_formatter = sbml_diff.GenerateDot(all_colors, 1, model_names=['model_overview'])
-
-			t_sbml_file = codecs.open(os.path.join(settings.MEDIA_ROOT, self.model_filename), 'r')
-			t_content = t_sbml_file.read()
-
-			sd = sbml_diff.SBMLDiff([t_content], [], output_formatter)
-			model_short_filename = os.path.splitext(os.path.basename(self.model_filename))[0]
-
-			model_folder = os.path.join(settings.MEDIA_ROOT, str(self.project.folder), "models/")
-			dotfile_filename = os.path.join(model_folder, "{0}.dot".format(model_short_filename))
-			dotfile = open(dotfile_filename, "w")
-
-			orig_stdout = sys.stdout
-			sys.stdout = dotfile
-			sd.diff_models()
-			sys.stdout = orig_stdout
-
-			dotfile.close()
-			from subprocess import check_call
-			try:
-				check_call(['dot','-Tpng',dotfile_filename,'-o',os.path.join(model_folder, "{0}.png".format(model_short_filename))])
-			except:
-				pass
-	def getSimpleGraph(self):
-		model_short_filename = os.path.splitext(os.path.basename(self.model_filename))[0]
-		model_folder = os.path.join(str(self.project.folder), "models/")
-		return os.path.join(model_folder, "{0}.png".format(model_short_filename))
+	# def updateSimpleGraph(self):
+	#
+	# 	if self.model_filename is not None:
+	#
+	# 		all_colors = ["#FF7F00",  "#32FF00", "#19B2FF", "#654CFF",  "#E51932", "#FFFF32"]
+	# 		output_formatter = sbml_diff.GenerateDot(all_colors, 1, model_names=['model_overview'])
+	#
+	# 		t_sbml_file = codecs.open(os.path.join(settings.MEDIA_ROOT, self.model_filename), 'r')
+	# 		t_content = t_sbml_file.read()
+	#
+	# 		sd = sbml_diff.SBMLDiff([t_content], [], output_formatter)
+	# 		model_short_filename = os.path.splitext(os.path.basename(self.model_filename))[0]
+	#
+	# 		model_folder = os.path.join(settings.MEDIA_ROOT, str(self.project.folder), "models/")
+	# 		dotfile_filename = os.path.join(model_folder, "{0}.dot".format(model_short_filename))
+	# 		dotfile = open(dotfile_filename, "w")
+	#
+	# 		orig_stdout = sys.stdout
+	# 		sys.stdout = dotfile
+	# 		sd.diff_models()
+	# 		sys.stdout = orig_stdout
+	#
+	# 		dotfile.close()
+	# 		from subprocess import check_call
+	# 		try:
+	# 			check_call(['dot','-Tpng',dotfile_filename,'-o',os.path.join(model_folder, "{0}.png".format(model_short_filename))])
+	# 		except:
+	# 			pass
+	# def getSimpleGraph(self):
+	# 	model_short_filename = os.path.splitext(os.path.basename(self.model_filename))[0]
+	# 	model_folder = os.path.join(str(self.project.folder), "models/")
+	# 	return os.path.join(model_folder, "{0}.png".format(model_short_filename))

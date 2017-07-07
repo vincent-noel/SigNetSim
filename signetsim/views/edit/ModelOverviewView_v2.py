@@ -37,15 +37,15 @@ class ModelOverviewView_v2(TemplateView, HasWorkingModel):
 
 		self.listOfSpecies = None
 		self.listOfReactions = None
-		self.interactionMatrix = None
+		# self.interactionMatrix = None
 
 	def get_context_data(self, **kwargs):
 
 		kwargs = HasWorkingModel.get_context_data(self, **kwargs)
-		kwargs['list_of_species'] = self.listOfSpecies
+		kwargs['list_of_species'] = [species for species in self.listOfSpecies if species.isInReactions()]
 		kwargs['list_of_reactions'] = self.listOfReactions
-		kwargs['interaction_matrix'] = self.interactionMatrix
-		kwargs['png_graph'] = self.getSimpleGraph()
+		# kwargs['interaction_matrix'] = self.interactionMatrix
+		# kwargs['png_graph'] = self.getSimpleGraph()
 		return kwargs
 
 
@@ -58,7 +58,7 @@ class ModelOverviewView_v2(TemplateView, HasWorkingModel):
 			return redirect('edit_overview')
 
 
-		self.updateSimpleGraph()
+		# self.updateSimpleGraph()
 		return TemplateView.get(self, request, *args, **kwargs)
 
 

@@ -75,7 +75,7 @@ urlpatterns = [
 
 	# Model editing
 	url(r'^edit/model/([^/]+)/$', ModelOverviewView.as_view(), name='edit_model'),
-	url(r'^edit/overview/$', ModelOverviewView.as_view(), name='edit_overview'),
+	url(r'^edit/overview/$', ModelOverviewView_v2.as_view(), name='edit_overview'),
 	url(r'^edit/overview_v2/$', ModelOverviewView_v2.as_view(), name='edit_overview_v2'),
 	url(r'^edit/annotations/$', ModelAnnotationsView.as_view(), name='edit_annotations'),
 	url(r'^edit/species/$', ModelSpeciesView.as_view(), name='edit_species'),

@@ -5,32 +5,48 @@
 
 
 function loadReactionGraph () {
-
-  $('#reactions_graph').cytoscape({
+  var cy = window.cy = cytoscape({
+    container: document.getElementById('reactions_graph'),
     layout: {
-      name: 'concentric',
-     // padding: 20,
+        name: 'cose-bilkent',
+        idealEdgeLength: 100,
+        nodeOverlap: 20
     },
 
     style: cytoscape.stylesheet()
       .selector('node')
         .css({
-          'shape': 'roundrectangle',
-          'padding-left': 20,
-          'padding-right': 20,
-          'padding-bottom': 20,
-          'padding-top': 20,
-          'content': 'data(name)',
-          'text-valign': 'center',
-          'text-outline-width': 2,
-          'text-outline-color': '#fff',
-          'background-color': '#fff',
-          'color': '#000'
+          'padding-left': 10,
+          'padding-right': 10,
+          'padding-bottom': 10,
+          'padding-top': 10,
+          'color': '#000',
+          'border-width': 2,
+          'border-color': '#000',
+          'background-color': '#fff'
+
         })
       .selector(':selected')
         .css({
           'border-width': 3,
           'border-color': '#333'
+        })
+      .selector('node.reaction')
+        .css({
+            'shape': 'rectangle',
+            'width': '5',
+            'height': '5'
+        })
+
+      .selector('node.species')
+        .css({
+            'shape': 'roundrectangle',
+            'content': 'data(name)',
+            'text-valign': 'center',
+            'text-outline-width': 2,
+            'text-outline-color': '#fff',
+            'width': 'label',
+            'height': 'label'
         })
       .selector('edge')
         .css({
@@ -39,7 +55,7 @@ function loadReactionGraph () {
           'width': 'mapData(50, 70, 100, 2, 6)',
           'target-arrow-shape': 'tee',
           'source-arrow-shape': 'none',
-          'line-color': '#000"',
+          'line-color': '#000',
           'source-arrow-color': '#000',
           'target-arrow-color': '#000'
         })
@@ -53,7 +69,10 @@ function loadReactionGraph () {
         .css({
           'target-arrow-shape': 'tee'
         })
-
+      .selector('edge.regulation')
+        .css({
+          'target-arrow-shape': 'circle'
+        })
       .selector('edge.questionable')
         .css({
           'line-style': 'dotted',
@@ -68,10 +87,10 @@ function loadReactionGraph () {
  elements: {
       nodes: [
         {% for species in list_of_species %}
-          { data: { id: '{{species.getSbmlId}}', name: '{{species.getName}}'} },
+          { data: { id: '{{species.getSbmlId}}', name: '{{species.getNameOrSbmlId}}'}, classes: 'species' },
         {% endfor %}
         {% for reaction in list_of_reactions %}
-          { data: { id: '{{reaction.getSbmlId}}', name: '{{reaction.getName}}'} },
+          { data: { id: '{{reaction.getSbmlId}}', name: '{{reaction.getNameOrSbmlId}}'}, classes: 'reaction' },
         {% endfor %}
       ],
       edges: [
@@ -87,9 +106,17 @@ function loadReactionGraph () {
 
             },
             {% endfor %}
-        {% endfor %}
+            {% for modifier in reaction.listOfModifiers.values %}
 
-        {% for reaction in list_of_reactions %}
+            {
+                data: {
+                    source: '{{modifier.getSpecies.getSbmlId}}',
+                    target: '{{reaction.getSbmlId}}'
+                },
+                classes: 'regulation',
+
+            },
+            {% endfor %}
             {% for product in reaction.listOfProducts.values %}
 
             {
