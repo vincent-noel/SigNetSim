@@ -2,7 +2,7 @@
 EXEC_DIR=$PWD
 CMD=$0
 
-if ["${CMD:0:1}" = "/" ]
+if [ "${CMD:0:1}" = "/" ]
 then
     # absolute path
     DIR=`dirname ${CMD}`
@@ -11,7 +11,9 @@ else
     # relative path
     DIR=`dirname $( realpath $PWD/${CMD} )`
 
-fiINSTALL_DIR=`dirname $DIR`
+fi
+
+INSTALL_DIR=`dirname $DIR`
 DATA_DIR=$1
 
 docker build -t signetsim:xenial $DIR/docker

@@ -2,7 +2,7 @@
 EXEC_DIR=$PWD
 CMD=$0
 
-if ["${CMD:0:1}" = "/" ]
+if [ "${CMD:0:1}" = "/" ]
 then
     # absolute path
     DIR=`dirname ${CMD}`
@@ -12,6 +12,7 @@ else
     DIR=`dirname $( realpath $PWD/${CMD} )`
 
 fi
+
 INSTALL_DIR=`dirname $DIR`
 
 apt-get install -y  \
