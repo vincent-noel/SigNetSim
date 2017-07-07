@@ -1,7 +1,17 @@
 #!/bin/bash
 EXEC_DIR=$PWD
-DIR=`dirname $PWD/$0`
-INSTALL_DIR=`dirname $DIR`
+CMD=$0
+
+if ["${CMD:0:1}" = "/" ]
+then
+    # absolute path
+    DIR=`dirname ${CMD}`
+
+else
+    # relative path
+    DIR=`dirname $( realpath $PWD/${CMD} )`
+
+fiINSTALL_DIR=`dirname $DIR`
 DATA_DIR=$1
 
 docker build -t signetsim:xenial $DIR/docker

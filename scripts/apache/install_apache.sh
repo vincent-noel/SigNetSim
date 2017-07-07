@@ -1,5 +1,17 @@
 EXEC_DIR=$PWD
-DIR=`dirname $( realpath $PWD/$0 )`
+CMD=$0
+
+if ["${CMD:0:1}" = "/" ]
+then
+    # absolute path
+    DIR=`dirname ${CMD}`
+
+else
+    # relative path
+    DIR=`dirname $( realpath $PWD/${CMD} )`
+
+fi
+
 T_DIR=`dirname $DIR`
 INSTALL_DIR=`dirname $T_DIR`
 ROOT_DIR=$1
