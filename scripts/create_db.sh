@@ -2,7 +2,7 @@
 EXEC_DIR=$PWD
 CMD=$0
 
-if ["${CMD:0:1}" = "/" ]
+if [ "${CMD:0:1}" = "/" ]
 then
     # absolute path
     DIR=`dirname ${CMD}`
