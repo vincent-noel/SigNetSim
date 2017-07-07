@@ -5,26 +5,18 @@
 A django web application for building, fitting, and analyzing mathematical models of molecular signaling networks.
 
 
-## Installation
+## Dependencies installation
 
 	bash scripts/install.sh
 
 Installs are tested for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretch]
 
 
-## Configure the apache server
+## Installation and apache server configuration
 
-	bash scripts/apache/generate_apache.sh [folder]
-    sudo bash scripts/apache/install_apache.sh
+    sudo bash scripts/configure.sh [folder]
 
-The server will run on localhost/[folder].
-
-
-## Database initialization
-
-    bash scripts/create_db
-
-Database and data folders will be created, with a default Admin with admin:admin credentials.
+The server will run on localhost/[folder], with a default Admin with admin:admin credentials.
 
 
 ## Running within a docker

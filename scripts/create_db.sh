@@ -5,16 +5,16 @@ INSTALL_DIR=`dirname $DIR`
 
 cd ${INSTALL_DIR}
 
-mkdir -p signetsim/static/mpld3
-cp -r /usr/local/lib/python2.7/dist-packages/mpld3/js/d3.v3.min.js signetsim/static/mpld3/
-cp -r /usr/local/lib/python2.7/dist-packages/mpld3/js/mpld3.v0.3.min.js signetsim/static/mpld3/
-mkdir static
+mkdir -p ${INSTALL_DIR}/signetsim/static/mpld3
+cp -r /usr/local/lib/python2.7/dist-packages/mpld3/js/d3.v3.min.js ${INSTALL_DIR}/signetsim/static/mpld3/
+cp -r /usr/local/lib/python2.7/dist-packages/mpld3/js/mpld3.v0.3.min.js ${INSTALL_DIR}/signetsim/static/mpld3/
+mkdir ${INSTALL_DIR}/static
 
 if [ ! -d ${INSTALL_DIR}/data/db ]
 then
 
-    mkdir -p data/db
-    mkdir -p data/media
+    mkdir -p ${INSTALL_DIR}/data/db
+    mkdir -p ${INSTALL_DIR}/data/media
 
     python manage.py makemigrations --noinput
     python manage.py migrate --noinput
@@ -31,8 +31,8 @@ else
 fi
 
 
-chgrp -R www-data data
-chmod -R 664 data
-find data -type d  -exec chmod 775 {} \;
+chgrp -R www-data ${INSTALL_DIR}/data
+chmod -R 664 ${INSTALL_DIR}/data
+find ${INSTALL_DIR}/data -type d  -exec chmod 775 {} \;
 
 cd $EXEC_DIR

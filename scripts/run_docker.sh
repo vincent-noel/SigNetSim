@@ -16,6 +16,4 @@ else
                 signetsim:xenial bash
 fi
 
-docker exec signetsim_container /bin/bash /SigNetSim/scripts/apache/generate_apache.sh
-docker exec signetsim_container /bin/bash /SigNetSim/scripts/apache/install_apache.sh
-docker exec signetsim_container /bin/bash /SigNetSim/scripts/create_db.sh
+docker exec signetsim_container /bin/bash /SigNetSim/scripts/configure.sh
