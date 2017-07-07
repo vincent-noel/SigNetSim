@@ -5,6 +5,8 @@ INSTALL_DIR=`dirname $DIR`
 DATA_DIR=$1
 
 docker build -t signetsim:xenial $DIR/docker
+RUN /bin/bash /SigNetSim/scripts/install.sh
+
 if [[ -z "${DATA_DIR}" ]]
 then
     docker run -d --name signetsim_container -p 8080:80 signetsim:xenial usr/sbin/apache2ctl -D FOREGROUND
@@ -15,4 +17,6 @@ else
                 signetsim:xenial usr/sbin/apache2ctl -D FOREGROUND
 fi
 
+docker exec signetsim_container /bin/bash /SigNetSim/scripts/apache/generate_apache.sh
+docker exec signetsim_container /bin/bash /SigNetSim/scripts/apache/install_apache.sh
 docker exec signetsim_container /bin/bash /SigNetSim/scripts/create_db.sh
