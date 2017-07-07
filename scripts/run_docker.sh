@@ -5,7 +5,6 @@ INSTALL_DIR=`dirname $DIR`
 DATA_DIR=$1
 
 docker build -t signetsim:xenial $DIR/docker
-RUN /bin/bash /SigNetSim/scripts/install.sh
 
 if [[ -z "${DATA_DIR}" ]]
 then
