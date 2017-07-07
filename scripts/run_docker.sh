@@ -8,9 +8,9 @@ docker build -t signetsim:xenial $DIR/docker
 
 if [[ -z "${DATA_DIR}" ]]
 then
-    docker run -d --name signetsim_container -p 8080:80 signetsim:xenial bash
+    docker run -dt --name signetsim_container -p 8080:80 signetsim:xenial bash
 else
-    docker run -d --name signetsim_container -p 8080:80 \
+    docker run -dt --name signetsim_container -p 8080:80 \
                 -v ${DATA_DIR}/data:/SigNetSim/data \
                 -v ${DATA_DIR}/settings:/SigNetSim/settings \
                 signetsim:xenial bash
