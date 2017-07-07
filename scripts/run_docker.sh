@@ -8,12 +8,12 @@ docker build -t signetsim:xenial $DIR/docker
 
 if [[ -z "${DATA_DIR}" ]]
 then
-    docker run -d --name signetsim_container -p 8080:80 signetsim:xenial usr/sbin/apache2ctl -D FOREGROUND
+    docker run -d --name signetsim_container -p 8080:80 signetsim:xenial bash
 else
     docker run -d --name signetsim_container -p 8080:80 \
                 -v ${DATA_DIR}/data:/SigNetSim/data \
                 -v ${DATA_DIR}/settings:/SigNetSim/settings \
-                signetsim:xenial usr/sbin/apache2ctl -D FOREGROUND
+                signetsim:xenial bash
 fi
 
 docker exec signetsim_container /bin/bash /SigNetSim/scripts/apache/generate_apache.sh

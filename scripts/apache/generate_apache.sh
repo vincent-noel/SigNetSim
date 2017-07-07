@@ -30,9 +30,11 @@ sed -i "s|___ROOT_DIR___|$ROOT_DIR|g" $DIR/apache_conf
 sed -i "s|___ROOT_DIR2___|$ROOT_DIR2|g" $DIR/apache_conf
 sed -i "s|___INSTALL_DIR___|$INSTALL_DIR|g" $DIR/apache_conf
 
+mkdir -p ${INSTALL_DIR}/data
+mkdir -p ${INSTALL_DIR}/settings
 
 if [ ! -f ${INSTALL_DIR}/settings/settings.json ]
 then
-    cp signetsim/settings/settings.json settings/settings.json
+    cp ${INSTALL_DIR}/signetsim/settings/settings.json ${INSTALL_DIR}/settings/settings.json
 fi
 sed -i "s|  \"base_url\": \"/\"|  \"base_url\": \"$ROOT_DIR/\"|" $INSTALL_DIR/settings/settings.json

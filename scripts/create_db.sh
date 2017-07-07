@@ -31,12 +31,6 @@ else
 fi
 
 
-mkdir -p settings
-if [ ! -f ${INSTALL_DIR}/settings/settings.json ]
-then
-    cp signetsim/settings/settings.json settings/settings.json
-fi
-
 chgrp -R www-data data
 chmod -R 664 data
 find data -type d  -exec chmod 775 {} \;
