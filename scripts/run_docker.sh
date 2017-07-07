@@ -16,4 +16,4 @@ else
                 signetsim:xenial bash
 fi
 
-docker exec signetsim_container /bin/bash /SigNetSim/scripts/configure.sh
+docker exec signetsim_container /bin/bash /SigNetSim/scripts/install.sh
