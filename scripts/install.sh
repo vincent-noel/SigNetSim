@@ -5,6 +5,6 @@ INSTALL_DIR=`dirname $DIR`
 ROOT_DIR=$1
 
 
-${DIR}/scripts/install_deps.sh
+${DIR}/install_deps.sh
 ${DIR}/apache/install_apache.sh ${ROOT_DIR}
 ${DIR}/create_db.sh
