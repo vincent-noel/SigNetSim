@@ -7,7 +7,7 @@ A django web application for building, fitting, and analyzing mathematical model
 
 ## Installation
 
-	bash scripts/install.sh [folder]
+	sudo bash scripts/install.sh [folder]
 
 The server will run on localhost/[folder], with a default Admin with admin:admin credentials.
 Should work for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretch].

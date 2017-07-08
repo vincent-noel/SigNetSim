@@ -15,15 +15,12 @@ fi
 
 INSTALL_DIR=`dirname $DIR`
 
-apt-get install -y  \
-    libopenmpi-dev openmpi-bin \
-    libsundials-serial-dev libsundials-serial \
-    liblapack-dev libblas-dev libatlas-dev libatlas-base-dev \
-    git python-pip python-dev \
-    gcc g++ make \
-    unzip wget curl realpath gnupg \
-    apache2 libapache2-mod-wsgi
 
+# System Dependencies
+apt-get install -y $( cat apt_requirements )
+
+
+# Python Dependencies
 pip install pip --upgrade
 if [ ! -f /usr/bin/pip ]
 then
@@ -32,13 +29,15 @@ fi
 
 easy_install -U distribute
 
+pip install -r pip_requirements
+
+# JS Dependencies
 curl -sL https://deb.nodesource.com/setup_6.x | bash -
 apt-get install -y nodejs
 npm install -g bower
 
 cd $INSTALL_DIR
 
-pip install -r requirements.txt
 bower --allow-root install
 
 cd $EXEC_DIR
