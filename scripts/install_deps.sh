@@ -17,7 +17,7 @@ INSTALL_DIR=`dirname $DIR`
 
 
 # System Dependencies
-apt-get install -y $( cat apt_requirements )
+apt-get install -y $( cat ${DIR}/apt_requirements )
 
 
 # Python Dependencies
@@ -29,7 +29,7 @@ fi
 
 easy_install -U distribute
 
-pip install -r pip_requirements
+pip install -r ${DIR}/pip_requirements
 
 # JS Dependencies
 curl -sL https://deb.nodesource.com/setup_6.x | bash -
