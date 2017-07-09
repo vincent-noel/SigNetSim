@@ -15,7 +15,6 @@ fi
 
 INSTALL_DIR=`dirname $DIR`
 
-
 # System Dependencies
 apt-get install -y $( cat ${DIR}/apt_requirements )
 
