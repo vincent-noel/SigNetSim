@@ -72,7 +72,7 @@ class HasErrorMessages(object):
 			t_formula.setPrettyPrintMathFormula(expression)
 			return None
 
-		except Excepton as e:
+		except Exception as e:
 			return e.message
 
 

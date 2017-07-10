@@ -1,17 +1,14 @@
-
-function clear_form () {
-
+function clear_form()
+{
   $("#dropdown_variable_name").html("Choose a variable");
   $('#dropdown_variable_id').val("");
 
   $("#rule_expression").val("");
   $("#rule_expression_alg").val("");
 
-  $('#rule_type_dropdown_button').prop('disabled', false);
-
-
-  console.log("form cleared");
+  reset_errors();
 }
+
 
 $('#rule_type_dropdown li').on('click', function(){
   $("#rule_type_name").html($(this).text());
@@ -47,16 +44,19 @@ $('#new_rule_button').on('click', function()
   $("#rule_id").val("");
   $("#rule_type_name").html("Choose a type");
   $("#rule_type").val("");
-
   clear_form();
+
+
   setExpressionEmpty();
   setExpressionAlgEmpty();
+  reset_errors();
   $("#rule_species").removeClass("in");
   $("#rule_exp_others").removeClass("in");
   $("#rule_exp_alg").removeClass("in");
   $('#modal_rule').modal('show');
 });
-
+var form_exp_error = "";
+var form_expalg_error = "";
 
 function setExpressionEmpty()
 {
@@ -100,6 +100,8 @@ $("#rule_expression").on('change paste keyup', function()
                 setExpressionValid();
             } else {
                 setExpressionInvalid();
+                form_exp_error = "is invalid";
+
             }
         });
       },
@@ -153,6 +155,7 @@ $("#rule_expression_alg").on('change paste keyup', function()
             if (index === 'valid' && element === 'true') {
                 setExpressionAlgValid();
             } else {
+                form_expalg_error = "is invalid";
                 setExpressionAlgInvalid();
             }
         });
@@ -212,5 +215,58 @@ function view_rule(rule_ind)
     $('#modal_rule').modal('show');
 
 }
+function reset_errors()
+{
+   $("#error_modal").empty();
+   // form_exp_error = "";
+   // form_expalg_error = "";
+}
+
+function save_rule()
+{
+    var nb_errors = 0;
+    reset_errors();
+
+    if ($("#rule_type").val() == ""){
+        add_error_modal("no_type", "Please select a rule type");
+        nb_errors++;
+
+    } else {
+
+        if ($("#rule_type").val() != 0){
+
+            if ($("#dropdown_variable_id").val() == "") {
+                add_error_modal("no_var", "Please select a variable");
+                nb_errors++;
+            }
+
+            if ($("#rule_expression").val() == "") {
+                add_error_modal("empty_exp", "Expression is empty");
+                nb_errors++;
+            }
+
+        } else {
+            if ($("#rule_expression_alg").val() == "") {
+                add_error_modal("empty_exp_alg", "Expression is empty");
+                nb_errors++;
+            }
+        }
 
 
+
+    }
+
+    if (form_exp_error != ""){
+        add_error_modal("invalid_exp", "Expression " + form_exp_error);
+        nb_errors++;
+    }
+    if (form_expalg_error != ""){
+        add_error_modal("invalid_expalg", "Expression " + form_expalg_error);
+        nb_errors++;
+    }
+
+    if (nb_errors == 0)
+    {
+        $("#rule_form").submit();
+    }
+}
