@@ -21,6 +21,6 @@
     "cytoscape": "^3.1.2",
     "bootstrap": "^3.3.7",
     "jquery": "^3.2.1",
-    "cytoscape-cose-bilkent": "^1.6.12"
+    "cytoscape-cola": "^1.6.0"
   }
 }

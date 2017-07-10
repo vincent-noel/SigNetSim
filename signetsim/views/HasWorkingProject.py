@@ -155,3 +155,5 @@ class HasWorkingProject(HasUserLoggedIn):
 	def getProjectModels(self, request):
 		if self.isUserLoggedIn(request) and self.project is not None:
 			return SbmlModel.objects.filter(project=self.project)
+		else:
+			return []

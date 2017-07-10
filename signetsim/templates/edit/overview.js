@@ -8,9 +8,10 @@ function loadReactionGraph () {
   var cy = window.cy = cytoscape({
     container: document.getElementById('reactions_graph'),
     layout: {
-        name: 'cose-bilkent',
-        idealEdgeLength: 100,
-        nodeOverlap: 20
+      name: 'cola',
+      nodeSpacing: 5,
+      edgeLengthVal: 45,
+      maxSimulationTime: 150000
     },
 
     style: cytoscape.stylesheet()
@@ -48,12 +49,27 @@ function loadReactionGraph () {
             'width': 'label',
             'height': 'label'
         })
+        .selector('node.empty_species')
+        .css({
+              'padding-left': 0,
+          'padding-right': 0,
+          'padding-bottom': 0,
+          'padding-top': 0,
+            'shape': 'roundrectangle',
+            'font-family':'FontAwesome',
+            'content': '\uf05e',
+            'text-valign': 'center',
+            'text-outline-width': 2,
+            'text-outline-color': '#fff',
+            'width': 'label',
+            'height': 'label',
+            'border-width': 0
+
+        })
       .selector('edge')
         .css({
           'curve-style': 'bezier',
           'opacity': 0.666,
-          'width': 'mapData(50, 70, 100, 2, 6)',
-          'target-arrow-shape': 'tee',
           'source-arrow-shape': 'none',
           'line-color': '#000',
           'source-arrow-color': '#000',
@@ -91,10 +107,17 @@ function loadReactionGraph () {
         {% endfor %}
         {% for reaction in list_of_reactions %}
           { data: { id: '{{reaction.getSbmlId}}', name: '{{reaction.getNameOrSbmlId}}'}, classes: 'reaction' },
+            {% if reaction.listOfReactants|length == 0 %}
+          { data: { id: '{{reaction.getSbmlId}}_reactant', name: '<i class="fa fa-ban" aria-hidden="true"></i>'}, classes: 'empty_species' },
+            {% endif %}
+            {% if reaction.listOfProducts|length == 0 %}
+          { data: { id: '{{reaction.getSbmlId}}_product', name: '<i class="fa fa-ban" aria-hidden="true"></i>'}, classes: 'empty_species' },
+            {% endif %}
         {% endfor %}
       ],
       edges: [
         {% for reaction in list_of_reactions %}
+          {% if reaction.listOfReactants.values|length > 0 %}
             {% for reactant in reaction.listOfReactants.values %}
 
             {
@@ -106,6 +129,16 @@ function loadReactionGraph () {
 
             },
             {% endfor %}
+    {% else %}
+     {
+                data: {
+                    source: '{{reaction.getSbmlId}}_reactant',
+                    target: '{{reaction.getSbmlId}}'
+                },
+                classes: 'positive',
+
+            },
+    {% endif %}
             {% for modifier in reaction.listOfModifiers.values %}
 
             {
@@ -117,6 +150,7 @@ function loadReactionGraph () {
 
             },
             {% endfor %}
+    {% if reaction.listOfProducts.values|length > 0 %}
             {% for product in reaction.listOfProducts.values %}
 
             {
@@ -128,6 +162,16 @@ function loadReactionGraph () {
 
             },
             {% endfor %}
+    {% else %}
+     {
+                data: {
+                    source: '{{reaction.getSbmlId}}',
+                    target: '{{reaction.getSbmlId}}_product'
+                },
+                classes: 'positive',
+
+            },
+    {% endif %}
         {% endfor %}
       ]
     },

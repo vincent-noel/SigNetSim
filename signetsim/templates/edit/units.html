@@ -40,7 +40,7 @@
       <tbody>
         {% for unit_def in unit_definitions %}
         <tr class="row">
-          <td class="col-md-10">{{unit_def.prettyPrint}}</td>
+          <td class="col-md-10">{{unit_def.getNameOrSbmlId}}</td>
           <td class="col-md-2">
             {% if user.is_authenticated %}
             <div class="pull-right">
