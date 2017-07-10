@@ -75,8 +75,8 @@ class ModelRulesView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == 'delete':
 				self.delete(request)
 
-			elif request.POST['action'] == "edit":
-				self.edit(request)
+			# elif request.POST['action'] == "edit":
+			# 	self.edit(request)
 
 			elif request.POST['action'] == "save":
 				self.save(request)
@@ -121,17 +121,10 @@ class ModelRulesView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 			self.saveModel(request)
 			self.loadRules()
-			self.form.clear()
 
-
-	def edit(self, request):
-
-
-		t_id = self.readInt(request, 'rule_id',
-							"the identifier of the rule",
-							max_value=len(self.listOfRules))
-
-		self.form.load(t_id)
+		else:
+			self.form.printErrors()
+			self.printErrors()
 
 
 	def delete(self, request):

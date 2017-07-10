@@ -1,9 +1,5 @@
 {% load tags %}
 
-
-
-
-
 function loadReactionGraph () {
   var cy = window.cy = cytoscape({
     container: document.getElementById('reactions_graph'),
@@ -108,10 +104,10 @@ function loadReactionGraph () {
         {% for reaction in list_of_reactions %}
           { data: { id: '{{reaction.getSbmlId}}', name: '{{reaction.getNameOrSbmlId}}'}, classes: 'reaction' },
             {% if reaction.listOfReactants|length == 0 %}
-          { data: { id: '{{reaction.getSbmlId}}_reactant', name: '<i class="fa fa-ban" aria-hidden="true"></i>'}, classes: 'empty_species' },
+          { data: { id: '{{reaction.getSbmlId}}_reactant', name: 'empty'}, classes: 'empty_species' },
             {% endif %}
             {% if reaction.listOfProducts|length == 0 %}
-          { data: { id: '{{reaction.getSbmlId}}_product', name: '<i class="fa fa-ban" aria-hidden="true"></i>'}, classes: 'empty_species' },
+          { data: { id: '{{reaction.getSbmlId}}_product', name: 'empty'}, classes: 'empty_species' },
             {% endif %}
         {% endfor %}
       ],

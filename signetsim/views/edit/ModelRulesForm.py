@@ -38,40 +38,10 @@ class ModelRulesForm(ModelParentForm):
 		self.definition = None
 
 
-	def clear(self):
-
-		ModelParentForm.clear(self)
-		self.ruleType = None
-		self.variable = None
-		self.definition = None
-
-
-	def load(self, rule_id):
-
-		self.id = rule_id
-		t_rule = self.parent.listOfRules[rule_id]
-
-		if self.id < len(self.parent.getModel().listOfRules):
-			if t_rule.isAlgebraic():
-				self.ruleType = 0
-			elif t_rule.isAssignment():
-				self.ruleType = 1
-			elif t_rule.isRate():
-				self.ruleType = 2
-		else:
-			self.ruleType = 3
-
-		if self.ruleType != 0:
-			self.variable = self.parent.listOfVariables.index(t_rule.getVariable())
-
-		self.definition = t_rule.getPrettyPrintDefinition()
-
-		self.isEditing = True
-
 	def save(self, rule):
 
 		try:
-			if not rule.isAlgebraic():
+			if self.ruleType > 0:
 				rule.setVariable(self.parent.listOfVariables[self.variable])
 
 			rule.setPrettyPrintDefinition(self.definition)
@@ -92,7 +62,7 @@ class ModelRulesForm(ModelParentForm):
 								max_value=len(self.parent.ruleTypes))
 
 		if self.ruleType is not None:
-			if self.ruleType in [1,2,3]:
+			if self.ruleType > 0:
 				self.variable = self.readInt(request, 'variable_id',
 									"the variable affected",
 									max_value=len(self.parent.listOfVariables))

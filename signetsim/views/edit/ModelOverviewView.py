@@ -36,14 +36,16 @@ class ModelOverviewView(TemplateView, HasWorkingModel):
 		HasWorkingModel.__init__(self)
 
 		self.listOfSpecies = None
-		self.interactionMatrix = None
+		self.listOfReactions = None
+		# self.interactionMatrix = None
 
 	def get_context_data(self, **kwargs):
 
 		kwargs = HasWorkingModel.get_context_data(self, **kwargs)
-		kwargs['list_of_species'] = [species.getNameOrSbmlId() for species in self.listOfSpecies]
-		kwargs['interaction_matrix'] = self.interactionMatrix
-		kwargs['png_graph'] = self.getSimpleGraph()
+		kwargs['list_of_species'] = [species for species in self.listOfSpecies if species.isInReactions()]
+		kwargs['list_of_reactions'] = self.listOfReactions
+		# kwargs['interaction_matrix'] = self.interactionMatrix
+		# kwargs['png_graph'] = self.getSimpleGraph()
 		return kwargs
 
 
@@ -56,7 +58,7 @@ class ModelOverviewView(TemplateView, HasWorkingModel):
 			return redirect('edit_overview')
 
 
-		self.updateSimpleGraph()
+		# self.updateSimpleGraph()
 		return TemplateView.get(self, request, *args, **kwargs)
 
 
@@ -75,7 +77,8 @@ class ModelOverviewView(TemplateView, HasWorkingModel):
 
 		HasWorkingModel.load(self, request, *args, **kwargs)
 		if self.isModelLoaded():
-			self.listOfSpecies = self.model.listOfSpecies.values()
+			self.listOfSpecies = self.getModel().listOfSpecies.values()
+			self.listOfReactions = self.getModel().listOfReactions.values()
 			# self.model.build()
 			# self.interactionMatrix = self.model.interactionMatrix
 			# print self.model.jacobianMatrix

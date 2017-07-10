@@ -24,7 +24,7 @@
 
 from ModelCompartmentsView import ModelCompartmentsView
 from ModelOverviewView import ModelOverviewView
-from ModelOverviewView_v2 import ModelOverviewView_v2
+from ModelOverviewView import ModelOverviewView
 from ModelAnnotationsView import ModelAnnotationsView
 from ModelParametersView import ModelParametersView
 from ModelReactionsView import ModelReactionsView

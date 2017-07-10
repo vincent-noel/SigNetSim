@@ -109,7 +109,7 @@ class TestSelectSubmodel(TestCase):
 		)
 		self.assertEqual(
 			[submodel for submodel in response_choose_model.context['model_submodels']],
-			['SOS (Main model)']
+			['Model definition']
 		)
 
 		self.assertEqual(
@@ -128,7 +128,7 @@ class TestSelectSubmodel(TestCase):
 		)
 		self.assertEqual(
 			[submodel for submodel in response_choose_model.context['model_submodels']],
-			['Ras (Main model)']
+			['Model definition']
 		)
 
 		self.assertEqual(
@@ -151,7 +151,7 @@ class TestSelectSubmodel(TestCase):
 		)
 		self.assertEqual(
 			[submodel for submodel in response_choose_model.context['model_submodels']],
-			['MAPK (Main model)']
+			['Model definition']
 		)
 
 		self.assertEqual(
@@ -173,7 +173,7 @@ class TestSelectSubmodel(TestCase):
 		)
 		self.assertEqual(
 			[submodel for submodel in response_choose_model.context['model_submodels']],
-			['SOS-Ras-MAPK (Main model)', 'sos_mod', 'ras_mod', 'mapk_mod']
+			['Model definition']#, 'sos_mod', 'ras_mod', 'mapk_mod']
 		)
 
 		self.assertEqual(

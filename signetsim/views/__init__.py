@@ -24,7 +24,7 @@
 
 from data import DataView, ExperimentView, ConditionView
 
-from edit import ModelCompartmentsView, ModelOverviewView, ModelOverviewView_v2
+from edit import ModelCompartmentsView, ModelOverviewView
 from edit import ModelParametersView, ModelReactionsView, ModelRulesView, ModelSpeciesView
 from edit import ModelUnitsView, ModelEventsView, ModelMiscView, ModelSubmodelsView, ModelAnnotationsView
 

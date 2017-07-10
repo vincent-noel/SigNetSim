@@ -31,7 +31,7 @@ from django.contrib.auth.views import logout
 from signetsim.json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
 from signetsim.json import GetContinuationFigure, GetListOfObjectsFromSubmodels
 from signetsim.json import GetSBOName, SetAccountActive, SetAccountStaff
-from signetsim.json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction
+from signetsim.json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction, GetRule
 from signetsim.json import GetSubmodels, GetListOfObjects, GetContinuationStatus, GetProject
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
 from views import DataOptimizationView, DataOptimizationView0, ModelOptimizationView
@@ -41,7 +41,7 @@ from views import ListOfModelsView, ListOfProjectsView, GenerateCombineArchive
 from views import ListOfOptimizationsView, OptimizationResultView
 from views import ListOfSimulationsView, SedmlSimulationView
 from views import LoginView, ActivateAccountView, ProfileView, AdminView
-from views import ModelCompartmentsView, ModelOverviewView, ModelOverviewView_v2, ModelAnnotationsView
+from views import ModelCompartmentsView, ModelOverviewView, ModelAnnotationsView
 from views import ModelReactionsView, ModelRulesView, ModelSubmodelsView
 from views import ModelSpeciesView, ModelParametersView
 from views import ModelUnitsView, ModelEventsView, ModelMiscView
@@ -75,8 +75,7 @@ urlpatterns = [
 
 	# Model editing
 	url(r'^edit/model/([^/]+)/$', ModelOverviewView.as_view(), name='edit_model'),
-	url(r'^edit/overview/$', ModelOverviewView_v2.as_view(), name='edit_overview'),
-	url(r'^edit/overview_v2/$', ModelOverviewView_v2.as_view(), name='edit_overview_v2'),
+	url(r'^edit/overview/$', ModelOverviewView.as_view(), name='edit_overview'),
 	url(r'^edit/annotations/$', ModelAnnotationsView.as_view(), name='edit_annotations'),
 	url(r'^edit/species/$', ModelSpeciesView.as_view(), name='edit_species'),
 	url(r'^edit/parameters/$', ModelParametersView.as_view(), name='edit_parameters'),
@@ -126,6 +125,7 @@ urlpatterns = [
 	url(r'^json/get_compartment/$', GetCompartment.as_view(), name='get_compartment'),
 	url(r'^json/get_reaction/$', GetReaction.as_view(), name='get_reaction'),
 	url(r'^json/get_reaction_kinetic_law/$', GetReactionKineticLaw.as_view(), name='get_reaction_kinetic_law'),
+	url(r'^json/get_rule/$', GetRule.as_view(), name='get_rule'),
 	url(r'^json/get_sbo_name/$', GetSBOName.as_view(), name='get_sbo_name'),
 	url(r'^json/set_account_active/$', SetAccountActive.as_view(), name='set_account_active'),
 	url(r'^json/set_account_staff/$', SetAccountStaff.as_view(), name='set_account_staff'),

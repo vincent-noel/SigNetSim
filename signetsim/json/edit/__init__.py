@@ -27,6 +27,7 @@ from GetCompartment import GetCompartment
 from GetParameter import GetParameter
 from GetReaction import GetReaction
 from GetReactionKineticLaw import GetReactionKineticLaw
+from GetRule import GetRule
 from GetSubmodels import GetSubmodels
 
 from GetSBOName import GetSBOName

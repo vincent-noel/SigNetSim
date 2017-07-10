@@ -18,11 +18,13 @@
 {% extends '_layouts/menupage.html' %}
 {% load static from staticfiles %}
 {% load bootstrap3 %}
-{% load tags %}
 
 {% block title %} Overview | {{ block.super }}{% endblock title %}
 {% block header %}
-<script src="{% static "cytoscape/dist/cytoscape.min.js" %}"></script>
+<script src="{% static 'cytoscape/dist/cytoscape.js' %}"></script>
+<script src="{% static 'cytoscape-cola/cola.js' %}"></script>
+<script src="{% static 'cytoscape-cola/cytoscape-cola.js' %}"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock header %}
 
 {% block view_name %}Model overview{% endblock view_name %}
@@ -33,13 +35,13 @@
   <h4>Overview</h4>
   <hr/><br/>
   {% if model_id != None %}
-  <img src="../../media/{{png_graph}}"/>
+  <div class="container-fluid" id="reactions_graph"></div>
   {% endif %}
 </div>
 
 {% endblock view_content %}
+
 {% block js %}
 {{ block.super }}
-
-
+{% include 'edit/overview.js' %}
 {% endblock js %}

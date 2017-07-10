@@ -36,21 +36,11 @@
   </form>
   <script>
 
-    $('#project_list li').on('click', function(){
-//      var nb_projects = $('#project_list').children().length - 1;
-
-//      {% if user.is_authenticated %}
-//        if ($(this).index() >= nb_projects) {
-//        $('#new_project').modal('show');
-//      }
-//      else{
-//      {% endif %}
+    $('#project_list li').on('click', function()
+    {
         $("#project_name").html($(this).text());
         $('#project_id').val($(this).index());
         $('#choose_project').submit();
-//      {% if user.is_authenticated %}
-//      }
-//      {% endif %}
     });
 
   </script>

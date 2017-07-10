@@ -23,6 +23,8 @@
 {% block view_sidebar %}{% include 'edit/menu.html' with page="rules" %}{% endblock view_sidebar %}
 
 {% block view_content %}
+
+{% load static from staticfiles %}
 {% load bootstrap3 %}
 {% load tags %}
 <div class="container-fluid" id="view">
@@ -44,7 +46,7 @@
         {% for rule in list_of_rules %}
         <tr class="row">
           <td class="col-md-2">{{rule.getVariable.getNameOrSbmlId}}</td>
-          <td class="col-md-6">{{rule.getPrettyPrintDefinition}}</td>
+          <td class="col-md-6">{{rule.getPrettyPrintDefinition}}{% if rule.getRuleType == 0 %} = 0{% endif %}</td>
           <td class="col-md-2">{{rule.getRuleTypeDescription}}</td>
           <td class="col-md-2">
             {% if user.is_authenticated %}
@@ -52,7 +54,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="rule_id" value="{{ forloop.counter0 }}">
-                <button type="submit" name="action" value="edit" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" onclick="view_rule({{forloop.counter0}});" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
               </form>
             </div>
@@ -78,22 +80,22 @@
 {% block view_modal %}
 
 
-<div class="modal fade in" id="modal_rule" tabindex="1" role="dialog" aria-labelledby="{% if form.isEditing == True %}Edit{% else %}New{% endif %} rule">
+<div class="modal fade in" id="modal_rule" tabindex="1" role="dialog" aria-labelledby="New rule">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <form action="" method="post" class="form" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">{% if form.isEditing == True %}Edit{% else %}New{% endif %} rule</h4>
+          <h4 class="modal-title" id="modal_rule-title">New rule</h4>
         </div>
         <div class="modal-body text-center">
           <div class="input-group col-xs-12">
             <div class="dropdown">
-              <input type="hidden" id="rule_id" name="rule_id" value="{% if form.isEditing == True %}{{form.id}}{% endif %}">
-              <input type="hidden" id="rule_type" name="rule_type" value="{% if form.isEditing == True %}{{form.ruleType}}{% endif %}">
-              <button type="button" id="rule_type_dropdown_button" class="btn btn-primary dropdown-toggle col-xs-12" data-toggle="dropdown" {% if form.isEditing == True %}disabled="true"{% endif %}>
-                <span id="rule_type_name">{% if form.isEditing == True %}{{rules_types|my_lookup:form.ruleType}}{% else %}Choose a type{% endif %}</span>
+              <input type="hidden" id="rule_id" name="rule_id" value="">
+              <input type="hidden" id="rule_type" name="rule_type" value="">
+              <button type="button" id="rule_type_dropdown_button" class="btn btn-primary dropdown-toggle col-xs-12" data-toggle="dropdown">
+                <span id="rule_type_name">Choose a type</span>
                 <span class="caret"></span>
               </button>
               <ul id="rule_type_dropdown" class="dropdown-menu col-xs-12">
@@ -104,12 +106,12 @@
             </div>
           </div>
           <br/>
-          <div class="collapse {% if form.isEditing == True and form.ruleType == 0 %}out{% else %}in{% endif %}" id="rule_species">
+          <div class="collapse" id="rule_species">
             <div class="input-group">
               <span class="input-group-addon">Variable</span>
               <div class="dropdown">
                 <button type="button" class="btn btn-primary dropdown-toggle col-xs-12" data-toggle="dropdown">
-                  <span id="dropdown_variable_name">{% if form.isEditing == True and form.ruleType != 0 %}{{list_of_variables|my_lookup:form.variable}}{% else %}Choose a variable{% endif %}</span>
+                  <span id="dropdown_variable_name"></span>
                   <span class="caret"></span>
                 </button>
                 <ul id="dropdown_variables_list" class="dropdown-menu col-xs-12">
@@ -117,25 +119,63 @@
                     <li><a>{{ variable }}</a></li>
                     {% endfor %}
                 </ul>
-                <input type="hidden" id="dropdown_variable_id" name="variable_id" value="{% if form.isEditing == True %}{{form.variable}}{% endif %}">
+                <input type="hidden" id="dropdown_variable_id" name="variable_id" value="">
               </div>
             </div>
             <br/>
           </div>
-          <div class="collapse {% if form.isEditing == True and form.ruleType == 0 %}out{% else %}in{% endif %}" id="rule_exp_others">
-            <div class="input-group">
-              <span class="input-group-addon">Expression</span>
-              <input type="text" class="form-control input-sm" placeholder="Input expression" name="rule_expression" id="rule_expression" value="{% if form.isEditing == True %}{{form.definition}}{% endif %}">
-            </div>
+          <div class="collapse" id="rule_exp_others">
+             <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <td class="col-xs-11" style="padding: 0px;">
+                      <div class="input-group">
+                        <span class="input-group-addon">Expression</span>
+                        <input type="text" class="form-control input-sm" placeholder="Input expression" name="rule_expression" id="rule_expression" value="">
+                      </div>
+                    </td>
+                    <td class="col-xs-1" style="padding: 0px;vertical-align:middle">
+                      <div id="exp_validating" class="pull-right collapse">
+                        <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+                      </div>
+                      <div id="exp_valid" class="pull-right collapse">
+                        <span class="glyphicon glyphicon-ok" style="color:#5cb85c; font-size: 1.5em"></span>
+                      </div>
+                      <div id="exp_invalid" class="pull-right collapse">
+                      <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
+                      </div>
+                    </td>
+                  </tr>
+                </thead>
+              </table>
             <br/>
           </div>
-          <div class="collapse {% if form.isEditing == True and form.ruleType == 0 %}in{% else %}out{% endif %}" id="rule_exp_alg">
-            <div class="input-group">
-              <span class="input-group-addon">Expression</span>
-              <input type="text" class="form-control input-sm" placeholder="Input expression" name="rule_expression_alg" id="rule_expression_alg" value="{% if form.isEditing == True %}{{form.definition}}{% endif %}">
-              <span class="input-group-addon"> = 0</span>
+          <div class="collapse" id="rule_exp_alg">
+            <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <td class="col-xs-11" style="padding: 0px;">
+                      <div class="input-group">
+                        <span class="input-group-addon">Expression</span>
+                        <input type="text" class="form-control input-sm" placeholder="Input expression" name="rule_expression_alg" id="rule_expression_alg" value="">
+                        <span class="input-group-addon"> = 0</span>
+                      </div>
+                    </td>
+                    <td class="col-xs-1" style="padding: 0px;vertical-align:middle">
+                      <div id="expalg_validating" class="pull-right collapse">
+                        <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+                      </div>
+                      <div id="expalg_valid" class="pull-right collapse">
+                        <span class="glyphicon glyphicon-ok" style="color:#5cb85c; font-size: 1.5em"></span>
+                      </div>
+                      <div id="expalg_invalid" class="pull-right collapse">
+                      <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
+                      </div>
+                    </td>
+                  </tr>
+                </thead>
+              </table>
             </div>
-          </div>
           <br/>
           {% include 'commons/error_modal.html' %}
 
@@ -153,82 +193,6 @@
 {% endblock view_modal %}
 
 {% block js %}
-
-function clear_form () {
-
-  $("#dropdown_variable_name").html("Choose a variable");
-  $('#dropdown_variable_id').val("");
-
-  $("#rule_expression").val("");
-  $("#rule_expression_alg").val("");
-
-  $('#rule_type_dropdown_button').prop('disabled', false);
-
-
-  console.log("form cleared");
-}
-
-$('#rule_type_dropdown li').on('click', function(){
-  $("#rule_type_name").html($(this).text());
-  $('#rule_type').val($(this).index());
-  clear_form();
-
-  if ($(this).index() == 0){
-
-    $("#rule_species").addClass("out");
-    $("#rule_species").removeClass("in");
-    $("#rule_exp_others").addClass("out");
-    $("#rule_exp_others").removeClass("in");
-    $("#rule_exp_alg").addClass("in");
-    $("#rule_exp_alg").removeClass("out");
-
-  } else {
-
-    $("#rule_species").addClass("in");
-    $("#rule_species").removeClass("out");
-    $("#rule_exp_others").addClass("in");
-    $("#rule_exp_others").removeClass("out");
-    $("#rule_exp_alg").addClass("out");
-    $("#rule_exp_alg").removeClass("in");
-  }
-
-});
-
-
-$('#dropdown_variables_list li').on('click', function(){
-  $("#dropdown_variable_name").html($(this).text());
-  $('#dropdown_variable_id').val($(this).index());
-});
-
-
-$('#new_rule_button').on('click', function()
-{
-  $("#rule_id").val("");
-  $("#rule_type_name").html("Choose a type");
-  $("#rule_type").val("");
-
-  clear_form();
-
-  $("#rule_species").addClass("out");
-  $("#rule_species").removeClass("in");
-  $("#rule_exp_others").addClass("out");
-  $("#rule_exp_others").removeClass("in");
-  $("#rule_exp_alg").addClass("out");
-  $("#rule_exp_alg").removeClass("in");
-  $('#modal_rule').modal('show');
-});
-
-
-
-{% if form.isEditing == True or form.hasErrors == True %}
-
-$(window).on('load',function(){
-    $('#modal_rule').modal('show');
-});
-
-{% endif %}
-
-
 {{ block.super }}
-
+{% include 'edit/rules.js' %}
 {% endblock js %}

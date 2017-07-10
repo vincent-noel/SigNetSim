@@ -26,7 +26,8 @@ from JsonRequest import JsonRequest
 
 from admin import SetAccountStaff, SetAccountActive
 from edit import GetListOfObjects, GetListOfObjectsFromSubmodels
-from edit import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw, GetSubmodels, GetSBOName
+from edit import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw, GetRule, \
+	GetSubmodels, GetSBOName
 from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
 
 from GetContinuationFigure import GetContinuationFigure
