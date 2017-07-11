@@ -6,8 +6,8 @@ function loadReactionGraph () {
     layout: {
       name: 'cola',
       nodeSpacing: 5,
-      edgeLengthVal: 45,
-      maxSimulationTime: 150000
+      edgeLengthVal: 200,
+      maxSimulationTime: 60000,
     },
 
     style: cytoscape.stylesheet()
