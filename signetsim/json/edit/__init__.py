@@ -28,6 +28,7 @@ from GetParameter import GetParameter
 from GetReaction import GetReaction
 from GetReactionKineticLaw import GetReactionKineticLaw
 from GetRule import GetRule
+from GetEvent import GetEvent
 from GetSubmodels import GetSubmodels
 
 from GetSBOName import GetSBOName

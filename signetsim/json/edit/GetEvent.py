@@ -25,8 +25,7 @@ from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 
-class GetRule(JsonRequest, HasWorkingModel):
-
+class GetEvent(JsonRequest, HasWorkingModel):
 
 	def __init__(self):
 		JsonRequest.__init__(self)
@@ -37,32 +36,29 @@ class GetRule(JsonRequest, HasWorkingModel):
 	def post(self, request, *args, **kwargs):
 		self.load(request, *args, **kwargs)
 
-		rule_ind = int(request.POST['rule_ind'])
-		self.data.update({'rule_id': rule_ind})
+		event_ind = int(request.POST['event_ind'])
 
-		if rule_ind < len(self.getModel().listOfRules):
-			rule = self.getModel().listOfRules.values()[rule_ind]
-			self.data.update({'rule_type': rule.getRuleType(), 'rule_type_label': rule.getRuleTypeDescription()})
+		if event_ind < len(self.getModel().listOfEvents):
+			event = self.getModel().listOfEvents.values()[event_ind]
 
-
-		else:
-			rule_ind -= len(self.getModel().listOfRules)
-			rule = self.getModel().listOfInitialAssignments.values()[rule_ind]
-			self.data.update({'rule_type': 3, 'rule_type_label': 'Initial assignment'})
-
-		self.data.update({
-			'expression': rule.getPrettyPrintDefinition()
-		})
-
-		if self.data['rule_type'] != 0:
 			self.data.update({
-				'variable': self.listOfVariables.index(rule.getVariable()),
-				'variable_label': rule.getVariable().getNameOrSbmlId()
+				'event_ind': event_ind,
+				'event_name': event.getNameOrSbmlId(),
+				'event_trigger': event.trigger.getPrettyPrintMathFormula(),
+				'event_persistent': 1 if event.trigger.isPersistent else 0,
+				'event_initialvalue': 1 if event.trigger.initialValue else 0,
+				'event_valuefromtrigger': 1 if event.useValuesFromTriggerTime else 0,
+				'event_delay': event.delay.getPrettyPrintMathFormula() if event.delay is not None else "",
+				'event_priority': event.priority.getPrettyPrintMathFormula() if event.priority is not None else ""
 			})
 
+			for ind, event_assignment in enumerate(event.listOfEventAssignments):
+				self.data.update({
+					('event_assignment_variable_%d' % ind): self.listOfVariables.index(event_assignment.getVariable()),
+					('event_assignment_definition_%d' % ind): event_assignment.getDefinition().getPrettyPrintMathFormula()
+				})
 
 		return JsonRequest.post(self, request, *args, **kwargs)
-
 
 	def load(self, request, *args, **kwargs):
 		HasWorkingModel.load(self, request, *args, **kwargs)

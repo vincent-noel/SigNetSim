@@ -35,11 +35,11 @@ from os.path import dirname, join
 from json import loads
 
 
-class TestRule(TestCase):
+class TestEvent(TestCase):
 
 	fixtures = ["user_with_project.json"]
 
-	def testRule(self):
+	def testEvents(self):
 
 		settings.MEDIA_ROOT = "/tmp/"
 
@@ -69,7 +69,6 @@ class TestRule(TestCase):
 		sbml_doc = SbmlDocument()
 		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		sbml_model = sbml_doc.getModelInstance()
-		listOfRules = sbml_model.listOfRules.values() + sbml_model.listOfInitialAssignments.values()
 		listOfVariables = []
 		for variable in sbml_model.listOfVariables.values():
 			if (variable.isParameter()
@@ -77,20 +76,6 @@ class TestRule(TestCase):
 				or variable.isCompartment()) and variable.isGlobal():
 
 				listOfVariables.append(variable)
-
-		rule = listOfRules[0]
-
-		response_get_compartment = c.post('/json/get_rule/', {
-			'rule_ind': '0',
-		})
-
-		self.assertEqual(response_get_compartment.status_code, 200)
-		json_response = loads(response_get_compartment.content)
-
-
-		self.assertEqual(json_response[u'rule_id'], listOfRules.index(rule))
-		self.assertEqual(json_response[u'rule_type'], 1)
-		self.assertEqual(json_response[u'variable'], listOfVariables.index(sbml_model.listOfVariables.getBySbmlId('total_ras_gtp')))
 
 		response_choose_project = c.post('/models/', {
 			'action': 'choose_project',
@@ -99,45 +84,108 @@ class TestRule(TestCase):
 		self.assertEqual(response_choose_project.status_code, 200)
 		self.assertEqual(response_choose_project.context['project_name'], "Project")
 
-		response_choose_model = c.post('/edit/rules/', {
+		response_choose_model = c.post('/edit/events/', {
 			'action': 'choose_model',
 			'model_id': 0
 		})
 		self.assertEqual(response_choose_model.status_code, 200)
 		self.assertEqual(response_choose_model.context['model_name'], "SOS-Ras-MAPK with n17")
 
-		response_save_rule = c.post('/edit/rules/', {
+		response_save_event = c.post('/edit/events/', {
 			'action': 'save',
-			'rule_id': listOfRules.index(rule),
-			'rule_type': 1,
-			'variable_id': listOfVariables.index(sbml_model.listOfVariables.getBySbmlId('total_mapk_activated')),
-			'rule_expression': "75*ras_gtp",
+			'event_id': '',
+			'event_name': "Test event",
+			'event_trigger': "time==0",
+			'event_priority': "",
+			'event_delay': "",
+			'event_assignment_0_id': listOfVariables.index(sbml_model.listOfVariables.getBySbmlId('ras_gtp')),
+			'event_assignment_0_expression': 'ras_gtp*2'
 		})
 
-		self.assertEqual(response_save_rule.status_code, 200)
-		self.assertEqual(response_save_rule.context['form'].getErrors(), [])
+		self.assertEqual(response_save_event.status_code, 200)
+		self.assertEqual(response_save_event.context['form'].getErrors(), [])
 
+		model = SbmlModel.objects.filter(project=project)[0]
 		sbml_doc = SbmlDocument()
 		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		sbml_model = sbml_doc.getModelInstance()
-		listOfRules = sbml_model.listOfRules.values() + sbml_model.listOfInitialAssignments.values()
 		listOfVariables = []
 		for variable in sbml_model.listOfVariables.values():
 			if (variable.isParameter()
 				or variable.isSpecies()
 				or variable.isCompartment()) and variable.isGlobal():
+
 				listOfVariables.append(variable)
+		event = sbml_model.listOfEvents.values()[0]
 
-		rule = listOfRules[0]
+		response_get_event = c.post('/json/get_event/', {
+			'event_ind': '0',
+		})
+
+		self.assertEqual(response_get_event.status_code, 200)
+		json_response = loads(response_get_event.content)
 
 
-		self.assertEqual(rule.getType(), 1)
-		self.assertEqual(rule.getVariable(), sbml_model.listOfVariables.getBySbmlId('total_mapk_activated'))
-		self.assertEqual(rule.getDefinition().getPrettyPrintMathFormula(), "75*ras_gtp")
+		self.assertEqual(json_response[u'event_ind'], 0)
+		self.assertEqual(json_response[u'event_name'], "Test event")
+		self.assertEqual(json_response[u'event_trigger'], "Eq(_time_, 0)")
+		self.assertEqual(json_response[u'event_priority'], "")
+		self.assertEqual(json_response[u'event_delay'], "")
 
-		response_delete_rule = c.post('/edit/rules/', {
+		response_delete_event = c.post('/edit/events/', {
 			'action': 'delete',
 			'rule_id': 0
 		})
-		self.assertEqual(response_delete_rule.status_code, 200)
-		self.assertEqual(response_delete_rule.context['form'].getErrors(), [])
+		self.assertEqual(response_delete_event.status_code, 200)
+		self.assertEqual(response_delete_event.context['form'].getErrors(), [])
+
+	#
+		# response_choose_project = c.post('/models/', {
+		# 	'action': 'choose_project',
+		# 	'project_id': 0
+		# })
+		# self.assertEqual(response_choose_project.status_code, 200)
+		# self.assertEqual(response_choose_project.context['project_name'], "Project")
+		# 
+		# response_choose_model = c.post('/edit/rules/', {
+		# 	'action': 'choose_model',
+		# 	'model_id': 0
+		# })
+		# self.assertEqual(response_choose_model.status_code, 200)
+		# self.assertEqual(response_choose_model.context['model_name'], "SOS-Ras-MAPK with n17")
+		# 
+		# response_save_rule = c.post('/edit/rules/', {
+		# 	'action': 'save',
+		# 	'rule_id': listOfRules.index(rule),
+		# 	'rule_type': 1,
+		# 	'variable_id': listOfVariables.index(sbml_model.listOfVariables.getBySbmlId('total_mapk_activated')),
+		# 	'rule_expression': "75*ras_gtp",
+		# })
+		# 
+		# self.assertEqual(response_save_rule.status_code, 200)
+		# self.assertEqual(response_save_rule.context['form'].getErrors(), [])
+		# 
+		# sbml_doc = SbmlDocument()
+		# sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
+		# sbml_model = sbml_doc.getModelInstance()
+		# listOfRules = sbml_model.listOfRules.values() + sbml_model.listOfInitialAssignments.values()
+		# listOfVariables = []
+		# for variable in sbml_model.listOfVariables.values():
+		# 	if (variable.isParameter()
+		# 		or variable.isSpecies()
+		# 		or variable.isCompartment()) and variable.isGlobal():
+		# 		listOfVariables.append(variable)
+		# 
+		# rule = listOfRules[0]
+		# 
+		# 
+		# self.assertEqual(rule.getType(), 1)
+		# self.assertEqual(rule.getVariable(), sbml_model.listOfVariables.getBySbmlId('total_mapk_activated'))
+		# self.assertEqual(rule.getDefinition().getPrettyPrintMathFormula(), "75*ras_gtp")
+		# 
+		# response_delete_rule = c.post('/edit/rules/', {
+		# 	'action': 'delete',
+		# 	'rule_id': 0
+		# })
+		# self.assertEqual(response_delete_rule.status_code, 200)
+		# self.assertEqual(response_delete_rule.context['form'].getErrors(), [])
