@@ -8,8 +8,8 @@ function add_assignment(){
       <td class=\"col-xs-5 text-center\">\
         <input type=\"hidden\" id=\"event_assignment_" + nb_assignments.toString() + "\" name=\"event_assignment_" + nb_assignments.toString() + "_id\" value=\"\">\
         <div class=\"dropdown\">\
-          <button type=\"button\" class=\"btn btn-primary btn-sm dropdown-toggle\" data-toggle=\"dropdown\">\
-            <span id=\"event_assignment_" + nb_assignments.toString() + "_label\">Choose a variable</span>\
+          <button type=\"button\" class=\"btn btn-primary btn-sm dropdown-toggle\" data-toggle=\"dropdown\" style=\"width:130px\">\
+            <span id=\"event_assignment_" + nb_assignments.toString() + "_label\" style=\"overflow: hidden; white-space:nowrap; display:inline-block;width:90px; text-overflow:ellipsis;  vertical-align: bottom;\">Choose a variable</span>\
             <span class=\"caret\"></span>\
           </button>\
           <ul id=\"event_assignment_" + nb_assignments.toString() + "_dropdown\" class=\"dropdown-menu\">\
@@ -86,10 +86,8 @@ $('#new_event_button').on('click', function(){
     $("#event_persistent").attr("checked", true);
     $("#event_initialvalue").attr("checked", false);
     $("#error_messages").remove();
-    if($("#trigger_options").hasClass("in")) {
-            $("#trigger_options").addClass("out");
-            $("#trigger_options").removeClass("in");
-    }
+    if($("#trigger_options").hasClass("in")) { $("#trigger_options").removeClass("in"); }
+
     $('#modal_event').modal('show');
 
 });
