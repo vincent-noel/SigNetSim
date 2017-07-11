@@ -49,14 +49,22 @@ class GetEvent(JsonRequest, HasWorkingModel):
 				'event_initialvalue': 1 if event.trigger.initialValue else 0,
 				'event_valuefromtrigger': 1 if event.useValuesFromTriggerTime else 0,
 				'event_delay': event.delay.getPrettyPrintMathFormula() if event.delay is not None else "",
-				'event_priority': event.priority.getPrettyPrintMathFormula() if event.priority is not None else ""
+				'event_priority': event.priority.getPrettyPrintMathFormula() if event.priority is not None else "",
+				'list_of_assignments': [
+					(
+						self.listOfVariables.index(event_assignment.getVariable()),
+						event_assignment.getVariable().getNameOrSbmlId(),
+						event_assignment.getDefinition().getPrettyPrintMathFormula()
+					)
+					for event_assignment in event.listOfEventAssignments
+				]
 			})
 
-			for ind, event_assignment in enumerate(event.listOfEventAssignments):
-				self.data.update({
-					('event_assignment_variable_%d' % ind): self.listOfVariables.index(event_assignment.getVariable()),
-					('event_assignment_definition_%d' % ind): event_assignment.getDefinition().getPrettyPrintMathFormula()
-				})
+			# for ind, event_assignment in enumerate(event.listOfEventAssignments):
+			# 	self.data.update({
+			# 		('event_assignment_variable_%d' % ind): self.listOfVariables.index(event_assignment.getVariable()),
+			# 		('event_assignment_definition_%d' % ind): event_assignment.getDefinition().getPrettyPrintMathFormula()
+			# 	})
 
 		return JsonRequest.post(self, request, *args, **kwargs)
 

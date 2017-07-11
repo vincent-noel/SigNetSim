@@ -27,7 +27,6 @@ from django.conf import settings
 from django.test import TestCase, Client
 
 from signetsim.models import User, Project, SbmlModel
-from signetsim.views.ListOfModelsView import ListOfModelsView
 
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.model.math.MathFormula import MathFormula
@@ -125,7 +124,6 @@ class TestEvent(TestCase):
 		self.assertEqual(response_get_event.status_code, 200)
 		json_response = loads(response_get_event.content)
 
-
 		self.assertEqual(json_response[u'event_ind'], 0)
 		self.assertEqual(json_response[u'event_name'], "Test event")
 
@@ -137,13 +135,13 @@ class TestEvent(TestCase):
 
 		self.assertEqual(simplify(formula.getDeveloppedInternalMathFormula()-formula_response.getDeveloppedInternalMathFormula()), 0)
 		self.assertEqual(json_response[u'event_delay'], "")
-		self.assertEqual(json_response[u'event_assignment_variable_0'], listOfVariables.index(sbml_model.listOfVariables.getBySbmlId('ras_gtp')))
+		self.assertEqual(json_response[u'list_of_assignments'][0][0], listOfVariables.index(sbml_model.listOfVariables.getBySbmlId('ras_gtp')))
 
 		formula = MathFormula(sbml_model)
 		formula.setPrettyPrintMathFormula("ras_gtp*2", rawFormula=True)
 
 		formula_response = MathFormula(sbml_model)
-		formula_response.setPrettyPrintMathFormula(json_response[u'event_assignment_definition_0'], rawFormula=True)
+		formula_response.setPrettyPrintMathFormula(json_response[u'list_of_assignments'][0][2], rawFormula=True)
 		self.assertEqual(simplify(formula.getDeveloppedInternalMathFormula()-formula_response.getDeveloppedInternalMathFormula()), 0)
 		self.assertTrue(u'event_assignment_variable_1' not in json_response)
 
@@ -206,19 +204,12 @@ class TestEvent(TestCase):
 			simplify(formula.getDeveloppedInternalMathFormula() - event.listOfEventAssignments[1].getDefinition().getDeveloppedInternalMathFormula()),
 			0)
 
-
 		response_delete_event = c.post('/edit/events/', {
 			'action': 'delete',
 			'event_id': 0
 		})
 		self.assertEqual(response_delete_event.status_code, 200)
 		self.assertEqual(response_delete_event.context['form'].getErrors(), [])
-		self.assertEqual(json_response[u'event_ind'], 0)
-		self.assertEqual(json_response[u'event_name'], "Test event")
-		self.assertEqual(json_response[u'event_trigger'], "time == 0")
-		self.assertEqual(json_response[u'event_priority'], "")
-		self.assertEqual(json_response[u'event_delay'], "")
-
 
 		model = SbmlModel.objects.filter(project=project)[0]
 		sbml_doc = SbmlDocument()

@@ -1,5 +1,5 @@
 
-var nb_assignments = {{form.assignments|length}} - 1;
+var nb_assignments = - 1;
 
 function add_assignment(){
     nb_assignments = nb_assignments + 1;
@@ -18,7 +18,7 @@ function add_assignment(){
         </div>\
       </td>\
       <td class=\"col-xs-5\">\
-        <input type=\"text\" class=\"form-control input-sm\" placeholder=\"Input assignment exression\" name=\"event_assignment_" + nb_assignments.toString() + "_expression\" value=\"\">\
+        <input type=\"text\" class=\"form-control input-sm\" placeholder=\"Input assignment exression\" name=\"event_assignment_" + nb_assignments.toString() + "_expression\" id=\"event_assignment_" + nb_assignments.toString() + "_expression\" value=\"\">\
       </td>\
       <td class=\"col-xs-2 text-right vert-align\">\
         <button type=\"button\" onclick=\"remove_assignment(" + nb_assignments.toString() + ");\" class=\"btn btn-danger btn-xs\"><span class=\"glyphicon glyphicon-remove\"></span></button>\
@@ -77,22 +77,6 @@ $('#toggle_trigger_options').on('click', function(){
   }
 });
 
-$('#new_event_button').on('click', function(){
-    $("#body_assignments").children("tr").remove();
-    add_assignment();
-    $("#event_trigger").attr("value", "");
-    $("#event_priority").attr("value", "");
-    $("#event_delay").attr("value", "");
-    $("#event_persistent").attr("checked", true);
-    $("#event_initialvalue").attr("checked", false);
-    $("#error_messages").remove();
-    if($("#trigger_options").hasClass("in")) { $("#trigger_options").removeClass("in"); }
-
-    $('#modal_event').modal('show');
-
-});
-
-
 function toggle_slide(slide_id) {
   if ($('#' + slide_id).prop('checked') == true) {
     $('#' + slide_id).prop("checked", false);
@@ -101,3 +85,77 @@ function toggle_slide(slide_id) {
   }
 }
 
+
+
+$('#new_event_button').on('click', function(){
+    $("#body_assignments").children("tr").remove();
+    nb_assignments = -1;
+
+    add_assignment();
+    $("#event_trigger").attr("value", "");
+    $("#event_priority").attr("value", "");
+    $("#event_delay").attr("value", "");
+    $("#event_persistent").prop("checked", true);
+    $("#event_initialvalue").prop("checked", false);
+    $("#event_usetriggertime").prop("checked", true);
+    $("#error_messages").remove();
+    if($("#trigger_options").hasClass("in")) { $("#trigger_options").removeClass("in"); }
+
+    $('#modal_event').modal('show');
+
+});
+
+function view_event(event_ind)
+{
+    $("#modal_event-title").html("Edit events");
+    $("#body_assignments").children("tr").remove();
+    nb_assignments = -1;
+    ajax_call(
+        "POST", "{{csrf_token}}",
+        "{% url 'get_event' %}", {'event_ind': event_ind},
+        function(data)
+        {
+            $.each(data, function(index, element) {
+                if (index === "event_ind") { $("#event_id").val(element); }
+                else if (index === "event_name") { $("#event_name").val(element); }
+                else if (index === "event_trigger") { $("#event_trigger").val(element); }
+                else if (index === "event_delay") { $("#event_delay").val(element); }
+                else if (index === "event_priority") { $("#event_priority").val(element); }
+
+                else if (index == "event_persistent") {
+                   if (element == "1") { $("#event_persistent").prop('checked', true); }
+                   else { $("#event_persistent").prop('checked', false); }
+
+                } else if (index == "event_initialvalue") {
+                   if (element == "1") { $("#event_initialvalue").prop('checked', true); }
+                   else { $("#event_initialvalue").prop('checked', false); }
+
+                } else if (index == "event_valuefromtrigger") {
+                   if (element == "1") { $("#event_usetriggertime").prop('checked', true); }
+                   else { $("#event_usetriggertime").prop('checked', false); }
+
+                } else if (index === "list_of_assignments") {
+                    $.each(element, function (index, subelement) {
+                        add_assignment();
+                        $("#event_assignment_" + nb_assignments.toString() + "_label").html(subelement[1]);
+                        $("#event_assignment_" + nb_assignments.toString()).val(subelement[0]);
+                        $("#event_assignment_" + nb_assignments.toString() + "_expression").val(subelement[2]);
+                    });
+                }
+
+
+            });
+
+        },
+        function() { console.log("failed"); }
+    );
+
+
+    $('#modal_event').modal('show');
+}
+
+function save_event()
+{
+
+    $("#event_form").submit();
+}
