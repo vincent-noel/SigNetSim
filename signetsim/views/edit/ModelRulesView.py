@@ -151,12 +151,11 @@ class ModelRulesView(TemplateView, HasWorkingModel, HasErrorMessages):
 	def loadGlobalVariables(self):
 
 		self.listOfVariables = []
-
 		for variable in self.getModel().listOfVariables.values():
-			if (variable.isParameter()
+			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
-				or variable.isCompartment()) and variable.isGlobal():
-
+				or variable.isCompartment()
+				or variable.isStoichiometry()):
 				self.listOfVariables.append(variable)
 
 

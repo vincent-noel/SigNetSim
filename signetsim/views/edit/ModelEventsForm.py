@@ -39,39 +39,6 @@ class ModelEventsForm(ModelParentForm):
 		self.assignments = [(None, None)]
 		self.useValuesFromTriggerTime = False
 
-	# def clear(self):
-	#
-	# 	ModelParentForm.clear(self)
-	#
-	# 	self.id = None
-	# 	self.name = None
-	# 	self.trigger = ""
-	# 	self.delay = None
-	# 	self.priority = None
-	# 	self.initialvalue = False
-	# 	self.persistent = True
-	# 	self.assignments = [(None, None)]
-	# 	self.useValuesFromTriggerTime = False
-
-
-	# def load(self, event_id):
-	#
-	# 	self.id = event_id
-	# 	t_event = self.parent.model.listOfEvents[self.parent.listOfEvents[event_id].objId]
-	# 	self.name = t_event.getName()
-	# 	self.trigger = t_event.getTrigger()
-	# 	self.delay = t_event.getDelay()
-	# 	self.priority = t_event.getPriority()
-	# 	self.persistent = t_event.isTriggerPersistent()
-	# 	self.initialvalue = t_event.getTriggerInitialValue()
-	# 	self.useValuesFromTriggerTime = t_event.getUseValuesFromTriggerTime()
-	# 	self.assignments = []
-	# 	for assignment in t_event.listOfEventAssignments:
-	#
-	# 		t_pos = assignment.getVariable()
-	# 		t_var_pos = self.parent.listOfVariables.index(t_pos)
-	# 		self.assignments.append((t_var_pos, assignment.getDefinition().getPrettyPrintMathFormula()))
-	# 	self.isEditing = True
 
 	def save(self, event):
 

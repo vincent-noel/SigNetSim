@@ -75,9 +75,6 @@ class ModelEventsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == "save":
 				self.save(request)
 
-			elif request.POST['action'] == "edit":
-				self.edit(request)
-
 		self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
@@ -90,7 +87,14 @@ class ModelEventsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		if self.isModelLoaded():
 			self.listOfEvents = self.getModel().listOfEvents.values()
 			self.getModel().listOfVariables.classifyVariables()
-			self.listOfVariables = [var for var in self.getModel().listOfVariables.values()]# if var.isConstant() or var.isAssignment()]
+
+			self.listOfVariables = []
+			for variable in self.getModel().listOfVariables.values():
+				if ((variable.isParameter() and variable.isGlobal())
+					or variable.isSpecies()
+					or variable.isCompartment()
+					or variable.isStoichiometry()):
+					self.listOfVariables.append(variable)
 
 	def delete(self, request):
 
@@ -100,7 +104,7 @@ class ModelEventsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			t_id = int(request.POST['event_id'])
 			if t_id < len(self.listOfEvents):
 				try:
-					self.getModel().listOfEvents.removeById(self.listOfEvents[t_id].objId)
+					self.getModel().listOfEvents.remove(self.listOfEvents[t_id])
 
 				except ModelException as e:
 					self.form.addError(e.message)
@@ -125,12 +129,3 @@ class ModelEventsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.listOfEvents = self.getModel().listOfEvents.values()
 			self.form.clear()
 
-
-	def edit(self, request):
-
-		if (request.POST.get('event_id') is not None
-			and str(request.POST['event_id']).isdigit()):
-
-			t_id = int(request.POST['event_id'])
-			if t_id < len(self.listOfEvents):
-				self.form.load(t_id)

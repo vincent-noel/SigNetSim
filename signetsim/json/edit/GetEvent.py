@@ -64,8 +64,9 @@ class GetEvent(JsonRequest, HasWorkingModel):
 		HasWorkingModel.load(self, request, *args, **kwargs)
 
 		for variable in self.getModel().listOfVariables.values():
-			if (variable.isParameter()
+			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
-				or variable.isCompartment()) and variable.isGlobal():
+				or variable.isCompartment()
+				or variable.isStoichiometry()):
 
 				self.listOfVariables.append(variable)

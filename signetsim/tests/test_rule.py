@@ -27,13 +27,13 @@ from django.conf import settings
 from django.test import TestCase, Client
 
 from signetsim.models import User, Project, SbmlModel
-from signetsim.views.ListOfModelsView import ListOfModelsView
 
 from libsignetsim.model.SbmlDocument import SbmlDocument
+from libsignetsim.model.math.MathFormula import MathFormula
 
 from os.path import dirname, join
 from json import loads
-
+from sympy import simplify
 
 class TestRule(TestCase):
 
@@ -72,10 +72,10 @@ class TestRule(TestCase):
 		listOfRules = sbml_model.listOfRules.values() + sbml_model.listOfInitialAssignments.values()
 		listOfVariables = []
 		for variable in sbml_model.listOfVariables.values():
-			if (variable.isParameter()
+			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
-				or variable.isCompartment()) and variable.isGlobal():
-
+				or variable.isCompartment()
+				or variable.isStoichiometry()):
 				listOfVariables.append(variable)
 
 		rule = listOfRules[0]
@@ -123,9 +123,10 @@ class TestRule(TestCase):
 		listOfRules = sbml_model.listOfRules.values() + sbml_model.listOfInitialAssignments.values()
 		listOfVariables = []
 		for variable in sbml_model.listOfVariables.values():
-			if (variable.isParameter()
+			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
-				or variable.isCompartment()) and variable.isGlobal():
+				or variable.isCompartment()
+				or variable.isStoichiometry()):
 				listOfVariables.append(variable)
 
 		rule = listOfRules[0]
@@ -133,7 +134,9 @@ class TestRule(TestCase):
 
 		self.assertEqual(rule.getType(), 1)
 		self.assertEqual(rule.getVariable(), sbml_model.listOfVariables.getBySbmlId('total_mapk_activated'))
-		self.assertEqual(rule.getDefinition().getPrettyPrintMathFormula(), "75*ras_gtp")
+		formula = MathFormula(sbml_model)
+		formula.setPrettyPrintMathFormula("75*ras_gtp", rawFormula=True)
+		self.assertEqual(simplify(rule.getDefinition().getDeveloppedInternalMathFormula()-formula.getDeveloppedInternalMathFormula()), 0)
 
 		response_delete_rule = c.post('/edit/rules/', {
 			'action': 'delete',

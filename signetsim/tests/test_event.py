@@ -30,10 +30,11 @@ from signetsim.models import User, Project, SbmlModel
 from signetsim.views.ListOfModelsView import ListOfModelsView
 
 from libsignetsim.model.SbmlDocument import SbmlDocument
+from libsignetsim.model.math.MathFormula import MathFormula
 
 from os.path import dirname, join
 from json import loads
-
+from sympy import simplify
 
 class TestEvent(TestCase):
 
@@ -71,10 +72,10 @@ class TestEvent(TestCase):
 		sbml_model = sbml_doc.getModelInstance()
 		listOfVariables = []
 		for variable in sbml_model.listOfVariables.values():
-			if (variable.isParameter()
+			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
-				or variable.isCompartment()) and variable.isGlobal():
-
+				or variable.isCompartment()
+				or variable.isStoichiometry()):
 				listOfVariables.append(variable)
 
 		response_choose_project = c.post('/models/', {
@@ -111,12 +112,11 @@ class TestEvent(TestCase):
 		sbml_model = sbml_doc.getModelInstance()
 		listOfVariables = []
 		for variable in sbml_model.listOfVariables.values():
-			if (variable.isParameter()
+			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
-				or variable.isCompartment()) and variable.isGlobal():
-
+				or variable.isCompartment()
+				or variable.isStoichiometry()):
 				listOfVariables.append(variable)
-		event = sbml_model.listOfEvents.values()[0]
 
 		response_get_event = c.post('/json/get_event/', {
 			'event_ind': '0',
@@ -128,64 +128,101 @@ class TestEvent(TestCase):
 
 		self.assertEqual(json_response[u'event_ind'], 0)
 		self.assertEqual(json_response[u'event_name'], "Test event")
-		self.assertEqual(json_response[u'event_trigger'], "Eq(_time_, 0)")
-		self.assertEqual(json_response[u'event_priority'], "")
+
+		formula = MathFormula(sbml_model)
+		formula.setPrettyPrintMathFormula("time==0", rawFormula=True)
+
+		formula_response = MathFormula(sbml_model)
+		formula_response.setPrettyPrintMathFormula(json_response[u'event_trigger'], rawFormula=True)
+
+		self.assertEqual(simplify(formula.getDeveloppedInternalMathFormula()-formula_response.getDeveloppedInternalMathFormula()), 0)
 		self.assertEqual(json_response[u'event_delay'], "")
+		self.assertEqual(json_response[u'event_assignment_variable_0'], listOfVariables.index(sbml_model.listOfVariables.getBySbmlId('ras_gtp')))
+
+		formula = MathFormula(sbml_model)
+		formula.setPrettyPrintMathFormula("ras_gtp*2", rawFormula=True)
+
+		formula_response = MathFormula(sbml_model)
+		formula_response.setPrettyPrintMathFormula(json_response[u'event_assignment_definition_0'], rawFormula=True)
+		self.assertEqual(simplify(formula.getDeveloppedInternalMathFormula()-formula_response.getDeveloppedInternalMathFormula()), 0)
+		self.assertTrue(u'event_assignment_variable_1' not in json_response)
+
+		# Modifying an event
+		response_save_event = c.post('/edit/events/', {
+			'action': 'save',
+			'event_id': '0',
+			'event_name': "Test event",
+			'event_trigger': "time==100",
+			'event_priority': "",
+			'event_delay': "",
+			'event_assignment_0_id': listOfVariables.index(sbml_model.listOfVariables.getBySbmlId('ras_gtp')),
+			'event_assignment_0_expression': 'ras_gtp*2',
+			'event_assignment_1_id': listOfVariables.index(sbml_model.listOfVariables.getBySbmlId('ras_gdp')),
+			'event_assignment_1_expression': 'ras_gdp/2',
+
+		})
+		self.assertEqual(response_save_event.status_code, 200)
+		self.assertEqual(response_save_event.context['form'].getErrors(), [])
+
+		model = SbmlModel.objects.filter(project=project)[0]
+		sbml_doc = SbmlDocument()
+		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
+		sbml_model = sbml_doc.getModelInstance()
+		event = sbml_model.listOfEvents.values()[0]
+		listOfVariables = []
+		for variable in sbml_model.listOfVariables.values():
+			if ((variable.isParameter() and variable.isGlobal())
+				or variable.isSpecies()
+				or variable.isCompartment()
+				or variable.isStoichiometry()):
+				listOfVariables.append(variable)
+
+		self.assertEqual(event.getNameOrSbmlId(), "Test event")
+
+		formula = MathFormula(sbml_model)
+		formula.setPrettyPrintMathFormula("time==100", rawFormula=True)
+
+		self.assertEqual(
+			simplify(formula.getDeveloppedInternalMathFormula() - event.trigger.getDeveloppedInternalMathFormula()),
+			0)
+
+		self.assertEqual(event.priority, None)
+		self.assertEqual(event.delay, None)
+		self.assertEqual(event.listOfEventAssignments[0].getVariable(), sbml_model.listOfVariables.getBySbmlId('ras_gtp'))
+
+		formula = MathFormula(sbml_model)
+		formula.setPrettyPrintMathFormula("ras_gtp*2")
+
+		self.assertEqual(
+			simplify(formula.getDeveloppedInternalMathFormula() - event.listOfEventAssignments[0].getDefinition().getDeveloppedInternalMathFormula()),
+			0)
+
+		self.assertEqual(event.listOfEventAssignments[1].getVariable(), sbml_model.listOfVariables.getBySbmlId('ras_gdp'))
+
+		formula = MathFormula(sbml_model)
+		formula.setPrettyPrintMathFormula("ras_gdp/2")
+
+		self.assertEqual(
+			simplify(formula.getDeveloppedInternalMathFormula() - event.listOfEventAssignments[1].getDefinition().getDeveloppedInternalMathFormula()),
+			0)
+
 
 		response_delete_event = c.post('/edit/events/', {
 			'action': 'delete',
-			'rule_id': 0
+			'event_id': 0
 		})
 		self.assertEqual(response_delete_event.status_code, 200)
 		self.assertEqual(response_delete_event.context['form'].getErrors(), [])
+		self.assertEqual(json_response[u'event_ind'], 0)
+		self.assertEqual(json_response[u'event_name'], "Test event")
+		self.assertEqual(json_response[u'event_trigger'], "time == 0")
+		self.assertEqual(json_response[u'event_priority'], "")
+		self.assertEqual(json_response[u'event_delay'], "")
 
-	#
-		# response_choose_project = c.post('/models/', {
-		# 	'action': 'choose_project',
-		# 	'project_id': 0
-		# })
-		# self.assertEqual(response_choose_project.status_code, 200)
-		# self.assertEqual(response_choose_project.context['project_name'], "Project")
-		# 
-		# response_choose_model = c.post('/edit/rules/', {
-		# 	'action': 'choose_model',
-		# 	'model_id': 0
-		# })
-		# self.assertEqual(response_choose_model.status_code, 200)
-		# self.assertEqual(response_choose_model.context['model_name'], "SOS-Ras-MAPK with n17")
-		# 
-		# response_save_rule = c.post('/edit/rules/', {
-		# 	'action': 'save',
-		# 	'rule_id': listOfRules.index(rule),
-		# 	'rule_type': 1,
-		# 	'variable_id': listOfVariables.index(sbml_model.listOfVariables.getBySbmlId('total_mapk_activated')),
-		# 	'rule_expression': "75*ras_gtp",
-		# })
-		# 
-		# self.assertEqual(response_save_rule.status_code, 200)
-		# self.assertEqual(response_save_rule.context['form'].getErrors(), [])
-		# 
-		# sbml_doc = SbmlDocument()
-		# sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
-		# sbml_model = sbml_doc.getModelInstance()
-		# listOfRules = sbml_model.listOfRules.values() + sbml_model.listOfInitialAssignments.values()
-		# listOfVariables = []
-		# for variable in sbml_model.listOfVariables.values():
-		# 	if (variable.isParameter()
-		# 		or variable.isSpecies()
-		# 		or variable.isCompartment()) and variable.isGlobal():
-		# 		listOfVariables.append(variable)
-		# 
-		# rule = listOfRules[0]
-		# 
-		# 
-		# self.assertEqual(rule.getType(), 1)
-		# self.assertEqual(rule.getVariable(), sbml_model.listOfVariables.getBySbmlId('total_mapk_activated'))
-		# self.assertEqual(rule.getDefinition().getPrettyPrintMathFormula(), "75*ras_gtp")
-		# 
-		# response_delete_rule = c.post('/edit/rules/', {
-		# 	'action': 'delete',
-		# 	'rule_id': 0
-		# })
-		# self.assertEqual(response_delete_rule.status_code, 200)
-		# self.assertEqual(response_delete_rule.context['form'].getErrors(), [])
+
+		model = SbmlModel.objects.filter(project=project)[0]
+		sbml_doc = SbmlDocument()
+		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
+		sbml_model = sbml_doc.getModelInstance()
+		self.assertEqual(len(sbml_model.listOfEvents), 0)
+
