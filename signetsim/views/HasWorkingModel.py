@@ -155,6 +155,12 @@ class HasWorkingModel(HasWorkingProject):
 	def isModelLoaded(self):
 		return self.model is not None
 
+	def isFlattenModel(self):
+		return self.model_submodel is not None and self.model_submodel == -1
+
+	def isCompModelDefinition(self):
+		return self.model_submodel is not None and self.model_submodel == 0
+
 	def saveModelName(self, name):
 		db_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
 		db_model.name = name
@@ -165,20 +171,20 @@ class HasWorkingModel(HasWorkingProject):
 		# print ">Switching to model !!!!!"
 		if model_id is not None:
 			self.model_id = model_id
-			self.model_submodel = 0
+			self.model_submodel = None
 			self.modelInstance = None
 
 		self.__loadModelVariables()
 		self.savePickledModel(request)
 		request.session['model_id'] = self.model_id
-		request.session['model_submodel'] = 0
+		request.session['model_submodel'] = ""
 
 
 	def __setModel(self, request):
 
 		# print ">Switching to model %d : %s" % (self.list_of_models[int(request.POST['model_id'])].id, self.list_of_models[int(request.POST['model_id'])].name)
 		self.model_id = self.list_of_models[int(request.POST['model_id'])].id
-		self.model_submodel = 0
+		self.model_submodel = None
 		self.modelInstance = None
 		self.__loadModelVariables()
 		self.savePickledModel(request)
@@ -188,10 +194,10 @@ class HasWorkingModel(HasWorkingProject):
 	def __setSubmodel(self, request):
 
 		t_id = str(request.POST['submodel_id'])
-
+		print "Submodel : %s" % t_id
 		if t_id != "":
 			self.model_submodel = int(t_id)
-			if (self.model_submodel-1) > len(self.model.listOfSubmodels.keys()):
+			if (self.model_submodel) > 1:
 				self.model_submodel = -1
 		else:
 			self.model_submodel = 0
@@ -263,6 +269,8 @@ class HasWorkingModel(HasWorkingProject):
 			t_submodel_id = str(request.session['model_submodel'])
 			if t_submodel_id != "":
 				self.model_submodel = int(t_submodel_id)
+			else:
+				self.model_submodel = None
 
 
 
@@ -295,7 +303,7 @@ class HasWorkingModel(HasWorkingProject):
 		self.model_id = None
 		self.model = None
 		self.model_name = None
-		self.model_submodel = 0
+		self.model_submodel = None
 		self.modelInstance = None
 
 

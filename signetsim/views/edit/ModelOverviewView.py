@@ -42,7 +42,7 @@ class ModelOverviewView(TemplateView, HasWorkingModel):
 	def get_context_data(self, **kwargs):
 
 		kwargs = HasWorkingModel.get_context_data(self, **kwargs)
-		kwargs['list_of_species'] = [species for species in self.listOfSpecies if species.isInReactions()]
+		kwargs['list_of_species'] = self.listOfSpecies
 		kwargs['list_of_reactions'] = self.listOfReactions
 		# kwargs['interaction_matrix'] = self.interactionMatrix
 		# kwargs['png_graph'] = self.getSimpleGraph()
@@ -77,8 +77,16 @@ class ModelOverviewView(TemplateView, HasWorkingModel):
 
 		HasWorkingModel.load(self, request, *args, **kwargs)
 		if self.isModelLoaded():
-			self.listOfSpecies = self.getModel().listOfSpecies.values()
-			self.listOfReactions = self.getModel().listOfReactions.values()
+			if self.isCompModelDefinition():
+				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values()]
+
+			elif self.isFlattenModel():
+				# Would be nice to also draw the boundaries of the submodels here
+				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values() if species.isInReactions()]
+				self.listOfReactions = self.getModel().listOfReactions.values()
+			else:
+				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values() if species.isInReactions()]
+				self.listOfReactions = self.getModel().listOfReactions.values()
 			# self.model.build()
 			# self.interactionMatrix = self.model.interactionMatrix
 			# print self.model.jacobianMatrix
