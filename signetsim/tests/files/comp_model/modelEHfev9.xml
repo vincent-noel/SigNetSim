@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
   <model metaid="_meta_id_66_" id="model_0" name="Ras" substanceUnits="nmol" timeUnits="s" extentUnits="nmol">
-    <listOfUnitDefinitions>
+    <listOfUnitDefinitions metaid="_meta_id_1_">
       <unitDefinition id="L" name="Litre">
         <listOfUnits>
           <unit kind="litre" exponent="1" scale="1" multiplier="1"/>
@@ -65,22 +65,22 @@
         </listOfUnits>
       </unitDefinition>
     </listOfUnitDefinitions>
-    <listOfCompartments>
+    <listOfCompartments metaid="_meta_id_2_">
       <compartment metaid="_meta_id_3_" id="cell" name="cell" spatialDimensions="3" size="1" units="L" constant="true"/>
     </listOfCompartments>
-    <listOfSpecies>
+    <listOfSpecies metaid="_meta_id_17_">
       <species metaid="_meta_id_41_" id="sos" name="SOS" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_42_" id="ras_gdp" name="Ras-GDP" compartment="cell" initialConcentration="265.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_43_" id="ras_gtp" name="Ras-GTP" compartment="cell" initialConcentration="64.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_44_" id="sos_ras_gdp" name="SOS-Ras-GDP" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_45_" id="sos_ras_gtp" name="SOS-Ras-GTP" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_46_" id="gap" name="GAP" compartment="cell" initialConcentration="125" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species metaid="_meta_id_50_" id="gef" name="GEF" compartment="cell" initialConcentration="333" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_50_" id="gef" name="GEF" compartment="cell" initialConcentration="100" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_53_" id="ras_n17" name="Ras-N17" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_54_" id="sos_ras_n17" name="SOS-Ras-N17" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_65_" id="gef_rasn17" name="GEF-RasN17" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
-    <listOfParameters>
+    <listOfParameters metaid="_meta_id_4_">
       <parameter metaid="_meta_id_5_" id="sos_ras_gdp_comp" name="SOS-Ras-GDP complexification constant" value="0.00011255" units="per_nmol_per_liter_per_seconds" constant="true"/>
       <parameter metaid="_meta_id_6_" id="sos_ras_gdp_decomp" name="SOS-Ras-GDP decomplexification constant" value="3" units="s_1" constant="true"/>
       <parameter metaid="_meta_id_7_" id="parameter_3" name="Ras activation by SOS-Ras-GDP catalytic constant" value="0.003" units="s_1" constant="true"/>
@@ -104,7 +104,7 @@
       <parameter metaid="_meta_id_38_" id="gef_rasn17_comp" name="GEF Ras-N17 complexification" value="0.002" units="per_nmol_per_liter_per_seconds" constant="true"/>
       <parameter metaid="_meta_id_39_" id="gef_rasn17_decomp" name="GEF Ras-N17 decomplexification" value="1.92e-05" units="s_1" constant="true"/>
     </listOfParameters>
-    <listOfReactions>
+    <listOfReactions metaid="_meta_id_79_">
       <reaction metaid="_meta_id_67_" id="reaction_2" name="SOS-Ras-GDP Complexification" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference metaid="_meta_id_68_" species="sos" stoichiometry="1" constant="true"/>
@@ -113,7 +113,7 @@
         <listOfProducts>
           <speciesReference metaid="_meta_id_71_" species="sos_ras_gdp" stoichiometry="1" constant="true"/>
         </listOfProducts>
-        <kineticLaw metaid="_meta_id_24_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
@@ -145,7 +145,7 @@
         <listOfProducts>
           <speciesReference metaid="_meta_id_78_" species="sos_ras_gtp" stoichiometry="1" constant="true"/>
         </listOfProducts>
-        <kineticLaw metaid="_meta_id_27_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
@@ -179,7 +179,7 @@
         <listOfModifiers>
           <modifierSpeciesReference metaid="_meta_id_86_" species="sos_ras_gdp"/>
         </listOfModifiers>
-        <kineticLaw metaid="_meta_id_31_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -209,7 +209,7 @@
         <listOfModifiers>
           <modifierSpeciesReference metaid="_meta_id_94_" species="sos_ras_gtp"/>
         </listOfModifiers>
-        <kineticLaw metaid="_meta_id_35_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -239,7 +239,7 @@
         <listOfModifiers>
           <modifierSpeciesReference metaid="_meta_id_102_" species="gap"/>
         </listOfModifiers>
-        <kineticLaw metaid="_meta_id_47_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -269,7 +269,7 @@
         <listOfModifiers>
           <modifierSpeciesReference metaid="_meta_id_110_" species="gef"/>
         </listOfModifiers>
-        <kineticLaw metaid="_meta_id_52_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -289,13 +289,13 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="sosrasn17_comp" name="SOS-RasN17 complexification" reversible="true" fast="false">
+      <reaction metaid="_meta_id_55_" id="sosrasn17_comp" name="SOS-RasN17 complexification" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="sos" stoichiometry="1" constant="true"/>
-          <speciesReference species="ras_n17" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_meta_id_56_" species="sos" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_meta_id_57_" species="ras_n17" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="sos_ras_n17" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_meta_id_59_" species="sos_ras_n17" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -321,13 +321,13 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="gefrasn17_comp" name="GEF-RasN17 complexification" reversible="true" fast="false">
+      <reaction metaid="_meta_id_62_" id="gefrasn17_comp" name="GEF-RasN17 complexification" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="gef" stoichiometry="1" constant="true"/>
-          <speciesReference species="ras_n17" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_meta_id_63_" species="gef" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_meta_id_64_" species="ras_n17" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="gef_rasn17" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_meta_id_72_" species="gef_rasn17" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -345,8 +345,8 @@
                 <apply>
                   <times/>
                   <ci> gef </ci>
-                  <ci> gef_rasn17_comp </ci>
                   <ci> ras_n17 </ci>
+                  <ci> gef_rasn17_comp </ci>
                 </apply>
               </apply>
             </apply>

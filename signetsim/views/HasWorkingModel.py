@@ -194,7 +194,7 @@ class HasWorkingModel(HasWorkingProject):
 	def __setSubmodel(self, request):
 
 		t_id = str(request.POST['submodel_id'])
-		print "Submodel : %s" % t_id
+
 		if t_id != "":
 			self.model_submodel = int(t_id)
 			if (self.model_submodel) > 1:

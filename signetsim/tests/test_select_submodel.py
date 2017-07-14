@@ -157,7 +157,7 @@ class TestSelectSubmodel(TestCase):
 		self.assertEqual(
 			[species.getNameOrSbmlId() for species in response_choose_model.context['list_of_species']],
 			[
-				'Ras-GTP', 'SOS-Ras-GTP', 'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP',
+				'Ras-GTP', 'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP',
 				'Mapk', 'Mapk-P', 'Mapk-PP', 'Total MEK activated', 'Total MAPK activated'
 			]
 		)
@@ -173,12 +173,12 @@ class TestSelectSubmodel(TestCase):
 		)
 		self.assertEqual(
 			[submodel for submodel in response_choose_model.context['model_submodels']],
-			['Model definition']#, 'sos_mod', 'ras_mod', 'mapk_mod']
+			['Model definition']
 		)
 
 		self.assertEqual(
 			[species.getNameOrSbmlId() for species in response_choose_model.context['list_of_species']],
-			['SOS', 'Ras-GTP', 'SOS-Ras-GTP', 'ERK-PP', 'FGF2', 'Ras-N17', 'GEF']
+			['SOS', 'Ras-GTP', 'ERK-PP']
 		)
 
 
@@ -189,7 +189,7 @@ class TestSelectSubmodel(TestCase):
 		self.assertEqual(response_choose_submodel.status_code, 200)
 		self.assertEqual(
 			[species.getNameOrSbmlId() for species in response_choose_submodel.context['list_of_species']],
-			['SOS', 'Ras-GTP', 'SOS-Ras-GTP', 'ERK-PP', 'FGF2', 'Ras-N17', 'GEF']
+			['SOS', 'Ras-GTP', 'ERK-PP']
 		)
 
 		response_choose_submodel = c.post('/edit/species/', {
@@ -206,39 +206,11 @@ class TestSelectSubmodel(TestCase):
 			'action': 'choose_submodel',
 			'submodel_id': 2
 		})
-		self.assertEqual(response_choose_submodel.status_code, 200)
-		self.assertEqual(
-			[species.getNameOrSbmlId() for species in response_choose_submodel.context['list_of_species']],
-			[
-				'SOS', 'Ras-GDP', 'Ras-GTP', 'SOS-Ras-GDP', 'SOS-Ras-GTP',
-				'GAP', 'GEF', 'Ras-N17', 'SOS-Ras-N17', 'GEF-RasN17'
-			]
-		)
 
-		response_choose_submodel = c.post('/edit/species/', {
-			'action': 'choose_submodel',
-			'submodel_id': 3
-		})
 		self.assertEqual(response_choose_submodel.status_code, 200)
 		self.assertEqual(
 			[species.getNameOrSbmlId() for species in response_choose_submodel.context['list_of_species']],
-			[
-				'Ras-GTP', 'SOS-Ras-GTP', 'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP',
-				'Mapk', 'Mapk-P', 'Mapk-PP', 'Total MEK activated', 'Total MAPK activated'
-			]
-		)
-
-		response_choose_submodel = c.post('/edit/species/', {
-			'action': 'choose_submodel',
-			'submodel_id': 5
-		})
-		self.assertEqual(response_choose_submodel.status_code, 200)
-		self.assertEqual(
-			[species.getNameOrSbmlId() for species in response_choose_submodel.context['list_of_species']],
-			[
-				'SOS', 'Ras-GTP', 'SOS-Ras-GTP', 'ERK-PP', 'FGF2', 'Ras-N17', 'GEF', 'SOS_inactive',
-				'Ras-GDP', 'SOS-Ras-GDP', 'SOS-Ras-GTP', 'GAP', 'SOS-Ras-N17', 'GEF-RasN17', 'SOS-Ras-GTP',
-				'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP', 'Mapk', 'Mapk-P',
-				'Total MEK activated', 'Total MAPK activated'
-			]
+			['SOS', 'Ras-GTP', 'ERK-PP', 'SOS_inactive', 'FGF2', 'Ras-GDP', 'SOS-Ras-GDP', 'SOS-Ras-GTP', 'GAP', 'GEF',
+			 'Ras-N17', 'SOS-Ras-N17', 'GEF-RasN17', 'SOS-Ras-GTP', 'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP', 'Mapk',
+			 'Mapk-P', 'Total MEK activated', 'Total MAPK activated']
 		)

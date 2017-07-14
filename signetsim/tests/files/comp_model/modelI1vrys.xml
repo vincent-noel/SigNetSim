@@ -1,7 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
   <model metaid="_meta_id_236_" id="model_0" name="MAPK" substanceUnits="nmol" timeUnits="s" extentUnits="nmol">
-    <listOfUnitDefinitions>
+    <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+        <rdf:Description rdf:about="#_meta_id_236_">
+          <dcterms:creator>
+            <rdf:Bag>
+              <rdf:li rdf:parseType="Resource">
+                <vCard:N rdf:parseType="Resource">
+                  <vCard:Family>Noël</vCard:Family>
+                  <vCard:Given>Vincent</vCard:Given>
+                </vCard:N>
+                <vCard:EMAIL>vincent.noel@butantan.gov.br</vCard:EMAIL>
+                <vCard:ORG rdf:parseType="Resource">
+                  <vCard:Orgname>Instituto Butantan</vCard:Orgname>
+                </vCard:ORG>
+              </rdf:li>
+            </rdf:Bag>
+          </dcterms:creator>
+          <dcterms:created rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-06-23T00:14:30Z</dcterms:W3CDTF>
+          </dcterms:created>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-06-23T00:14:30Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-06-23T00:14:41Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-06-23T00:16:34Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-06-23T00:16:40Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-06-23T00:16:48Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-06-23T00:16:55Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-06-23T00:17:05Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-06-23T00:17:17Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-07-14T02:23:04Z</dcterms:W3CDTF>
+          </dcterms:modified>
+        </rdf:Description>
+      </rdf:RDF>
+    </annotation>
+    <listOfUnitDefinitions metaid="_meta_id_1_">
       <unitDefinition id="L" name="Litre">
         <listOfUnits>
           <unit kind="litre" exponent="1" scale="1" multiplier="1"/>
@@ -65,12 +115,11 @@
         </listOfUnits>
       </unitDefinition>
     </listOfUnitDefinitions>
-    <listOfCompartments>
+    <listOfCompartments metaid="_meta_id_2_">
       <compartment metaid="_meta_id_3_" id="cell" name="cell" spatialDimensions="3" size="1" units="L" constant="true"/>
     </listOfCompartments>
-    <listOfSpecies>
+    <listOfSpecies metaid="_meta_id_5_">
       <species metaid="_meta_id_43_" id="ras_gtp" name="Ras-GTP" compartment="cell" initialConcentration="64.5" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species metaid="_meta_id_45_" id="sos_ras_gtp" name="SOS-Ras-GTP" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_55_" id="raf" name="Raf" compartment="cell" initialConcentration="81" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_56_" id="raf_p" name="Raf-P" compartment="cell" initialConcentration="19" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_57_" id="mek" name="Mek" compartment="cell" initialConcentration="270" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
@@ -82,17 +131,17 @@
       <species metaid="_meta_id_63_" id="total_mek_p" name="Total MEK activated" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_64_" id="total_mapk_activated" name="Total MAPK activated" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
-    <listOfParameters>
-      <parameter metaid="_meta_id_22_" id="raf_activation_cat" name="Raf activation catalytic constant" value="0.0611" units="s_1" constant="true">
+    <listOfParameters metaid="_meta_id_4_">
+      <parameter metaid="_meta_id_22_" id="kcat1" name="Raf activation catalytic constant" value="0.0611" units="s_1" constant="true">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">0.0046</body>
         </notes>
       </parameter>
-      <parameter metaid="_meta_id_23_" id="raf_activation_mich" name="Raf activation michaelis constant" value="0.0362" units="nmol_per_liter" constant="true"/>
-      <parameter metaid="_meta_id_24_" id="raf_inactivation_cat" name="Raf inactivation catalytic" value="0.25" units="nmol_per_liter_per_seconds" constant="true"/>
-      <parameter metaid="_meta_id_25_" id="raf_inactivation_michaelis" name="Raf inactivation michaelis constant" value="8" units="nmol_per_liter" constant="true"/>
-      <parameter metaid="_meta_id_26_" id="mek_activation_cat" name="Mek activation catalytic constant" value="0.025" units="s_1" constant="true"/>
-      <parameter metaid="_meta_id_27_" id="mek_activation_michaelis" name="Mek activation michaelis" value="15" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_23_" id="k1M" name="Raf activation michaelis constant" value="0.0362" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_24_" id="k2cat" name="Raf inactivation catalytic" value="0.25" units="nmol_per_liter_per_seconds" constant="true"/>
+      <parameter metaid="_meta_id_25_" id="k2m" name="Raf inactivation michaelis constant" value="8" units="nmol_per_liter" constant="true"/>
+      <parameter metaid="_meta_id_26_" id="k3cat" name="Mek activation catalytic constant" value="0.025" units="s_1" constant="true"/>
+      <parameter metaid="_meta_id_27_" id="k3m" name="Mek activation michaelis" value="15" units="nmol_per_liter" constant="true"/>
       <parameter metaid="_meta_id_28_" id="mek_inactivation_cat" name="Mek inactivation catalytic constant" value="0.75" units="nmol_per_liter_per_seconds" constant="true"/>
       <parameter metaid="_meta_id_29_" id="mek_inactivation_mich" name="Mek inactivation michaelis constant" value="15" units="nmol_per_liter" constant="true"/>
       <parameter metaid="_meta_id_30_" id="mapk_activation_cat" name="Mapk activation catalytic constant" value="0.025" units="s_1" constant="true"/>
@@ -102,7 +151,7 @@
       <parameter metaid="_meta_id_36_" id="parameter_31" name="Raf inactivation by ERK catalytic constant" value="1.64" units="s_1" constant="true"/>
       <parameter metaid="_meta_id_37_" id="parameter_32" name="Raf inactivation by ERK michaelis constant" value="7.9" units="nmol_per_liter" constant="true"/>
     </listOfParameters>
-    <listOfRules>
+    <listOfRules metaid="_meta_id_73_">
       <assignmentRule metaid="_meta_id_233_" variable="total_mek_p">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
@@ -122,7 +171,7 @@
         </math>
       </assignmentRule>
     </listOfRules>
-    <listOfReactions>
+    <listOfReactions metaid="_meta_id_71_">
       <reaction metaid="_meta_id_135_" id="Raf_activation_by_Ras_GTP" name="Raf activation by Ras-GTP" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference metaid="_meta_id_136_" species="raf" stoichiometry="1" constant="true"/>
@@ -133,7 +182,7 @@
         <listOfModifiers>
           <modifierSpeciesReference metaid="_meta_id_140_" species="ras_gtp"/>
         </listOfModifiers>
-        <kineticLaw metaid="_meta_id_141_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -142,12 +191,12 @@
                 <ci> raf </ci>
                 <ci> ras_gtp </ci>
                 <ci> cell </ci>
-                <ci> raf_activation_cat </ci>
+                <ci> kcat1 </ci>
               </apply>
               <apply>
                 <plus/>
                 <ci> raf </ci>
-                <ci> raf_activation_mich </ci>
+                <ci> k1M </ci>
               </apply>
             </apply>
           </math>
@@ -160,7 +209,7 @@
         <listOfProducts>
           <speciesReference metaid="_meta_id_146_" species="raf" stoichiometry="1" constant="true"/>
         </listOfProducts>
-        <kineticLaw metaid="_meta_id_147_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -168,12 +217,12 @@
                 <times/>
                 <ci> raf_p </ci>
                 <ci> cell </ci>
-                <ci> raf_inactivation_cat </ci>
+                <ci> k2cat </ci>
               </apply>
               <apply>
                 <plus/>
                 <ci> raf_p </ci>
-                <ci> raf_inactivation_michaelis </ci>
+                <ci> k2m </ci>
               </apply>
             </apply>
           </math>
@@ -189,7 +238,7 @@
         <listOfModifiers>
           <modifierSpeciesReference metaid="_meta_id_154_" species="raf_p"/>
         </listOfModifiers>
-        <kineticLaw metaid="_meta_id_155_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -198,12 +247,12 @@
                 <ci> mek </ci>
                 <ci> raf_p </ci>
                 <ci> cell </ci>
-                <ci> mek_activation_cat </ci>
+                <ci> k3cat </ci>
               </apply>
               <apply>
                 <plus/>
                 <ci> mek </ci>
-                <ci> mek_activation_michaelis </ci>
+                <ci> k3m </ci>
               </apply>
             </apply>
           </math>
@@ -219,7 +268,7 @@
         <listOfModifiers>
           <modifierSpeciesReference metaid="_meta_id_162_" species="raf_p"/>
         </listOfModifiers>
-        <kineticLaw metaid="_meta_id_163_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -228,12 +277,12 @@
                 <ci> mek_p </ci>
                 <ci> raf_p </ci>
                 <ci> cell </ci>
-                <ci> mek_activation_cat </ci>
+                <ci> k3cat </ci>
               </apply>
               <apply>
                 <plus/>
                 <ci> mek_p </ci>
-                <ci> mek_activation_michaelis </ci>
+                <ci> k3m </ci>
               </apply>
             </apply>
           </math>
@@ -246,7 +295,7 @@
         <listOfProducts>
           <speciesReference metaid="_meta_id_168_" species="mek" stoichiometry="1" constant="true"/>
         </listOfProducts>
-        <kineticLaw metaid="_meta_id_169_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -272,7 +321,7 @@
         <listOfProducts>
           <speciesReference metaid="_meta_id_174_" species="mek_p" stoichiometry="1" constant="true"/>
         </listOfProducts>
-        <kineticLaw metaid="_meta_id_175_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -301,7 +350,7 @@
         <listOfModifiers>
           <modifierSpeciesReference metaid="_meta_id_182_" species="mek_pp"/>
         </listOfModifiers>
-        <kineticLaw metaid="_meta_id_183_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -331,7 +380,7 @@
         <listOfModifiers>
           <modifierSpeciesReference metaid="_meta_id_190_" species="mek_pp"/>
         </listOfModifiers>
-        <kineticLaw metaid="_meta_id_191_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -358,7 +407,7 @@
         <listOfProducts>
           <speciesReference metaid="_meta_id_196_" species="mapk" stoichiometry="1" constant="true"/>
         </listOfProducts>
-        <kineticLaw metaid="_meta_id_197_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -384,7 +433,7 @@
         <listOfProducts>
           <speciesReference metaid="_meta_id_202_" species="mapk_p" stoichiometry="1" constant="true"/>
         </listOfProducts>
-        <kineticLaw metaid="_meta_id_203_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
@@ -413,7 +462,7 @@
         <listOfModifiers>
           <modifierSpeciesReference metaid="_meta_id_218_" species="mapk_pp"/>
         </listOfModifiers>
-        <kineticLaw metaid="_meta_id_219_">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
