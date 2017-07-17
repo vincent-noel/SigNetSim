@@ -229,3 +229,31 @@ class TestSubmodel(TestCase):
 		)
 
 		self.assertEqual(len(response_delete_submodel.context['list_of_submodel_types']), 2)
+
+
+		response_add_submodel = c.post('/edit/submodels/', {
+			'action': 'save',
+			'submodel_id': "",
+			'submodel_name': "SOS",
+			'submodel_sbml_id': "sos_mod",
+			'submodel_type': 1,
+			'submodel_source': 0,
+			'submodel_submodel_ref': 0,
+			'extent_conversion_factor': "",
+			'time_conversion_factor': "",
+		})
+
+		self.assertEqual(response_add_submodel.status_code, 200)
+
+
+		self.assertEqual(len(response_add_submodel.context['list_of_submodel_types']), 3)
+
+		self.assertEqual(
+			[submodel.getNameOrSbmlId() for submodel in response_add_submodel.context['list_of_submodels']],
+			['Ras module', 'MAPK module', 'SOS module']
+		)
+
+		self.assertEqual(
+			response_add_submodel.context['list_of_submodel_types'],
+			[1,1,1]
+		)
