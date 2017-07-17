@@ -234,7 +234,7 @@ class TestSubmodel(TestCase):
 		response_add_submodel = c.post('/edit/submodels/', {
 			'action': 'save',
 			'submodel_id': "",
-			'submodel_name': "SOS",
+			'submodel_name': "SOS module",
 			'submodel_sbml_id': "sos_mod",
 			'submodel_type': 1,
 			'submodel_source': 0,
