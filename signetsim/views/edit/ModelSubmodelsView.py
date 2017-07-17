@@ -29,7 +29,8 @@ from ModelSubmodelsForm import ModelSubmodelsForm
 from ModelSubmodelSubstitutionForm import ModelSubmodelSubstitutionForm
 from libsignetsim.model.ModelException import ModelException
 from libsignetsim.model.Variable import Variable
-
+from libsignetsim.model.sbml.ReplacedElement import ReplacedElement
+from libsignetsim.model.sbml.ReplacedBy import ReplacedBy
 
 class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
@@ -256,7 +257,10 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 			else:
 
-				pass
+				if self.formSubstitutions.id < len(self.listOfSubstitutions):
+
+					listOfSubstitutions = self.getModel().listOfSbmlObjects.getListOfSubstitutions()
+					self.formSubstitutions.save(request, listOfSubstitutions[self.formSubstitutions.id])
 
 			self.saveModel(request)
 			self.loadSubstitutions()
@@ -300,5 +304,7 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 				self.listOfObjectsMetaIds.append(object.getMetaId())
 
 	def loadSubstitutions(self):
-		self.listOfSubstitutions = self.model.listOfSbmlObjects.getListOfSubstitutions()
+
+
+		self.listOfSubstitutions = self.model.listOfSbmlObjects.getListOfSubstitutions_old()
 		# print self.listOfSubstitutions

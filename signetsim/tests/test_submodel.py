@@ -304,7 +304,7 @@ class TestSubmodel(TestCase):
 			'substitution_type': 0,
 			'substitution_model_object': 3,
 			'substitution_submodel': 2,
-			'substitution_submodel_object': 2
+			'substitution_submodel_object': 1
 		})
 
 		self.assertEqual(response_add_substitution.status_code, 200)
@@ -318,6 +318,39 @@ class TestSubmodel(TestCase):
 				(sub_type, object_1.getSbmlId(), submodel, object_2.getSbmlId())
 				for sub_type, object_1, submodel, object_2
 				in response_get_submodel.context['list_of_substitutions']
+			],
+			[
+				(0, 'compartment_0', ['ras_mod'], 'cell'),
+				(0, 'compartment_0', ['mapk_mod'], 'cell'),
+				(0, 'compartment_0', ['sos_mod'], 'cell'),
+				(0, 'sos', ['ras_mod'], 'sos'),
+				(0, 'sos', ['sos_mod'], 'sos'),
+				(0, 'rasgtp', ['ras_mod'], 'ras_gtp'),
+				(0, 'rasgtp', ['mapk_mod'], 'ras_gtp'),
+				(0, 'erkpp', ['mapk_mod'], 'mapk_pp'),
+				(0, 'erkpp', ['sos_mod'], 'fgf2')
+			]
+		)
+
+		response_modify_substitution = c.post('/edit/submodels/', {
+
+			'action': 'save_substitution',
+			'substitution_id': 8,
+			'substitution_type': 0,
+			'substitution_model_object': 3,
+			'substitution_submodel': 2,
+			'substitution_submodel_object': 2
+		})
+
+		self.assertEqual(response_modify_substitution.status_code, 200)
+		self.assertEqual(response_modify_substitution.context['form_subs'].getErrors(), [])
+		self.assertEqual(response_modify_substitution.context['getErrors'], [])
+
+		self.assertEqual(
+			[
+				(sub_type, object_1.getSbmlId(), submodel, object_2.getSbmlId())
+				for sub_type, object_1, submodel, object_2
+				in response_modify_substitution.context['list_of_substitutions']
 			],
 			[
 				(0, 'compartment_0', ['ras_mod'], 'cell'),
