@@ -23,13 +23,11 @@
 
 """
 
-from django.test import TestCase, Client, RequestFactory
-from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import TestCase, Client
 from signetsim.models import User, Project, SbmlModel
-from signetsim.views.ListOfModelsView import ListOfModelsView
 from django.conf import settings
 from os.path import dirname, join
-from shutil import rmtree
+from json import loads
 
 class TestSubmodel(TestCase):
 
@@ -230,7 +228,6 @@ class TestSubmodel(TestCase):
 
 		self.assertEqual(len(response_delete_submodel.context['list_of_submodel_types']), 2)
 
-
 		response_add_submodel = c.post('/edit/submodels/', {
 			'action': 'save',
 			'submodel_id': "",
@@ -256,4 +253,81 @@ class TestSubmodel(TestCase):
 		self.assertEqual(
 			response_add_submodel.context['list_of_submodel_types'],
 			[1,1,1]
+		)
+
+		response_get_submodel = c.post('/json/get_submodel/', {
+			'id': "2",
+		})
+
+		self.assertEqual(response_get_submodel.status_code, 200)
+		json_response = loads(response_get_submodel.content)
+
+		self.assertEqual(json_response['id'], 2)
+		self.assertEqual(json_response['name'], "SOS module")
+		self.assertEqual(json_response['sbml_id'], "sos_mod")
+		self.assertEqual(json_response['type'], 1)
+		self.assertEqual(json_response['source'], 0)
+		self.assertEqual(json_response['source_name'], "SOS")
+		self.assertEqual(json_response['extent_conversion_factor'], "")
+		self.assertEqual(json_response['time_conversion_factor'], "")
+
+		response_add_substitution = c.post('/edit/submodels/', {
+
+			'action': 'save_substitution',
+			'substitution_id': "",
+			'substitution_type': 0,
+			'substitution_model_object': 0,
+			'substitution_submodel': 2,
+			'substitution_submodel_object': 5
+		})
+
+		self.assertEqual(response_add_substitution.status_code, 200)
+		self.assertEqual(response_add_substitution.context['form_subs'].getErrors(), [])
+
+		response_add_substitution = c.post('/edit/submodels/', {
+
+			'action': 'save_substitution',
+			'substitution_id': "",
+			'substitution_type': 0,
+			'substitution_model_object': 1,
+			'substitution_submodel': 2,
+			'substitution_submodel_object': 9
+		})
+
+		self.assertEqual(response_add_substitution.status_code, 200)
+		self.assertEqual(response_add_substitution.context['form_subs'].getErrors(), [])
+
+		response_add_substitution = c.post('/edit/submodels/', {
+
+			'action': 'save_substitution',
+			'substitution_id': "",
+			'substitution_type': 0,
+			'substitution_model_object': 3,
+			'substitution_submodel': 2,
+			'substitution_submodel_object': 2
+		})
+
+		self.assertEqual(response_add_substitution.status_code, 200)
+		self.assertEqual(response_add_substitution.context['form_subs'].getErrors(), [])
+
+		response_get_submodel = c.get('/edit/submodels/')
+		self.assertEqual(response_get_submodel.status_code, 200)
+
+		self.assertEqual(
+			[
+				(sub_type, object_1.getSbmlId(), submodel, object_2.getSbmlId())
+				for sub_type, object_1, submodel, object_2
+				in response_get_submodel.context['list_of_substitutions']
+			],
+			[
+				(0, 'compartment_0', ['ras_mod'], 'cell'),
+				(0, 'compartment_0', ['mapk_mod'], 'cell'),
+				(0, 'compartment_0', ['sos_mod'], 'cell'),
+				(0, 'sos', ['ras_mod'], 'sos'),
+				(0, 'sos', ['sos_mod'], 'sos'),
+				(0, 'rasgtp', ['ras_mod'], 'ras_gtp'),
+				(0, 'rasgtp', ['mapk_mod'], 'ras_gtp'),
+				(0, 'erkpp', ['mapk_mod'], 'mapk_pp'),
+				(0, 'erkpp', ['sos_mod'], 'erkpp')
+			]
 		)

@@ -49,58 +49,22 @@ class ModelSubmodelsForm(ModelParentForm):
 		self.listOfObjectsMetaIds = None
 
 
-	def load(self, request, submodel, definition):
-
-		self.id = self.parent.listOfSubmodels.index(submodel)
-		self.name = submodel.getName()
-		self.sbmlId = submodel.getSbmlId()
-
-		self.type = self.parent.listOfSubmodelTypes[self.id]
-
-		if self.type == 1:
-
-			sbml_files = [os.path.basename(str(model.sbml_file)) for model in self.parent.listOfProjectModels]
-
-			if definition.getSource() in sbml_files:
-				self.source = sbml_files.index(definition.getSource())
-				self.parent.loadModelSubModels(request, self.source)
-
-				if definition.hasModelRef():
-					self.submodelRef = self.parent.listOfSubmodelsRefs.index(definition.getModelRef())
-
-				else:
-					self.submodelRef = 0
-
-			else:
-				self.addError("Impossible to find the model %s in the project !" % self.sbmlId)
-
-		if submodel.hasTimeConversionFactor():
-			t_factor = submodel.getTimeConversionFactor().getPrettyPrintMathFormula()
-			t_variable = self.parent.model.listOfVariables.getBySbmlId(t_factor)
-			self.timeConversionFactor = self.parent.listOfConversionFactors.index(t_variable)
-
-		if submodel.hasExtentConversionFactor():
-			t_factor = submodel.getExtentConversionFactor().getPrettyPrintMathFormula()
-			t_variable = self.parent.model.listOfVariables.getBySbmlId(t_factor)
-			self.extentConversionFactor = self.parent.listOfConversionFactors.index(t_variable)
-
-
-		self.listOfObjects = []
-		self.listOfObjectsMetaIds = []
-		for object in submodel.getModelObject().listOfSbmlObjects.values():
-			if isinstance(object, Variable) and not object.isStoichiometry():
-				self.listOfObjects.append(object.getNameOrSbmlId() + (" (%s)" % type(object).__name__))
-				self.listOfObjectsMetaIds.append(object.getMetaId())
-
-
-		self.listOfDeletions = []
-		for deletion in submodel.listOfDeletions.values():
-			t_index = self.listOfObjectsMetaIds.index(deletion.getDeletionObject().getMetaId())
-			self.listOfDeletions.append(t_index)
-
-
-		# print self.listOfDeletions
-		self.isEditing = True
+	# 	self.listOfObjects = []
+	# 	self.listOfObjectsMetaIds = []
+	# 	for object in submodel.getModelObject().listOfSbmlObjects.values():
+	# 		if isinstance(object, Variable) and not object.isStoichiometry():
+	# 			self.listOfObjects.append(object.getNameOrSbmlId() + (" (%s)" % type(object).__name__))
+	# 			self.listOfObjectsMetaIds.append(object.getMetaId())
+	#
+	#
+	# 	self.listOfDeletions = []
+	# 	for deletion in submodel.listOfDeletions.values():
+	# 		t_index = self.listOfObjectsMetaIds.index(deletion.getDeletionObject().getMetaId())
+	# 		self.listOfDeletions.append(t_index)
+	#
+	#
+	# 	# print self.listOfDeletions
+	# 	self.isEditing = True
 
 
 	def save(self, request, submodel, definition):
@@ -114,13 +78,13 @@ class ModelSubmodelsForm(ModelParentForm):
 
 			if self.type == 1:
 				if self.source is not None:
-
 					t_filename = os.path.basename(str(self.parent.listOfProjectModels[self.source].sbml_file))
 					self.parent.loadModelSubModels(request, self.source)
 					definition.setSource(t_filename)
 
 					if self.submodelRef is not None and self.submodelRef != 0 and self.submodelRef < len(self.parent.listOfSubmodelsRefs):
 						definition.setModelRef(self.parent.listOfSubmodelsRef(self.submodelRef))
+
 
 			if self.timeConversionFactor is not None:
 				factor_id = self.parent.listOfConversionFactors[self.timeConversionFactor].getSbmlId()

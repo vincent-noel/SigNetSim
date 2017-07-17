@@ -94,9 +94,6 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == "delete":
 				self.deleteSubmodel(request)
 
-			elif request.POST['action'] == "edit":
-				self.editSubmodel(request)
-
 			elif request.POST['action'] == "save":
 				self.saveSubmodel(request)
 
@@ -106,7 +103,7 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == "edit_substitution":
 				self.editSubstitution(request)
 
-			elif request.POST['action'] == "save_subs":
+			elif request.POST['action'] == "save_substitution":
 				self.saveSubstitution(request)
 
 		self.savePickledModel(request)
@@ -150,23 +147,6 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 		except ModelException as e:
 			self.addError(e.message)
-
-
-	def editSubmodel(self, request):
-
-		submodel_id = self.readInt(request, 'submodel_id',
-									"the identifier of the submodel",
-									max_value=len(self.listOfSubmodels),
-									reportField=False)
-
-		t_submodel = self.listOfSubmodels[submodel_id]
-		if self.listOfSubmodelTypes[submodel_id] == 0:
-			t_def = self.model.parentDoc.listOfModelDefinitions.getBySbmlId(t_submodel.getModelRef())
-
-		elif self.listOfSubmodelTypes[submodel_id] == 1:
-			t_def = self.model.parentDoc.listOfExternalModelDefinitions.getBySbmlId(t_submodel.getModelRef())
-
-		self.form.load(request, t_submodel, t_def)
 
 
 	def saveSubmodel(self, request):
@@ -289,6 +269,7 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		self.listOfSubmodelTypes = []
 		if self.model.parentDoc.useCompPackage:
 			self.listOfSubmodels = self.model.listOfSubmodels.values()
+
 			for submodel in self.listOfSubmodels:
 				if submodel.getModelRef() in self.model.parentDoc.listOfModelDefinitions.sbmlIds():
 					self.listOfSubmodelTypes.append(0)
@@ -305,18 +286,10 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 		self.listOfSubmodelsRefs = self.getModelSubmodels(request, model_id)
 
-	# def loadDeletions(self):
-	#
-	#     self.listOfDeletions = []
-	#     self.listOfDeletionsSubmodels = []
-	#     for submodel in self.getModel().listOfSubmodels.values():
-	#         self.listOfDeletions += submodel.listOfDeletions.values()
-	#         if len(submodel.listOfDeletions.keys()) > 0:
-	#             self.listOfDeletionsSubmodels += [submodel.getSbmlId()]*len(submodel.listOfDeletions.keys())
 
 	def loadConversionFactors(self):
-		self.listOfConversionFactors = self.model.listOfParameters.values()
 
+		self.listOfConversionFactors = self.model.listOfParameters.values()
 
 	def loadObjects(self):
 		self.listOfObjects = []

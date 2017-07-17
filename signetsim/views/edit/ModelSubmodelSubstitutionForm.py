@@ -108,14 +108,12 @@ class ModelSubmodelSubstitutionForm(ModelParentForm):
 	def loadSubmodelObjects(self):
 
 		# print self.submodel
-		# print self.parent.listOfSubmodels
 		# print self.parent.listOfSubmodels[self.submodel]
 		# print self.parent.listOfSubmodels[self.submodel].getModelObject()
+
+
 		t_submodel = self.parent.listOfSubmodels[self.submodel].getModelObject()
 		self.listOfObjects = []
 		for t_object in t_submodel.listOfSbmlObjects.values():
 			if isinstance(t_object, Variable) and not t_object.isStoichiometry():
 				self.listOfObjects.append(t_object)
-				# print "POIL"
-
-		# print [obj.getNameOrSbmlId() for obj in self.listOfObjects]

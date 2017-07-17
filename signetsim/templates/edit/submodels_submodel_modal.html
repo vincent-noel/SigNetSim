@@ -1,0 +1,291 @@
+{% load bootstrap3 %}
+{% load tags %}
+{% load static from staticfiles %}
+
+<!-- Modal -->
+<div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New submodel" id="modal_submodel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form class="form" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="save_submodel">
+        <input type="hidden" id="submodel_id" name="submodel_id" value="">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal_title" id="modal_submodel-title">New submodel</h4>
+        </div>
+        <div class="modal-body">
+          <div class="collapse in" id="tabs_internal">
+            <ul class="nav nav-tabs text-center">
+              <li class="active"><a data-toggle="tab" href="#general">General</a></li>
+              <li><a data-toggle="tab" href="#conversions">Conversions</a></li>
+              <li><a data-toggle="tab" href="#deletions">Deletions</a></li>
+            </ul>
+          </div>
+          <div class="collapse" id="tabs_external">
+            <ul class="nav nav-tabs text-center">
+              <li class="active"><a data-toggle="tab" href="#general">General</a></li>
+              <li><a data-toggle="tab" href="#source">Source</a></li>
+              <li><a data-toggle="tab" href="#conversions">Conversions</a></li>
+              <li><a data-toggle="tab" href="#deletions">Deletions</a></li>
+            </ul>
+          </div>
+          <div class="tab-content">
+            <div id="general" class="tab-pane fade in active">
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12">
+                      <input type="hidden" name="submodel_type" id="submodel_type" value="0">
+                      <div class="dropdown">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                          <span id="submodel_type_label">Internal model definition</span>
+                          <span class="caret"></span>
+                        </button>
+                        <ul id="submodel_type_dropdown" class="dropdown-menu">
+                          <li><a>Internal model definition</a></li>
+                          <li><a>External model definition</a></li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12">
+                      <input type="text" class="form-control input-sm" id="submodel_name" placeholder="<Input name>" name="submodel_name" value="">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-11">Identifier</th>
+                    <th class="col-xs-1"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-11">
+                      <input type="text" class="form-control input-sm" id="submodel_sbml_id" placeholder="<Input name>" name="submodel_sbml_id" value="">
+                    </td>
+                    <td class="col-xs-1" style="vertical-align:middle">
+                      <div id="sbmlid_validating" class="pull-right collapse">
+                        <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+                      </div>
+                      <div id="sbmlid_valid" class="pull-right collapse">
+                        <span class="glyphicon glyphicon-ok" style="color:#5cb85c; font-size: 1.5em"></span>
+                      </div>
+                      <div id="sbmlid_invalid" class="pull-right collapse">
+                      <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="source" class="tab-pane fade">
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Source</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12">
+                      <input type="hidden" name="submodel_source" id="submodel_source" value="">
+                      <div class="dropdown">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                          <span id="submodel_source_label">Select a model within your project</span>
+                          <span class="caret"></span>
+                        </button>
+                        <ul id="submodel_source_dropdown" class="dropdown-menu">
+                          {% for project_model in list_of_project_models %}
+                          <li><a>{{project_model}}</a></li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="collapse in" id="table_submodel_ref">
+                <table class="table table-striped">
+                  <thead>
+                    <tr class="row">
+                      <th class="col-xs-12">Submodel reference</th>
+                    </tr>
+                  </thead>
+                  <tbody id="body_submodels_refs">
+                    <tr class="row">
+                      <td class="col-xs-12 text-center">
+                        <div class="collapse col-xs-12" id="submodel_refs_loading">
+                            <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+                        </div>
+                        <div class="collapse col-xs-12" id="submodel_refs_loading_failed">
+                          <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
+                        </div>
+                        <div class="collapse in" id="submodel_refs_loaded">
+                          <input type="hidden" name="submodel_submodel_ref" id="submodel_submodel_ref" value="">
+                          <div class="dropdown">
+                            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                              <span id="submodel_submodel_ref_label">Select a source model</span>
+                              <span class="caret"></span>
+                            </button>
+                            <ul id="submodel_submodel_ref_dropdown" class="dropdown-menu">
+                              {% for submodel_ref in list_of_submodels_refs %}
+                              <li><a>{{submodel_ref}}{% if form.submodelRef == 0%} (Main model){% endif %}</a></li>
+                              {% endfor %}
+                            </ul>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div id="conversions" class="tab-pane fade in">
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Time conversion</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12">
+                      <input type="hidden" name="time_conversion_factor" id="time_conversion_factor" value="{% if form.timeConversionFactor != None %}{{form.timeConversionFactor}}{% endif %}">
+                      <div class="dropdown">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                          <span id="time_conversion_factor_label">{% if form.timeConversionFactor != None %}{{list_of_conversion_factors|my_lookup:form.timeConversionFactor}}{% else %}Select a time conversion factor{% endif %}</span>
+                          <span class="caret"></span>
+                        </button>
+                        <ul id="time_conversion_factor_dropdown" class="dropdown-menu">
+                          <li><a>None</a></li>
+                          <li role="separator" class="divider"></li>
+                          {% for conv_factor in list_of_conversion_factors %}
+                          <li><a>{{conv_factor}}</a></li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Extent conversion</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12 text-center">
+                      <input type="hidden" name="extent_conversion_factor" id="extent_conversion_factor" value="{% if form.extentConversionFactor != None %}{{form.extentConversionFactor}}{% endif %}">
+                      <div class="dropdown">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                          <span id="extent_conversion_factor_label">{% if form.extentConversionFactor != None %}{{list_of_conversion_factors|my_lookup:form.extentConversionFactor}}{% else %}Select an extent conversion factor{% endif %}</span>
+                          <span class="caret"></span>
+                        </button>
+                        <ul id="extent_conversion_factor_dropdown" class="dropdown-menu">
+                          <li><a>None</a></li>
+                          <li role="separator" class="divider"></li>
+                        {% for conv_factor in list_of_conversion_factors %}
+                          <li><a>{{conv_factor}}</a></li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="deletions" class="tab-pane fade in">
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-10">Name</th>
+                    <th class="col-xs-2"></th>
+                  </tr>
+                </thead>
+                <tbody id="body_list_of_deletions">
+                  {% for deletion in form.listOfDeletions %}
+                  <tr class="row" id="deletion_{{forloop.counter0}}">
+                    <input type="hidden" name="deletion_id_{{forloop.counter0}}_" id="deletion_id_{{forloop.counter0}}_" value="{{deletion}}">
+                    <td class="col-xs-10">{{form.listOfObjects|my_lookup:deletion}}</td>
+                    <td class="col-xs-2 text-right">
+                      <button type="button" class="btn btn-danger btn-xs" id="deletion_button_{{forloop.counter0}}">{% bootstrap_icon "remove" %}</button>
+                    </td>
+                    <script type="text/javascript">
+                        $("#deletion_button_{{forloop.counter0}}").on("click", function(){
+                          list_of_deletions.splice( $.inArray($("#deletion_id_{{forloop.counter0}}").val(), list_of_deletions), 1 );
+                          $("#deletion_{{forloop.counter0}}").remove();
+                          updateDeletionsForm();
+                        });
+                    </script>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <table class="table table-striped">
+                <thead>
+                  <tr class="row">
+                    <th class="col-xs-12">Add</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row">
+                    <td class="col-xs-12 text-center">
+                      <div class="collapse col-xs-12" id="list_of_objects_loading">
+                          <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+                      </div>
+                      <div class="collapse col-xs-12" id="list_of_objects_loading_failed">
+                        <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
+                      </div>
+                      <div class="collapse in" id="list_of_objects_loaded">
+                        <div class="dropdown">
+                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span>Select an object to delete in the submodel</span>
+                            <span class="caret"></span>
+                          </button>
+                          <ul id="objects_to_delete_dropdown" class="dropdown-menu">
+                            {% for objects in form.listOfObjects %}
+                            <li><a>{{objects}}</a></li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {% include 'commons/error_modal.html' %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" name="action" value="save" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
