@@ -57,7 +57,7 @@ function get_substitution_list_of_objects(index)
   $.ajax(
   {
       type: "POST",
-      url: '{% url 'get_list_of_objects' %}',
+      url: '{% url 'get_list_of_objects_from_submodels' %}',
       data: {
           'model_id': index,
       },

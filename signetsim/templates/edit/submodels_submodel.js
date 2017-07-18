@@ -361,7 +361,7 @@ $('#new_submodels_button').on('click', function(){
     $("#submodel_type_label").html("Internal model definition");
 
     $("#submodel_source").val("");
-    $("#submodel_source_label").html(Select a model within your project");
+    $("#submodel_source_label").html("Select a model within your project");
 
     $("#submodel_submodel_ref").val("");
     $("#submodel_submodel_ref_label").html("Choose a submodel");
