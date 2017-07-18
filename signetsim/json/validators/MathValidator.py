@@ -36,11 +36,6 @@ class MathValidator(JsonRequest, HasWorkingModel):
 		JsonRequest.__init__(self)
 		HasWorkingModel.__init__(self)
 
-	def get(self, request, *args, **kwargs):
-		self.load(request, *args, **kwargs)
-		self.data.update({self.model.getSbmlId(): self.model.getName()})
-		return JsonRequest.get(self, request, *args, **kwargs)
-
 	def post(self, request, *args, **kwargs):
 		self.load(request, *args, **kwargs)
 

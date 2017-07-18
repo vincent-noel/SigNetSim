@@ -78,6 +78,19 @@ class GetSubmodel(JsonRequest, HasWorkingModel):
 							'source_submodel_ref_name': "Main model"
 						})
 
+				#
+				# listOfObjects = []
+				# for object in submodel.getModelObject().listOfSbmlObjects.values():
+				# 	if isinstance(object, Variable) and not object.isStoichiometry():
+				# 		listOfObjects.append(object.getNameOrSbmlId() + (" (%s)" % type(object).__name__))
+				# 		self.listOfObjectsMetaIds.append(object.getMetaId())
+				#
+				# self.listOfDeletions = []
+				# for deletion in submodel.listOfDeletions.values():
+				# 	t_index = self.listOfObjectsMetaIds.index(deletion.getDeletionObject().getMetaId())
+				# 	self.listOfDeletions.append(t_index)
+
+
 
 			self.data.update({
 				'time_conversion_factor': (
@@ -101,6 +114,7 @@ class GetSubmodel(JsonRequest, HasWorkingModel):
 					else ""
 				),
 			})
+
 		return JsonRequest.post(self, request, *args, **kwargs)
 
 

@@ -30,6 +30,7 @@ from GetReactionKineticLaw import GetReactionKineticLaw
 from GetRule import GetRule
 from GetEvent import GetEvent
 from GetSubmodel import GetSubmodel
+from GetSubstitution import GetSubstitution
 from GetSubmodels import GetSubmodels
 
 from GetSBOName import GetSBOName

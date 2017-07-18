@@ -49,24 +49,6 @@ class ModelSubmodelsForm(ModelParentForm):
 		self.listOfObjectsMetaIds = None
 
 
-	# 	self.listOfObjects = []
-	# 	self.listOfObjectsMetaIds = []
-	# 	for object in submodel.getModelObject().listOfSbmlObjects.values():
-	# 		if isinstance(object, Variable) and not object.isStoichiometry():
-	# 			self.listOfObjects.append(object.getNameOrSbmlId() + (" (%s)" % type(object).__name__))
-	# 			self.listOfObjectsMetaIds.append(object.getMetaId())
-	#
-	#
-	# 	self.listOfDeletions = []
-	# 	for deletion in submodel.listOfDeletions.values():
-	# 		t_index = self.listOfObjectsMetaIds.index(deletion.getDeletionObject().getMetaId())
-	# 		self.listOfDeletions.append(t_index)
-	#
-	#
-	# 	# print self.listOfDeletions
-	# 	self.isEditing = True
-
-
 	def save(self, request, submodel, definition):
 
 

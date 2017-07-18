@@ -49,9 +49,9 @@ function setSbmlIdValidating()
 }
 
 
-$("#parameter_sbml_id").on('change paste keyup', function()
+$("#submodel_sbml_id").on('change paste keyup', function()
 {
-  new_sbml_id = $.trim($("#parameter_sbml_id").val());
+  new_sbml_id = $.trim($("#submodel_sbml_id").val());
   if (old_sbml_id === "" || new_sbml_id !== old_sbml_id)
   {
     setSbmlIdValidating();
@@ -61,7 +61,7 @@ $("#parameter_sbml_id").on('change paste keyup', function()
         function(data)
         {
            $.each(data, function(index, element) {
-             if (index === 'valid' && element === 'true') {
+             if (index === 'error' && element === '') {
                setSbmlIdValid();
              } else {
                setSbmlIdInvalid();
@@ -138,7 +138,8 @@ function loadSubmodelRefs(submodels_refs)
     $("<script>").attr("type", "text/javascript").text("\
         $(\"#submodel_submodel_ref_dropdown li\").on(\"click\", function(){\
           $(\"#submodel_submodel_ref_label\").html($(this).text());\
-          $(\"#submodel_submodel_ref\").val($(this).index());});")
+          $(\"#submodel_submodel_ref\").val($(this).index());});\
+          updateListOfObjects($(\"#submodel_source\").val(), $(this).index());")
       .appendTo('#submodel_refs_loaded');
 }
 
@@ -149,19 +150,17 @@ $('#submodel_source_dropdown li').on('click', function(){
   $("#submodel_source_label").html($(this).text());
   $('#submodel_source').val($(this).index());
 
-  update_list_submodels();
-  updateListOfObjects();
+  update_list_submodels($('#submodel_source').val());
 
 });
 
-
-function update_list_submodels()
+function update_list_submodels(submodel_source)
 {
 
     setSubmodelsRefsLoading();
     ajax_call(
         "POST", "{{csrf_token}}",
-        "{% url 'get_submodels' %}", {'model_id': $('#submodel_source').val()},
+        "{% url 'get_submodels' %}", {'model_id': submodel_source},
         function(data)
         {
            $.each(data, function(index, element) {
@@ -289,7 +288,7 @@ function setListOfObjectsLoadingFailed()
 
 }
 
-function updateListOfObjects()
+function updateListOfObjects(model_id, submodel_id)
 {
   $("#list_of_objects_loaded").children().each(function() {
     $(this).remove();
@@ -300,38 +299,26 @@ function updateListOfObjects()
   });
 
   setListOfObjectsLoading();
+  ajax_call(
+      "POST", "{{csrf_token}}",
+      "{% url 'get_list_of_objects' %}", {'model_id': model_id, 'submodel_id': submodel_id},
+      function(data)
+      {
+         $.each(data, function(index, element) {
+           if (index == 'list' && element.length > 0)
+           {
+              setListOfObjectsLoaded();
+              loadSubmodelObjects(element);
 
-  $.ajaxSetup({
-      beforeSend: function(xhr, settings) {
-          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-              xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
-          }
-      }
-  });
-  $.ajax(
-  {
-      type: "POST",
-      url: '{% url 'get_list_of_objects' %}',
-      data: {
-          'model_id': $('#submodel_source').val(),
+           }
+         });
       },
+      function()
+      {
+        setListOfObjectsLoadingFailed();
+      }
 
-  })
-  .done(function(data)
-  {
-     $.each(data, function(index, element) {
-       if (index == 'list' && element.length > 0)
-       {
-          setListOfObjectsLoaded();
-          loadSubmodelObjects(element);
-
-       }
-     });
-  })
-  .fail(function()
-  {
-    setListOfObjectsLoadingFailed();
-  })
+  );
 
 }
 
@@ -367,18 +354,17 @@ $('#new_submodels_button').on('click', function(){
 
     $("#modal_title").html("New submodel");
 
-    $("#submodel_name").attr("value", "");
-    $("#submodel_sbml_id").attr("value", "");
+    $("#submodel_name").val("");
+    $("#submodel_sbml_id").val("");
 
-    $("#submodel_type").attr("value", 0);
+    $("#submodel_type").val("value", 0);
     $("#submodel_type_label").html("Internal model definition");
 
-    $("#submodel_source").attr("value", "");
-    $("#submodel_source_label").attr("value", "Select a model within your project");
+    $("#submodel_source").val("");
+    $("#submodel_source_label").html(Select a model within your project");
 
-    $("#submodel_submodel_ref").attr("value", "");
-    $("#submodel_submodel_ref_label").attr("value", "Choose a submodel");
-    // $("#table_submodel_ref").removeClass("in");
+    $("#submodel_submodel_ref").val("");
+    $("#submodel_submodel_ref_label").html("Choose a submodel");
 
     $('#submodel_type').val($(this).index());
     $("#source").removeClass('active in');
@@ -410,7 +396,7 @@ function view_submodel(submodel_id)
         {
            $.each(data, function(index, element)
            {
-               if (index === "submodel_id") { $("#submodel_id").val(element.toString()); }
+               if (index === "id") { $("#modal_submodel_id").val(element.toString()); }
                else if (index === "name") { $("#submodel_name").val(element.toString()); }
                else if (index === "sbml_id") { $("#submodel_sbml_id").val(element.toString()); }
                else if (index === "type") {
@@ -429,6 +415,10 @@ function view_submodel(submodel_id)
                         $("#tabs_external").addClass("in");
                    }
                }
+               else if (index === "source") { $("#submodel_source").val(element.toString()); update_list_submodels(element); }
+               else if (index === "source_name") { $("#submodel_source_label").html(element.toString()); }
+               else if (index === "source_submodel_ref") { $("#submodel_submodel_ref").val(element.toString()); updateListOfObjects(element.toString());}
+               else if (index === "source_submodel_ref_name") { $("#submodel_submodel_ref_label").html(element.toString()) }
 
            });
 
@@ -436,7 +426,12 @@ function view_submodel(submodel_id)
         function() { console.log("failed"); }
     )
 
-$('.nav-tabs a[href="#general"]').tab('show')
+    $('.nav-tabs a[href="#general"]').tab('show')
     $("#modal_submodel").modal('show');
 
+}
+
+function save_submodel()
+{
+    $("#submodel_form").submit()
 }

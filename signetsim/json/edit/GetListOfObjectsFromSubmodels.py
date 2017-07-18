@@ -44,10 +44,6 @@ class GetListOfObjectsFromSubmodels(JsonRequest, HasWorkingModel):
 
 		t_list = self.getListOfObjects(request)
 		self.data.update({'list': t_list})
-		print "Index : %d" % int(request.POST['model_id'])
-		# print "List of objects : "
-		# print t_list
-		# print ""
 
 		return JsonRequest.post(self, request, *args, **kwargs)
 
@@ -59,23 +55,7 @@ class GetListOfObjectsFromSubmodels(JsonRequest, HasWorkingModel):
 	def getListOfObjects(self, request):
 
 		if str(request.POST['model_id']) != "":
-			# print "model id = %d" % int(request.POST['model_id'])
-			# print [pm.name for pm in self.getProjectModels(request)]
-			# print [pm.id for pm in self.getProjectModels(request)]
-			# print self.model_name
-			# print self.model_id
 			list_of_project_models = self.getModelSBMLSubmodels(request)
-			# print "list of models : %s" % [pm.name for pm in list_of_project_models]
-			# print "selected model : %s" % str(list_of_project_models[int(request.POST['model_id'])].name)
-
-			# t_model = list_of_project_models[int(request.POST['model_id'])]
-			# t_filename = join(settings.MEDIA_ROOT, str(t_model.sbml_file))
-			# doc = SbmlDocument()
-			# doc.readSbml(t_filename)
-
-			# t_model = list_of_project_models[int(request.POST['model_id'])]
-			# t_filename = join(settings.MEDIA_ROOT, str(t_model.sbml_file))
-			# doc = SbmlDocument()
 			doc = list_of_project_models[int(request.POST['model_id'])]
 
 			self.listOfObjects = []

@@ -269,7 +269,9 @@ class TestSubmodel(TestCase):
 		self.assertEqual(json_response['source'], 0)
 		self.assertEqual(json_response['source_name'], "SOS")
 		self.assertEqual(json_response['extent_conversion_factor'], "")
+		self.assertEqual(json_response['extent_conversion_factor_name'], "")
 		self.assertEqual(json_response['time_conversion_factor'], "")
+		self.assertEqual(json_response['time_conversion_factor_name'], "")
 
 		response_add_substitution = c.post('/edit/submodels/', {
 
@@ -364,3 +366,17 @@ class TestSubmodel(TestCase):
 				(0, 'erkpp', ['sos_mod'], 'erkpp')
 			]
 		)
+
+		response_get_substitution = c.post('/json/get_substitution/', {
+			'id': '8'
+		})
+
+		self.assertEqual(response_get_substitution.status_code, 200)
+		json_response = loads(response_get_substitution.content)
+
+		self.assertEqual(json_response['id'], 8)
+		self.assertEqual(json_response['object_name'], "ERK-PP")
+		self.assertEqual(json_response['submodel_id'], 2)
+		self.assertEqual(json_response['submodel_name'], "SOS module")
+		self.assertEqual(json_response['submodel_object_id'], 2)
+		self.assertEqual(json_response['submodel_object_name'], "ERK-PP")
