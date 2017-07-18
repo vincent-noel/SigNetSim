@@ -66,7 +66,8 @@ class ModelSubmodelsForm(ModelParentForm):
 
 					if self.submodelRef is not None and self.submodelRef != 0 and self.submodelRef < len(self.parent.listOfSubmodelsRefs):
 						definition.setModelRef(self.parent.listOfSubmodelsRef(self.submodelRef))
-
+			elif self.type == 0:
+				definition.modelDefinition.setName(self.name)
 
 			if self.timeConversionFactor is not None:
 				factor_id = self.parent.listOfConversionFactors[self.timeConversionFactor].getSbmlId()

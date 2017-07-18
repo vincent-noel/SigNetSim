@@ -26,9 +26,7 @@ from django.views.generic import TemplateView
 from django.core.urlresolvers import reverse
 
 from libsignetsim.uris.URI import URI
-from libsignetsim.settings.Settings import Settings
 
-from signetsim.models import SbmlModel
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from signetsim.views.edit.ModelAnnotationsForm import ModelAnnotationsForm
@@ -43,9 +41,6 @@ class ModelAnnotationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		HasErrorMessages.__init__(self)
 		HasWorkingModel.__init__(self)
 
-		# self.listOfUnits = None
-		# self.listOfParameters = None
-		# self.sbmlLevels = None
 		self.modelHistory = None
 		self.modelPublication = None
 		self.form = ModelAnnotationsForm(self)
@@ -58,9 +53,6 @@ class ModelAnnotationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 		kwargs['page_address'] = reverse('edit_annotations')
 
-		# kwargs['list_of_units'] = [unit.getName() for unit in self.listOfUnits]
-		# kwargs['list_of_parameters'] = [parameter.getNameOrSbmlId() for parameter in self.listOfParameters]
-		# kwargs['sbml_levels'] = self.sbmlLevels
 		kwargs['model_history'] = self.modelHistory
 		kwargs['model_publication'] = self.modelPublication
 		kwargs['form'] = self.form
@@ -91,38 +83,6 @@ class ModelAnnotationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == "edit_model_notes":
 				self.saveNotes(request)
 
-
-			# elif request.POST['action'] == "choose_time_unit":
-			# 	self.saveTimeUnit(request)
-			#
-			# elif request.POST['action'] == "reset_time_unit":
-			# 	self.resetTimeUnit(request)
-			#
-			#
-			# elif request.POST['action'] == "choose_substance_unit":
-			# 	self.saveSubstanceUnit(request)
-			#
-			# elif request.POST['action'] == "reset_substance_unit":
-			# 	self.resetSubstanceUnit(request)
-			#
-			#
-			# elif request.POST['action'] == "choose_extent_unit":
-			# 	self.saveExtentUnit(request)
-			#
-			# elif request.POST['action'] == "reset_extent_unit":
-			# 	self.resetExtentUnit(request)
-			#
-			#
-			# elif request.POST['action'] == "choose_scaling_factor":
-			# 	self.saveScalingFactor(request)
-			#
-			# elif request.POST['action'] == "reset_scaling_factor":
-			# 	self.resetScalingFactor(request)
-			#
-			#
-			# elif request.POST['action'] == "choose_sbml_level":
-			# 	self.saveSbmlLevel(request)
-
 			elif request.POST['action'] == "set_model_publication":
 				self.setModelPublication(request)
 
@@ -139,57 +99,10 @@ class ModelAnnotationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.setModel(request, int(args[0]))
 
 		if self.isModelLoaded():
-			# self.listOfUnits = self.getModel().listOfUnitDefinitions.values()
-			# self.listOfParameters = self.getModel().listOfParameters.values()
-			# self.sbmlLevels = self.getModel().getSbmlLevels()
 			self.form.load()
 			self.modelHistory = self.getModel().modelHistory
 			if len(self.getModel().getAnnotation().getIsDescribedBy()) > 0:
 				self.modelPublication = self.getModel().getAnnotation().getIsDescribedBy()[0]
-
-	# def saveTimeUnit(self, request):
-	# 	self.form.readTimeUnit(request)
-	# 	self.form.saveTimeUnit()
-	# 	self.saveModel(request)
-	# 
-	# def resetTimeUnit(self, request):
-	# 	self.form.clearTimeUnits()
-	# 	self.form.saveTimeUnit()
-	# 	self.saveModel(request)
-	# 
-	# 
-	# def saveSubstanceUnit(self, request):
-	# 	self.form.readSubstanceUnit(request)
-	# 	self.form.saveSubstanceUnit()
-	# 	self.saveModel(request)
-	# 
-	# def resetSubstanceUnit(self, request):
-	# 	self.form.clearSubstanceUnits()
-	# 	self.form.saveSubstanceUnit()
-	# 	self.saveModel(request)
-	# 
-	# 
-	# def saveExtentUnit(self, request):
-	# 	self.form.readExtentUnit(request)
-	# 	self.form.saveExtentUnit()
-	# 	self.saveModel(request)
-	# 
-	# def resetExtentUnit(self, request):
-	# 	self.form.clearExtentUnit()
-	# 	self.form.saveExtentUnit()
-	# 	self.saveModel(request)
-	# 
-	# 
-	# def saveScalingFactor(self, request):
-	# 	self.form.readScalingFactor(request)
-	# 	self.form.saveScalingFactor()
-	# 	self.saveModel(request)
-	# 
-	# def resetScalingFactor(self, request):
-	# 	self.form.clearScalingFactor()
-	# 	self.form.saveScalingFactor()
-	# 	self.saveModel(request)
-
 
 	def saveNotes(self, request):
 		self.form.readNotes(request)
@@ -202,12 +115,6 @@ class ModelAnnotationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		self.form.saveName()
 		self.saveModel(request)
 		self.saveModelName(self.form.name)
-
-
-	# def saveSbmlLevel(self, request):
-	# 	self.form.readSbmlLevel(request)
-	# 	self.form.saveSbmlLevel()
-	# 	self.saveModel(request)
 
 	def setModelPublication(self, request):
 

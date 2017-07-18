@@ -164,7 +164,6 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 					new_submodel = self.model.listOfSubmodels.new()
 					# self.form.readDeletions(new_submodel, request)
 					new_definition = self.model.parentDoc.listOfModelDefinitions.new()
-
 					self.form.save(request, new_submodel, new_definition)
 
 
@@ -271,8 +270,8 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 		self.listOfSubmodels = []
 		self.listOfSubmodelTypes = []
-		if self.model.parentDoc.useCompPackage:
-			self.listOfSubmodels = self.model.listOfSubmodels.values()
+		if self.getModel().parentDoc.useCompPackage:
+			self.listOfSubmodels = self.getModel().listOfSubmodels.values()
 
 			for submodel in self.listOfSubmodels:
 				if submodel.getModelRef() in self.model.parentDoc.listOfModelDefinitions.sbmlIds():
@@ -306,5 +305,5 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 	def loadSubstitutions(self):
 
 
-		self.listOfSubstitutions = self.model.listOfSbmlObjects.getListOfSubstitutions_old()
+		self.listOfSubstitutions = self.getModel().listOfSbmlObjects.getListOfSubstitutions_old()
 		# print self.listOfSubstitutions

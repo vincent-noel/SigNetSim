@@ -64,11 +64,13 @@
           <a href="{% url 'edit_events' %}">Events</a>
         </td>
       </tr>
+      {% if model_submodel == None or model_submodel == 0 %}
       <tr{% if page == "submodels" %}  class="item_active"{% endif %}>
         <td>
           <a href="{% url 'edit_submodels' %}">Submodels</a>
         </td>
       </tr>
+      {% endif %}
       <tr{% if page == "units" %}  class="item_active"{% endif %}>
         <td>
           <a href="{% url 'edit_units' %}">Units</a>

@@ -79,11 +79,13 @@ class ModelOverviewView(TemplateView, HasWorkingModel):
 		if self.isModelLoaded():
 			if self.isCompModelDefinition():
 				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values()]
+				self.listOfReactions = []
 
 			elif self.isFlattenModel():
 				# Would be nice to also draw the boundaries of the submodels here
 				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values() if species.isInReactions()]
 				self.listOfReactions = self.getModel().listOfReactions.values()
+
 			else:
 				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values() if species.isInReactions()]
 				self.listOfReactions = self.getModel().listOfReactions.values()

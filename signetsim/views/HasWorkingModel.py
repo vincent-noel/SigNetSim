@@ -66,7 +66,7 @@ class HasWorkingModel(HasWorkingProject):
 		kwargs['model_id'] = self.model_id
 		kwargs['model_name'] = self.model_name
 		kwargs['model_has_submodels'] = (self.model is not None and self.model.parentDoc.isCompEnabled() and len(self.model.listOfSubmodels) > 0)
-		kwargs['model_submodels'] = ["Model definition"]# + self.model.listOfSubmodels.sbmlIds()
+		kwargs['model_submodels'] = ["Model definition"] + [model.getName() for model in self.model.parentDoc.listOfModelDefinitions.values()]
 		kwargs['model_submodel'] = self.model_submodel
 
 		return kwargs
@@ -112,8 +112,8 @@ class HasWorkingModel(HasWorkingProject):
 		elif self.model_submodel == -1:
 			return self.getModelInstance()
 		else:
-			t_list_submodels = self.model.listOfSubmodels.values()
-			return t_list_submodels[self.model_submodel-1].getModelObject()
+			t_list_submodels = self.model.parentDoc.listOfModelDefinitions.values()
+			return t_list_submodels[self.model_submodel-1].modelDefinition
 
 	def saveModel(self, request):
 		if self.model is not None:
@@ -162,9 +162,10 @@ class HasWorkingModel(HasWorkingProject):
 		return self.model_submodel is not None and self.model_submodel == 0
 
 	def saveModelName(self, name):
-		db_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
-		db_model.name = name
-		db_model.save()
+		if self.model_submodel == 0:
+			db_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
+			db_model.name = name
+			db_model.save()
 
 
 	def setModel(self, request, model_id):
@@ -197,8 +198,9 @@ class HasWorkingModel(HasWorkingProject):
 
 		if t_id != "":
 			self.model_submodel = int(t_id)
-			if (self.model_submodel) > 1:
+			if (self.model_submodel) > len(self.model.parentDoc.listOfModelDefinitions):
 				self.model_submodel = -1
+
 		else:
 			self.model_submodel = 0
 

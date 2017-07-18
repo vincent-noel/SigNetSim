@@ -199,7 +199,9 @@ class TestSelectSubmodel(TestCase):
 		self.assertEqual(response_choose_submodel.status_code, 200)
 		self.assertEqual(
 			[species.getNameOrSbmlId() for species in response_choose_submodel.context['list_of_species']],
-			['SOS', 'SOS_inactive', 'FGF2', 'ERK-PP']
+			['SOS', 'Ras-GTP', 'ERK-PP', 'SOS_inactive', 'FGF2', 'Ras-GDP', 'SOS-Ras-GDP', 'SOS-Ras-GTP', 'GAP', 'GEF',
+			 'Ras-N17', 'SOS-Ras-N17', 'GEF-RasN17', 'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP', 'Mapk',
+			 'Mapk-P', 'Total MEK activated', 'Total MAPK activated']
 		)
 
 		response_choose_submodel = c.post('/edit/species/', {

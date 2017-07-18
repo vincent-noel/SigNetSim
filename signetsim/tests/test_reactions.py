@@ -68,8 +68,7 @@ class TestReactions(TestCase):
 		sbml_doc = SbmlDocument()
 		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		sbml_model = sbml_doc.getModelInstance()
-		reaction = sbml_model.listOfReactions.getBySbmlId('reaction_2')
-
+		reaction = sbml_model.listOfReactions.getBySbmlId('reaction_4')
 
 		response_choose_project = c.post('/models/', {
 			'action': 'choose_project',
@@ -89,8 +88,9 @@ class TestReactions(TestCase):
 			[t_reaction.getReactionDescription() for t_reaction in sbml_model.listOfReactions.values()]
 		)
 
+
 		response_get_reaction = c.post('/json/get_reaction/', {
-			'sbml_id': 'reaction_2'
+			'sbml_id': 'reaction_4'
 		})
 
 		self.assertEqual(response_get_reaction.status_code, 200)
@@ -126,81 +126,68 @@ class TestReactions(TestCase):
 			for product in reaction.listOfProducts.values()
 		])
 
+		response_delete_reaction = c.post('/edit/reactions/', {
+			'action': 'delete',
+			'reaction_id': 2
+		})
 
-		#
-		# response_save_species = c.post('/edit/species/', {
-		# 	'action': 'save',
-		# 	'species_id': 2,
-		# 	'species_name': "New name",
-		# 	'species_sbml_id': "new_name",
-		# 	'species_value': 75,
-		# 	'species_value_type': 0,
-		# 	'species_compartment': 0,
-		# 	'species_unit': 2,
-		# 	'species_constant': "on",
-		# 	'species_boundary': "on",
-		# })
-		# 
-		# self.assertEqual(response_save_species.status_code, 200)
-		# 
-		# sbml_doc = SbmlDocument()
-		# sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
-		# sbml_model = sbml_doc.getModelInstance()
-		# species = sbml_model.listOfSpecies.getBySbmlId('new_name')
-		# 
-		# self.assertTrue(species is not None)
-		# self.assertEqual(species.getName(), "New name")
-		# self.assertEqual(species.getValue(), 75)
-		# self.assertEqual(species.hasOnlySubstanceUnits, True)
-		# self.assertEqual(species.constant, True)
-		# self.assertEqual(species.boundaryCondition, True)
-		# 
-		# response_delete_species = c.post('/edit/species/', {
-		# 	'action': 'delete',
-		# 	'species_id': sbml_model.listOfSpecies.values().index(species)
-		# })
-		# self.assertEqual(response_delete_species.status_code, 200)
-		# self.assertEqual(response_delete_species.context['getErrors'], ['Species is used in reactions'])
-		# 
-		# response_save_new_species = c.post('/edit/species/', {
-		# 	'action': 'save',
-		# 	'species_id': "",
-		# 	'species_name': "New species",
-		# 	'species_sbml_id': "new_species",
-		# 	'species_value': 2500,
-		# 	'species_value_type': 0,
-		# 	'species_compartment': 0,
-		# 	'species_unit': 2,
-		# 	'species_constant': "off",
-		# 	'species_boundary': "off",
-		# })
-		# 
-		# self.assertEqual(response_save_new_species.status_code, 200)
-		# 
-		# sbml_doc = SbmlDocument()
-		# sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
-		# sbml_model = sbml_doc.getModelInstance()
-		# species = sbml_model.listOfSpecies.getBySbmlId('new_species')
-		# 
-		# self.assertTrue(species != None)
-		# self.assertEqual(species.getName(), "New species")
-		# self.assertEqual(species.getValue(), 2500)
-		# self.assertEqual(species.isConcentration(), False)
-		# self.assertEqual(species.getCompartment().getName(), "cell")
-		# self.assertEqual(species.constant, False)
-		# self.assertEqual(species.boundaryCondition, False)
-		# 
-		# response_delete_species = c.post('/edit/species/', {
-		# 	'action': 'delete',
-		# 	'species_id': sbml_model.listOfSpecies.values().index(species)
-		# })
-		# self.assertEqual(response_delete_species.status_code, 200)
-		# 
-		# sbml_doc = SbmlDocument()
-		# sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
-		# sbml_model = sbml_doc.getModelInstance()
-		# 
-		# species = sbml_model.listOfSpecies.getBySbmlId('new_species')
-		# 
-		# self.assertEqual(species, None)
+		self.assertEqual(response_delete_reaction.status_code, 200)
+
+		model = SbmlModel.objects.filter(project=project)[0]
+		sbml_doc = SbmlDocument()
+		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
+		sbml_model = sbml_doc.getModelInstance()
+		self.assertEqual(len(sbml_model.listOfReactions), 21)
+		self.assertEqual(sbml_model.listOfReactions.getBySbmlId('reaction_4'), None)
+		response_create_creation = c.post('/edit/reactions/', {
+			'action': 'save',
+			'reaction_id': "",
+			'reaction_sbml_id': "reaction_4",
+			'reaction_name': "Ras activation by SOS-Ras-GDP",
+			'reaction_reactant_0': 1,
+			'reaction_reactant_0_stoichiometry': "1",
+			'reaction_modifier_0': 3,
+			'reaction_modifier_0_stoichiometry': "1",
+			'reaction_product_0': 2,
+			'reaction_product_0_stoichiometry': "1",
+			'reaction_type': 1,
+			'reaction_parameter_0': 2,
+			'reaction_parameter_1': 3,
+			'reaction_sboterm': ""
+		})
+
+		self.assertEqual(response_create_creation.status_code, 200)
+		model = SbmlModel.objects.filter(project=project)[0]
+		sbml_doc = SbmlDocument()
+		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
+		sbml_model = sbml_doc.getModelInstance()
+		reaction = sbml_model.listOfReactions.getBySbmlId('reaction_4')
+		self.assertEqual(len(sbml_model.listOfReactions), 22)
+		self.assertEqual(reaction.getName(), "Ras activation by SOS-Ras-GDP")
+
+		response_modify_creation = c.post('/edit/reactions/', {
+			'action': 'save',
+			'reaction_id': sbml_model.listOfReactions.values().index(reaction),
+			'reaction_sbml_id': "reaction_4",
+			'reaction_name': "Ras activation by SOS-Ras-GDP, modified",
+			'reaction_reactant_0': 1,
+			'reaction_reactant_0_stoichiometry': "1",
+			'reaction_modifier_0': 3,
+			'reaction_modifier_0_stoichiometry': "1",
+			'reaction_product_0': 2,
+			'reaction_product_0_stoichiometry': "1",
+			'reaction_type': 1,
+			'reaction_parameter_0': 2,
+			'reaction_parameter_1': 3,
+			'reaction_sboterm': ""
+		})
+
+		self.assertEqual(response_modify_creation.status_code, 200)
+		model = SbmlModel.objects.filter(project=project)[0]
+		sbml_doc = SbmlDocument()
+		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
+		sbml_model = sbml_doc.getModelInstance()
+		reaction = sbml_model.listOfReactions.getBySbmlId('reaction_4')
+		self.assertEqual(len(sbml_model.listOfReactions), 22)
+		self.assertEqual(reaction.getName(), "Ras activation by SOS-Ras-GDP, modified")
 

@@ -218,9 +218,6 @@ class ModelReactionsForm(ModelParentForm):
 			t_reactant.setSpecies(self.parent.listOfSpecies[species_id])
 			t_reactant.setStoichiometry(stoichiometry)
 
-		print reaction.listOfReactants.keys()
-
-
 	def saveModifiers(self, reaction):
 
 		reaction.listOfModifiers.clear()

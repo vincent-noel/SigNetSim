@@ -66,11 +66,13 @@ function get_substitution_list_of_objects(index)
   .done(function(data)
   {
      $.each(data, function(index, element) {
-       if (index == 'list' && element.length > 0)
-       {
+       if (index == 'list'){
           setSubstitutionListOfObjectsLoaded();
-          loadSubstitutionSubmodelObjects(element);
+          if (element.length > 0)
+           {
+              loadSubstitutionSubmodelObjects(element);
 
+           }
        }
      });
   })
