@@ -36,7 +36,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.models import SbmlModel, Experiment, Condition, Observation, Treatment, SEDMLSimulation
+from signetsim.models import SbmlModel, Experiment, Condition, Observation, Treatment, SEDMLSimulation, new_sedml_filename
 from signetsim.settings.Settings import Settings
 from TimeSeriesSimulationForm import TimeSeriesSimulationForm
 from django.shortcuts import redirect
@@ -389,9 +389,10 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel):
 						curve.setXData(data_time)
 						curve.setYData(data)
 
-			open("simulation.xml", "a")
+			simulation_filename = join(settings.MEDIA_ROOT, new_sedml_filename())
+			open(simulation_filename, "a")
 
-			new_simulation = SEDMLSimulation(project=self.project, name="Simulation", sedml_file=File(open("simulation.xml", "r")))
+			new_simulation = SEDMLSimulation(project=self.project, name="Simulation", sedml_file=File(open(simulation_filename, "r")))
 			new_simulation.save()
 
 			filename = join(settings.MEDIA_ROOT, str(new_simulation.sedml_file))
