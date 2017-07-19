@@ -22,18 +22,20 @@
 {% block view_name %}Sedml simulation{% endblock view_name %}
 {% block view_sidebar %}{% include 'simulate/menu.html' %}{% endblock view_sidebar %}
 {% block view_content %}
-{% block header_js %}<script src="{% static "chart.js/dist/Chart.js" %}"></script>{% endblock header_js %}
+{% block header_js %}
+<script src="{% static "chart.js/dist/Chart.js" %}"></script>
+{% endblock header_js %}
 
 <div class="container-fluid" id="view">
   <h4>SED-ML simulation</h4>
-  <br/>
   <div class="container-fluid">
-
   {% for plot_2d in plots_2d %}
-  <br/><br/><br/>
+  <br/><br/>
   <div>
       <canvas id="canvas_{{forloop.counter0}}"></canvas>
   </div>
+        <div id="legend_{{forloop.counter0}}"></div>
+  <br/>
   {% endfor %}
 
   <script>

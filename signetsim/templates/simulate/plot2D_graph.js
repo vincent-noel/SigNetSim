@@ -35,18 +35,15 @@ var config_{{forloop.counter0}}=
             fill: false,
             backgroundColor: "{{colors|get_color:forloop.counter0}}",
             borderColor: "{{colors|get_color:forloop.counter0}}",
+            cubicInterpolationMode: "monotone",
 
         },
         {% endfor %}
         ],
     },
 
-    legend:
-    {
-        display: true,
-        position: 'bottom',
-        fullWidth: true,
-    },
+
+
 
     options:
     {
@@ -64,7 +61,7 @@ var config_{{forloop.counter0}}=
             }],
             yAxes: [
             {
-                display: true,
+                type: 'linear',
                 scaleLabel:
                 {
                     display: true,
@@ -72,9 +69,9 @@ var config_{{forloop.counter0}}=
                     labelString: 'Concentration'
                 },
                 ticks: {
-                    beginAtZero: true,
-                }
-            }],
+                    min: 0,
+                },
+            }]
         },
         title:
         {
@@ -82,18 +79,50 @@ var config_{{forloop.counter0}}=
           text: "{{plot_2d.getName}}",
 
         },
+        legend:
+        {
+            display: true,
+            position: 'bottom',
+
+            fullWidth: true,
+        },
+        maintainAspectRatio: false,
     }
 };
 {% endfor %}
 
-$(window).on('load', function() {
+$(window).on('load', function()
+{
 
 
-{% for plot_2d in plots_2d %}
-  var ctx_{{forloop.counter0}} = document.getElementById("canvas_{{forloop.counter0}}").getContext("2d");
-  ctx_{{forloop.counter0}}.canvas.height = ctx_{{forloop.counter0}}.canvas.width*0.5;
-  ctx_{{forloop.counter0}}.scale(10, 10);
-  window.myLine_{{forloop.counter0}} = new Chart(ctx_{{forloop.counter0}}, config_{{forloop.counter0}});
-{% endfor %}
+    {% for plot_2d in plots_2d %}
+
+    ctx_{{forloop.counter0}} = document.getElementById("canvas_{{forloop.counter0}}").getContext("2d");
+    // ctx_{{forloop.counter0}}.canvas.height = ctx_{{forloop.counter0}}.canvas.width*0.5;
+    chart_{{forloop.counter0}} = new Chart(ctx_{{forloop.counter0}}, config_{{forloop.counter0}});
+    chart_{{forloop.counter0}} = new Chart($("#canvas_{{forloop.counter0}}"), config_{{forloop.counter0}});
+
+    update_charts_size();
+
+
+    {% endfor %}
 
 });
+
+$(window).on('resize', function () {
+    update_charts_size();
+});
+
+function update_charts_size()
+{
+    {% for plot_2d in plots_2d %}
+
+        legend_height = chart_{{forloop.counter0}}.legend.height;
+
+        ctx_{{forloop.counter0}}.canvas.height = ctx_{{forloop.counter0}}.canvas.width*0.5 + legend_height;
+        $("#canvas_{{forloop.counter0}}").css("height", ctx_{{forloop.counter0}}.canvas.width*0.5 + legend_height);
+
+        chart_{{forloop.counter0}}.resize();
+
+    {% endfor %}
+}

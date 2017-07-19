@@ -76,10 +76,6 @@ var config_{{forloop.counter0}}=
         display: true,
         position: 'bottom',
 
-        // labels: {
-        //   padding: 40,
-        //
-        // },
         fullWidth: true,
     },
 
