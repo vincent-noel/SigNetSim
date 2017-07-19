@@ -101,9 +101,6 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == "delete_substitution":
 				self.deleteSubstitution(request)
 
-			elif request.POST['action'] == "edit_substitution":
-				self.editSubstitution(request)
-
 			elif request.POST['action'] == "save_substitution":
 				self.saveSubstitution(request)
 
@@ -140,8 +137,6 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif self.listOfSubmodelTypes[submodel_id] == 1:
 				t_def = self.model.parentDoc.listOfExternalModelDefinitions.getBySbmlId(t_submodel.getModelRef())
 				self.model.parentDoc.listOfExternalModelDefinitions.remove(t_def)
-
-
 
 			self.saveModel(request)
 			self.loadSubmodels()
@@ -267,17 +262,14 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 
 	def loadProjectModels(self, request):
-
 		self.listOfProjectModels = [pm for pm in self.getProjectModels(request) if pm.id != self.model_id]
 
 
 	def loadModelSubModels(self, request, model_id):
-
 		self.listOfSubmodelsRefs = self.getModelSubmodels(request, model_id)
 
 
 	def loadConversionFactors(self):
-
 		self.listOfConversionFactors = self.model.listOfParameters.values()
 
 	def loadObjects(self):
@@ -289,7 +281,4 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 				self.listOfObjectsMetaIds.append(object.getMetaId())
 
 	def loadSubstitutions(self):
-
-
 		self.listOfSubstitutions = self.getModel().listOfSbmlObjects.getListOfSubstitutions_old()
-		# print self.listOfSubstitutions

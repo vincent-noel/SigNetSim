@@ -32,7 +32,10 @@ class ModelSubmodelSubstitutionForm(ModelParentForm):
 
 		ModelParentForm.__init__(self, parent)
 
-		self.types = ['Replace a variable from a submodel with a variable from the main model (Replacement)', 'Replace a variable from the main model with a variable from a sbmodel (Replaced by)']
+		self.types = [
+			'Replace a variable from a submodel with a variable from the main model (Replacement)',
+			'Replace a variable from the main model with a variable from a sbmodel (Replaced by)'
+		]
 
 		self.type = None
 		self.modelObject = None

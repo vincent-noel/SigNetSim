@@ -161,6 +161,9 @@ class HasWorkingModel(HasWorkingProject):
 	def isCompModelDefinition(self):
 		return self.model_submodel is not None and self.model_submodel == 0
 
+	def isCompInternalSubmodel(self):
+		return self.model_submodel is not None and self.model_submodel > 0
+
 	def saveModelName(self, name):
 		if self.model_submodel == 0:
 			db_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)

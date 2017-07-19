@@ -98,7 +98,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="substitution_id" value="{{ forloop.counter0 }}">
-                <button type="submit" name="action" value="edit_substitution" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" onclick="view_substitution({{forloop.counter0}})" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete_substitution" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
               </form>
               </div>
@@ -112,11 +112,12 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-      <button type="button" class="btn btn-primary btn-sm" id="new_modification_button">{% bootstrap_icon "file" %} Create new modification</button>
+      <button type="button" class="btn btn-primary btn-sm" id="new_substitution_button">{% bootstrap_icon "file" %} Create new substitution</button>
   </div>
   {% endif %}
   {% endif %}
 </div>
+<br/>
 {% endblock view_content %}
 {% block view_modal %}
 

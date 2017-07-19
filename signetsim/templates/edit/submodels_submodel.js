@@ -371,6 +371,7 @@ $('#new_submodels_button').on('click', function(){
     $("#general").addClass('active in');
     $("#tabs_external").removeClass("in");
     $("#tabs_internal").addClass("in");
+    reset_errors();
 
     $('#modal_submodel').modal('show');
 
@@ -431,7 +432,30 @@ function view_submodel(submodel_id)
 
 }
 
+
+function reset_errors()
+{
+   $("#error_modal").empty();
+}
+
 function save_submodel()
 {
-    $("#submodel_form").submit()
+    var nb_errors = 0;
+    reset_errors();
+
+    if ($("#submodel_sbml_id").val() == "") {
+        add_error_modal("invalid_submodel_sbmlid", "Please choose an identifier");
+        nb_errors++;
+    }
+
+    if ($("#submodel_type").val() == 1) {
+        if ($("#submodel_source").val() == "") {
+            add_error_modal("invalid_submodel source", "Please select an existing model in the project");
+            nb_errors++;
+        }
+    }
+
+    if (nb_errors == 0) {
+        $("#submodel_form").submit()
+    }
 }

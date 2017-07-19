@@ -53,6 +53,7 @@ class GetSubstitution(JsonRequest, HasWorkingModel):
 
 			if isinstance(substitution, ReplacedElement):
 				self.data.update({
+					'type': 0,
 					'object_id': self.listOfObjects.index(substitution.getParentObject()),
 					'object_name': substitution.getParentObject().getName(),
 				})

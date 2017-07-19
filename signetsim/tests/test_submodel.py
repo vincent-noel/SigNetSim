@@ -422,3 +422,66 @@ class TestSubmodel(TestCase):
 			response_add_submodel.context['list_of_submodel_types'],
 			[1, 1, 1, 0]
 		)
+
+		response_select_internal = c.post('/edit/compartments/', {
+			'action': 'choose_submodel',
+			'submodel_id': 1
+		})
+		self.assertEqual(response_select_internal.status_code, 200)
+
+		response_save_compartment = c.post('/edit/compartments/', {
+			'action': 'save',
+			'compartment_id': "",
+			'compartment_name': "Cell",
+			'compartment_sbml_id': "cell",
+			'compartment_size': 1,
+			'compartment_unit': "",
+			'compartment_constant': "on",
+			'compartment_sboterm': "",
+		})
+
+		self.assertEqual(response_save_compartment.status_code, 200)
+		self.assertEqual(response_save_compartment.context['getErrors'], [])
+
+		response_select_internal = c.post('/edit/submodels/', {
+			'action': 'choose_submodel',
+			'submodel_id': 0
+		})
+		self.assertEqual(response_select_internal.status_code, 200)
+
+		response_add_substitution = c.post('/edit/submodels/', {
+
+			'action': 'save_substitution',
+			'substitution_id': "",
+			'substitution_type': 0,
+			'substitution_model_object': 0,
+			'substitution_submodel': 3,
+			'substitution_submodel_object': 0
+		})
+
+
+		self.assertEqual(response_add_substitution.status_code, 200)
+		self.assertEqual(response_add_substitution.context['form_subs'].getErrors(), [])
+
+		response_get_submodel = c.get('/edit/submodels/')
+		self.assertEqual(response_get_submodel.status_code, 200)
+
+		self.assertEqual(
+			[
+				(sub_type, object_1.getSbmlId(), submodel, object_2.getSbmlId())
+				for sub_type, object_1, submodel, object_2
+				in response_get_submodel.context['list_of_substitutions']
+			],
+			[
+				(0, 'compartment_0', ['ras_mod'], 'cell'),
+				(0, 'compartment_0', ['mapk_mod'], 'cell'),
+				(0, 'compartment_0', ['sos_mod'], 'cell'),
+				(0, 'compartment_0', ['internal_modified'], 'cell'),
+				(0, 'sos', ['ras_mod'], 'sos'),
+				(0, 'sos', ['sos_mod'], 'sos'),
+				(0, 'rasgtp', ['ras_mod'], 'ras_gtp'),
+				(0, 'rasgtp', ['mapk_mod'], 'ras_gtp'),
+				(0, 'erkpp', ['mapk_mod'], 'mapk_pp'),
+				(0, 'erkpp', ['sos_mod'], 'erkpp')
+			]
+		)
