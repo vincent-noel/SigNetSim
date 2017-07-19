@@ -380,3 +380,45 @@ class TestSubmodel(TestCase):
 		self.assertEqual(json_response['submodel_name'], "SOS module")
 		self.assertEqual(json_response['submodel_object_id'], 2)
 		self.assertEqual(json_response['submodel_object_name'], "ERK-PP")
+
+
+		response_add_submodel = c.post('/edit/submodels/', {
+			'action': 'save',
+			'submodel_id': "",
+			'submodel_name': "Internal model",
+			'submodel_sbml_id': "internal",
+			'submodel_type': 0,
+			'extent_conversion_factor': "",
+			'time_conversion_factor': ""
+		})
+
+		self.assertEqual(response_add_submodel.status_code, 200)
+		self.assertEqual(
+			[submodel.getNameOrSbmlId() for submodel in response_add_submodel.context['list_of_submodels']],
+			['Ras module', 'MAPK module', 'SOS module', 'Internal model']
+		)
+
+		self.assertEqual(
+			response_add_submodel.context['list_of_submodel_types'],
+			[1, 1, 1, 0]
+		)
+		response_add_submodel = c.post('/edit/submodels/', {
+			'action': 'save',
+			'submodel_id': 3,
+			'submodel_name': "Internal model, modified",
+			'submodel_sbml_id': "internal_modified",
+			'submodel_type': 0,
+			'extent_conversion_factor': "",
+			'time_conversion_factor': ""
+		})
+
+		self.assertEqual(response_add_submodel.status_code, 200)
+		self.assertEqual(
+			[submodel.getNameOrSbmlId() for submodel in response_add_submodel.context['list_of_submodels']],
+			['Ras module', 'MAPK module', 'SOS module', 'Internal model, modified']
+		)
+
+		self.assertEqual(
+			response_add_submodel.context['list_of_submodel_types'],
+			[1, 1, 1, 0]
+		)

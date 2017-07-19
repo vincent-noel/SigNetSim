@@ -23,13 +23,11 @@
 
 """
 
-from django.test import TestCase, Client, RequestFactory
-from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import TestCase, Client
 from signetsim.models import User, Project, SbmlModel
-from signetsim.views.ListOfModelsView import ListOfModelsView
+from libsignetsim.model.SbmlDocument import SbmlDocument
 from django.conf import settings
 from os.path import dirname, join
-from shutil import rmtree
 
 class TestSelectSubmodel(TestCase):
 
@@ -216,3 +214,48 @@ class TestSelectSubmodel(TestCase):
 			 'Ras-N17', 'SOS-Ras-N17', 'GEF-RasN17', 'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP', 'Mapk',
 			 'Mapk-P', 'Total MEK activated', 'Total MAPK activated']
 		)
+
+		response_choose_submodel = c.post('/edit/submodels/', {
+			'action': 'choose_submodel',
+			'submodel_id': 0
+		})
+		self.assertEqual(response_choose_submodel.status_code, 200)
+		self.assertEqual(response_choose_submodel.context['model_submodels'], ['Model definition'])
+
+		response_add_submodel = c.post('/edit/submodels/', {
+			'action': 'save',
+			'submodel_id': "",
+			'submodel_name': "Internal model",
+			'submodel_sbml_id': "internal",
+			'submodel_type': 0,
+			'extent_conversion_factor': "",
+			'time_conversion_factor': ""
+		})
+
+		self.assertEqual(response_add_submodel.status_code, 200)
+		model = SbmlModel.objects.filter(project=project)[3]
+		sbml_doc = SbmlDocument()
+		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
+		sbml_model = sbml_doc.model
+		self.assertEqual(sbml_doc.listOfModelDefinitions.values()[0].modelDefinition.getName(), "Internal model")
+		self.assertEqual(sbml_model.listOfSubmodels.values()[3].getSbmlId(), "internal")
+		self.assertEqual(response_add_submodel.context['model_submodels'], ['Model definition', 'Internal model'])
+
+		response_add_submodel = c.post('/edit/submodels/', {
+			'action': 'save',
+			'submodel_id': 3,
+			'submodel_name': "Internal model, modified",
+			'submodel_sbml_id': "internal_modified",
+			'submodel_type': 0,
+			'extent_conversion_factor': "",
+			'time_conversion_factor': ""
+		})
+
+		self.assertEqual(response_add_submodel.status_code, 200)
+		model = SbmlModel.objects.filter(project=project)[3]
+		sbml_doc = SbmlDocument()
+		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
+		sbml_model = sbml_doc.model
+		self.assertEqual(sbml_doc.listOfModelDefinitions.values()[0].modelDefinition.getName(), "Internal model, modified")
+		self.assertEqual(sbml_model.listOfSubmodels.values()[3].getSbmlId(), "internal_modified")
+		self.assertEqual(response_add_submodel.context['model_submodels'], ['Model definition', 'Internal model, modified'])

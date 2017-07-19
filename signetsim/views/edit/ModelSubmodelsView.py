@@ -166,7 +166,6 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 					new_definition = self.model.parentDoc.listOfModelDefinitions.new()
 					self.form.save(request, new_submodel, new_definition)
 
-
 				if self.form.type == 1:
 
 					if not self.model.parentDoc.isCompEnabled():
@@ -220,19 +219,6 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 		except ModelException as e:
 			self.addError(e.message)
-
-
-	def editSubstitution(self, request):
-
-
-		substitution_id = self.readInt(request, 'substitution_id',
-									"the identifier of the substitution",
-									max_value=len(self.listOfSubstitutions),
-									reportField=False)
-
-		t_substitution = self.listOfSubstitutions[substitution_id]
-		self.formSubstitutions.load(request, t_substitution)
-
 
 	def saveSubstitution(self, request):
 

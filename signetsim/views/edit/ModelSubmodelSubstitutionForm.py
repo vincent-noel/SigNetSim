@@ -40,21 +40,6 @@ class ModelSubmodelSubstitutionForm(ModelParentForm):
 		self.submodelObject = None
 		self.listOfObjects = []
 
-	def load(self, request, substitution):
-
-		self.type = substitution[0]
-
-
-		self.modelObject = self.parent.listOfObjectsMetaIds.index(substitution[1].getMetaId())
-
-		t_submodel_ids = [submodel.getSbmlId() for submodel in self.parent.listOfSubmodels]
-		self.submodel = t_submodel_ids.index(substitution[2][0])
-		self.loadSubmodelObjects()
-		self.submodelObject = self.listOfObjects.index(substitution[3])
-
-		self.isEditing = True
-
-
 	def save(self, request, replacement):
 
 		try:
@@ -78,7 +63,6 @@ class ModelSubmodelSubstitutionForm(ModelParentForm):
 
 		except ModelException as e:
 			self.addError(e.message)
-
 
 	def read(self, request):
 
@@ -106,11 +90,6 @@ class ModelSubmodelSubstitutionForm(ModelParentForm):
 
 
 	def loadSubmodelObjects(self):
-
-		# print self.submodel
-		# print self.parent.listOfSubmodels[self.submodel]
-		# print self.parent.listOfSubmodels[self.submodel].getModelObject()
-
 
 		t_submodel = self.parent.listOfSubmodels[self.submodel].getModelObject()
 		self.listOfObjects = []
