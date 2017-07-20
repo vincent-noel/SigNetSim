@@ -94,13 +94,12 @@ var config_{{forloop.counter0}}=
 $(window).on('load', function()
 {
 
-
     {% for plot_2d in plots_2d %}
 
     ctx_{{forloop.counter0}} = document.getElementById("canvas_{{forloop.counter0}}").getContext("2d");
-    // ctx_{{forloop.counter0}}.canvas.height = ctx_{{forloop.counter0}}.canvas.width*0.5;
+    ctx_{{forloop.counter0}}.canvas.height = $("#plots_container").width()*0.5;
+
     chart_{{forloop.counter0}} = new Chart(ctx_{{forloop.counter0}}, config_{{forloop.counter0}});
-    chart_{{forloop.counter0}} = new Chart($("#canvas_{{forloop.counter0}}"), config_{{forloop.counter0}});
 
     update_charts_size();
 
@@ -117,12 +116,9 @@ function update_charts_size()
 {
     {% for plot_2d in plots_2d %}
 
-        legend_height = chart_{{forloop.counter0}}.legend.height;
-
-        ctx_{{forloop.counter0}}.canvas.height = ctx_{{forloop.counter0}}.canvas.width*0.5 + legend_height;
-        $("#canvas_{{forloop.counter0}}").css("height", ctx_{{forloop.counter0}}.canvas.width*0.5 + legend_height);
-
-        chart_{{forloop.counter0}}.resize();
+    legend_height = chart_{{forloop.counter0}}.legend.height;
+    $("#canvas_{{forloop.counter0}}").css("height", $("#plots_container").width()*0.5 + legend_height);
 
     {% endfor %}
 }
+
