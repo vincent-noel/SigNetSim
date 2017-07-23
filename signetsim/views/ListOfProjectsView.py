@@ -26,23 +26,15 @@ from django.views.generic import TemplateView
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from django.conf import settings
 from signetsim.models import User
-from django.core.files import File
-
-from signetsim.models import Project, SbmlModel, SEDMLSimulation, CombineArchiveModel
-from signetsim.models import Optimization, ContinuationComputation
-from signetsim.models import Experiment, Condition, Observation, Treatment
-from signetsim.manager import deleteProject, copyProject
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from signetsim.models import Project
+from signetsim.managers.projects import deleteProject, copyProject, importProject
 from signetsim.forms import DocumentForm
-from libsignetsim.combine.CombineArchive import CombineArchive
-from libsignetsim.combine.CombineException import CombineException
-from libsignetsim.model.Model import Model
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.sedml.SedmlDocument import SedmlDocument
-from libsignetsim.model.ModelException import ModelException
 
-from os.path import join, isfile, isdir, basename, splitext
+from os.path import join
 from os import remove, mkdir
-from shutil import rmtree, copy
+
 
 class ListOfProjectsView(TemplateView, HasWorkingProject):
 
@@ -205,176 +197,11 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 			new_folder = Project(user=request.user)
 			new_folder.save()
-			mkdir(join(settings.MEDIA_ROOT, str(new_folder.folder)))
 
-			new_archive = CombineArchiveModel(project=new_folder, archive_file=request.FILES['docfile'])
-			new_archive.save()
-
-			new_combine_archive = CombineArchive()
-			filename = join(settings.MEDIA_ROOT, str(new_archive.archive_file))
-			t_name = basename(str(new_archive.archive_file))
-			new_folder.name = t_name.split('.')[0]
-			new_folder.save()
-
-			try:
-				new_combine_archive.readArchive(filename)
-
-				for sbml_file in new_combine_archive.getAllSbmls():
-					t_file = File(open(sbml_file, 'r'))
-
-					sbml_model = SbmlModel(project=new_folder, sbml_file=t_file)
-					sbml_model.save()
-
-					try:
-						doc = SbmlDocument()
-
-						doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(sbml_model.sbml_file)))
-
-						sbml_model.name = doc.model.getName()
-						sbml_model.save()
-					except ModelException:
-						name = splitext(str(sbml_model.sbml_file))[0]
-						sbml_model.name = name
-						sbml_model.save()
-
-
-				for sedml_filename in new_combine_archive.getAllSedmls():
-					sedml_archive = SEDMLSimulation(project=new_folder, sedml_file=File(open(sedml_filename, 'r')))
-					sedml_archive.name = basename(sedml_filename).split('.')[0]
-					sedml_archive.save()
-
-					# Now everything is in the same folder
-					sedml_doc = SedmlDocument()
-					sedml_doc.readSedmlFromFile(join(settings.MEDIA_ROOT, str(sedml_archive.sedml_file)))
-					sedml_doc.listOfModels.removePaths()
-
-					sbml_files = sedml_doc.listOfModels.makeLocalSources()
-
-					for sbml_file in sbml_files:
-
-						if len(SbmlModel.objects.filter(project=new_folder, sbml_file=join(join(str(new_folder.folder), "models"), basename(sbml_file)))) == 0:
-
-							t_file = File(open(sbml_file, 'r'))
-							sbml_model = SbmlModel(project=new_folder, sbml_file=t_file)
-							sbml_model.save()
-							try:
-								doc = SbmlDocument()
-
-								doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(sbml_model.sbml_file)))
-
-								sbml_model.name = doc.model.getName()
-								sbml_model.save()
-							except ModelException:
-								name = splitext(str(sbml_model.sbml_file))[0]
-								sbml_model.name = name
-								sbml_model.save()
-
-					sedml_doc.writeSedmlToFile(join(settings.MEDIA_ROOT, str(sedml_archive.sedml_file)))
-
-
-
-			except CombineException as e:
-				print e.message
+			archive = request.FILES['docfile']
+			path = default_storage.save(join("tmp", str(archive)), ContentFile(archive.read()))
+			importProject(new_folder, join(settings.MEDIA_ROOT, path))
+			remove(join(settings.MEDIA_ROOT, path))
 
 	def loadFolders(self, request):
 		self.listOfFolders = Project.objects.filter(user=request.user)
-
-
-	#
-	# def __deleteProjectModels(self, project):
-	#
-	# 	for model in SbmlModel.objects.filter(project=project):
-	# 		filename = join(settings.MEDIA_ROOT, str(model.sbml_file))
-	# 		if isfile(filename):
-	# 			remove(filename)
-	# 		model.delete()
-	#
-	#
-	#
-	# def __deleteProjectData(self, project):
-	#
-	#
-	# 	for experiment in Experiment.objects.filter(project=project):
-	# 		for condition in Condition.objects.filter(experiment=experiment):
-	# 			for observation in Observation.objects.filter(condition=condition):
-	# 				observation.delete()
-	# 			for treatment in Treatment.objects.filter(condition=condition):
-	# 				treatment.delete()
-	# 			condition.delete()
-	# 		experiment.delete()
-	#
-	#
-	# def __deleteProjectOptimizations(self, project):
-	#
-	# 	for optim in Optimization.objects.filter(project=project):
-	# 		subdirectory = "optimization_%s" % optim.optimization_id
-	# 		directory = join(settings.MEDIA_ROOT, project.folder, "optimizations", subdirectory)
-	# 		if isdir(directory):
-	# 			rmtree(directory)
-	# 		optim.delete()
-	#
-	#
-	# def __deleteProjectEquilibriumCurve(self, project):
-	#
-	# 	for cont in ContinuationComputation.objects.filter(project=project):
-	# 		cont.delete()
-	#
-	#
-	# def __deleteProjectArchives(self, project):
-	#
-	# 	for archive in CombineArchiveModel.objects.filter(project=project):
-	# 		filename = join(settings.MEDIA_ROOT, str(archive.archive_file))
-	# 		if isfile(filename):
-	# 			remove(filename)
-	# 		archive.delete()
-
-	# def copyProjectModels(self, project, new_project):
-	#
-	# 	t_models = SbmlModel.objects.filter(project=project)
-	# 	for model in t_models:
-	# 		t_file = File(open(join(settings.MEDIA_ROOT, str(model.sbml_file))))
-	#
-	# 		new_model = SbmlModel(project=new_project, name=model.name,
-	# 								sbml_file=t_file)
-	# 		new_model.save()
-	#
-	# def copyProjectExperiments(self, project, new_project):
-	#
-	# 	t_experiments = Experiment.objects.filter(project=project)
-	# 	for experiment in t_experiments:
-	#
-	# 		new_experiment = Experiment(project=new_project,
-	# 										name=str(experiment.name),
-	# 										notes=str(experiment.notes))
-	# 		new_experiment.save()
-	# 		t_conditions = Condition.objects.filter(experiment=experiment)
-	# 		for condition in t_conditions:
-	# 			new_condition = Condition(experiment=new_experiment,
-	# 										name=str(condition.name),
-	# 										notes=str(condition.notes))
-	# 			new_condition.save()
-	#
-	# 			t_observations = Observation.objects.filter(condition=condition)
-	# 			for t_observation in t_observations:
-	# 				new_observation = Observation(condition=new_condition,
-	# 									species=t_observation.species,
-	# 									time=t_observation.time,
-	# 									value=t_observation.value,
-	# 									stddev=t_observation.stddev,
-	# 									steady_state=t_observation.steady_state,
-	# 									min_steady_state=t_observation.min_steady_state,
-	# 									max_steady_state=t_observation.max_steady_state)
-	#
-	# 				new_observation.save()
-	#
-	# 			t_treatments = Treatment.objects.filter(condition=condition)
-	# 			for t_treatment in t_treatments:
-	# 				new_treatment = Treatment(condition=new_condition,
-	# 									species=t_treatment.species,
-	# 									time=t_treatment.time,
-	# 									value=t_treatment.value)
-	#
-	# 				new_treatment.save()
-	#
-	# 			new_condition.save()
-	# 		new_experiment.save()

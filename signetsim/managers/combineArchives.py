@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" manager.py
+""" users.py
 
 
 	This file ...

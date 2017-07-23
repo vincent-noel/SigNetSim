@@ -38,7 +38,7 @@ from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsVi
 from views import DataOptimizationView, DataOptimizationView0, ModelOptimizationView
 from views import DataView, ExperimentView, ConditionView
 from views import HelpView, SuccessView
-from views import ListOfModelsView, ListOfProjectsView, GenerateCombineArchive
+from views import ListOfModelsView, ListOfProjectsView, ProjectArchive
 from views import ListOfOptimizationsView, OptimizationResultView
 from views import ListOfSimulationsView, SedmlSimulationView
 from views import LoginView, ActivateAccountView, ProfileView, AdminView
@@ -62,8 +62,7 @@ urlpatterns = [
 
 	# Model import/export
 	url(r'^project/([^/]+)/$', ListOfModelsView.as_view(), name='project'),
-	url(r'^project_archive/$', GenerateCombineArchive.as_view(), name='project_archive_generic'),
-	url(r'^project_archive/([^/]+)/$', GenerateCombineArchive.as_view(), name='project_archive'),
+	url(r'^project_archive/([^/]+)/$', ProjectArchive.as_view(), name='project_archive'),
 	url(r'^models/$', ListOfModelsView.as_view(), name='models'),
 
 	# Authentication

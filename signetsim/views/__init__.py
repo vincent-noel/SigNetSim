@@ -48,7 +48,7 @@ from SuccessView import SuccessView
 from HelpView import HelpView
 from ListOfModelsView import ListOfModelsView
 from ListOfProjectsView import ListOfProjectsView
-from GenerateCombineArchive import GenerateCombineArchive
+from ProjectArchive import ProjectArchive
 
 from auth import SignUpView, SignUpSuccessView, ValidateEmailView
 from auth import ActivateAccountView, LoginView, ProfileView

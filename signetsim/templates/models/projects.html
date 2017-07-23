@@ -52,7 +52,7 @@
                 <button type="button" class="btn btn-xs btn-primary" onclick="view_project({{project.id}});" title="Edit project">{% bootstrap_icon "pencil" %}</button>
                 <button type="button" class="btn btn-xs btn-primary" id="send_{{project.id}}" title="Send project">{% bootstrap_icon "send" %}</button>
                 <button type="submit" name="action" value="copy_folder" class="btn btn-xs btn-primary" title="Duplicate project">{% bootstrap_icon "duplicate" %}</button>
-                <a href="{% url 'project_archive' project.id %}" style="display: inline-block" target="_blank">
+                <a href="{% url 'project_archive' project.folder %}" style="display: inline-block" target="_blank">
                   <button type="button" class="btn btn-xs btn-default" title="Download as COMBINE archive">{% bootstrap_icon "download-alt" %}</button>
                 </a>
                 <button type="submit" name="action" value="delete_folder" class="btn btn-primary btn-xs btn-danger" title="Remove project">{% bootstrap_icon "trash" %}</button>
@@ -60,7 +60,7 @@
             </div>
             {% else %}
             <div class="pull-right">
-              <a href="{% url 'project_archive' project.id %}" style="display: inline-block" target="_blank">
+              <a href="{% url 'project_archive' project.folder %}" style="display: inline-block" target="_blank">
                 <button type="button" class="btn btn-xs btn-default" title="Download as COMBINE archive">{% bootstrap_icon "download-alt" %}</button>
               </a>
             </div>

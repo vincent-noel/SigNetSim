@@ -101,10 +101,9 @@ $(window).on('load', function()
 
     chart_{{forloop.counter0}} = new Chart(ctx_{{forloop.counter0}}, config_{{forloop.counter0}});
 
-    update_charts_size();
-
-
     {% endfor %}
+
+    update_charts_size();
 
 });
 

@@ -25,7 +25,7 @@
 from django.views.generic import TemplateView
 from signetsim.models import User
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from signetsim.manager import deleteUser
+from signetsim.managers.users import deleteUser
 
 class AdminView(TemplateView, HasErrorMessages):
 	template_name = 'admin/admin.html'

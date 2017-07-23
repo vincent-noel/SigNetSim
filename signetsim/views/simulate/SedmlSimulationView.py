@@ -23,12 +23,17 @@
 """
 
 from django.views.generic import TemplateView
+from django.shortcuts import redirect
+from django.conf import settings
+
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from signetsim.models import SEDMLSimulation
-from libsignetsim.sedml.SedmlDocument import SedmlDocument
-from django.conf import settings
 from signetsim.settings.Settings import Settings
+
+from libsignetsim.sedml.SedmlDocument import SedmlDocument
+
 from os.path import join
+
 
 class SedmlSimulationView(TemplateView, HasWorkingProject):
 
@@ -66,7 +71,7 @@ class SedmlSimulationView(TemplateView, HasWorkingProject):
 
 		if "action" in request.POST:
 			if HasWorkingProject.isChooseProject(self, request):
-				self.load(request, *args, **kwargs)
+				return redirect('list_of_simulations')
 
 		return TemplateView.get(self, request, *args, **kwargs)
 
