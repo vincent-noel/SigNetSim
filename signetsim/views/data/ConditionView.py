@@ -23,6 +23,7 @@
 """
 
 
+from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from signetsim.views.data.ObservationForm import ObservationForm
@@ -89,7 +90,8 @@ class ConditionView(TemplateView, HasWorkingProject):
 		if "action" in request.POST:
 
 			if HasWorkingProject.isChooseProject(self, request):
-				self.load(request, *args, **kwargs)
+				return redirect('experimental_data')
+				# self.load(request, *args, **kwargs)
 
 			elif request.POST['data_type'] == 'treatment':
 

@@ -91,7 +91,11 @@ def copyProject(project, new_project):
 
 	# Copying data
 	for experiment in Experiment.objects.filter(project=project):
-		copyExperiment(experiment, new_project)
+		new_experiment = Experiment(project=new_project,
+									name=str(experiment.name),
+									notes=str(experiment.notes))
+		new_experiment.save()
+		copyExperiment(experiment, new_experiment)
 
 	# Copying simulations
 	for simulation in SEDMLSimulation.objects.filter(project=project):

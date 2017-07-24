@@ -41,17 +41,22 @@
         <tr class="row">
            <td class="col-xs-8 col-sm-9 col-md-10 col-lg-11"><a href="{{experiment.id}}">{{ experiment.name }}</a></td>
            <td class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-             {% if user.is_authenticated %}
              <div class="pull-right">
-               <form class="form" role="form" action="" method="post">
-                 {% csrf_token %}
-                 <input type="hidden" class="form-control" name="id" value="{{experiment.id}}">
-                   <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger" title="Remove">{% bootstrap_icon "trash" %}</button>
-                   <button type="submit" name="action" value="duplicate" class="btn btn-xs btn-primary" title="Duplicate">{% bootstrap_icon "duplicate" %}</button>
-                   <button type="submit" name="action" value="edit" class="btn btn-primary btn-xs btn-primary" title="Edit">{% bootstrap_icon "pencil" %}</button>
-               </form>
+               {% if user.is_authenticated %}
+  	          	 <form class="form" role="form" action="" method="post">
+    	           {% csrf_token %}
+							 {% endif %}
+      	         <a href="{% url 'data_archive' experiment.id %}" style="display: inline-block" target="_blank">
+									 <button type="button" class="btn btn-xs btn-default" title="Download">{% bootstrap_icon "download-alt" %}</button>
+								 </a>
+							 {% if user.is_authenticated %}
+								 <input type="hidden" class="form-control" name="id" value="{{experiment.id}}">
+								 <button type="submit" name="action" value="edit" class="btn btn-primary btn-xs btn-primary" title="Edit">{% bootstrap_icon "pencil" %}</button>
+								 <button type="submit" name="action" value="duplicate" class="btn btn-xs btn-primary" title="Duplicate">{% bootstrap_icon "duplicate" %}</button>
+								 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger" title="Remove">{% bootstrap_icon "trash" %}</button>
+						 </form>
+						 {% endif %}
              </div>
-             {% endif %}
            </td>
         </tr>
         {% endfor %}
@@ -62,7 +67,7 @@
   <hr/>
   <div class="containter-fluid">
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#new_experiment">{% bootstrap_icon "file" %} New experiment</button>
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#import_csv_experiment">{% bootstrap_icon "folder-open" %}&nbsp; Import experiment (CSV)</button>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#import_experiment">{% bootstrap_icon "folder-open" %}&nbsp; Import experiment</button>
 
   </div>
   {% endif %}
@@ -156,20 +161,25 @@
 </div>
 
 
-<div class="modal fade in" id="load_model" tabindex="1" role="dialog" aria-labelledby="Import experimental data (CSV)">
+<div class="modal fade in" id="import_experiment" tabindex="1" role="dialog" aria-labelledby="Import experimental data">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form action="." method="post" class="form-inline" enctype="multipart/form-data">
-        <input type="hidden" name="action" value="load_model">
+			<form action="." method="post" class="form-inline" enctype="multipart/form-data">
+			{% csrf_token %}
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel_2">Import experimental data (CSV)</h4>
+        <h4 class="modal-title">Import experimental data</h4>
+      </div>
+			<div class="modal-body">
+				{% bootstrap_form file_upload_form layout=inline %}
+				{% buttons %}
+				{% endbuttons %}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary">Load model</button>
+        <button type="submit" name="action" value="import" class="btn btn-primary">Load model</button>
       </div>
-      </form>
+			</form>
     </div>
   </div>
 </div>

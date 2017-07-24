@@ -113,8 +113,6 @@ class Project(models.Model):
 									  choices=ACCESS_CHOICES,
 									  default=PRIVATE)
 
-
-
 class SbmlModel(models.Model):
 	project = models.ForeignKey(Project)
 	name = models.CharField(max_length=255, null=True)

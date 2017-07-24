@@ -36,7 +36,7 @@ from signetsim.json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels,
 from signetsim.json import GetContinuationStatus, GetProject
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
 from views import DataOptimizationView, DataOptimizationView0, ModelOptimizationView
-from views import DataView, ExperimentView, ConditionView
+from views import DataView, ExperimentView, ConditionView, DataArchive
 from views import HelpView, SuccessView
 from views import ListOfModelsView, ListOfProjectsView, ProjectArchive
 from views import ListOfOptimizationsView, OptimizationResultView
@@ -101,6 +101,7 @@ urlpatterns = [
 
 	# Experimental data
 	url(r'^data/$', DataView.as_view(), name='experimental_data'),
+	url(r'^data_archive/([^/]+)/$', DataArchive.as_view(), name='data_archive'),
 	url(r'^data/([^/]+)/$', ExperimentView.as_view(), name='experiment'),
 	url(r'^data/([^/]+)/([^/]+)/$', ConditionView.as_view(), name='experiment_data'),
 

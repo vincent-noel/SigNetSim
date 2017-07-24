@@ -120,11 +120,7 @@ class SignUpView(TemplateView):
 
 				# For test runs
 				if 'HTTP_HOST' in request.META:
-					try:
-						self.sendAdminEmail(request, self.form.username, self.form.email)
-					except:
-						#Probably bad SMTP configuration... too bad
-						pass
+					self.sendAdminEmail(request, self.form.username, self.form.email)
 				return True
 		return False
 
@@ -148,7 +144,17 @@ class SignUpView(TemplateView):
 
 		admins_email = [t_user.email for t_user in User.objects.filter(is_staff=True)]
 
-		activate_url = "%s%saccounts/activate_account?username=%s" % (request.META['HTTP_HOST'], settings.BASE_URL, username)
+		url = settings.BASE_URL
+		if request.META['HTTP_X_SCRIPT_NAME'] != "":
+			url = str(request.META['HTTP_X_SCRIPT_NAME']) + url
+
+		if request.META['HTTP_X_SCHEME'] != "":
+			url = "%s://%s%s" % (str(request.META['HTTP_X_SCHEME']), request.META['HTTP_HOST'], url)
+
+		else:
+			url = "%s://%s%s" % (request.scheme, request.META['HTTP_HOST'], url)
+
+		activate_url = "%saccounts/activate_account?username=%s" % (url, username)
 
 		send_mail(
 			subject='SigNetSim user account activation',
@@ -157,7 +163,7 @@ class SignUpView(TemplateView):
 							username, email, activate_url, activate_url),
 			from_email='signetsim@gmail.com',
 			recipient_list=admins_email,
-			fail_silently=False,
+			fail_silently=True,
 		)
 
 

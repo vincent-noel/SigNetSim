@@ -32,4 +32,4 @@ class DocumentForm(forms.Form):
 
 	def __init__(self, *args, **kwargs):
 		super(DocumentForm, self).__init__(*args, **kwargs)
-		self.fields['docfile'].widget.attrs['class'] = 'btn btn-default'
+		self.fields['docfile'].widget.attrs['class'] = 'btn btn-default btn-file'

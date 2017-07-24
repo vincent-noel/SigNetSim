@@ -23,7 +23,7 @@
 """
 
 from signetsim.models import Experiment, Condition, Observation, Treatment
-
+from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from signetsim.views.HasWorkingProject import HasWorkingProject
 
@@ -75,7 +75,7 @@ class ExperimentView(TemplateView, HasWorkingProject):
 		if "action" in request.POST:
 
 			if HasWorkingProject.isChooseProject(self, request):
-				self.load(request, *args, **kwargs)
+				return redirect('experimental_data')
 
 			elif request.POST['action'] == "create":
 				self.newCondition(request)

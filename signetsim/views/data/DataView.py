@@ -25,8 +25,16 @@
 
 from django.views.generic import TemplateView
 from signetsim.views.HasWorkingProject import HasWorkingProject
-
-from signetsim.models import Experiment, Condition, Observation, Treatment
+from signetsim.forms import DocumentForm
+from signetsim.models import Experiment
+from signetsim.managers.data import importExperiment as importExperimentViaManager
+from signetsim.managers.data import copyExperiment as copyExperimentViaManager
+from signetsim.managers.data import deleteExperiment as deleteExperimentViaManager
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.conf import settings
+from os.path import join
+from os import remove
 
 class DataView(TemplateView, HasWorkingProject):
 
@@ -41,6 +49,7 @@ class DataView(TemplateView, HasWorkingProject):
 		self.experimentId = None
 		self.experimentName = None
 		self.experimentNotes = None
+		self.fileUploadForm = DocumentForm()
 
 
 	def get_context_data(self, **kwargs):
@@ -51,6 +60,7 @@ class DataView(TemplateView, HasWorkingProject):
 		kwargs['experiment_id'] = self.experimentId
 		kwargs['experiment_name'] = self.experimentName
 		kwargs['experiment_notes'] = self.experimentNotes
+		kwargs['file_upload_form'] = self.fileUploadForm
 		return kwargs
 
 
@@ -71,6 +81,7 @@ class DataView(TemplateView, HasWorkingProject):
 			if HasWorkingProject.isChooseProject(self, request):
 				self.loadExperiments(request)
 
+
 			elif request.POST['action'] == "create":
 				self.newExperiment(request)
 
@@ -85,6 +96,9 @@ class DataView(TemplateView, HasWorkingProject):
 
 			elif request.POST['action'] == "duplicate":
 				self.duplicateExperiment(request)
+
+			elif request.POST['action'] == "import":
+				self.importExperiment(request)
 
 		return TemplateView.get(self, request, *args, **kwargs)
 
@@ -108,16 +122,7 @@ class DataView(TemplateView, HasWorkingProject):
 		experiment = Experiment.objects.get(project=self.project,
 											id=request.POST['id'])
 
-		conditions = Condition.objects.filter(experiment=experiment)
-		for condition in conditions:
-			initial_data = Treatment.objects.filter(condition=condition)
-			initial_data.delete()
-
-			observed_data = Observation.objects.filter(condition=condition)
-			observed_data.delete()
-
-		conditions.delete()
-		experiment.delete()
+		deleteExperimentViaManager(experiment)
 
 
 	def editExperiment(self, request):
@@ -145,46 +150,18 @@ class DataView(TemplateView, HasWorkingProject):
 
 		new_experiment = Experiment(project=self.project)
 		new_experiment.save()
-
-		t_conditions = Condition.objects.filter(experiment=t_experiment)
-		for t_condition in t_conditions:
-
-			new_condition = Condition(experiment=new_experiment)
-
-			new_condition.save()
-
-			t_observations = Observation.objects.filter(condition=t_condition)
-
-			for t_observation in t_observations:
-				new_observation = Observation(condition=new_condition,
-									species=t_observation.species,
-									time=t_observation.time,
-									value=t_observation.value,
-									stddev=t_observation.stddev,
-									steady_state=t_observation.steady_state,
-									min_steady_state=t_observation.min_steady_state,
-									max_steady_state=t_observation.max_steady_state)
-
-				new_observation.save()
-
-			t_treatments = Treatment.objects.filter(condition=t_condition)
-
-			for t_treatment in t_treatments:
-				new_treatment = Treatment(
-									condition=new_condition,
-									species=t_treatment.species,
-									time=t_treatment.time,
-									value=t_treatment.value)
-
-				new_treatment.save()
-
-			new_condition.name = t_condition.name
-			new_condition.notes = t_condition.notes
-
-			new_condition.save()
+		copyExperimentViaManager(t_experiment, new_experiment)
 
 
-		new_experiment.name = t_experiment.name
-		new_experiment.notes = t_experiment.notes
+	def importExperiment(self, request):
 
-		new_experiment.save()
+		self.fileUploadForm = DocumentForm(request.POST, request.FILES)
+		if self.fileUploadForm.is_valid():
+
+			new_experiment = Experiment(project=self.project)
+			new_experiment.save()
+
+			archive = request.FILES['docfile']
+			path = default_storage.save(str(archive), ContentFile(archive.read()))
+			importExperimentViaManager(new_experiment, str(join(settings.MEDIA_ROOT, path)))
+			remove(join(settings.MEDIA_ROOT, path))

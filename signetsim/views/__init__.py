@@ -22,7 +22,7 @@
 
 """
 
-from data import DataView, ExperimentView, ConditionView
+from data import DataView, ExperimentView, ConditionView, DataArchive
 
 from edit import ModelCompartmentsView, ModelOverviewView
 from edit import ModelParametersView, ModelReactionsView, ModelRulesView, ModelSpeciesView

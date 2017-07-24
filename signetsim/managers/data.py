@@ -25,7 +25,8 @@
 
 from signetsim.models import Experiment, Condition, Observation, Treatment
 from libsignetsim.data.Experiment import Experiment as SigNetSimExperiment
-
+from django.conf import settings
+from os.path import join
 
 def deleteExperiment(experiment):
 
@@ -37,13 +38,13 @@ def deleteExperiment(experiment):
 		condition.delete()
 	experiment.delete()
 
-def copyExperiment(experiment, new_project):
+def copyExperiment(experiment, new_experiment):
 
 
-	new_experiment = Experiment(project=new_project,
-									name=str(experiment.name),
-									notes=str(experiment.notes))
-	new_experiment.save()
+	# new_experiment = Experiment(project=new_project,
+	# 								name=str(experiment.name),
+	# 								notes=str(experiment.notes))
+	# new_experiment.save()
 	t_conditions = Condition.objects.filter(experiment=experiment)
 	for condition in t_conditions:
 		new_condition = Condition(experiment=new_experiment,
@@ -77,6 +78,53 @@ def copyExperiment(experiment, new_project):
 	new_experiment.save()
 
 
+def exportExperiment(experiment):
+
+	t_experiment = buildExperiment(experiment)
+	t_filename = join(settings.MEDIA_ROOT, "experiment.xml")
+	t_experiment.writeNuMLToFile(join(settings.MEDIA_ROOT, "experiment.xml"))
+
+	return t_filename
+
+
+def importExperiment(experiment, filename):
+
+	t_experiment = SigNetSimExperiment()
+	t_experiment.readNuMLFromFile(filename)
+
+	experiment.name = t_experiment.name
+	experiment.save()
+
+	for t_condition in t_experiment.listOfConditions.values():
+
+		condition = Condition(experiment=experiment, name=t_condition.name)
+		condition.save()
+
+		for t_initial_value in t_condition.listOfInitialConditions.values():
+
+			initial_value = Treatment(
+				condition=condition,
+				species=t_initial_value.name,
+				time=t_initial_value.t,
+				value=t_initial_value.value
+			)
+			initial_value.save()
+
+		for t_observation in t_condition.listOfExperimentalData.values():
+
+			observation = Observation(
+				condition=condition,
+				species=t_observation.name,
+				time=t_observation.t,
+				value=t_observation.value,
+				stddev=t_observation.value_dev,
+				steady_state=t_observation.steady_state,
+				min_steady_state=t_observation.min_steady_state,
+				max_steady_state=t_observation.max_steady_state
+			)
+			observation.save()
+
+
 def buildExperiment(experiment):
 
 	conditions = Condition.objects.filter(experiment=experiment)
@@ -95,3 +143,5 @@ def buildExperiment(experiment):
 			t_condition.addInitialCondition(data.time, data.species, data.value)
 
 	return t_experiment
+
+
