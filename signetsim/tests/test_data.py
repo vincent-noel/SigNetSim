@@ -30,6 +30,7 @@ from signetsim.views.ListOfModelsView import ListOfModelsView
 from django.conf import settings
 from os.path import dirname, join
 from shutil import rmtree
+from json import loads
 
 class TestData(TestCase):
 
@@ -60,8 +61,132 @@ class TestData(TestCase):
 		experiment_filename = join(files_folder, "experiment.xml")
 
 		response_import_data = c.post('/data/', {
-			'action': 'import_data',
-			'docile': open(experiment_filename, 'r')
+			'action': 'import',
+			'docfile': open(experiment_filename, 'r')
 		})
 
 		self.assertEqual(response_import_data.status_code, 200)
+		self.assertEqual(
+			[experiment.name for experiment in response_import_data.context['experimental_data']],
+			[u'Ras, Mapk quantifications']
+		)
+
+
+		response_create_experiment = c.post('/data/', {
+			'action': 'save',
+			'experiment_id': "",
+			'experiment_name': "Test experiment",
+			'experiment_notes': "Something"
+		})
+
+		self.assertEqual(response_create_experiment.status_code, 200)
+		self.assertEqual(
+			[experiment.name for experiment in response_create_experiment.context['experimental_data']],
+			[u'Ras, Mapk quantifications', u'Test experiment']
+		)
+
+		response_modify_experiment = c.post('/data/', {
+			'action': 'save',
+			'experiment_id': response_create_experiment.context['experimental_data'][1].id,
+			'experiment_name': "Test experiment different",
+			'experiment_notes': "Something"
+		})
+
+		self.assertEqual(response_modify_experiment.status_code, 200)
+		self.assertEqual(
+			[experiment.name for experiment in response_modify_experiment.context['experimental_data']],
+			[u'Ras, Mapk quantifications', u'Test experiment different']
+		)
+
+		response_delete_experiment = c.post('/data/', {
+			'action': 'delete',
+			'id': response_create_experiment.context['experimental_data'][1].id
+		})
+
+		self.assertEqual(response_delete_experiment.status_code, 200)
+		self.assertEqual(
+			[experiment.name for experiment in response_delete_experiment.context['experimental_data']],
+			[u'Ras, Mapk quantifications']
+		)
+
+		experiment_id = response_delete_experiment.context['experimental_data'][0].id
+
+		response_json_get_experiment = c.post('/json/get_experiment/', {
+			'id': experiment_id
+		})
+
+		self.assertEqual(response_json_get_experiment.status_code, 200)
+		json_response = loads(response_json_get_experiment.content)
+
+		self.assertEqual(json_response[u'name'], u'Ras, Mapk quantifications')
+		self.assertEqual(json_response[u'notes'], u'')
+
+		response_download_experiment = c.get(
+			'/data_archive/%d/' % experiment_id
+		)
+
+		self.assertEqual(response_download_experiment.status_code, 200)
+		lines = response_download_experiment.content.split("\n")
+		self.assertEqual(lines[0], "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+		self.assertEqual(lines[1], "<numl xmlns=\"http://www.numl.org/numl/level1/version1\" level=\"1\" version=\"1\">")
+
+		response_choose_experiment = c.get('/data/%d/' % experiment_id)
+		self.assertEqual(response_choose_experiment.status_code, 200)
+		self.assertEqual(response_choose_experiment.context['experiment_name'], u'Ras, Mapk quantifications')
+		self.assertEqual(
+			[condition.name for condition in response_choose_experiment.context['conditions']],
+			[u'Starved', u'+Ras-N17', u'+FGF2', u'+FGF2 +Ras-N17']
+		)
+
+		response_new_condition = c.post('/data/%d/' % experiment_id, {
+			'action': 'save',
+			'condition_id': "",
+			'condition_name': "Test condition",
+			'condition_notes': "Some notes"
+		})
+
+		self.assertEqual(response_new_condition.status_code, 200)
+		self.assertEqual(
+			[condition.name for condition in response_new_condition.context['conditions']],
+			[u'Starved', u'+Ras-N17', u'+FGF2', u'+FGF2 +Ras-N17', u'Test condition']
+		)
+
+		condition_id = [
+			condition.id
+			for condition in response_new_condition.context['conditions']
+			if condition.name == "Test condition"
+		]
+
+		response_modify_condition = c.post('/data/%d/' % experiment_id, {
+			'action': 'save',
+			'condition_id': condition_id,
+			'condition_name': "Test condition, but different",
+			'condition_notes': "Some modified notes"
+		})
+
+		self.assertEqual(response_modify_condition.status_code, 200)
+		self.assertEqual(
+			[condition.name for condition in response_modify_condition.context['conditions']],
+			[u'Starved', u'+Ras-N17', u'+FGF2', u'+FGF2 +Ras-N17', u'Test condition, but different']
+		)
+
+		response_json_get_condition = c.post('/json/get_condition/', {
+			'id': condition_id
+		})
+
+		self.assertEqual(response_json_get_condition.status_code, 200)
+		json_response = loads(response_json_get_condition.content)
+
+		self.assertEqual(json_response[u'name'], u'Test condition, but different')
+		self.assertEqual(json_response[u'notes'], u'Some modified notes')
+
+		response_delete_condition = c.post('/data/%d/' % experiment_id, {
+			'action': 'delete',
+			'id': condition_id
+		})
+
+		self.assertEqual(response_delete_condition.status_code, 200)
+		self.assertEqual(
+			[condition.name for condition in response_delete_condition.context['conditions']],
+			[u'Starved', u'+Ras-N17', u'+FGF2', u'+FGF2 +Ras-N17']
+		)

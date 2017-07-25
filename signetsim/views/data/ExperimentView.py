@@ -77,14 +77,8 @@ class ExperimentView(TemplateView, HasWorkingProject):
 			if HasWorkingProject.isChooseProject(self, request):
 				return redirect('experimental_data')
 
-			elif request.POST['action'] == "create":
-				self.newCondition(request)
-
 			elif request.POST['action'] == "delete":
 				self.deleteCondition(request)
-
-			elif request.POST['action'] == "edit":
-				self.editCondition(request)
 
 			elif request.POST['action'] == "save":
 				self.saveCondition(request)
@@ -103,8 +97,11 @@ class ExperimentView(TemplateView, HasWorkingProject):
 
 	def saveCondition(self, request):
 
-		condition = Condition.objects.get(experiment=self.experiment,
-										  id=request.POST['id'])
+		print request.POST['condition_id']
+		if str(request.POST['condition_id']) == "":
+			condition = Condition(experiment=self.experiment)
+		else:
+			condition = Condition.objects.get(experiment=self.experiment, id=request.POST['condition_id'])
 
 		condition.name = str(request.POST['condition_name'])
 		condition.notes = str(request.POST['condition_notes'])
@@ -133,14 +130,6 @@ class ExperimentView(TemplateView, HasWorkingProject):
 		observed_data.delete()
 
 		condition.delete()
-
-
-	def newCondition(self, request):
-
-		new_condition = Condition(experiment=self.experiment,
-								  name=request.POST['condition_name'],
-								  notes=request.POST['condition_notes'])
-		new_condition.save()
 
 
 	def duplicateCondition(self, request):

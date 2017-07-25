@@ -45,9 +45,9 @@
                <form class="form" role="form" action="" method="post">
                  {% csrf_token %}
                  <input type="hidden" class="form-control" name="id" value="{{condition.id}}">
+                 <button type="button" onclick="view_condition({{ condition.id }})" class="btn btn-primary btn-xs btn-primary" title="Edit">{% bootstrap_icon "pencil" %}</button>
+                 <button type="submit" name="action" value="duplicate" class="btn btn-xs btn-primary" title="Duplicate">{% bootstrap_icon "duplicate" %}</button>
                  <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger" title="Remove">{% bootstrap_icon "trash" %}</button>
-                 <button type="submit"  name="action" value="duplicate" class="btn btn-xs btn-primary" title="Duplicate">{% bootstrap_icon "duplicate" %}</button>
-                 <button type="submit" name="action" value="edit" class="btn btn-primary btn-xs btn-primary" title="Edit">{% bootstrap_icon "pencil" %}</button>
                </form>
              </div>
              {% endif %}
@@ -60,7 +60,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="containter-fluid">
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#new_condition">{% bootstrap_icon "file" %} New condition</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="new_condition()">{% bootstrap_icon "file" %} New condition</button>
   </div>
   {% endif %}
 </div>
@@ -68,19 +68,21 @@
 {% endblock view_content %}
 {% block view_modal %}
 
-<div class="modal fade in" id="new_condition" tabindex="1" role="dialog" aria-labelledby="New condition">
+<div class="modal fade in" id="modal_condition" tabindex="1" role="dialog" aria-labelledby="New condition">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form action="." method="post" class="form" enctype="multipart/form-data">
+      <form id="condition_form" method="post" class="form" enctype="multipart/form-data">
         {% csrf_token %}
+				<input type="hidden" name="action" value="save">
+				<input type="hidden" id="condition_id" name="condition_id" value="">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">Create a new condition</h4>
+          <h4 class="modal-title" id="modal_condition-title">Create a new condition</h4>
         </div>
         <div class="modal-body">
           <div class="input-group">
             <span class="input-group-addon">Name</span>
-            <input type="text" class="form-control input-sm" placeholder="Input condition name" name="condition_name" value="">
+            <input type="text" class="form-control input-sm" placeholder="Input condition name" id="condition_name" name="condition_name" value="">
           </div>
           <br/>
           <table class="table table-striped">
@@ -93,7 +95,7 @@
               <tr class="row">
                 <td class="col-sm-12">
                   <div class="form-group">
-                   <textarea class="form-control" name="condition_notes" rows="5">{% if condition_notes %}{{condition_notes}}{% endif %}</textarea>
+                   <textarea class="form-control" id="condition_notes" name="condition_notes" rows="5">{% if condition_notes %}{{condition_notes}}{% endif %}</textarea>
                   </div>
                 </td>
               </tr>
@@ -101,67 +103,16 @@
           </table>
         </div>
         <div class="modal-footer">
-          <button type="submit" name="action" value="create" class="btn btn-primary">Submit</button>
+          <button type="button" onclick="save_condition()" class="btn btn-primary">Submit</button>
         </div>
       </form>
     </div>
   </div>
 </div>
-
-
-<div class="modal fade in" id="edit_condition" tabindex="1" role="dialog" aria-labelledby="Edit condition">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <form action="." method="post" class="form" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="hidden" class="form-control" name="id" value="{{condition_id}}">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">Edit condition</h4>
-        </div>
-        <div class="modal-body">
-          <div class="input-group">
-            <span class="input-group-addon">Name</span>
-            <input type="text" class="form-control input-sm" placeholder="Input condition name" name="condition_name" value="{{condition_name}}">
-          </div>
-          <br/>
-          <table class="table table-striped">
-            <thead>
-              <tr class="row">
-                <th class="col-sm-12">Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="row">
-                <td class="col-sm-12">
-                  <div class="form-group">
-                   <textarea class="form-control" name="condition_notes" rows="5">{% if condition_notes %}{{condition_notes}}{% endif %}</textarea>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" name="action" value="save" class="btn btn-primary">Submit</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
 
 
 {% endblock view_modal %}
 {% block js %}
-{{ block.super }}
-
-{% if condition_id != None %}
-
-  $(window).on('load',function(){
-    $('#edit_condition').modal('show');
-  });
-
-{% endif %}
-
+	{{ block.super }}
+	{% include 'data/experiment.js' %}
 {% endblock js %}

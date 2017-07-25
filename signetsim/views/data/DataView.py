@@ -81,15 +81,11 @@ class DataView(TemplateView, HasWorkingProject):
 			if HasWorkingProject.isChooseProject(self, request):
 				self.loadExperiments(request)
 
-
 			elif request.POST['action'] == "create":
 				self.newExperiment(request)
 
 			elif request.POST['action'] == "delete":
 				self.deleteExperiment(request)
-
-			elif request.POST['action'] == "edit":
-				self.editExperiment(request)
 
 			elif request.POST['action'] == "save":
 				self.saveExperiment(request)
@@ -104,7 +100,6 @@ class DataView(TemplateView, HasWorkingProject):
 
 
 	def loadExperiments(self, request):
-
 		self.listOfExperiments = Experiment.objects.filter(project=self.project)
 
 
@@ -124,20 +119,12 @@ class DataView(TemplateView, HasWorkingProject):
 
 		deleteExperimentViaManager(experiment)
 
-
-	def editExperiment(self, request):
-
-		t_experiment = Experiment.objects.get(project=self.project,
-											  id=request.POST['id'])
-		self.experimentId = t_experiment.id
-		self.experimentName = t_experiment.name
-		self.experimentNotes = t_experiment.notes
-
-
 	def saveExperiment(self, request):
 
-		t_experiment = Experiment.objects.get(project=self.project,
-											  id=request.POST['id'])
+		if str(request.POST['experiment_id']) == "":
+			t_experiment = Experiment(project=self.project)
+		else:
+			t_experiment = Experiment.objects.get(project=self.project, id=str(request.POST['experiment_id']))
 
 		t_experiment.name = str(request.POST['experiment_name'])
 		t_experiment.notes = str(request.POST['experiment_notes'])

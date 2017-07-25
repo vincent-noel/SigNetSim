@@ -51,7 +51,7 @@
 								 </a>
 							 {% if user.is_authenticated %}
 								 <input type="hidden" class="form-control" name="id" value="{{experiment.id}}">
-								 <button type="submit" name="action" value="edit" class="btn btn-primary btn-xs btn-primary" title="Edit">{% bootstrap_icon "pencil" %}</button>
+								 <button type="button" onclick="view_experiment({{ experiment.id }})" class="btn btn-primary btn-xs btn-primary" title="Edit">{% bootstrap_icon "pencil" %}</button>
 								 <button type="submit" name="action" value="duplicate" class="btn btn-xs btn-primary" title="Duplicate">{% bootstrap_icon "duplicate" %}</button>
 								 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger" title="Remove">{% bootstrap_icon "trash" %}</button>
 						 </form>
@@ -66,7 +66,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="containter-fluid">
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#new_experiment">{% bootstrap_icon "file" %} New experiment</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="new_experiment()">{% bootstrap_icon "file" %} New experiment</button>
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#import_experiment">{% bootstrap_icon "folder-open" %}&nbsp; Import experiment</button>
 
   </div>
@@ -78,19 +78,21 @@
 
 {% block view_modal %}
 
-<div class="modal fade in" id="new_experiment" tabindex="1" role="dialog" aria-labelledby="New experiment">
+<div class="modal fade in" id="modal_experiment" tabindex="1" role="dialog" aria-labelledby="New experiment">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form action="." method="post" class="form" enctype="multipart/form-data">
+      <form method="post" class="form" id="experiment_form" enctype="multipart/form-data">
         {% csrf_token %}
+				<input type="hidden" name="action" value="save">
+				<input type="hidden" id="experiment_id" name="experiment_id" value="">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">New experiment</h4>
+          <h4 class="modal-title" id="modal_experiment-title">New experiment</h4>
         </div>
         <div class="modal-body">
           <div class="input-group">
             <span class="input-group-addon">Name</span>
-            <input type="text" class="form-control input-sm" placeholder="Input experiment name" name="experiment_name" value="">
+            <input type="text" class="form-control input-sm" placeholder="Input experiment name" name="experiment_name" value="" id="experiment_name">
           </div>
           <br/>
           <table class="table table-striped">
@@ -103,7 +105,7 @@
               <tr class="row">
                 <td class="col-sm-12">
                   <div class="form-group">
-                   <textarea class="form-control" name="experiment_notes" rows="5"></textarea>
+                   <textarea class="form-control" name="experiment_notes" id="experiment_notes" rows="5"></textarea>
                   </div>
                 </td>
               </tr>
@@ -111,54 +113,13 @@
           </table>
         </div>
         <div class="modal-footer">
-          <button type="submit" name="action" value="create" class="btn btn-primary">Submit</button>
+          <button type="button" onclick="save_experiment()" class="btn btn-primary">Submit</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
-
-<div class="modal fade in" id="edit_experiment" tabindex="1" role="dialog" aria-labelledby="Edit experiment">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <form action="." method="post" class="form" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="hidden" class="form-control" name="id" value="{{experiment_id}}">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">Edit experiment</h4>
-        </div>
-        <div class="modal-body">
-          <div class="input-group">
-            <span class="input-group-addon">Name</span>
-            <input type="text" class="form-control input-sm" placeholder="Input experiment name" name="experiment_name" value="{{experiment_name}}">
-          </div>
-          <br/>
-          <table class="table table-striped">
-            <thead>
-              <tr class="row">
-                <th class="col-sm-12">Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="row">
-                <td class="col-sm-12">
-                  <div class="form-group">
-                   <textarea class="form-control" name="experiment_notes" rows="5">{% if experiment_notes %}{{experiment_notes}}{% endif %}</textarea>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" name="action" value="save" class="btn btn-primary">Submit</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 
 
 <div class="modal fade in" id="import_experiment" tabindex="1" role="dialog" aria-labelledby="Import experimental data">
@@ -187,15 +148,8 @@
 
 
 {% endblock view_modal %}
+
 {% block js %}
-{{ block.super }}
-
-{% if experiment_id != None %}
-
-  $(window).on('load',function(){
-    $('#edit_experiment').modal('show');
-  });
-
-{% endif %}
-
+	{{ block.super }}
+	{% include 'data/data.js' %}
 {% endblock js %}

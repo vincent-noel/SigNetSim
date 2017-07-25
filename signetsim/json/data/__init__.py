@@ -2,7 +2,7 @@
 """ __init__.py
 
 
-	Initialization of the module web/signetsim
+	Initialization of the module signetsim.json.data
 
 
 	Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
@@ -22,15 +22,5 @@
 
 """
 
-from JsonRequest import JsonRequest
-
-from admin import SetAccountStaff, SetAccountActive
-from data import GetExperiment, GetCondition
-from edit import GetListOfObjects, GetListOfObjectsFromSubmodels
-from edit import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw, GetRule, \
-	GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetSBOName
-from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
-
-from GetContinuationFigure import GetContinuationFigure
-from GetContinuationStatus import GetContinuationStatus
-from GetProject import GetProject
+from GetExperiment import GetExperiment
+from GetCondition import GetCondition
