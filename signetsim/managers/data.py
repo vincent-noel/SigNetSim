@@ -41,10 +41,6 @@ def deleteExperiment(experiment):
 def copyExperiment(experiment, new_experiment):
 
 
-	# new_experiment = Experiment(project=new_project,
-	# 								name=str(experiment.name),
-	# 								notes=str(experiment.notes))
-	# new_experiment.save()
 	t_conditions = Condition.objects.filter(experiment=experiment)
 	for condition in t_conditions:
 		new_condition = Condition(experiment=new_experiment,
@@ -75,6 +71,9 @@ def copyExperiment(experiment, new_experiment):
 			new_treatment.save()
 
 		new_condition.save()
+
+	new_experiment.name = experiment.name
+	new_experiment.notes = experiment.notes
 	new_experiment.save()
 
 

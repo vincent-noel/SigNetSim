@@ -27,7 +27,7 @@ from shutil import rmtree
 from signetsim.models import SbmlModel, Experiment, Optimization, SEDMLSimulation, ContinuationComputation, CombineArchiveModel
 
 from signetsim.managers.models import deleteModel, copyModel
-from signetsim.managers.data import deleteExperiment, copyExperiment, buildExperiment
+from signetsim.managers.data import deleteExperiment, copyExperiment, buildExperiment, importExperiment
 from signetsim.managers.simulations import deleteSimulation, copySimulation
 from signetsim.managers.optimizations import deleteOptimization
 from django.conf import settings
@@ -37,9 +37,12 @@ from libsignetsim.combine.CombineArchive import CombineArchive
 from libsignetsim.combine.CombineException import CombineException
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.sedml.SedmlDocument import SedmlDocument
+from libsignetsim.numl.NuMLDocument import NuMLDocument
 from libsignetsim.model.ModelException import ModelException
 from libsignetsim.settings.Settings import Settings
 
+import libnuml
+reload(libnuml)
 
 def deleteProject(project):
 
@@ -163,6 +166,12 @@ def importProject(new_folder, filename):
 							sbml_model.save()
 
 				sedml_doc.writeSedmlToFile(join(settings.MEDIA_ROOT, str(sedml_archive.sedml_file)))
+
+
+		for numl_file in new_combine_archive.getAllNumls():
+			new_experiment = Experiment(project=new_folder)
+			new_experiment.save()
+			importExperiment(new_experiment, numl_file)
 
 	except CombineException as e:
 		print e.message
