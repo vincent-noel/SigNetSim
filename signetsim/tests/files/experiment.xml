@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<numl xmlns="http://www.numl.org/numl/level1/version1" level="1" version="1">
+  <ontologyTerms>
+    <ontologyTerm id="term_0" term="time" sourceTermId="SBO:0000345" ontologyURI="http://www.ebi.ac.uk/sbo/"/>
+    <ontologyTerm id="term_1" term="concentration" sourceTermId="SBO:0000196" ontologyURI="http://www.ebi.ac.uk/sbo/"/>
+  </ontologyTerms>
+  <resultComponents>
+    <resultComponent id="result_component_0">
+      <dimensionDescription xmlns="http://www.numl.org/numl/level1/version1">
+        <compositeDescription id="result_component_0_header_0" name="Experiment" indexType="string">
+          <compositeDescription id="result_component_0_header_0_0" name="Condition" indexType="string">
+            <compositeDescription id="result_component_0_header_0_0_0" name="Data type" indexType="string">
+              <compositeDescription id="result_component_0_header_0_0_0_0" name="Time" indexType="double">
+                <compositeDescription id="result_component_0_header_0_0_0_0_0" name="Species" indexType="xpath">
+                  <tupleDescription id="result_component_0_header_0_0_0_0_0_0">
+                    <atomicDescription id="result_component_0_header_0_0_0_0_0_0_0" name="Concentration" valueType="double"/>
+                    <atomicDescription id="result_component_0_header_0_0_0_0_0_0_0" name="Standard deviation" valueType="double"/>
+                  </tupleDescription>
+                </compositeDescription>
+              </compositeDescription>
+            </compositeDescription>
+          </compositeDescription>
+        </compositeDescription>
+      </dimensionDescription>
+      <dimension>
+        <compositeValue indexValue="Ras, Mapk quantifications" description="result_component_0_header_0">
+          <compositeValue indexValue="Starved" description="result_component_0_header_0_0">
+            <compositeValue indexValue="initial_values" description="result_component_0_header_0_0_0">
+              <compositeValue indexValue="0.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;FGF2&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>0.0</atomicValue>
+                    <atomicValue></atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="0.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Ras-N17&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>0.0</atomicValue>
+                    <atomicValue></atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+            </compositeValue>
+            <compositeValue indexValue="observations" description="result_component_0_header_0_0_0">
+              <compositeValue indexValue="0.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Total Ras-GTP&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>40.0</atomicValue>
+                    <atomicValue>0</atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="300.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Total Ras-GTP&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>40.0</atomicValue>
+                    <atomicValue>0</atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="600.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Total Ras-GTP&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>40.0</atomicValue>
+                    <atomicValue>0</atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="900.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Total Ras-GTP&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>40.0</atomicValue>
+                    <atomicValue>0</atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="1800.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Total Ras-GTP&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>40.0</atomicValue>
+                    <atomicValue>0</atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="0.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Total MAPK activated&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>11.54</atomicValue>
+                    <atomicValue>0</atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="300.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Total MAPK activated&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>11.54</atomicValue>
+                    <atomicValue>0</atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="600.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Total MAPK activated&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>11.54</atomicValue>
+                    <atomicValue>0</atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="900.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Total MAPK activated&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>11.54</atomicValue>
+                    <atomicValue>0</atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="1800.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Total MAPK activated&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>11.54</atomicValue>
+                    <atomicValue>0</atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+            </compositeValue>
+          </compositeValue>
+          <compositeValue indexValue="+Ras-N17" description="result_component_0_header_0_0">
+            <compositeValue indexValue="initial_values" description="result_component_0_header_0_0_0">
+              <compositeValue indexValue="0.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;FGF2&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>0.0</atomicValue>
+                    <atomicValue></atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="0.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Ras-N17&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>666.0</atomicValue>
+                    <atomicValue></atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+            </compositeValue>
+            <compositeValue indexValue="observations" description="result_component_0_header_0_0_0"/>
+          </compositeValue>
+          <compositeValue indexValue="+FGF2" description="result_component_0_header_0_0">
+            <compositeValue indexValue="initial_values" description="result_component_0_header_0_0_0">
+              <compositeValue indexValue="0.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Ras-N17&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>0.0</atomicValue>
+                    <atomicValue></atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="0.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;FGF2&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>333.0</atomicValue>
+                    <atomicValue></atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+            </compositeValue>
+            <compositeValue indexValue="observations" description="result_component_0_header_0_0_0"/>
+          </compositeValue>
+          <compositeValue indexValue="+FGF2 +Ras-N17" description="result_component_0_header_0_0">
+            <compositeValue indexValue="initial_values" description="result_component_0_header_0_0_0">
+              <compositeValue indexValue="0.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;FGF2&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>333.0</atomicValue>
+                    <atomicValue></atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+              <compositeValue indexValue="0.0" description="result_component_0_header_0_0_0_0">
+                <compositeValue indexValue="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@name=&apos;Ras-N17&apos;]" description="result_component_0_header_0_0_0_0_0">
+                  <tuple>
+                    <atomicValue>666.0</atomicValue>
+                    <atomicValue></atomicValue>
+                  </tuple>
+                </compositeValue>
+              </compositeValue>
+            </compositeValue>
+            <compositeValue indexValue="observations" description="result_component_0_header_0_0_0"/>
+          </compositeValue>
+        </compositeValue>
+      </dimension>
+    </resultComponent>
+  </resultComponents>
+</numl>

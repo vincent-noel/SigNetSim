@@ -32,7 +32,7 @@ from signetsim.models import Project
 from signetsim.managers.projects import deleteProject, copyProject, importProject
 from signetsim.forms import DocumentForm
 
-from os.path import join
+from os.path import join, exists
 from os import remove, mkdir
 
 
@@ -195,13 +195,25 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 		self.fileUploadForm = DocumentForm(request.POST, request.FILES)
 		if self.fileUploadForm.is_valid():
 
-			new_folder = Project(user=request.user)
-			new_folder.save()
+			try:
+				new_folder = Project(user=request.user)
 
-			archive = request.FILES['docfile']
-			path = default_storage.save(join("tmp", str(archive)), ContentFile(archive.read()))
-			importProject(new_folder, join(settings.MEDIA_ROOT, path))
-			remove(join(settings.MEDIA_ROOT, path))
+				archive = request.FILES['docfile']
+				path = join(settings.MEDIA_ROOT, str(archive))
+
+				if exists(path):
+					remove(path)
+
+				t_content_file = open(path, "w")
+				t_content_file.write(archive.read())
+				t_content_file.close()
+
+				importProject(new_folder, path)
+
+			except Exception as e:
+				remove(path)
+
+			new_folder.save()
 
 	def loadFolders(self, request):
 		self.listOfFolders = Project.objects.filter(user=request.user)

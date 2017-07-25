@@ -21,28 +21,26 @@
 	along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 """
-from os.path import isdir, isfile, join, splitext, basename
-from os import remove
-from shutil import rmtree
-from signetsim.models import SbmlModel, Experiment, Optimization, SEDMLSimulation, ContinuationComputation, CombineArchiveModel
+from django.conf import settings
+from django.core.files import File
 
+from signetsim.models import SbmlModel, Experiment, Optimization, SEDMLSimulation, ContinuationComputation, CombineArchiveModel
 from signetsim.managers.models import deleteModel, copyModel
 from signetsim.managers.data import deleteExperiment, copyExperiment, buildExperiment, importExperiment
 from signetsim.managers.simulations import deleteSimulation, copySimulation
 from signetsim.managers.optimizations import deleteOptimization
-from django.conf import settings
-from django.core.files import File
 
 from libsignetsim.combine.CombineArchive import CombineArchive
 from libsignetsim.combine.CombineException import CombineException
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.sedml.SedmlDocument import SedmlDocument
-from libsignetsim.numl.NuMLDocument import NuMLDocument
 from libsignetsim.model.ModelException import ModelException
 from libsignetsim.settings.Settings import Settings
 
-import libnuml
-reload(libnuml)
+from os.path import isdir, isfile, join, splitext, basename, exists
+from os import remove
+from shutil import rmtree
+
 
 def deleteProject(project):
 
@@ -134,38 +132,38 @@ def importProject(new_folder, filename):
 				sbml_model.save()
 #
 
-			for sedml_filename in new_combine_archive.getAllSedmls():
-				sedml_archive = SEDMLSimulation(project=new_folder, sedml_file=File(open(sedml_filename, 'r')))
-				sedml_archive.name = basename(sedml_filename).split('.')[0]
-				sedml_archive.save()
+		for sedml_filename in new_combine_archive.getAllSedmls():
 
-				# Now everything is in the same folder
-				sedml_doc = SedmlDocument()
-				sedml_doc.readSedmlFromFile(join(settings.MEDIA_ROOT, str(sedml_archive.sedml_file)))
-				sedml_doc.listOfModels.removePaths()
+			sedml_archive = SEDMLSimulation(project=new_folder, sedml_file=File(open(sedml_filename, 'r')))
+			sedml_archive.name = basename(sedml_filename).split('.')[0]
+			sedml_archive.save()
 
-				sbml_files = sedml_doc.listOfModels.makeLocalSources()
+			# Now everything is in the same folder
+			sedml_doc = SedmlDocument()
+			sedml_doc.readSedmlFromFile(join(settings.MEDIA_ROOT, str(sedml_archive.sedml_file)))
+			sedml_doc.listOfModels.removePaths()
+			sbml_files = sedml_doc.listOfModels.makeLocalSources()
 
-				for sbml_file in sbml_files:
+			for sbml_file in sbml_files:
 
-					if len(SbmlModel.objects.filter(project=new_folder, sbml_file=join(join(str(new_folder.folder), "models"), basename(sbml_file)))) == 0:
+				if len(SbmlModel.objects.filter(project=new_folder, sbml_file=join(join(str(new_folder.folder), "models"), basename(sbml_file)))) == 0:
 
-						t_file = File(open(sbml_file, 'r'))
-						sbml_model = SbmlModel(project=new_folder, sbml_file=t_file)
+					t_file = File(open(sbml_file, 'r'))
+					sbml_model = SbmlModel(project=new_folder, sbml_file=t_file)
+					sbml_model.save()
+					try:
+						doc = SbmlDocument()
+
+						doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(sbml_model.sbml_file)))
+
+						sbml_model.name = doc.model.getName()
 						sbml_model.save()
-						try:
-							doc = SbmlDocument()
+					except ModelException:
+						name = splitext(str(sbml_model.sbml_file))[0]
+						sbml_model.name = name
+						sbml_model.save()
 
-							doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(sbml_model.sbml_file)))
-
-							sbml_model.name = doc.model.getName()
-							sbml_model.save()
-						except ModelException:
-							name = splitext(str(sbml_model.sbml_file))[0]
-							sbml_model.name = name
-							sbml_model.save()
-
-				sedml_doc.writeSedmlToFile(join(settings.MEDIA_ROOT, str(sedml_archive.sedml_file)))
+			sedml_doc.writeSedmlToFile(join(settings.MEDIA_ROOT, str(sedml_archive.sedml_file)))
 
 
 		for numl_file in new_combine_archive.getAllNumls():
