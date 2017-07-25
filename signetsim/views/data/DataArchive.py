@@ -24,12 +24,15 @@
 
 from django.views.generic import TemplateView
 from django.http import HttpResponse
+from django.shortcuts import redirect
+
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from signetsim.models import Experiment
 from signetsim.managers.data import exportExperiment
-from os.path import basename
-from django.shortcuts import redirect
+
 from os import remove
+from os.path import basename
+
 
 class DataArchive(TemplateView, HasWorkingProject):
 
@@ -38,21 +41,19 @@ class DataArchive(TemplateView, HasWorkingProject):
 		TemplateView.__init__(self, **kwargs)
 		HasWorkingProject.__init__(self)
 
-	def get_context_data(self, **kwargs):
-		kwargs = HasWorkingProject.get_context_data(self, **kwargs)
-		return kwargs
-
-
 	def get(self, request, *args, **kwargs):
 
 		HasWorkingProject.load(self, request, *args, **kwargs)
 
 		if len(args) > 0:
+
 			experiment = Experiment.objects.get(project=self.project, id=int(args[0]))
 			filename = exportExperiment(experiment)
+
 			response = HttpResponse(open(filename, 'rb'), content_type='text/xml')
 			response['Content-Disposition'] = 'attachment; filename=' + basename(filename)
 			remove(filename)
+
 			return response
 
 		redirect('experimental_data')

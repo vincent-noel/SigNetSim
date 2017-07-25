@@ -81,9 +81,6 @@ class DataView(TemplateView, HasWorkingProject):
 			if HasWorkingProject.isChooseProject(self, request):
 				self.loadExperiments(request)
 
-			elif request.POST['action'] == "create":
-				self.newExperiment(request)
-
 			elif request.POST['action'] == "delete":
 				self.deleteExperiment(request)
 
@@ -101,15 +98,6 @@ class DataView(TemplateView, HasWorkingProject):
 
 	def loadExperiments(self, request):
 		self.listOfExperiments = Experiment.objects.filter(project=self.project)
-
-
-	def newExperiment(self, request):
-
-		new_exp = Experiment(project=self.project,
-							 name=request.POST['experiment_name'],
-							 notes=request.POST['experiment_notes'])
-		new_exp.save()
-
 
 
 	def deleteExperiment(self, request):

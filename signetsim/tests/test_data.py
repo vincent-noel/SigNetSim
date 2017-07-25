@@ -130,6 +130,28 @@ class TestData(TestCase):
 		self.assertEqual(lines[0], "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
 		self.assertEqual(lines[1], "<numl xmlns=\"http://www.numl.org/numl/level1/version1\" level=\"1\" version=\"1\">")
 
+		response_duplicate_experiment = c.post('/data/', {
+			'action': 'duplicate',
+			'id': experiment_id
+		})
+
+		self.assertEqual(response_duplicate_experiment.status_code, 200)
+		self.assertEqual(
+			[experiment.name for experiment in response_duplicate_experiment.context['experimental_data']],
+			[u'Ras, Mapk quantifications', u'Ras, Mapk quantifications']
+		)
+
+		response_get_experiments_page = c.get('/data/')
+
+		self.assertEqual(response_get_experiments_page.status_code, 200)
+		self.assertEqual(
+			[experiment.name for experiment in response_get_experiments_page.context['experimental_data']],
+			[u'Ras, Mapk quantifications', u'Ras, Mapk quantifications']
+		)
+
+
+
+		# Testing conditions
 		response_choose_experiment = c.get('/data/%d/' % experiment_id)
 		self.assertEqual(response_choose_experiment.status_code, 200)
 		self.assertEqual(response_choose_experiment.context['experiment_name'], u'Ras, Mapk quantifications')
@@ -189,4 +211,15 @@ class TestData(TestCase):
 		self.assertEqual(
 			[condition.name for condition in response_delete_condition.context['conditions']],
 			[u'Starved', u'+Ras-N17', u'+FGF2', u'+FGF2 +Ras-N17']
+		)
+
+		response_duplicate_condition = c.post('/data/%d/' % experiment_id, {
+			'action': 'duplicate',
+			'id': response_delete_condition.context['conditions'][3].id
+		})
+
+		self.assertEqual(response_duplicate_condition.status_code, 200)
+		self.assertEqual(
+			[condition.name for condition in response_duplicate_condition.context['conditions']],
+			[u'Starved', u'+Ras-N17', u'+FGF2', u'+FGF2 +Ras-N17', u'+FGF2 +Ras-N17']
 		)

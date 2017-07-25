@@ -22,10 +22,12 @@
 
 """
 
-from signetsim.models import Experiment, Condition, Observation, Treatment
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
+
 from signetsim.views.HasWorkingProject import HasWorkingProject
+from signetsim.models import Experiment, Condition, Observation, Treatment
+from signetsim.managers.data import copyCondition
 
 class ExperimentView(TemplateView, HasWorkingProject):
 
@@ -97,7 +99,6 @@ class ExperimentView(TemplateView, HasWorkingProject):
 
 	def saveCondition(self, request):
 
-		print request.POST['condition_id']
 		if str(request.POST['condition_id']) == "":
 			condition = Condition(experiment=self.experiment)
 		else:
@@ -108,20 +109,9 @@ class ExperimentView(TemplateView, HasWorkingProject):
 		condition.save()
 
 
-	def editCondition(self, request):
-
-		condition = Condition.objects.get(experiment=self.experiment,
-										  id=request.POST['id'])
-
-		self.conditionId = condition.id
-		self.conditionName = condition.name
-		self.conditionNotes = condition.notes
-
-
 	def deleteCondition(self, request):
 
-		condition = Condition.objects.get(experiment=self.experiment,
-										  id=request.POST['id'])
+		condition = Condition.objects.get(experiment=self.experiment, id=request.POST['id'])
 
 		initial_data = Treatment.objects.filter(condition=condition)
 		initial_data.delete()
@@ -134,41 +124,12 @@ class ExperimentView(TemplateView, HasWorkingProject):
 
 	def duplicateCondition(self, request):
 
-		t_condition = Condition.objects.get(experiment=self.experiment,
-											  id=request.POST['id'])
+		condition = Condition.objects.get(experiment=self.experiment, id=request.POST['id'])
 
 		new_condition = Condition(experiment=self.experiment)
-
 		new_condition.save()
 
-		t_observations = Observation.objects.filter(condition=t_condition)
-
-		for t_observation in t_observations:
-			new_observation = Observation(condition=new_condition,
-								species=t_observation.species,
-								time=t_observation.time,
-								value=t_observation.value,
-								stddev=t_observation.stddev,
-								steady_state=t_observation.steady_state,
-								min_steady_state=t_observation.min_steady_state,
-								max_steady_state=t_observation.max_steady_state)
-
-			new_observation.save()
-
-		t_treatments = Treatment.objects.filter(condition=t_condition)
-
-		for t_treatment in t_treatments:
-			new_treatment = Treatment(condition=new_condition,
-								species=t_treatment.species,
-								time=t_treatment.time,
-								value=t_treatment.value)
-
-			new_treatment.save()
-
-		new_condition.name = t_condition.name
-		new_condition.notes = t_condition.notes
-
-		new_condition.save()
+		copyCondition(condition, new_condition)
 
 
 	def loadConditions(self, request):

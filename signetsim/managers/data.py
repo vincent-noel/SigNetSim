@@ -43,38 +43,42 @@ def copyExperiment(experiment, new_experiment):
 
 	t_conditions = Condition.objects.filter(experiment=experiment)
 	for condition in t_conditions:
-		new_condition = Condition(experiment=new_experiment,
-									name=str(condition.name),
-									notes=str(condition.notes))
+		new_condition = Condition(experiment=new_experiment)
 		new_condition.save()
 
-		t_observations = Observation.objects.filter(condition=condition)
-		for t_observation in t_observations:
-			new_observation = Observation(condition=new_condition,
-								species=t_observation.species,
-								time=t_observation.time,
-								value=t_observation.value,
-								stddev=t_observation.stddev,
-								steady_state=t_observation.steady_state,
-								min_steady_state=t_observation.min_steady_state,
-								max_steady_state=t_observation.max_steady_state)
-
-			new_observation.save()
-
-		t_treatments = Treatment.objects.filter(condition=condition)
-		for t_treatment in t_treatments:
-			new_treatment = Treatment(condition=new_condition,
-								species=t_treatment.species,
-								time=t_treatment.time,
-								value=t_treatment.value)
-
-			new_treatment.save()
-
-		new_condition.save()
+		copyCondition(condition, new_condition)
 
 	new_experiment.name = experiment.name
 	new_experiment.notes = experiment.notes
 	new_experiment.save()
+
+def copyCondition(condition, new_condition):
+
+	t_observations = Observation.objects.filter(condition=condition)
+	for t_observation in t_observations:
+		new_observation = Observation(condition=new_condition,
+									  species=t_observation.species,
+									  time=t_observation.time,
+									  value=t_observation.value,
+									  stddev=t_observation.stddev,
+									  steady_state=t_observation.steady_state,
+									  min_steady_state=t_observation.min_steady_state,
+									  max_steady_state=t_observation.max_steady_state)
+
+		new_observation.save()
+
+	t_treatments = Treatment.objects.filter(condition=condition)
+	for t_treatment in t_treatments:
+		new_treatment = Treatment(condition=new_condition,
+								  species=t_treatment.species,
+								  time=t_treatment.time,
+								  value=t_treatment.value)
+
+		new_treatment.save()
+
+	new_condition.name = condition.name
+	new_condition.notes = condition.notes
+	new_condition.save()
 
 
 def exportExperiment(experiment):
