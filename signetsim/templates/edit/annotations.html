@@ -38,29 +38,37 @@
       <table class="table table-striped">
         <thead>
           <tr class="row">
+						{% if user.is_authenticated %}
             <th class="col-xs-10">Model name</th>
-            <th class="col-xs-2 text-right">Actions</th>
+						<th class="col-xs-2 text-right">Actions</th>
+						{% else %}
+            <th class="col-xs-12">Model name</th>
+						{% endif %}
           </tr>
         </thead>
         <tbody>
           <tr class="row">
+						{% if user.is_authenticated %}
             <td class="col-xs-10 text-center">
+						{% else %}
+						<td class="col-xs-12 text-center">
+						{% endif %}
               <div class="collapse in" id="edit_reaction_off">{% if form.name != None %}{{form.name}}{% endif %}</div>
               <div class="collapse out" id="edit_reaction_on">
                 <input type="text" class="form-control input-sm" placeholder="<Input name>" id="model_name_input" name="model_name" value="{% if form.name != None %}{{form.name}}{% endif %}">
               </div>
             </td>
+						{% if user.is_authenticated %}
             <td class="col-xs-2">
-              {% if user.is_authenticated %}
-                <div class="pull-right collapse in" id="edit_reaction_off_actions">
-                  <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_name">{% bootstrap_icon "pencil" %}</button>
-                </div>
-                <div class="pull-right collapse out" id="edit_reaction_on_actions">
-                  <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_name_cancel">{% bootstrap_icon "remove" %}</button>
-                  <button type="submit" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
-                </div>
-              {% endif %}
+							<div class="pull-right collapse in" id="edit_reaction_off_actions">
+								<button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_name">{% bootstrap_icon "pencil" %}</button>
+							</div>
+							<div class="pull-right collapse out" id="edit_reaction_on_actions">
+								<button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_name_cancel">{% bootstrap_icon "remove" %}</button>
+								<button type="submit" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
+							</div>
             </td>
+						{% endif %}
           </tr>
         </tbody>
       </table>
@@ -73,20 +81,28 @@
       <table class="table table-striped">
         <thead>
           <tr class="row">
+						{% if user.is_authenticated %}
             <th class="col-xs-10">Notes</th>
             <th class="col-xs-2"></th>
+						{% else %}
+ 						<th class="col-xs-12">Notes</th>
+						{% endif %}
           </tr>
         </thead>
         <tbody>
           <tr class="row">
+						{% if user.is_authenticated %}
             <td class="col-xs-10 text-center">
+						{% else %}
+            <td class="col-xs-12 text-center">
+						{% endif %}
               <div class="collapse in" id="edit_notes_off">{% if form.notes != None %}{% autoescape off %}{{form.notes}}{% endautoescape %}{% endif %}</div>
               <div class="collapse out" id="edit_notes_on">
                 <textarea class="form-control" name="model_notes" rows="10">{% if form.notes != None %}{{form.notes}}{% endif %}</textarea>
               </div>
             </td>
+						{% if user.is_authenticated %}
             <td class="col-xs-2">
-              {% if user.is_authenticated %}
               <div class="pull-right collapse in" id="edit_notes_off_actions">
                   <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_notes">{% bootstrap_icon "pencil" %}</button>
               </div>
@@ -94,8 +110,8 @@
                   <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_notes_cancel">{% bootstrap_icon "remove" %}</button>
                   <button type="submit" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
               </div>
-              {% endif %}
             </td>
+						{% endif %}
           </tr>
         </tbody>
       </table>

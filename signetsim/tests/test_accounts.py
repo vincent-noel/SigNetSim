@@ -138,3 +138,48 @@ class TestAccounts(TestCase):
 
 		c.logout()
 		self.assertTrue(c.login(username='test_user', password='new_password'))
+
+		c.logout()
+
+		self.assertTrue(c.login(username='admin', password='admin'))
+
+		response_inactive_account = c.post('/json/set_account_active/', {
+			'username': 'test_user',
+			'status': 'false'
+		})
+
+		self.assertEqual(response_inactive_account.status_code, 200)
+
+		user = User.objects.get(username='test_user')
+		self.assertEqual(user.is_active, False)
+
+		response_active_account = c.post('/json/set_account_active/', {
+			'username': 'test_user',
+			'status': 'true'
+		})
+
+		self.assertEqual(response_active_account.status_code, 200)
+
+		user = User.objects.get(username='test_user')
+		self.assertEqual(user.is_active, True)
+		self.assertEqual(user.is_staff, False)
+
+		response_staff_account = c.post('/json/set_account_staff/', {
+			'username': 'test_user',
+			'status': 'true'
+		})
+
+		self.assertEqual(response_staff_account.status_code, 200)
+
+		user = User.objects.get(username='test_user')
+		self.assertEqual(user.is_staff, True)
+
+		response_unstaff_account = c.post('/json/set_account_staff/', {
+			'username': 'test_user',
+			'status': 'false'
+		})
+
+		self.assertEqual(response_unstaff_account.status_code, 200)
+
+		user = User.objects.get(username='test_user')
+		self.assertEqual(user.is_staff, False)

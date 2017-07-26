@@ -24,8 +24,12 @@
 """
 
 from django.test import TestCase, Client
-from signetsim.models import User, Project
 from django.conf import settings
+
+from signetsim.models import User, Project
+
+from json import loads
+
 
 class TestAccounts(TestCase):
 
@@ -89,6 +93,15 @@ class TestAccounts(TestCase):
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		self.assertEqual(len(Project.objects.filter(user=user_2)), 1)
 
+		response_get_project = c.post('/json/get_project/', {
+			'id': project.id
+		})
+
+		self.assertEqual(response_get_project.status_code, 200)
+		json_response = loads(response_get_project.content)
+
+		self.assertEqual(json_response['name'], u'Project 1')
+		self.assertEqual(json_response['public'], 0)
 
 
 
