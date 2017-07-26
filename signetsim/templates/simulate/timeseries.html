@@ -37,7 +37,7 @@
     <div class="form-group">
       <form class="form" method="POST" action="{% url 'simulate_model' %}">
         {% csrf_token %}
-        {% include 'simulate/form_variable_selector' %}
+        {% include 'simulate/form_variable_selector.html' %}
         <div class="collapse" id="options">
           <label>Start time</label>
           <input type="text" ID="time_min" Class="form-control" name="time_min" value="{% if t_min %}{{t_min}}{% else %}0{% endif %}"/>

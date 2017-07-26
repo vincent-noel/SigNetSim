@@ -7,7 +7,7 @@
     <div class="tab-content">
       {% if species %}
         <label>Species to plot (hold shift to select more than one):</label>
-        {% with species|my_len as len_species %}
+        {% with species|length as len_species %}
         <select multiple class="form-control" id="sel2" name="species_selected" size="{% if len_species > 10 %}10{% else %}{{len_species}}{% endif %}">
         {% endwith %}
           {% for specie in species %}
@@ -22,7 +22,7 @@
     <div class="tab-content">
       {% if reactions %}
         <label>Reactions fluxes to plot (hold shift to select more than one):</label>
-        {% with reactions|my_len as len_reactions %}
+        {% with reactions|length as len_reactions %}
         <select multiple class="form-control" id="sel_reaction" name="reactions_selected" size="{% if len_reactions > 10 %}10{% else %}{{len_reactions}}{% endif %}">
         {% endwith %}
           {% for reaction in reactions %}

@@ -98,16 +98,17 @@ var config_observations_graph =
           },
           fullWidth: true,
       },
+      maintainAspectRatio: false,
+
   }
 
 };
 
-var observations_chart;
 $(window).on('load', function() {
 
   ctx_observations_graph = document.getElementById("observations_graph").getContext("2d");
   ctx_observations_graph.canvas.height = ctx_observations_graph.canvas.width*0.5;
-  var observations_chart = new Chart(ctx_observations_graph, config_observations_graph);
+  observations_chart = new Chart(ctx_observations_graph, config_observations_graph);
 
   update_charts_size();
 
