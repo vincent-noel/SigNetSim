@@ -485,3 +485,101 @@ class TestSubmodel(TestCase):
 				(0, 'erkpp', ['sos_mod'], 'erkpp')
 			]
 		)
+
+		response_delete_substitution = c.post('/edit/submodels/', {
+			'action': 'delete_substitution',
+			'substitution_id': 4
+		})
+		self.assertEqual(response_delete_substitution.status_code, 200)
+		response_delete_substitution = c.post('/edit/submodels/', {
+			'action': 'delete_substitution',
+			'substitution_id': 4
+		})
+		self.assertEqual(response_delete_substitution.status_code, 200)
+
+		self.assertEqual(
+			[
+				(sub_type, object_1.getSbmlId(), submodel, object_2.getSbmlId())
+				for sub_type, object_1, submodel, object_2
+				in response_delete_substitution.context['list_of_substitutions']
+			],
+			[
+				(0, 'compartment_0', ['ras_mod'], 'cell'),
+				(0, 'compartment_0', ['mapk_mod'], 'cell'),
+				(0, 'compartment_0', ['sos_mod'], 'cell'),
+				(0, 'compartment_0', ['internal_modified'], 'cell'),
+				(0, 'rasgtp', ['ras_mod'], 'ras_gtp'),
+				(0, 'rasgtp', ['mapk_mod'], 'ras_gtp'),
+				(0, 'erkpp', ['mapk_mod'], 'mapk_pp'),
+				(0, 'erkpp', ['sos_mod'], 'erkpp')
+			]
+		)
+		response_add_replacedby = c.post('/edit/submodels/', {
+
+			'action': 'save_substitution',
+			'substitution_id': "",
+			'substitution_type': 1,
+			'substitution_model_object': 1,
+			'substitution_submodel': 2,
+			'substitution_submodel_object': 9
+		})
+		self.assertEqual(response_add_replacedby.status_code, 200)
+		self.assertEqual(response_add_replacedby.context['getErrors'], [])
+		self.assertEqual(response_add_replacedby.context['form_subs'].getErrors(), [])
+
+		self.assertEqual(
+			[
+				(sub_type, object_1.getSbmlId(), submodel, object_2.getSbmlId())
+				for sub_type, object_1, submodel, object_2
+				in response_add_replacedby.context['list_of_substitutions']
+			],
+			[
+				(0, 'compartment_0', ['ras_mod'], 'cell'),
+				(0, 'compartment_0', ['mapk_mod'], 'cell'),
+				(0, 'compartment_0', ['sos_mod'], 'cell'),
+				(0, 'compartment_0', ['internal_modified'], 'cell'),
+				(1, 'sos', ['sos_mod'], 'sos'),
+				(0, 'rasgtp', ['ras_mod'], 'ras_gtp'),
+				(0, 'rasgtp', ['mapk_mod'], 'ras_gtp'),
+				(0, 'erkpp', ['mapk_mod'], 'mapk_pp'),
+				(0, 'erkpp', ['sos_mod'], 'erkpp')
+			]
+		)
+
+		response_get_replacedby = c.post('/json/get_substitution/', {
+			'id': 4
+		})
+
+		self.assertEqual(response_get_replacedby.status_code, 200)
+		json_response = loads(response_get_replacedby.content)
+
+		self.assertEqual(json_response[u'object_name'], u'SOS')
+		self.assertEqual(json_response[u'object_id'], 1)
+		self.assertEqual(json_response[u'submodel_name'], u'SOS module')
+		self.assertEqual(json_response[u'submodel_id'], 2)
+		self.assertEqual(json_response[u'submodel_object_name'], u'SOS')
+		self.assertEqual(json_response[u'submodel_object_id'], 9)
+
+		response_delete_replacedby = c.post('/edit/submodels/', {
+			'action': 'delete_substitution',
+			'substitution_id': 4
+		})
+
+		self.assertEqual(response_delete_replacedby.status_code, 200)
+		self.assertEqual(
+			[
+				(sub_type, object_1.getSbmlId(), submodel, object_2.getSbmlId())
+				for sub_type, object_1, submodel, object_2
+				in response_delete_replacedby.context['list_of_substitutions']
+			],
+			[
+				(0, 'compartment_0', ['ras_mod'], 'cell'),
+				(0, 'compartment_0', ['mapk_mod'], 'cell'),
+				(0, 'compartment_0', ['sos_mod'], 'cell'),
+				(0, 'compartment_0', ['internal_modified'], 'cell'),
+				(0, 'rasgtp', ['ras_mod'], 'ras_gtp'),
+				(0, 'rasgtp', ['mapk_mod'], 'ras_gtp'),
+				(0, 'erkpp', ['mapk_mod'], 'mapk_pp'),
+				(0, 'erkpp', ['sos_mod'], 'erkpp')
+			]
+		)

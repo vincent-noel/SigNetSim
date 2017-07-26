@@ -71,10 +71,34 @@ class GetSubstitution(JsonRequest, HasWorkingModel):
 					'submodel_object_name': substitution.getReplacedElementObject().getNameOrSbmlId(),
 				})
 
+			elif isinstance(substitution, ReplacedBy):
+				self.data.update({
+					'type': 1,
+					'object_id': self.listOfObjects.index(substitution.getParentObject()),
+					'object_name': substitution.getParentObject().getName(),
+				})
+
+				submodel = self.getModel().listOfSubmodels.getBySbmlIdRef(substitution.getSubmodelRef())
+				submodel_objects = []
+				for t_object in submodel.getModelObject().listOfSbmlObjects.values():
+					if isinstance(t_object, Variable) and not t_object.isStoichiometry():
+						submodel_objects.append(t_object)
+
+				self.data.update({
+					'submodel_id': self.listOfSubmodels.index(submodel),
+					'submodel_name': submodel.getName(),
+					'submodel_object_id': submodel_objects.index(substitution.getReplacingElement()),
+					'submodel_object_name': substitution.getReplacingElement().getNameOrSbmlId(),
+
+				})
 		return JsonRequest.post(self, request, *args, **kwargs)
 
 
 	def load(self, request, *args, **kwargs):
 		HasWorkingModel.load(self, request, *args, **kwargs)
-		self.listOfObjects = self.getModel().listOfSbmlObjects.values()
+
+		self.listOfObjects = []
+		for object in self.getModel().listOfSbmlObjects.values():
+			if isinstance(object, Variable) and not object.isStoichiometry():
+				self.listOfObjects.append(object)
 		self.listOfSubmodels = self.getModel().listOfSubmodels.values()
