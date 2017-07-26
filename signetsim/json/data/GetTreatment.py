@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-""" __init__.py
+""" GetTreatment.py
 
 
-	Initialization of the module web/signetsim
+	This file...
+
 
 
 	Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
@@ -22,15 +23,31 @@
 
 """
 
-from JsonRequest import JsonRequest
+from signetsim.json import JsonRequest
+from signetsim.views.HasWorkingProject import HasWorkingProject
+from signetsim.models import Treatment
 
-from admin import SetAccountStaff, SetAccountActive
-from data import GetExperiment, GetCondition, GetTreatment, GetObservation
-from edit import GetListOfObjects, GetListOfObjectsFromSubmodels
-from edit import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw, GetRule, \
-	GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetSBOName
-from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
 
-from GetContinuationFigure import GetContinuationFigure
-from GetContinuationStatus import GetContinuationStatus
-from GetProject import GetProject
+class GetTreatment(JsonRequest, HasWorkingProject):
+
+	def __init__(self):
+		JsonRequest.__init__(self)
+		HasWorkingProject.__init__(self)
+
+	def post(self, request, *args, **kwargs):
+
+		HasWorkingProject.load(self, request, *args, **kwargs)
+
+		if Treatment.objects.filter(id=int(request.POST['id'])).exists():
+
+			treatment = Treatment.objects.get(id=int(request.POST['id']))
+
+			self.data.update({
+				'species': treatment.species,
+				'time': treatment.time,
+				'value': treatment.value
+			})
+
+		return JsonRequest.post(self, request, *args, **kwargs)
+
+

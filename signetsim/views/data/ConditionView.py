@@ -91,15 +91,11 @@ class ConditionView(TemplateView, HasWorkingProject):
 
 			if HasWorkingProject.isChooseProject(self, request):
 				return redirect('experimental_data')
-				# self.load(request, *args, **kwargs)
 
 			elif request.POST['data_type'] == 'treatment':
 
 				if request.POST['action'] == "delete":
 					self.deleteTreatment(request)
-
-				elif request.POST['action'] == "edit":
-					self.editTreatment(request)
 
 				elif request.POST['action'] == "save":
 					self.saveTreatment(request)
@@ -111,15 +107,10 @@ class ConditionView(TemplateView, HasWorkingProject):
 				if request.POST['action'] == "delete":
 					self.deleteObservation(request)
 
-				elif request.POST['action'] == "edit":
-					self.editObservation(request)
-
 				elif request.POST['action'] == "save":
-					print "saving observation"
 					self.saveObservation(request)
 
 				self.loadObservations()
-
 
 		return TemplateView.get(self, request, *args, **kwargs)
 
@@ -138,12 +129,6 @@ class ConditionView(TemplateView, HasWorkingProject):
 		self.observationForm.read(request)
 		if not self.observationForm.hasErrors():
 			self.observationForm.save()
-		else:
-			self.observationForm.printErrors()
-
-	def editObservation(self, request):
-		self.observationForm.load(request)
-
 
 	def deleteObservation(self, request):
 
@@ -153,26 +138,16 @@ class ConditionView(TemplateView, HasWorkingProject):
 												id=self.observationForm.id)
 			observation.delete()
 
-
-
 	def saveTreatment(self, request):
 
 		self.treatmentForm.read(request)
 		if not self.treatmentForm.hasErrors():
 			self.treatmentForm.save()
 
-
-	def editTreatment(self, request):
-		self.treatmentForm.load(request)
-
-
 	def deleteTreatment(self, request):
 
-		self.treatmentForm.read(request)
-		if not self.treatmentForm.isNew():
-			treatment = Treatment.objects.get(condition=self.condition,
-												id=self.treatmentForm.id)
-			treatment.delete()
+		treatment = Treatment.objects.get(condition=self.condition, id=request.POST['id'])
+		treatment.delete()
 
 
 	def loadExperiment(self, request, *args):

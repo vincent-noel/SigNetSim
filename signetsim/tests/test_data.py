@@ -213,9 +213,10 @@ class TestData(TestCase):
 			[u'Starved', u'+Ras-N17', u'+FGF2', u'+FGF2 +Ras-N17']
 		)
 
+		condition_id = response_delete_condition.context['conditions'][3].id
 		response_duplicate_condition = c.post('/data/%d/' % experiment_id, {
 			'action': 'duplicate',
-			'id': response_delete_condition.context['conditions'][3].id
+			'id': condition_id
 		})
 
 		self.assertEqual(response_duplicate_condition.status_code, 200)
@@ -223,3 +224,144 @@ class TestData(TestCase):
 			[condition.name for condition in response_duplicate_condition.context['conditions']],
 			[u'Starved', u'+Ras-N17', u'+FGF2', u'+FGF2 +Ras-N17', u'+FGF2 +Ras-N17']
 		)
+
+		# Testing data
+		response_choose_experiment = c.get('/data/%d/%d/' % (experiment_id, condition_id))
+		self.assertEqual(response_choose_experiment.status_code, 200)
+		self.assertEqual(response_choose_experiment.context['experiment_name'], u'Ras, Mapk quantifications')
+		self.assertEqual(response_choose_experiment.context['condition_name'], u'+FGF2 +Ras-N17')
+
+		for treatment in response_choose_experiment.context['experiment_initial_data']:
+
+			response_delete_treatment = c.post('/data/%d/%d/' % (experiment_id, condition_id), {
+				'data_type': 'treatment',
+				'action': 'delete',
+				'id': treatment.id
+			})
+
+			self.assertEqual(response_delete_treatment.status_code, 200)
+
+		response_choose_experiment = c.get('/data/%d/%d/' % (experiment_id, condition_id))
+		self.assertEqual(response_choose_experiment.status_code, 200)
+		self.assertEqual(len(response_choose_experiment.context['experiment_initial_data']), 0)
+
+		response_add_treatment = c.post('/data/%d/%d/' % (experiment_id, condition_id), {
+			'data_type': 'treatment',
+			'action': 'save',
+			'id': "",
+			'name': 'FGF2',
+			'time': 0,
+			'value': 333.0
+		})
+
+		self.assertEqual(response_add_treatment.status_code, 200)
+		self.assertEqual(len(response_add_treatment.context['experiment_initial_data']), 1)
+
+		treatment_id = response_add_treatment.context['experiment_initial_data'][0].id
+		response_get_treatment = c.post('/json/get_treatment/', {
+			'id': treatment_id
+		})
+
+		self.assertEqual(response_get_treatment.status_code, 200)
+		json_response = loads(response_get_treatment.content)
+
+		self.assertEqual(json_response[u'species'], u'FGF2')
+		self.assertEqual(json_response[u'time'], 0)
+		self.assertEqual(json_response[u'value'], 333.0)
+
+		response_modify_treatment = c.post('/data/%d/%d/' % (experiment_id, condition_id), {
+			'data_type': 'treatment',
+			'action': 'save',
+			'id': treatment_id,
+			'name': 'Ras-GTP',
+			'time': 20,
+			'value': 300
+		})
+
+		self.assertEqual(response_modify_treatment.status_code, 200)
+		self.assertEqual(len(response_modify_treatment.context['experiment_initial_data']), 1)
+
+		response_get_treatment = c.post('/json/get_treatment/', {
+			'id': treatment_id
+		})
+
+		self.assertEqual(response_get_treatment.status_code, 200)
+		json_response = loads(response_get_treatment.content)
+
+		self.assertEqual(json_response[u'species'], u'Ras-GTP')
+		self.assertEqual(json_response[u'time'], 20)
+		self.assertEqual(json_response[u'value'], 300.0)
+
+		self.assertEqual(len(response_modify_treatment.context['experiment_data']), 0)
+
+		response_add_observation = c.post('/data/%d/%d/' % (experiment_id, condition_id), {
+			'data_type': 'observation',
+			'action': 'save',
+			'id': "",
+			'name': 'Ras-GTP',
+			'time': 300,
+			'value': 333.0,
+			'stddev': 30,
+			'steady_state': 'off',
+			'min_steady_state': "0",
+			'max_steady_state': "0"
+		})
+
+		self.assertEqual(response_add_observation.status_code, 200)
+		self.assertEqual(len(response_add_observation.context['experiment_data']), 1)
+		observation_id = response_add_observation.context['experiment_data'][0].id
+
+		response_get_observation = c.post('/json/get_observation/', {
+			'id': observation_id
+		})
+
+		self.assertEqual(response_get_observation.status_code, 200)
+		json_response = loads(response_get_observation.content)
+
+		self.assertEqual(json_response[u'species'], u'Ras-GTP')
+		self.assertEqual(json_response[u'time'], 300)
+		self.assertEqual(json_response[u'value'], 333.0)
+		self.assertEqual(json_response[u'stddev'], 30.0)
+		self.assertEqual(json_response[u'steady_state'], 0)
+		self.assertEqual(json_response[u'min_steady_state'], 0)
+		self.assertEqual(json_response[u'max_steady_state'], 0)
+
+		response_modify_observation = c.post('/data/%d/%d/' % (experiment_id, condition_id), {
+			'data_type': 'observation',
+			'action': 'save',
+			'id': observation_id,
+			'name': 'Ras-GDP',
+			'time': 3600,
+			'value': 60.0,
+			'stddev': 10,
+			'steady_state': 'on',
+			'min_steady_state': "2400",
+			'max_steady_state': "4800"
+		})
+
+		self.assertEqual(response_modify_observation.status_code, 200)
+		self.assertEqual(len(response_modify_observation.context['experiment_data']), 1)
+
+		response_get_observation = c.post('/json/get_observation/', {
+			'id': observation_id
+		})
+
+		self.assertEqual(response_get_observation.status_code, 200)
+		json_response = loads(response_get_observation.content)
+
+		self.assertEqual(json_response[u'species'], u'Ras-GDP')
+		self.assertEqual(json_response[u'time'], 3600)
+		self.assertEqual(json_response[u'value'], 60.0)
+		self.assertEqual(json_response[u'stddev'], 10.0)
+		self.assertEqual(json_response[u'steady_state'], 1)
+		self.assertEqual(json_response[u'min_steady_state'], 2400)
+		self.assertEqual(json_response[u'max_steady_state'], 4800)
+
+		response_delete_observation = c.post('/data/%d/%d/' % (experiment_id, condition_id), {
+			'data_type': 'observation',
+			'action': 'delete',
+			'id': observation_id
+		})
+
+		self.assertEqual(response_delete_observation.status_code, 200)
+		self.assertEqual(len(response_delete_observation.context['experiment_data']), 0)

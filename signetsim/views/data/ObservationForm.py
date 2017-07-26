@@ -40,37 +40,6 @@ class ObservationForm(ParentForm):
 		self.minTimeSteadyState = None
 		self.maxTimeSteadyState = None
 
-	def clear(self):
-
-		ParentForm.clear(self)
-		self.id = None
-		self.name = None
-		self.time = None
-		self.value = None
-		self.stddev = None
-		self.steadyState = False
-		self.minTimeSteadyState = None
-		self.maxTimeSteadyState = None
-
-
-	def load(self, request):
-
-		t_observation_id = self.readInt(request, 'id',
-									"The identifier of the observation to load")
-
-		if t_observation_id is not None:
-			observation = Observation.objects.get(id=t_observation_id)
-			self.id = observation.id
-			self.name = observation.species
-			self.time = observation.time
-			self.value = observation.value
-			self.stddev = observation.stddev
-			self.steadyState = observation.steady_state
-			self.minTimeSteadyState = observation.min_steady_state
-			self.maxTimeSteadyState = observation.max_steady_state
-			self.isEditing = True
-
-
 	def save(self):
 
 		if self.isNew():
@@ -108,7 +77,6 @@ class ObservationForm(ParentForm):
 		self.steadyState = self.readOnOff(request, 'steady_state',
 				"The settings describing if the observation is at steady state")
 
-		print self.steadyState
 		self.minTimeSteadyState = self.readFloat(request, 'min_steady_state',
 									"The minimum time to reach steady state",
 													required=self.steadyState)

@@ -24,3 +24,5 @@
 
 from GetExperiment import GetExperiment
 from GetCondition import GetCondition
+from GetTreatment import GetTreatment
+from GetObservation import GetObservation

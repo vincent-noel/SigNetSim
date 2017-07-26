@@ -35,33 +35,33 @@ class TreatmentForm(ParentForm):
 		self.name = None
 		self.time = None
 		self.value = None
-
-
-	def clear(self):
-
-		ParentForm.clear(self)
-		self.id = None
-		self.name = None
-		self.time = None
-		self.value = None
-
-
-	def load(self, request):
-
-		t_treatment_id = self.readInt(request, 'id',
-									"The identifier of the treatment")
-		# print request.POST['id']
-		# print t_treatment_id
-
-		self.printErrors()
-		if t_treatment_id is not None:
-			treatment = Treatment.objects.get(id=t_treatment_id)
-			self.id = treatment.id
-			self.name = treatment.species
-			self.time = treatment.time
-			self.value = treatment.value
-			self.isEditing = True
-			# print self.isEditing
+	#
+	#
+	# def clear(self):
+	#
+	# 	ParentForm.clear(self)
+	# 	self.id = None
+	# 	self.name = None
+	# 	self.time = None
+	# 	self.value = None
+	#
+	#
+	# def load(self, request):
+	#
+	# 	t_treatment_id = self.readInt(request, 'id',
+	# 								"The identifier of the treatment")
+	# 	# print request.POST['id']
+	# 	# print t_treatment_id
+	#
+	# 	self.printErrors()
+	# 	if t_treatment_id is not None:
+	# 		treatment = Treatment.objects.get(id=t_treatment_id)
+	# 		self.id = treatment.id
+	# 		self.name = treatment.species
+	# 		self.time = treatment.time
+	# 		self.value = treatment.value
+	# 		self.isEditing = True
+	# 		# print self.isEditing
 
 
 	def save(self):

@@ -47,67 +47,78 @@ var config_observations_graph =
       ],
   },
 
-  title:
+
+
+
+
+  options:
   {
-    display: true,
-    text: " Condition POIL",
-
-  },
-
-
-  legend:
-  {
-      display: true,
-      position: "bottom",
-
-      labels: {
-        padding: 40,
-
-      },
-      fullWidth: true,
-  },
-
-
-
-  options: {
-          scales: {
-              xAxes: [{
-                  type: 'linear',
-                  scaleLabel:
-                  {
-                      display: true,
-                      fontStyle: "bold",
-                      labelString: 'Time (minutes)'
-                  },
-                  position: 'bottom'
-              }],
-              yAxes: [
+      scales: {
+          xAxes: [{
+              type: 'linear',
+              scaleLabel:
               {
                   display: true,
-                  scaleLabel:
-                  {
-                      display: true,
-                      fontStyle: "bold",
-                      labelString: 'Concentration (nM)'
-                  },
-                  ticks: {
-                      beginAtZero: true,
-                  }
-              }],
+                  fontStyle: "bold",
+                  labelString: 'Time (minutes)'
+              },
+              position: 'bottom'
+          }],
+          yAxes: [
+          {
+              display: true,
+              scaleLabel:
+              {
+                  display: true,
+                  fontStyle: "bold",
+                  labelString: 'Concentration (nM)'
+              },
+              ticks: {
+                  beginAtZero: true,
+              }
+          }],
 
-          }
-      }
+      },
+       title:
+      {
+        display: true,
+        text: "{{ experiment_name }}, {{ condition_name }}",
+
+      },
+
+
+      legend:
+      {
+          display: true,
+          position: "bottom",
+
+          labels: {
+            padding: 40,
+
+          },
+          fullWidth: true,
+      },
+  }
 
 };
 
+var observations_chart;
+$(window).on('load', function() {
 
-$(window).on('load', function(){
+  ctx_observations_graph = document.getElementById("observations_graph").getContext("2d");
+  ctx_observations_graph.canvas.height = ctx_observations_graph.canvas.width*0.5;
+  var observations_chart = new Chart(ctx_observations_graph, config_observations_graph);
 
-
-  var ctx_observations_graph = document.getElementById("observations_graph").getContext("2d");
-  ctx_observations_graph.canvas.height = ctx_observations_graph.canvas.width*0.667;
-  window.myLine_observations_graph = new Chart(ctx_observations_graph, config_observations_graph);
-
-
+  update_charts_size();
 
 });
+
+$(window).on('resize', function() {
+    update_charts_size();
+});
+
+function update_charts_size() {
+    legend_height = observations_chart.legend.height;
+    $("#observations_graph").css("height", $("#observations_graph").width() * 0.5 + legend_height);
+}
+
