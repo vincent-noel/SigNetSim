@@ -281,4 +281,19 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 				self.listOfObjectsMetaIds.append(object.getMetaId())
 
 	def loadSubstitutions(self):
-		self.listOfSubstitutions = self.getModel().listOfSbmlObjects.getListOfSubstitutions_old()
+
+		self.listOfSubstitutions = []
+		for substitution in self.getModel().listOfSbmlObjects.getListOfSubstitutions():
+			if isinstance(substitution, ReplacedElement):
+				self.listOfSubstitutions.append((0,
+					substitution.getParentObject(),
+					[substitution.getSubmodelRef()],
+					substitution.getReplacedElementObject()
+				))
+
+			elif isinstance(substitution, ReplacedBy):
+				self.listOfSubstitutions.append((1,
+					substitution.getParentObject(),
+					[substitution.getSubmodelRef()],
+					substitution.getReplacingElement()
+				))
