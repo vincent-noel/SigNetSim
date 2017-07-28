@@ -65,13 +65,14 @@ class ModelUnitsView(TemplateView, HasWorkingModel):
 				self.deleteUnitDefinition(request)
 
 			elif request.POST['action'] == "save":
+				print "> Saving..."
 				self.saveUnitDefinition(request)
 
 		self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
 	def deleteUnitDefinition(self, request):
-		t_id = int(request.POST['unit_definition_id'])
+		t_id = int(request.POST['id'])
 		t_unit_definition = self.getModel().listOfUnitDefinitions.values()[t_id]
 		self.getModel().listOfUnitDefinitions.remove(t_unit_definition)
 		self.loadUnitDefinitions()
@@ -85,7 +86,8 @@ class ModelUnitsView(TemplateView, HasWorkingModel):
 				unit_definition = self.getModel().listOfUnitDefinitions.new()
 				self.form.save(unit_definition)
 			else:
-				unit_definition = self.getModel().listOfUnitDefinitions[int(request.POST['unit_definition_id'])]
+				print ">> existing"
+				unit_definition = self.getModel().listOfUnitDefinitions.values()[self.form.id]
 				self.form.save(unit_definition)
 
 		self.loadUnitDefinitions()

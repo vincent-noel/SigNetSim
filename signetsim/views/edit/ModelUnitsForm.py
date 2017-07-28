@@ -21,21 +21,35 @@
 	along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 """
-from signetsim.views.edit.ModelParametersForm import ModelParametersForm
+from signetsim.views.edit.ModelParentForm import ModelParentForm
 from libsignetsim.model.sbml.Unit import Unit
 
 
-class ModelUnitsForm(ModelParametersForm):
+class ModelUnitsForm(ModelParentForm):
 
 	template_name = 'edit/units.html'
 
 	def __init__(self, parent):
 
-		ModelParametersForm.__init__(self, parent)
+		ModelParentForm.__init__(self, parent)
 
 		self.name = None
 		self.unitId = None
 		self.listOfUnits = []
+
+	def save(self, unit_definition):
+
+		print self.name
+		print self.unitId
+		print self.listOfUnits
+		unit_definition.setName(str(self.name))
+		unit_definition.setSbmlId(str(self.unitId))
+		unit_definition.listOfUnits = []
+
+		for (kind, exponent, scale, multiplier) in self.listOfUnits:
+			t_unit = unit_definition.newUnit()
+			t_unit.new(kind, exponent, scale, multiplier)
+
 
 	def read(self, request):
 
@@ -79,4 +93,6 @@ class ModelUnitsForm(ModelParametersForm):
 				"the multiplier of the unit #%d" % i
 			)
 
-			self.listOfUnits.append((t_unit, t_exponent, t_scale, t_multiplier))
+			self.listOfUnits.append((Unit.unit_id.keys()[t_unit], t_exponent, t_scale, t_multiplier))
+
+			i += 1

@@ -8,7 +8,7 @@ function add_unit(unit_name, unit_kind, unit_kind_name, unit_exponent, unit_scal
 {
     $("#list_units").append("\
         <tr class=\"row\"><td class=\"col-xs-10\">" + unit_name.toString() + "\
-            <input type=\"hidden\" id=\"unit_id_" + nb_units.toString() + " name=\"unit_id_" + nb_units.toString() + "\" value=\"" + unit_kind.toString() + "\">\
+            <input type=\"hidden\" id=\"unit_id_" + nb_units.toString() + "\" name=\"unit_id_" + nb_units.toString() + "\" value=\"" + unit_kind.toString() + "\">\
             <input type=\"hidden\" id=\"unit_id_" + nb_units.toString() + "_name\" name=\"unit_id_" + nb_units.toString() + "_name\" value=\"" + unit_kind_name.toString() + "\">\
             <input type=\"hidden\" id=\"unit_exponent_" + nb_units.toString() + "\" name=\"unit_exponent_" + nb_units.toString() + "\" value=\"" + unit_exponent.toString() + "\">\
             <input type=\"hidden\" id=\"unit_scale_" + nb_units.toString() + "\" name=\"unit_scale_" + nb_units.toString() + "\" value=\"" + unit_scale.toString() + "\">\
@@ -61,6 +61,7 @@ function view_unit_definition(unit_id)
                        add_unit(subelement[0], subelement[1], subelement[2], subelement[3], subelement[4], subelement[5]);
                    });
                }
+               $("#unit_definition_id").val(unit_id);
            });
 
         },
@@ -77,7 +78,7 @@ function save_unit_definition()
 
     if (nb_errors == 0)
     {
-        // $("#species_form").submit();
+         $("#unit_form").submit();
     }
 }
 
