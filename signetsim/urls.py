@@ -33,6 +33,7 @@ from signetsim.json import GetContinuationFigure, GetListOfObjectsFromSubmodels
 from signetsim.json import GetSBOName, SetAccountActive, SetAccountStaff
 from signetsim.json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction, GetRule
 from signetsim.json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetListOfObjects
+from signetsim.json import GetUnitDefinition
 from signetsim.json import GetContinuationStatus, GetProject, GetExperiment, GetCondition, GetTreatment, GetObservation
 
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
@@ -131,6 +132,7 @@ urlpatterns = [
 	url(r'^json/get_event/$', GetEvent.as_view(), name='get_event'),
 	url(r'^json/get_submodel/$', GetSubmodel.as_view(), name='get_submodel'),
 	url(r'^json/get_substitution/$', GetSubstitution.as_view(), name='get_substitution'),
+	url(r'^json/get_unit_definition/$', GetUnitDefinition.as_view(), name='get_unit_definition'),
 	url(r'^json/get_sbo_name/$', GetSBOName.as_view(), name='get_sbo_name'),
 
 	url(r'^json/set_account_active/$', SetAccountActive.as_view(), name='set_account_active'),

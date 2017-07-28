@@ -75,9 +75,6 @@ class ModelRulesView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == 'delete':
 				self.delete(request)
 
-			# elif request.POST['action'] == "edit":
-			# 	self.edit(request)
-
 			elif request.POST['action'] == "save":
 				self.save(request)
 

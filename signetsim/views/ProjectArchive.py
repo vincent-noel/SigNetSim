@@ -23,12 +23,11 @@
 """
 
 from django.views.generic import TemplateView
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404, HttpResponseForbidden
 from signetsim.models import Project
 from signetsim.managers.projects import exportProject
 from os.path import basename
 from django.shortcuts import redirect
-
 
 class ProjectArchive(TemplateView):
 
@@ -38,17 +37,22 @@ class ProjectArchive(TemplateView):
 
 		TemplateView.__init__(self, **kwargs)
 
-	def get_context_data(self, **kwargs):
-		return kwargs
-
-
 	def get(self, request, *args, **kwargs):
 
 		if len(args) > 0:
-			project = Project.objects.get(folder=str(args[0]))
-			filename = exportProject(project)
-			response = HttpResponse(open(filename, 'rb'), content_type='application/zip')
-			response['Content-Disposition'] = 'attachment; filename=' + basename(filename)
-			return response
+			if Project.objects.filter(folder=str(args[0])).exists():
+
+				project = Project.objects.get(folder=str(args[0]))
+
+				if project.access == 'PU' or project.user == request.user:
+					filename = exportProject(project)
+					response = HttpResponse(open(filename, 'rb'), content_type='application/zip')
+					response['Content-Disposition'] = 'attachment; filename=' + basename(filename)
+					return response
+
+				else:
+					raise HttpResponseForbidden
+			else:
+				raise Http404("Project doesn't exists")
 
 		redirect('projects')
