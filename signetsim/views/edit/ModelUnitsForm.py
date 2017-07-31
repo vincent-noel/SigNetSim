@@ -39,9 +39,6 @@ class ModelUnitsForm(ModelParentForm):
 
 	def save(self, unit_definition):
 
-		print self.name
-		print self.unitId
-		print self.listOfUnits
 		unit_definition.setName(str(self.name))
 		unit_definition.setSbmlId(str(self.unitId))
 		unit_definition.listOfUnits = []

@@ -65,7 +65,6 @@ class ModelUnitsView(TemplateView, HasWorkingModel):
 				self.deleteUnitDefinition(request)
 
 			elif request.POST['action'] == "save":
-				print "> Saving..."
 				self.saveUnitDefinition(request)
 
 		self.savePickledModel(request)
@@ -86,7 +85,6 @@ class ModelUnitsView(TemplateView, HasWorkingModel):
 				unit_definition = self.getModel().listOfUnitDefinitions.new()
 				self.form.save(unit_definition)
 			else:
-				print ">> existing"
 				unit_definition = self.getModel().listOfUnitDefinitions.values()[self.form.id]
 				self.form.save(unit_definition)
 
