@@ -23,13 +23,10 @@
 
 """
 
-from django.conf import settings
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.Variable import Variable
-from os.path import join
-
 from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
+
+from libsignetsim.model.Variable import Variable
 
 
 class GetListOfObjectsFromSubmodels(JsonRequest, HasWorkingModel):
@@ -42,27 +39,19 @@ class GetListOfObjectsFromSubmodels(JsonRequest, HasWorkingModel):
 	def post(self, request, *args, **kwargs):
 		self.load(request, *args, **kwargs)
 
-		t_list = self.getListOfObjects(request)
-		self.data.update({'list': t_list})
+		self.data.update({'list': self.getListOfObjects(request)})
 
 		return JsonRequest.post(self, request, *args, **kwargs)
-
-
-	def load(self, request, *args, **kwargs):
-		HasWorkingModel.load(self, request, *args, **kwargs)
 
 
 	def getListOfObjects(self, request):
 
 		if str(request.POST['model_id']) != "":
 			submodel = self.getModel().listOfSubmodels.values()[int(request.POST['model_id'])].getModelObject()
-			# list_of_project_models = self.getModelSBMLSubmodels(request)
-			# doc = list_of_project_models[int(request.POST['model_id'])]
 
 			self.listOfObjects = []
 			for t_object in submodel.listOfSbmlObjects.values():
 				if isinstance(t_object, Variable) and not t_object.isStoichiometry():
 					self.listOfObjects.append(t_object.getNameOrSbmlId() + (" (%s)" % type(t_object).__name__))
 
-			# print self.listOfObjects
 			return self.listOfObjects
