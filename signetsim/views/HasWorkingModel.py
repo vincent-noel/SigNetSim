@@ -126,14 +126,28 @@ class HasWorkingModel(HasWorkingProject):
 	def saveModelHistory(self, request):
 		if self.model.sbmlLevel >= 2:
 
-
 			creator = self.model.modelHistory.createCreator()
 			if str(request.user.email) not in self.model.modelHistory.getListOfCreatorsEmails():
 				creator = self.model.modelHistory.createCreator()
-				creator.setGivenName(request.user.first_name.encode('utf-8'))
-				creator.setEmail(request.user.email.encode('utf-8'))
-				creator.setOrganization(request.user.organization.encode('utf-8'))
-				creator.setFamilyName(request.user.last_name.encode('utf-8'))
+				if request.user.first_name is not None:
+					creator.setGivenName(request.user.first_name.encode('utf-8'))
+				else:
+					creator.setGivenName("")
+
+				if request.user.last_name is not None:
+					creator.setFamilyName(request.user.last_name.encode('utf-8'))
+				else:
+					creator.setFamilyName("")
+
+				if request.user.email is not None:
+					creator.setEmail(request.user.email.encode('utf-8'))
+				else:
+					creator.setEmail("")
+
+				if request.user.organization is not None:
+					creator.setOrganization(request.user.organization.encode('utf-8'))
+				else:
+					creator.setOrganization("")
 
 			date = Date()
 			now = datetime.datetime.now()
