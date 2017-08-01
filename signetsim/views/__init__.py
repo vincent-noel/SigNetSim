@@ -30,7 +30,7 @@ from edit import ModelUnitsView, ModelEventsView, ModelMiscView, ModelSubmodelsV
 
 from simulate import TimeSeriesSimulationView, SteadyStateSimulationView, ListOfSimulationsView, SedmlSimulationView
 
-from fit import ListOfOptimizationsView, OptimizationResultView, DataOptimizationView, DataOptimizationView0
+from fit import ListOfOptimizationsView, OptimizationResultView, DataOptimizationView
 from fit import ModelOptimizationView
 
 from analyse import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView

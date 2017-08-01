@@ -22,9 +22,7 @@
 
 {% block view_name %}Simulate steady states{% endblock view_name %}
 {% block header_js %}
-  {% if simulation_results_loaded == True %}
-    <script src="{% static "chart.js/dist/Chart.js" %}"></script>
-  {% endif %}
+	<script src="{% static "chart.js/dist/Chart.js" %}"></script>
 {% endblock header_js %}
 {% block view_sidebar %}{% include 'simulate/menu.html' %}{% endblock view_sidebar %}
 {% block view_content %}
@@ -35,24 +33,14 @@
   <div class="container-fluid">
     {% if species %}
     <div class="form-group">
-      <form class="form-vertical" method="POST" action="{% url 'simulate_steady_states' %}">
+      <form class="form-vertical" method="POST">
         {% csrf_token %}
-        {% if species %}
-        <label>Species to plot (hold shift to select more than one):</label>
-        {% with species|my_len as len_species %}
-        <select multiple class="form-control" id="sel2" name="species_selected" size="{% if len_species > 10 %}10{% else %}{{len_species}}{% endif %}">
-        {% endwith %}
-          {% for specie in species %}
-          <option {% if forloop.counter0 in ids_species_selected %}selected{% endif %} name="{{ forloop.counter0 }}" id="{{ forloop.counter0 }}" value="{{ forloop.counter0 }}">{{specie.getNameOrSbmlId}}</option>
-          {% endfor %}
-        </select>
-        <br/>
-        {% endif %}
+				{% include 'simulate/form_variable_selector.html' %}
         <label>Input species</label>
-        <input type="hidden" name="species_id" value="" id="species_id">
+        <input type="hidden" name="species_id" value="{{ form.speciesId }}" id="species_id">
         <div class="dropdown">
           <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-            <span id="species_name">{% if species_name != None %}{{ species_name }}{% else %}Choose a species {% endif %}</span>
+            <span id="species_name">{% if form.speciesName %}{{ form.speciesName }}{% else %}Choose a species {% endif %}</span>
             <span class="caret"></span>
           </button>
           <ul id="species_list" class="dropdown-menu">
@@ -62,25 +50,27 @@
           </ul>
         </div>
         <br/>
-        <label>Values to plot</label><input type="text" ID="ss_to_plot" class="form-control" name="ss_to_plot" value="{% if ss_to_plot %}{{ss_to_plot}}{% else %}0{% endif %}"></input>
-        <br/>
-        <label>Minimum time to reach steady state</label><input type="text" ID="time_min" class="form-control" name="time_min" value="{% if t_min %}{{t_min}}{% else %}0{% endif %}"></input>
-        <br/>
-        <label>Maximum time to reach steady state</label><input type="text" ID="time_max" class="form-control" name="time_max" value="{% if t_max %}{{t_max}}{% else %}1000{% endif %}"></input>
-        <br/><br/>
-        <input type="hidden" ID="model_id" name="model_id" value="{{model_id}}"></input>
-        <input type="hidden" ID="wdth" name="wdth"></input>
+        <label>Values to plot</label>
+				<input type="text" ID="ss_to_plot" class="form-control" name="ss_to_plot"
+							 value="{% if form.steady_states_str %}{{form.steady_states_str}}{% else %}0{% endif %}"/>
+        <div class="collapse" id="options">
+				<br/>
+        <label>Maximum time to reach steady state</label>
+				<input type="text" ID="time_max" class="form-control" name="time_max"
+							 value="{% if form.timeMax %}{{form.timeMax}}{% else %}1000{% endif %}"/>
+				</div>
+				<br/><br/>
         <div class="row">
           <div class="col-xs-6">
             <button type="submit" name="action" value="simulate_steady_states" class="btn btn-primary">Simulate</button>
           </div>
           <div class="col-xs-6 text-right">
-            <button type="button" class="btn btn-primary">More options</button>
+            <button type="button" class="btn btn-primary" id="toggle_options">More options</button>
           </div>
         </div>
 
       </form>
-    </div>
+    </form>
   </div>
 
   {% endif %}
@@ -92,16 +82,15 @@
     <strong>Error :</strong> {{ simulation_error_message }}
   </div>
   {% endif %}
-
-
-    <br/><br/><br/>
-    <div>
-        <canvas id="canvas"></canvas>
-    </div>
-
-    <script>
-    {% include 'simulate/steadystates_graph.js' %}
-    </script>
+	{% if sim_results %}
+	<br/><br/>
+	<div>
+			<canvas id="canvas"></canvas>
+	</div>
+	{% endif %}
+	<script>
+	{% include 'simulate/steadystates_graph.js' %}
+	</script>
 
 
 </div>
@@ -122,4 +111,15 @@ $('#species_list li').on('click', function(){
 {{ block.super }}
 
 
+$('#toggle_options').on('click', function(){
+
+  if($("#options").hasClass("in")) {
+    $("#options").removeClass("in");
+{#    $("#options_2").removeClass("in");#}
+
+  } else {
+    $("#options").addClass("in");
+{#    $("#options_2").addClass("in");#}
+  }
+});
 {% endblock js %}

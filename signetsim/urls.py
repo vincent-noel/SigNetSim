@@ -37,7 +37,7 @@ from signetsim.json import GetUnitDefinition
 from signetsim.json import GetContinuationStatus, GetProject, GetExperiment, GetCondition, GetTreatment, GetObservation
 
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
-from views import DataOptimizationView, DataOptimizationView0, ModelOptimizationView
+from views import DataOptimizationView, ModelOptimizationView
 from views import DataView, ExperimentView, ConditionView, DataArchive
 from views import HelpView, SuccessView
 from views import ListOfModelsView, ListOfProjectsView, ProjectArchive

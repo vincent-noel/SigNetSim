@@ -23,9 +23,7 @@
 {% block view_name %}Simulate model{% endblock view_name %}
 {% block view_sidebar %}{% include 'simulate/menu.html' %}{% endblock view_sidebar %}
 {% block header_js %}
-  {% if simulation_results_loaded == True %}
-    <script src="{% static 'chart.js/dist/Chart.js' %}"></script>
-  {% endif %}
+	<script src="{% static 'chart.js/dist/Chart.js' %}"></script>
 {% endblock header_js %}
 
 {% block view_content %}
@@ -40,20 +38,20 @@
         {% include 'simulate/form_variable_selector.html' %}
         <div class="collapse" id="options">
           <label>Start time</label>
-          <input type="text" ID="time_min" Class="form-control" name="time_min" value="{% if t_min %}{{t_min}}{% else %}0{% endif %}"/>
+          <input type="text" ID="time_min" Class="form-control" name="time_min" value="{% if form.timeMin %}{{form.timeMin}}{% else %}0{% endif %}"/>
           <br/>
           <label>Sampling</label>
-          <input type="text" ID="time_ech" Class="form-control" name="time_ech" value="{% if t_ech %}{{t_ech}}{% else %}10{% endif %}"/>
+          <input type="text" ID="time_ech" Class="form-control" name="time_ech" value="{% if form.timeEch %}{{form.timeEch}}{% else %}10{% endif %}"/>
           <br/>
         </div>
         <label>Duration</label>
-        <input type="text" ID="time_max" Class="form-control" name="time_max" value="{% if t_max %}{{t_max}}{% else %}100{% endif %}"/>
+        <input type="text" ID="time_max" Class="form-control" name="time_max" value="{% if form.timeMax %}{{form.timeMax}}{% else %}100{% endif %}"/>
         <br/>
         <div class="collapse" id="options_2">
 					<label>Use initial conditions from experiment</label>
 					<div class="dropdown" style="width:100%">
 						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" style="width:100%" data-toggle="dropdown">
-							<span id="experiment_name" class="dropdown-text">{% if experiment_id != None %}{{experiment_name}}{% else %}Select an experiment{% endif %}</span>
+							<span id="experiment_name" class="dropdown-text">{% if form.experimentId != None %}{{experiment_name}}{% else %}Select an experiment{% endif %}</span>
 							<span class="glyphicon glyphicon-triangle-bottom"></span>
 						</button>
 						<ul id="experiment_list" class="dropdown-menu" style="width:100%">
@@ -92,68 +90,29 @@
           </div>
           <div class="col-xs-4 text-center">
             {% if sim_results|length > 0 %}
-            <button type="submit"  name="action" value="save_simulation" class="btn btn-primary">Save as SED-ML</button>
+            <button type="submit"  name="action" value="save_simulation" class="btn btn-primary">Save</button>
             {% endif %}
           </div>
           <div class="col-xs-4 text-right">
-            <button type="button" id="toggle_options" class="btn btn-primary">More options</button>
+            <button type="button" id="toggle_options" class="btn btn-primary">More</button>
           </div>
         </div>
       </form>
     </div>
   </div>
+	<div class="container-fluid" id="plots_container">
 
-  {% for t, y in sim_results %}
-  <br/><br/><br/>
-  <div>
-      <canvas id="canvas_{{forloop.counter0}}"></canvas>
-  </div>
-  {% endfor %}
-
-  <script>
-  {% include 'simulate/timeseries_graph.js' %}
-  </script>
-
+		{% for t, y in sim_results %}
+		<br/><br/>
+		<div>
+				<canvas id="canvas_{{forloop.counter0}}"></canvas>
+		</div>
+		{% endfor %}
+	</div>
 </div>
 
 {% endblock view_content %}
 {% block js %}
-
-
-{% if model_id != None %}
-
-$('#toggle_options').on('click', function(){
-
-  if($("#options").hasClass("in")) {
-    $("#options").removeClass("in");
-    $("#options_2").removeClass("in");
-
-  } else {
-    $("#options").addClass("in");
-    $("#options_2").addClass("in");
-  }
-});
-
-function toggle_slide(slide_id) {
-  if ($('#' + slide_id).prop('checked') == true) {
-    $('#' + slide_id).prop("checked", false);
-  } else {
-    $('#' + slide_id).prop("checked", true);
-  }
-}
-
-function toggle_observations() {
-  toggle_slide('show_observations');
-}
-
-$('#experiment_list li').on('click', function(){
-  $("#experiment_name").html($(this).text());
-  $('#experiment_id').val($(this).index());
-  $("#experiment_selected").addClass("in");
-
-});
-{% endif %}
-
-{{ block.super }}
-
+	{{ block.super }}
+	{% include 'simulate/timeseries_graph.js' %}
 {% endblock js %}

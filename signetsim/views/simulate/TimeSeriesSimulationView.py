@@ -22,25 +22,23 @@
 
 """
 
-from libsignetsim.model.Model import Model
-from libsignetsim.model.ModelException import ModelException
-from libsignetsim.simulation.TimeseriesSimulation import TimeseriesSimulation
-from libsignetsim.simulation.SimulationException import SimulationException
-from libsignetsim.data.ExperimentalCondition import ExperimentalCondition
-from libsignetsim.data.ExperimentalData import ExperimentalData
-from libsignetsim.data.ListOfExperimentalData import ListOfExperimentalData
-from libsignetsim.data.Experiment import Experiment as SigNetSimExperiment
-from libsignetsim.LibSigNetSimException import UnknownObservationException, UnknownTreatmentException
 from django.views.generic import TemplateView
-from django.conf import settings
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.models import SbmlModel, Experiment, Condition, Observation, Treatment, SEDMLSimulation, new_sedml_filename
-from signetsim.settings.Settings import Settings
-from TimeSeriesSimulationForm import TimeSeriesSimulationForm
-from django.shortcuts import redirect
 from signetsim.views.simulate.SedmlWriter import SedmlWriter
-from os.path import basename, join
+
+from signetsim.views.simulate.TimeSeriesSimulationForm import TimeSeriesSimulationForm
+from signetsim.models import Experiment, Condition, Treatment, SEDMLSimulation, new_sedml_filename
+from signetsim.managers.data import buildExperiment
+from signetsim.settings.Settings import Settings
+
+from libsignetsim.simulation.TimeseriesSimulation import TimeseriesSimulation
+from libsignetsim.LibSigNetSimException import LibSigNetSimException
+
+from django.conf import settings
 from django.core.files import File
+from django.shortcuts import redirect
+
+from os.path import basename, join
 
 
 class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
@@ -63,14 +61,13 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 
 		self.observations = None
 
-		self.simulationResultsLoaded = None
-		self.ts = None
-		self.ys = None
 		self.simResults = None
 		self.t_unit = None
 		self.y_unit = None
 		self.y_max = 0
-		self.conditionNames = None
+
+		self.experiment = None
+
 
 	def get_context_data(self, **kwargs):
 
@@ -80,18 +77,12 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		kwargs['reactions'] = self.listOfReactions
 		kwargs['experiments'] = self.experiments
 
-		kwargs['experiment_id'] = self.form.experimentId
-		kwargs['experiment_name'] = self.experimentName
-		kwargs['experiment_nb_conditions'] = self.nbConditions
-		kwargs['experiment_conditions_names'] = self.conditionNames
-		kwargs['experiment_observations'] = self.observations
+		if self.experiment is not None:
+			kwargs['experiment_name'] = self.experiment.name
+			kwargs['experiment_observations'] = [condition.listOfExperimentalData for condition in self.experiment.listOfConditions.values()]
 
 		kwargs['ids_species_selected'] = self.form.selectedSpeciesIds
 		kwargs['ids_reactions_selected'] = self.form.selectedReactionsIds
-
-		kwargs['t_min'] = self.form.timeMin
-		kwargs['t_ech'] = self.form.timeEch
-		kwargs['t_max'] = self.form.timeMax
 
 		kwargs['sim_results'] = self.simResults
 		kwargs['t_unit'] = self.t_unit
@@ -99,7 +90,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		kwargs['y_max'] = self.y_max
 		kwargs['colors'] = Settings.default_colors
 
-		kwargs['simulation_results_loaded'] = self.simulationResultsLoaded
+		# kwargs['simulation_results_loaded'] = self.simulationResultsLoaded
 
 		kwargs['form'] = self.form
 		return kwargs
@@ -137,30 +128,9 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			self.loadReactions()
 			self.loadExperiments(request)
 
-
-	def simulate_timeseries(self, request):
-
-		self.loadExperiments(request)
-		self.experiment = None
-
-		if self.form.experimentId is not None:
-			self.buildExperiment(request)
-
-
-		t_simulation = TimeseriesSimulation(
-			list_of_models=[self.getModelInstance()],
-			experiment=self.experiment,
-			time_min=self.form.timeMin,
-			time_max=self.form.timeMax,
-			time_ech=self.form.timeEch)
-
-		t_simulation.run()
-
-		return t_simulation.getRawData()
-
-
 	def read_timeseries(self, results):
 
+		# generating results
 		self.simResults = []
 		for i, result in enumerate(results):
 			(t_t, t_y) = result
@@ -172,20 +142,22 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 					t_name = self.listOfVariables[var].getNameOrSbmlId()
 					if self.form.showObservations == True:
 						t_name += " (model)"
-					y_filtered.update({t_name:t_y[t_sbml_id]})
+					y_filtered.update({t_name: t_y[t_sbml_id]})
 
 			if self.form.selectedReactionsIds is not None:
 				for var in self.form.selectedReactionsIds:
 					t_sbml_id = self.listOfReactions[var].getSbmlId()
 					t_name = self.listOfReactions[var].getNameOrSbmlId()
-					y_filtered.update({t_name:t_y[t_sbml_id]})
+					y_filtered.update({t_name: t_y[t_sbml_id]})
 
 			if self.experiment is not None:
 				self.simResults.append((t_t, y_filtered, self.experiment.listOfConditions[i].name))
 			else:
 				self.simResults.append((t_t, y_filtered, ""))
+
+		# Units and max
 		tmax=0
-		for time, y_values,_ in self.simResults:
+		for time, y_values, _ in self.simResults:
 			for key, value in y_values.items():
 				for t_value in value:
 					tmax = max(tmax, t_value)
@@ -205,36 +177,32 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			and self.listOfVariables[self.form.selectedReactionsIds[0]].getUnits() is not None):
 			self.y_unit = self.listOfVariables[self.form.selectedReactionsIds[0]].getUnits().getNameOrSbmlId()
 
-		self.simulationResultsLoaded = True
-
 
 	def simulateModel(self, request):
 
 		self.form.read(request)
 		if not self.form.hasErrors():
 
-			self.loadExperiments(request)
 			self.experiment = None
-
 			if self.form.experimentId is not None:
-				self.buildExperiment(request)
+				t_experiment = Experiment.objects.get(id=self.experiments[self.form.experimentId].id)
+				self.experiment = buildExperiment(t_experiment)
 
 			try:
-				results = self.simulate_timeseries(request)
+				t_simulation = TimeseriesSimulation(
+					list_of_models=[self.getModelInstance()],
+					experiment=self.experiment,
+					time_min=self.form.timeMin,
+					time_max=self.form.timeMax,
+					time_ech=self.form.timeEch)
+
+				t_simulation.run()
+
+				results = t_simulation.getRawData()
 				self.read_timeseries(results)
 
-			except SimulationException as e:
+			except LibSigNetSimException as e:
 				self.form.addError(e.message)
-
-			except ModelException as e:
-				self.form.addError(e.message)
-
-			except UnknownObservationException as e:
-				self.form.addError(e.message)
-
-			except UnknownTreatmentException as e:
-				self.form.addError(e.message)
-
 
 
 	def saveSimulation(self, request):
@@ -314,51 +282,3 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 	def loadReactions(self):
 		self.listOfReactions = [obj for obj in self.getModelInstance().listOfVariables.values() if obj.isReaction()]
 
-
-	def buildExperiment(self, request):
-
-		t_experiment_id = self.experiments[self.form.experimentId].id
-
-		experiment = Experiment.objects.get(id=t_experiment_id)
-
-		conditions = Condition.objects.filter(experiment=experiment)
-
-		self.nbConditions = len(conditions)
-		self.experimentName = experiment.name
-		self.experiment = SigNetSimExperiment()
-		self.conditionNames = []
-		self.observations = []
-
-		for condition in conditions:
-			self.conditionNames.append(str(condition.name))
-			observed_data = Observation.objects.filter(condition=condition)
-			list_of_experimental_data = ListOfExperimentalData()
-			for data in observed_data:
-				t_experimental_data = ExperimentalData()
-				t_experimental_data.readDB(
-						data.species, data.time, data.value, data.stddev,
-						data.steady_state, data.min_steady_state,
-						data.max_steady_state)
-
-				list_of_experimental_data.add(t_experimental_data)
-
-
-			if self.form.showObservations == True:
-				self.observations.append(list_of_experimental_data.getValues())
-
-			input_data = Treatment.objects.filter(condition=condition)
-
-			list_of_input_data = ListOfExperimentalData()
-			for data in input_data:
-				t_experimental_data = ExperimentalData()
-				t_experimental_data.readDB(
-						data.species, data.time, data.value)
-				list_of_input_data.add(t_experimental_data)
-
-			t_condition = ExperimentalCondition()
-			t_condition.read(list_of_input_data, list_of_experimental_data)
-			t_condition.name = condition.name
-
-			self.experiment.addCondition(t_condition)
-
-		self.experiment.name = experiment.name

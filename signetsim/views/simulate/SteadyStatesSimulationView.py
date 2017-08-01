@@ -22,26 +22,16 @@
 
 """
 
-from libsignetsim.simulation.SimulationException import SimulationException
-from libsignetsim.data.ExperimentalCondition import ExperimentalCondition
-from libsignetsim.data.ExperimentalData import ExperimentalData
-from libsignetsim.data.ListOfExperimentalData import ListOfExperimentalData
-from libsignetsim.data.Experiment import Experiment as SigNetSimExperiment
 from signetsim.models import SbmlModel, Experiment, Condition, Observation, Treatment
 
-from libsignetsim.model.Model import Model
-from libsignetsim.model.ModelException import ModelException
+from libsignetsim.LibSigNetSimException import LibSigNetSimException
 from libsignetsim.simulation.SteadyStatesSimulation import SteadyStatesSimulation
-from libsignetsim.simulation.SimulationException import SimulationException
 
 from django.views.generic import TemplateView
-from django.core.exceptions import ObjectDoesNotExist
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.simulate.SteadyStatesSimulationForm import SteadyStateSimulationForm
-from signetsim.models import SbmlModel
 from signetsim.settings.Settings import Settings
-# from re import split
 
 class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 
@@ -61,9 +51,6 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 		self.experimentName = None
 
 		self.observations = None
-		self.simulationResultsLoaded = None
-		self.ts = None
-		self.ys = None
 		self.simResults = None
 		self.t_unit = None
 		self.y_unit = None
@@ -80,9 +67,6 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 		kwargs['ids_species_selected'] = self.form.selectedSpeciesIds
 		kwargs['ids_reactions_selected'] = self.form.selectedReactionsIds
 
-		kwargs['t_min'] = self.form.timeMin
-		kwargs['t_max'] = self.form.timeMax
-
 		kwargs['steady_states'] = self.form.steady_states
 		kwargs['sim_results'] = self.simResults
 		kwargs['t_unit'] = self.t_unit
@@ -90,7 +74,7 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 		kwargs['y_max'] = self.y_max
 		kwargs['colors'] = Settings.default_colors
 
-		kwargs['simulation_results_loaded'] = self.simulationResultsLoaded
+		# kwargs['simulation_results_loaded'] = self.simulationResultsLoaded
 
 		kwargs['form'] = self.form
 		return kwargs
@@ -131,86 +115,73 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 							list_of_models=[self.model],
 							species_input=self.listOfVariables[self.form.speciesId],
 							list_of_initial_values=self.form.steady_states,
-							time_min=self.form.timeMin,
-							time_max=self.form.timeMax)
+		)
 
 		t_simulation.run()
-
 		t_y = {}
 		for species in self.form.selectedSpeciesIds:
-			t_list = []
-			for iss, ss in enumerate(self.form.steady_states):
-				t_list.append(t_simulation.listOfData_v2[iss][self.listOfVariables[species].getSbmlId()])
-
-			print t_list
+			t_list = t_simulation.getRawData()[self.listOfVariables[species].getSbmlId()]
 			t_y.update({self.listOfVariables[species].getNameOrSbmlId(): t_list})
-
+		for reaction in self.form.selectedReactionsIds:
+			t_list = t_simulation.getRawData()[self.listOfReactions[reaction].getSbmlId()]
+			t_y.update({self.listOfReactions[reaction].getNameOrSbmlId(): t_list})
 		self.simResults = t_y
-		self.simulationResultsLoaded = True
 
 
-	def read_timeseries(self, results):
-
-		self.simResults = []
-		for result in results:
-			(t_t, t_y) = result
-
-			y_filtered = {}
-			if self.form.selectedSpeciesIds is not None:
-				for var in self.form.selectedSpeciesIds:
-					t_sbml_id = self.listOfVariables[var].getSbmlId()
-					t_name = self.listOfVariables[var].getNameOrSbmlId()
-					if self.form.showObservations == True:
-						t_name += " (model)"
-					y_filtered.update({t_name:t_y[t_sbml_id]})
-
-			if self.form.selectedReactionsIds is not None:
-				for var in self.form.selectedReactionsIds:
-					t_sbml_id = self.listOfReactions[var].getSbmlId()
-					t_name = self.listOfReactions[var].getNameOrSbmlId()
-					y_filtered.update({t_name:t_y[t_sbml_id]})
-
-			self.simResults.append((t_t, y_filtered))
-
-
-		tmax=0
-		for time, y_values in self.simResults:
-			for key, value in y_values.items():
-				for t_value in value:
-					tmax = max(tmax, t_value)
-
-		self.y_max = tmax*1.1
-
-		if self.getModelInstance().timeUnits is not None:
-			self.t_unit = self.getModelInstance().timeUnits.getName()
-
-		if (self.form.selectedSpeciesIds is not None
-			and len(self.form.selectedSpeciesIds) > 0
-			and self.listOfVariables[self.form.selectedSpeciesIds[0]].getUnits() is not None):
-			self.y_unit = self.listOfVariables[self.form.selectedSpeciesIds[0]].getUnits().getNameOrSbmlId()
-
-		if (self.form.selectedReactionsIds is not None
-			and len(self.form.selectedReactionsIds) > 0
-			and self.listOfVariables[self.form.selectedReactionsIds[0]].getUnits() is not None):
-			self.y_unit = self.listOfVariables[self.form.selectedReactionsIds[0]].getUnits().getNameOrSbmlId()
-
-		self.simulationResultsLoaded = True
-
+	# def read_timeseries(self, results):
+	#
+	# 	self.simResults = []
+	# 	for result in results:
+	# 		(t_t, t_y) = result
+	#
+	# 		y_filtered = {}
+	# 		if self.form.selectedSpeciesIds is not None:
+	# 			for var in self.form.selectedSpeciesIds:
+	# 				t_sbml_id = self.listOfVariables[var].getSbmlId()
+	# 				t_name = self.listOfVariables[var].getNameOrSbmlId()
+	# 				if self.form.showObservations == True:
+	# 					t_name += " (model)"
+	# 				y_filtered.update({t_name:t_y[t_sbml_id]})
+	#
+	# 		if self.form.selectedReactionsIds is not None:
+	# 			for var in self.form.selectedReactionsIds:
+	# 				t_sbml_id = self.listOfReactions[var].getSbmlId()
+	# 				t_name = self.listOfReactions[var].getNameOrSbmlId()
+	# 				y_filtered.update({t_name:t_y[t_sbml_id]})
+	#
+	# 		self.simResults.append((t_t, y_filtered))
+	#
+	#
+	# 	tmax=0
+	# 	for time, y_values in self.simResults:
+	# 		for key, value in y_values.items():
+	# 			for t_value in value:
+	# 				tmax = max(tmax, t_value)
+	#
+	# 	self.y_max = tmax*1.1
+	#
+		# if self.getModelInstance().timeUnits is not None:
+		# 	self.t_unit = self.getModelInstance().timeUnits.getName()
+		#
+		# if (self.form.selectedSpeciesIds is not None
+		# 	and len(self.form.selectedSpeciesIds) > 0
+		# 	and self.listOfVariables[self.form.selectedSpeciesIds[0]].getUnits() is not None):
+		# 	self.y_unit = self.listOfVariables[self.form.selectedSpeciesIds[0]].getUnits().getNameOrSbmlId()
+		#
+		# if (self.form.selectedReactionsIds is not None
+		# 	and len(self.form.selectedReactionsIds) > 0
+		# 	and self.listOfVariables[self.form.selectedReactionsIds[0]].getUnits() is not None):
+		# 	self.y_unit = self.listOfVariables[self.form.selectedReactionsIds[0]].getUnits().getNameOrSbmlId()
 
 	def simulateModel(self, request):
 
 		self.form.read(request)
 		if not self.form.hasErrors():
 			try:
-				results = self.simulate_steady_states(request)
-				# self.read_timeseries(results)
+				self.simulate_steady_states(request)
 
-			except SimulationException as e:
+			except LibSigNetSimException as e:
 				self.form.addError(e.message)
-
-			except ModelException as e:
-				self.form.addError(e.message)
-
 
 	def loadExperiments(self, request):
 		self.experiments = Experiment.objects.filter(project = self.project)

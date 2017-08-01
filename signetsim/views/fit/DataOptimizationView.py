@@ -123,9 +123,8 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 
 		experiments = self.form.buildExperiments(request)
 		t_optimization = ModelVsTimeseriesOptimization(
-							workingModel = self.model,
-							list_of_experiments = experiments,
-							# mapping=self.speciesMapping,
+							workingModel=self.model,
+							list_of_experiments=experiments,
 							parameters_to_fit=t_parameters)
 		t_optimization.setTempDirectory(os.path.join(self.getProjectFolder(), "optimizations"))
 		nb_procs = 2

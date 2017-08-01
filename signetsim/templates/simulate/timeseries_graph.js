@@ -42,13 +42,13 @@ var config_{{forloop.counter0}}=
         {% endfor %}
 
         {% with t_observation=experiment_observations|my_lookup:forloop.counter0 %}
-        {%  for id, t_values in t_observation.items %}
+        {% for name in t_observation.getSpecies %}
         {
 
-            label: "{{id}} (Data)",
+            label: "{{name}} (Data)",
             data: [
-                {% for tt_t, tt_y in t_values %}
-                {x: {{tt_t}}, y: {{tt_y}}},
+                {% for data in t_observation.getByVariable|my_lookup:name %}
+                {x: {{data.t}}, y: {{data.value}}},
                 {% endfor %}
             ],
 
@@ -58,28 +58,15 @@ var config_{{forloop.counter0}}=
             {% with t_ind_color=forloop.counter0|add:t_length %}
             backgroundColor: "{{colors|get_color:t_ind_color}}",
             borderColor: "{{colors|get_color:t_ind_color}}",
+            showLine: false,
             {% endwith %}
             {% endwith %}
-            cubicInterpolationMode: "monotone",
         },
         {% endfor %}
         {% endwith %}
 
         ],
     },
-
-
-
-
-    legend:
-    {
-        display: true,
-        position: 'bottom',
-
-        fullWidth: true,
-    },
-
-
 
     options:
     {
@@ -106,22 +93,83 @@ var config_{{forloop.counter0}}=
         },
         title:
         {
-          display: true,
-          text: " Condition #{{forloop.counter0}} : {{name}}",
-
+            display: true,
+            {% if sim_results|length > 1 %}
+            text: " Condition #{{forloop.counter0}} : {{name}}",
+            {% else  %}
+            text: "{{ name }}",
+            {% endif %}
         },
+        legend:
+        {
+            display: true,
+            position: 'bottom',
+
+            fullWidth: true,
+        },
+        maintainAspectRatio: false,
+
     }
 };
+{% endfor %}
+{% for _ in sim_results %}
+var chart_{{ forloop.counter0 }} = null;
 {% endfor %}
 
 $(window).on('load', function() {
 
+console.log('load');
+{% for _ in sim_results %}
+    ctx_{{forloop.counter0}} = document.getElementById("canvas_{{forloop.counter0}}").getContext("2d");
+    ctx_{{forloop.counter0}}.canvas.height = $("#plots_container").width()*0.5;
+    var chart_{{forloop.counter0}} = new Chart(ctx_{{forloop.counter0}}, config_{{forloop.counter0}});
+    update_charts_size()
 
-{% for t,y in sim_results %}
-  var ctx_{{forloop.counter0}} = document.getElementById("canvas_{{forloop.counter0}}").getContext("2d");
-  ctx_{{forloop.counter0}}.canvas.height = ctx_{{forloop.counter0}}.canvas.width*0.5;
-  ctx_{{forloop.counter0}}.scale(10, 10);
-  window.myLine_{{forloop.counter0}} = new Chart(ctx_{{forloop.counter0}}, config_{{forloop.counter0}});
 {% endfor %}
+
+});
+$(window).on('resize', function () {
+    console.log('resize');
+    update_charts_size();
+});
+
+function update_charts_size()
+{
+{% for _ in sim_results %}
+    if (chart_{{ forloop.counter0 }} != null){
+        legend_height = chart_{{forloop.counter0}}.legend.height;
+        $("#canvas_{{forloop.counter0}}").css("height", $("#plots_container").width()*0.5 + legend_height);
+    }
+{% endfor %}
+}
+
+$('#toggle_options').on('click', function(){
+
+  if($("#options").hasClass("in")) {
+    $("#options").removeClass("in");
+    $("#options_2").removeClass("in");
+
+  } else {
+    $("#options").addClass("in");
+    $("#options_2").addClass("in");
+  }
+});
+
+function toggle_slide(slide_id) {
+  if ($('#' + slide_id).prop('checked') == true) {
+    $('#' + slide_id).prop("checked", false);
+  } else {
+    $('#' + slide_id).prop("checked", true);
+  }
+}
+
+function toggle_observations() {
+  toggle_slide('show_observations');
+}
+
+$('#experiment_list li').on('click', function(){
+  $("#experiment_name").html($(this).text());
+  $('#experiment_id').val($(this).index());
+  $("#experiment_selected").addClass("in");
 
 });

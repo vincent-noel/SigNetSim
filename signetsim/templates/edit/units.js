@@ -272,7 +272,7 @@ function save_unit()
     } else {
         $("#unit_desc_" + $("#unit_edit_id").val().toString()).html(desc);
         $("#unit_id_" + $("#unit_edit_id").val().toString()).val($("#unit_id").val());
-        $("#unit_id_" + $("#unit_edit_id").val().toString() + "_name").val($("#unit_kind_name").val());
+        $("#unit_id_" + $("#unit_edit_id").val().toString() + "_name").val($("#unit_kind_name").html());
         $("#unit_scale_" + $("#unit_edit_id").val().toString()).val($("#unit_scale").val());
         $("#unit_exponent_" + $("#unit_edit_id").val().toString()).val($("#unit_exponent").val());
         $("#unit_multiplier_" + $("#unit_edit_id").val().toString()).val($("#unit_multiplier").val());

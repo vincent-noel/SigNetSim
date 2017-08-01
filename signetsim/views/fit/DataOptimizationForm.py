@@ -73,8 +73,6 @@ class DataOptimizationForm(object):
 		self.selectedDataSetsIds = list(set(self.selectedDataSetsIds))
 
 		self.loadMapping(request)
-		print self.selectedDataSets
-		print self.selectedDataSetsIds
 
 	def readSelectedDataset(self, request):
 

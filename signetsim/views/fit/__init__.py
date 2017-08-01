@@ -25,5 +25,4 @@
 from ListOfOptimizationsView import ListOfOptimizationsView
 from OptimizationResultView import OptimizationResultView
 from DataOptimizationView import DataOptimizationView
-from DataOptimizationView0 import DataOptimizationView0
 from ModelOptimizationView import ModelOptimizationView
