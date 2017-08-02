@@ -29,20 +29,35 @@
   <tbody>
 	{% for parameter in selected_parameters %}
 	<tr class="row">
+		<input type="hidden" name="parameter_{{ forloop.counter0 }}_id" value="{{ forloop.counter0 }}"/>
+		<input type="hidden" name="parameter_{{ forloop.counter0 }}_name" value="{{ parameter.2 }}"/>
+
 	  <td class="col-xs-1 vert-align">
-		<label><input type="checkbox" value="" id="select_parameter_{{forloop.counter0}}" {% if parameter.0 %}checked="True" {% endif %}></label>
+		<label><input type="checkbox" id="select_parameter_{{forloop.counter0}}"
+									name="parameter_{{ forloop.counter0 }}_active"
+									{% if parameter.1 %}checked{% endif %}
+		></label>
 	  </td>
 	  <td class="col-xs-5 vert-align">
-		{{parameter.1}}
+		{{parameter.2}}
 	  </td>
 	  <td class="col-xs-2 vert-align">
-		<input type="text" class="form-control invisible_inputs" id="parameter_{{forloop.counter0}}_min_input" value="{{parameter.3}}">
+		<input type="text" class="form-control invisible_inputs"
+					 id="parameter_{{forloop.counter0}}_min_input"
+					 name="parameter_{{ forloop.counter0 }}_min" value="{{parameter.4}}"
+		>
 	  </td>
 	  <td class="col-xs-2 vert-align">
-		<input type="text" class="form-control invisible_inputs" id="parameter_{{forloop.counter0}}_value_input" value="{{parameter.2}}">
+		<input type="text" class="form-control invisible_inputs"
+					 id="parameter_{{forloop.counter0}}_value_input"
+					 name="parameter_{{ forloop.counter0 }}_value" value="{{parameter.3}}"
+		>
 	  </td>
 	  <td class="col-xs-2 vert-align">
-		<input type="text" class="form-control invisible_inputs" id="parameter_{{forloop.counter0}}_max_input" value="{{parameter.4}}">
+		<input type="text" class="form-control invisible_inputs"
+					 id="parameter_{{forloop.counter0}}_max_input"
+					 name="parameter_{{ forloop.counter0 }}_max" value="{{parameter.5}}"
+		>
 	  </td>
 	</tr>
 	{% endfor %}

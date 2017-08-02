@@ -33,7 +33,6 @@ from libsignetsim.optimization.ModelVsTimeseriesOptimization import ModelVsTimes
 
 import threading
 import os
-# import json
 
 
 class DataOptimizationView(TemplateView, HasWorkingModel):
@@ -59,6 +58,7 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 		kwargs['selected_datasets_ids'] = self.form.selectedDataSetsIds
 		kwargs['selected_parameters'] = self.form.selectedParameters
 
+		kwargs['form'] = self.form
 		return kwargs
 
 
@@ -101,10 +101,10 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 
 		self.form.readSelectedDataset(request)
 		self.form.loadMapping(request)
-
+		self.form.readSettings(request)
 
 		t_parameters = []
-		for (ind, active, value, vmin, vmax) in self.form.selectedParameters:
+		for (ind, active, name, value, vmin, vmax) in self.form.selectedParameters:
 
 			if active:
 				t_parameter = None
@@ -125,10 +125,17 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 		t_optimization = ModelVsTimeseriesOptimization(
 							workingModel=self.model,
 							list_of_experiments=experiments,
-							parameters_to_fit=t_parameters)
+							parameters_to_fit=t_parameters,
+							nb_procs=self.form.nbCores,
+							p_lambda=self.form.plsaLambda,
+							p_criterion=self.form.plsaCriterion,
+							p_initial_temperature=self.form.plsaInitialTemperature,
+							p_initial_moves=self.form.plsaInitialMoves,
+							s_neg_penalty=self.form.scoreNegativePenalty
+		)
 		t_optimization.setTempDirectory(os.path.join(self.getProjectFolder(), "optimizations"))
 		nb_procs = 2
-		# return
+
 		t = threading.Thread(group=None,
 								target=t_optimization.runOptimization,
 								args=(nb_procs, None, None, ))

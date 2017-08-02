@@ -33,8 +33,6 @@
 	  </td>
 	  <td class="col-sm-2">
 		<div class="text-right">
-		  <form method="POST" action="">
-			{% csrf_token %}
 			<input type="hidden" name="dataset_id" value="{{dataset.id}}"/>
 			{% for dataset,_,_ in selected_datasets %}
 			  <input type="hidden" name="dataset_{{forloop.counter0}}" value="{{dataset.id}}"/>
@@ -42,7 +40,6 @@
 
 			<button type="button" id="mapping_{{forloop.counter0}}_button" class="btn btn-primary btn-xs btn-info">{% bootstrap_icon "link" %}</button>
 			<button type="submit" name="action" value="remove_dataset" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
-		  </form>
 		</div>
 	  </td>
 	</tr>
@@ -155,15 +152,11 @@
 		  </div>
 		</td>
 		<td class="col-sm-2">
-		  <form method="POST" action="">
-			{% csrf_token %}
 			{% for dataset,_,_ in selected_datasets %}
 			<input type="hidden" name="dataset_{{forloop.counter0}}" value="{{dataset.id}}"/>
 			{% endfor %}
 			<input type="hidden" id="dataset_id" name="dataset_id" value="">
-
 			<button type="submit" name="action" value="add_dataset" class="btn btn-primary">Add dataset</button>
-		  </form>
 		</td>
 	</tr>
   </tfoot>

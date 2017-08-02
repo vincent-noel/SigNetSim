@@ -32,7 +32,40 @@
     <div class="col-xs-12 main">
 
       <h3 class="page-header">Optimization result</h4>
-      <br/>
+			<br/>
+			<table class="table">
+        <thead>
+            <tr class="row">
+              <th class="col-xs-12">Fitting result</th>
+            </tr>
+        </thead>
+      </table>
+      <ul class="nav nav-tabs text-center">
+        {% for experiment in experiments %}
+        <li  {% if forloop.counter0 == 0 %}class="active"{% endif %}><a data-toggle="tab" href="#exp_{{forloop.counter0}}">Experiment #{{forloop.counter0}}</a></li>
+        {% endfor %}
+      </ul>
+
+      {% for experiment in experiments %}
+      <div class="tab-content">
+        <div id="exp_{{forloop.counter0}}" class="tab-pane fade in active">
+          <ul class="nav nav-tabs text-center">
+            {% for condition in experiment %}
+            <li {% if forloop.counter0 == 0 %}class="active"{% endif %}><a data-toggle="tab" href="#cond_{{forloop.parentloop.counter0}}_{{forloop.counter0}}">Condition #{{forloop.counter0}}</a></li>
+            {% endfor %}
+          </ul>
+          <div class="tab-content">
+            {% for condition in experiment %}
+
+            <div id="cond_{{forloop.parentloop.counter0}}_{{forloop.counter0}}" class="tab-pane fade in {% if forloop.counter0 == 0 %}active{% endif %}">
+              <canvas id="optim_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}}"></canvas>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+			<br/>
       <table class="table table-striped">
         <thead>
           <tr class="row">
@@ -114,39 +147,6 @@
         </tfoot>
       </table>
       <br/><br/>
-      <table class="table">
-        <thead>
-            <tr class="row">
-              <th class="col-xs-12">Fitting result</th>
-            </tr>
-        </thead>
-      </table>
-      <ul class="nav nav-tabs text-center">
-        {% for experiment in experiments %}
-        <li  {% if forloop.counter0 == 0 %}class="active"{% endif %}><a data-toggle="tab" href="#exp_{{forloop.counter0}}">Experiment #{{forloop.counter0}}</a></li>
-        {% endfor %}
-      </ul>
-
-      {% for experiment in experiments %}
-      <div class="tab-content">
-        <div id="exp_{{forloop.counter0}}" class="tab-pane fade in active">
-          <ul class="nav nav-tabs text-center">
-            {% for condition in experiment %}
-            <li {% if forloop.counter0 == 0 %}class="active"{% endif %}><a data-toggle="tab" href="#cond_{{forloop.parentloop.counter0}}_{{forloop.counter0}}">Condition #{{forloop.counter0}}</a></li>
-            {% endfor %}
-          </ul>
-          <div class="tab-content">
-            {% for condition in experiment %}
-
-            <div id="cond_{{forloop.parentloop.counter0}}_{{forloop.counter0}}" class="tab-pane fade in {% if forloop.counter0 == 0 %}active{% endif %}">
-              <canvas id="optim_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}}"></canvas>
-            </div>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-
       <table class="table">
         <thead>
           <tr class="row">

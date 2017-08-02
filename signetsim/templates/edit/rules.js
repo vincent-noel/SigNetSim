@@ -98,6 +98,8 @@ $("#rule_expression").on('change paste keyup', function()
         $.each(data, function(index, element) {
             if (index === 'valid' && element === 'true') {
                 setExpressionValid();
+                form_exp_error = "";
+
             } else {
                 setExpressionInvalid();
                 form_exp_error = "is invalid";
@@ -153,7 +155,8 @@ $("#rule_expression_alg").on('change paste keyup', function()
       {
         $.each(data, function(index, element) {
             if (index === 'valid' && element === 'true') {
-                setExpressionAlgValid();
+               form_expalg_error = "";
+               setExpressionAlgValid();
             } else {
                 form_expalg_error = "is invalid";
                 setExpressionAlgInvalid();
