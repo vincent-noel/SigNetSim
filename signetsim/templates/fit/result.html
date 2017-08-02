@@ -26,20 +26,12 @@
 
 {% block view_content %}
 {% load bootstrap3 %}
-
 <div class="container-fluid">
   <div class="row row-xs-offset-2">
     <div class="col-xs-12 main">
-
       <h3 class="page-header">Optimization result</h4>
-			<br/>
-			<table class="table">
-        <thead>
-            <tr class="row">
-              <th class="col-xs-12">Fitting result</th>
-            </tr>
-        </thead>
-      </table>
+
+    {% if experiments|length > 1 %}
       <ul class="nav nav-tabs text-center">
         {% for experiment in experiments %}
         <li  {% if forloop.counter0 == 0 %}class="active"{% endif %}><a data-toggle="tab" href="#exp_{{forloop.counter0}}">Experiment #{{forloop.counter0}}</a></li>
@@ -49,6 +41,10 @@
       {% for experiment in experiments %}
       <div class="tab-content">
         <div id="exp_{{forloop.counter0}}" class="tab-pane fade in active">
+			{% endfor %}
+				{% endif %}
+					{% for experiment in experiments %}
+
           <ul class="nav nav-tabs text-center">
             {% for condition in experiment %}
             <li {% if forloop.counter0 == 0 %}class="active"{% endif %}><a data-toggle="tab" href="#cond_{{forloop.parentloop.counter0}}_{{forloop.counter0}}">Condition #{{forloop.counter0}}</a></li>
@@ -62,9 +58,14 @@
             </div>
             {% endfor %}
           </div>
+						{% endfor %}
+			    {% if experiments|length > 1 %}
+      {% for experiment in experiments %}
+
         </div>
       </div>
       {% endfor %}
+			{% endif %}
 			<br/>
       <table class="table table-striped">
         <thead>

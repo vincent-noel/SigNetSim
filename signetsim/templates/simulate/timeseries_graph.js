@@ -86,8 +86,8 @@ var config_{{forloop.counter0}}=
                     labelString: 'Concentration'
                 },
                 ticks: {
-                    beginAtZero: true,
-                    suggestedMax: {{y_max}},
+//                    beginAtZero: true,
+{#                    suggestedMax: {{y_max}},#}
                 }
             }],
         },

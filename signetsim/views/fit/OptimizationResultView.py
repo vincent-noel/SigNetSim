@@ -24,11 +24,9 @@
 
 from django.core.files import File
 from django.conf import settings
+from django.shortcuts import redirect
 
-from signetsim.models import SbmlModel#,FittedSbmlModel
-
-from libsignetsim.model.SbmlDocument import SbmlDocument
-
+from signetsim.models import SbmlModel
 import os
 import re
 
@@ -93,15 +91,9 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 
 		self.load(request, *args, **kwargs)
 
-		if 'show_graph' in request.POST:
-			if request.session.get('view_width') != "":
-				request.session['view_width'] = int(request.POST['wdth'])
-			self.showGraph = str(request.POST['show_graph'])
-
 		if "action" in request.POST:
-
-			# if request.POST['action'] == "save_as_new_model":
-			#     self.saveAsNewModel(request)
+			if HasWorkingProject.isChooseProject(self, request):
+				return redirect('list_of_optimizations')
 
 			if request.POST['action'] == "save_model":
 				self.saveModel(request)

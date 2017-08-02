@@ -79,7 +79,6 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 	def get(self, request, *args, **kwargs):
 
 		self.load(request, *args, **kwargs)
-		self.loadSystemComponents()
 		self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
@@ -104,6 +103,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 		HasWorkingModel.load(self, request, *args, **kwargs)
 		self.modelInstance = self.getModelInstance()
 		self.loadSystem()
+		self.loadSystemComponents()
 
 	def loadSystem(self):
 		self.modelInstance.build()
@@ -124,7 +124,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 		self.latex_odes = []
 		for ode in self.modelInstance.getMathModel().listOfODEs:
 
-			ode_formula = ode.getFormula()#rawFormula=False)
+			ode_formula = ode.getFormula(developped=True)#rawFormula=False)
 			ode_latex = latex(unevaluatedSubs(expand(ode_formula), function_subs), mul_symbol='dot', symbol_names=symbol_names)
 			self.latex_odes.append(ode_latex)
 
@@ -144,7 +144,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 
 		self.latex_cfes = []
 		for cfe in self.modelInstance.getMathModel().listOfCFEs:
-			cfe_formula = cfe.getFormula()#rawFormula=False)
+			cfe_formula = cfe.getFormula(developped=True)#rawFormula=False)
 			cfe_latex = latex(unevaluatedSubs(expand(cfe_formula), function_subs), mul_symbol='dot', symbol_names=symbol_names)
 			self.latex_cfes.append(cfe_latex)
 
@@ -154,7 +154,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 
 		self.latex_daes = []
 		for dae in self.modelInstance.getMathModel().listOfDAEs:
-			dae_formula = dae.getFormula()#rawFormula=False)
+			dae_formula = dae.getFormula(developped=True)#rawFormula=False)
 			dae_latex = latex(unevaluatedSubs(expand(dae_formula), function_subs), mul_symbol='dot', symbol_names=symbol_names)
 			self.latex_daes.append(dae_latex)
 

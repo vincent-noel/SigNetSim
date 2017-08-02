@@ -1,4 +1,7 @@
 Django<1.9
 django-bootstrap3
 git+https://github.com/vincent-noel/libSigNetSim.git@develop
+mpld3
+dill
+matplotlib
 coveralls
