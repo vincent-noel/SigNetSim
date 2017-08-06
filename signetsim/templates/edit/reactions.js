@@ -422,6 +422,7 @@ function updateParameters(reaction_type, reversible){
 
     {% endfor %}
   }
+  updateParametersLists();
 
 }
 function addParameter(id, name) {
@@ -442,12 +443,15 @@ function addParameter(id, name) {
     </td>\
   </tr>\
   ");
+}
 
-  $("<script>").attr("type", "text/javascript").text("\
+function addParametersScript(id) {
+     $("<script>").attr("type", "text/javascript").attr("id", "reaction_parameter_" + id.toString() + "_script").text("\
       $('#reaction_parameter_" + id.toString() + "_dropdown li').on('click', function(){\
         selected_parameters[" + id.toString() + "] = $(this).index();\
         $('#reaction_parameter_" + id.toString() + "_label').html($(this).text());\
-        $('#reaction_parameter_" + id.toString() + "').val($(this).index());});")
+        $('#reaction_parameter_" + id.toString() + "').val($(this).index());\
+      });")
     .appendTo('#reaction_parameter_' + id.toString() + '_tr');
 }
 function removeParameters () {
@@ -473,7 +477,7 @@ function updateParametersLists()
 
     }
     for (var counter = 0; counter < nb_parameters; counter++) { $("#reaction_parameter_" + p_id.toString() + "_dropdown").append("<li><a>" + get_parameter_name(counter) + "</a></li>")}
-
+    addParametersScript(p_id);
     p_id = p_id + 1;
   });
 }
@@ -698,7 +702,6 @@ function view_reaction(sbml_id)
 function newReaction() {
   clearForm();
   $('#modal_reaction').modal('show');
-
 }
 
 $(window).on('load',function()
@@ -838,6 +841,21 @@ $("#reaction_sbml_id").on('change paste keyup', function()
 
 function save_reaction()
 {
-    $("#save_reaction_form").submit();
+    var nb_errors = 0;
+    reset_errors();
+    if (!$("#sbmlid_valid").hasClass("in")){
+        add_error_modal("invalid_sbml_id", "Sbml id is invalid");
+        nb_errors++;
+    }
+
+    if (nb_errors == 0)
+    {
+        $("#save_reaction_form").submit();
+    }
 }
 
+
+function reset_errors()
+{
+   $("#error_modal").empty();
+}

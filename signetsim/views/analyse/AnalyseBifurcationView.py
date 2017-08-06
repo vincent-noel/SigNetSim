@@ -146,12 +146,12 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			t_figure.set_size_inches((8, 5))
 
 			t_figure_html = mpld3.fig_to_html(t_figure, template_type='simple')
-			# t_figure_html = t_figure_html.replace(
-			# 	"<script type=\"text/javascript\" src=\"https://mpld3.github.io/js/d3.v3.min.js\"></script>", "")
-			# t_figure_html = t_figure_html.replace(
-			# 	"<script type=\"text/javascript\" src=\"https://mpld3.github.io/js/mpld3.v0.2.js\"></script>", "")
-			# t_figure_html = t_figure_html.replace("<style>", "")
-			# t_figure_html = t_figure_html.replace("</style>", "")
+			t_figure_html = t_figure_html.replace(
+				"<script type=\"text/javascript\" src=\"https://mpld3.github.io/js/d3.v3.min.js\"></script>", "")
+			t_figure_html = t_figure_html.replace(
+				"<script type=\"text/javascript\" src=\"https://mpld3.github.io/js/mpld3.v0.3.js\"></script>", "")
+			t_figure_html = t_figure_html.replace("<style>", "")
+			t_figure_html = t_figure_html.replace("</style>", "")
 			self.listOfFigures.append(t_figure_html)
 
 

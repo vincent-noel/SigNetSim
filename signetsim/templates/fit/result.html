@@ -67,25 +67,7 @@
       {% endfor %}
 			{% endif %}
 			<br/>
-      <table class="table table-striped">
-        <thead>
-          <tr class="row">
-            <th class="col-xs-6">Parameter name</th>
-            <th class="col-xs-3 text-right">Initial value</th>
-            <th class="col-xs-3 text-right">Fitted value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for parameter in parameters %}
-            <tr class="row">
-              <td class="col-xs-6">{{parameter.3}}</td>
-              <td class="col-xs-3 text-right">{{parameter.1}}</td>
-              <td class="col-xs-3 text-right">{{parameter.2}}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <table class="table table-striped">
+			 <table class="table table-striped">
         <thead>
           <tr class="row">
             <th colspan="3" class="col-xs-12">Fitting control</th>
@@ -112,6 +94,24 @@
             <td colspan="3" class="col-xs-12"></td>
           </tr>
         </tfoot>
+      </table>
+      <table class="table table-striped">
+        <thead>
+          <tr class="row">
+            <th class="col-xs-6">Parameter name</th>
+            <th class="col-xs-3 text-right">Initial value</th>
+            <th class="col-xs-3 text-right">Fitted value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for parameter in parameters %}
+            <tr class="row">
+              <td class="col-xs-6">{{parameter.3}}</td>
+              <td class="col-xs-3 text-right">{{parameter.1}}</td>
+              <td class="col-xs-3 text-right">{{parameter.2}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
       </table>
       <br/><br/>
       <table class="table table-striped">
