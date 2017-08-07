@@ -707,7 +707,7 @@ function newReaction() {
 $(window).on('load',function()
 {
     {% for reaction in list_of_reactions %}
-        // load_reaction_kinetic_law({{forloop.counter0}});
+         load_reaction_kinetic_law({{forloop.counter0}});
     {% endfor %}
 });
 
@@ -843,7 +843,7 @@ function save_reaction()
 {
     var nb_errors = 0;
     reset_errors();
-    if (!$("#sbmlid_valid").hasClass("in")){
+    if ($("#sbmlid_invalid").hasClass("in")){
         add_error_modal("invalid_sbml_id", "Sbml id is invalid");
         nb_errors++;
     }
