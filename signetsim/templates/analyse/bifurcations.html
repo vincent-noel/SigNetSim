@@ -99,82 +99,111 @@
 		  <h4 class="modal-title" id="modal_modification_title">New Curve</h4>
 		</div>
 		<div class="modal-body">
-		  <table class="table table-striped">
-			<thead>
-			  <tr class="row">
-				<th class="col-xs-12" colspan="2">Parameter</th>
-			  </tr>
-			</thead>
-			<tbody>
-			  <tr class="row">
-					<td class="col-xs-12" colspan="2">
-						<input type="hidden" name="parameter_id" id="parameter_id" value="">
-						<div class="dropdown">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-							<span id="parameter_label">Choose a parameter</span>
-							<span class="caret"></span>
-						</button>
-						<ul id="parameter_dropdown" class="dropdown-menu">
-							{% for constant in list_of_constants %}
-							<li><a>{{constant}}</a></li>
-							{% endfor %}
-						</ul>
-						<script>
-							$('#parameter_dropdown li').on('click', function(){
-							$("#parameter_label").html($(this).text());
-							$('#parameter_id').val($(this).index());
-							});
-						</script>
-						</div>
-					</td>
-			  </tr>
-			<tr class="row">
-						<td class="col-xs-10">From value</td>
-						<td class="col-xs-2">
-							<input type="text" class="form-control" id="from_value" name="from_value" value="">
+		<ul class="nav nav-tabs text-center">
+			<li class="active"><a data-toggle="tab" href="#parameters">Parameters</a></li>
+			<li><a data-toggle="tab" href="#settings">Settings</a></li>
+		</ul>
+		<div class="tab-content">
+			<div id="parameters" class="tab-pane fade in active">
+				<table class="table table-striped">
+				<thead>
+					<tr class="row">
+					<th class="col-xs-12" colspan="2">Parameter</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="row">
+						<td class="col-xs-12" colspan="2">
+							<input type="hidden" name="parameter_id" id="parameter_id" value="">
+							<div class="dropdown">
+							<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+								<span id="parameter_label">Choose a parameter</span>
+								<span class="caret"></span>
+							</button>
+							<ul id="parameter_dropdown" class="dropdown-menu">
+								{% for constant in list_of_constants %}
+								<li><a>{{constant}}</a></li>
+								{% endfor %}
+							</ul>
+							<script>
+								$('#parameter_dropdown li').on('click', function(){
+								$("#parameter_label").html($(this).text());
+								$('#parameter_id').val($(this).index());
+								});
+							</script>
+							</div>
 						</td>
 					</tr>
-			<tr class="row">
-						<td class="col-xs-10">To value</td>
-						<td class="col-xs-2">
-							<input type="text" class="form-control" id="to_value" name="to_value" value="">
+				<tr class="row">
+							<td class="col-xs-10">From value</td>
+							<td class="col-xs-2">
+								<input type="text" class="form-control" id="from_value" name="from_value" value="">
+							</td>
+						</tr>
+				<tr class="row">
+							<td class="col-xs-10">To value</td>
+							<td class="col-xs-2">
+								<input type="text" class="form-control" id="to_value" name="to_value" value="">
+							</td>
+						</tr>
+
+				</tbody>
+				</table>
+				<table class="table table-striped">
+				<thead>
+					<tr class="row">
+					<th class="col-xs-12">Variable</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="row">
+						<td class="col-xs-12">
+							<input type="hidden" name="variable_id" id="variable_id" value="">
+							<div class="dropdown">
+							<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+								<span id="variable_label">Choose a variable</span>
+								<span class="caret"></span>
+							</button>
+							<ul id="variable_dropdown" class="dropdown-menu">
+								{% for variable in list_of_variables %}
+								<li><a>{{variable}}</a></li>
+								{% endfor %}
+							</ul>
+							<script>
+								$('#variable_dropdown li').on('click', function(){
+								$("#variable_label").html($(this).text());
+								$('#variable_id').val($(this).index());
+								});
+							</script>
+							</div>
 						</td>
 					</tr>
-
-			</tbody>
-		  </table>
-		  <table class="table table-striped">
-			<thead>
-			  <tr class="row">
-				<th class="col-xs-12">Variable</th>
-			  </tr>
-			</thead>
-			<tbody>
-			  <tr class="row">
-					<td class="col-xs-12">
-						<input type="hidden" name="variable_id" id="variable_id" value="">
-						<div class="dropdown">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-							<span id="variable_label">Choose a variable</span>
-							<span class="caret"></span>
-						</button>
-						<ul id="variable_dropdown" class="dropdown-menu">
-							{% for variable in list_of_variables %}
-							<li><a>{{variable}}</a></li>
-							{% endfor %}
-						</ul>
-						<script>
-							$('#variable_dropdown li').on('click', function(){
-							$("#variable_label").html($(this).text());
-							$('#variable_id').val($(this).index());
-							});
-						</script>
-						</div>
-					</td>
-			  </tr>
-			</tbody>
-		  </table>
-
+				</tbody>
+				</table>
+			</div>
+			<div id="settings" class="tab-pane fade">
+				<table class="table table-striped">
+				<thead>
+{#					<tr class="row">#}
+{#						<th class="col-xs-12" colspan="2"></th>#}
+{#					</tr>#}
+				</thead>
+				<tbody>
+					<tr class="row">
+						<td class="col-xs-10">Ds</td>
+						<td class="col-xs-2">
+							<input type="text" class="form-control" id="ds" name="ds" value="0.1">
+						</td>
+					</tr>
+					<tr class="row">
+						<td class="col-xs-10">Max steps</td>
+						<td class="col-xs-2">
+							<input type="text" class="form-control" id="max_steps" name="max_steps" value="1000">
+						</td>
+					</tr>
+				</tbody>
+				</table>
+			</div>
 		  {% include 'commons/error_modal.html' %}
 		</div>
 		<div class="modal-footer">

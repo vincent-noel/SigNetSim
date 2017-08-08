@@ -25,15 +25,9 @@
 from libsignetsim.continuation.EquilibriumPointCurve import EquilibriumPointCurve
 from django.views.generic import TemplateView
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from django.core.urlresolvers import reverse
 from signetsim.models import ContinuationComputation, SbmlModel
-
-from libsignetsim.settings.Settings import Settings
-import pickle
-import threading
-# from signetsim.models import SbmlModel
 from signetsim.views.HasWorkingModel import HasWorkingModel
-
+from signetsim.views.analyse.AnalyseBifurcationForm import AnalyseBifurcationsForm
 import dill, mpld3
 from matplotlib import pyplot as plt
 
@@ -52,6 +46,9 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		self.listComputations = None
 		self.listOfFigures = None
 		self.computation = None
+
+		self.form = AnalyseBifurcationsForm(self)
+
 
 	def get_context_data(self, **kwargs):
 
@@ -130,55 +127,61 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 		self.listOfFigures = []
 		for continuation in self.listOfComputations:
-			t_object = dill.loads(continuation.figure.encode('Latin-1'))
-			t_object.continuation.plot.setLabels('')
-			t_object.continuation.plot.toggleLabels(visible="on")
-			t_object.continuation.display((t_object.parameter, t_object.variable), stability=True,linewidth=3,
-									color='#009ece',)
+			if continuation.figure is not None:# and str(continuation.figure) != "":
+				# print len(str(continuation.figure))
+				try:
 
-			t_figure_id = plt.get_fignums()[0]
-			t_figure = plt.figure(t_figure_id)
+					t_object = dill.loads(continuation.figure.encode('Latin-1'))
+					t_object.continuation.plot.setLabels('')
+					t_object.continuation.plot.toggleLabels(visible="on")
+					t_object.continuation.display((t_object.parameter, t_object.variable), stability=True,linewidth=3,
+											color='#009ece',)
 
-			t_figure.get_axes()[0].set_title("")
-			t_figure.get_axes()[0].set_xlim([t_object.fromValue, t_object.toValue])
+					t_figure_id = plt.get_fignums()[0]
+					t_figure = plt.figure(t_figure_id)
 
-			t_figure.set_dpi(100)
-			t_figure.set_size_inches((8, 5))
+					t_figure.get_axes()[0].set_title("")
+					t_figure.get_axes()[0].set_xlim([t_object.fromValue, t_object.toValue])
 
-			t_figure_html = mpld3.fig_to_html(t_figure, template_type='simple')
-			t_figure_html = t_figure_html.replace(
-				"<script type=\"text/javascript\" src=\"https://mpld3.github.io/js/d3.v3.min.js\"></script>", "")
-			t_figure_html = t_figure_html.replace(
-				"<script type=\"text/javascript\" src=\"https://mpld3.github.io/js/mpld3.v0.3.js\"></script>", "")
-			t_figure_html = t_figure_html.replace("<style>", "")
-			t_figure_html = t_figure_html.replace("</style>", "")
-			self.listOfFigures.append(t_figure_html)
+					t_figure.set_dpi(100)
+					t_figure.set_size_inches((8, 5))
 
+					t_figure_html = mpld3.fig_to_html(t_figure, template_type='simple')
+					t_figure_html = t_figure_html.replace(
+						"<script type=\"text/javascript\" src=\"https://mpld3.github.io/js/d3.v3.min.js\"></script>", "")
+					t_figure_html = t_figure_html.replace(
+						"<script type=\"text/javascript\" src=\"https://mpld3.github.io/js/mpld3.v0.3.js\"></script>", "")
+					t_figure_html = t_figure_html.replace("<style>", "")
+					t_figure_html = t_figure_html.replace("</style>", "")
+					self.listOfFigures.append(t_figure_html)
+				except:
+					self.listOfFigures.append("")
+
+			else:
+				self.listOfFigures.append("")
 
 	def computeCurve(self, request):
 
-		t_parameter_id = self.readInt(request, 'parameter_id', "the identifier of the parameter", required=True,
-									  max_value=len(self.listOfConstants))
+		self.form.read(request)
+		if not self.form.hasErrors():
 
-		from_value = self.readFloat(request, 'from_value', "the minimal value to look for equilibrium")
-		to_value = self.readFloat(request, 'to_value', "the minimal value to look for equilibrium")
 
-		t_variable_id = self.readInt(request, 'variable_id', "the identifier of the variable", required=True,
-									 max_value=len(self.listOfVariables))
+			t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
 
-		t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
+			self.computation = ContinuationComputation(project=self.project,
+													   model=t_model,
+													   parameter=self.listOfConstants[self.form.parameter].getSbmlId(),
+													   variable=self.listOfVariables[self.form.variable].getSbmlId())#,
+													   # ds=ds, max_steps=max_steps)
+			self.computation.save()
 
-		self.computation = ContinuationComputation(project=self.project,
-												   model=t_model,
-												   parameter=self.listOfConstants[t_parameter_id].getSbmlId(),
-												   variable=self.listOfVariables[t_variable_id].getSbmlId())
-		self.computation.save()
+			if self.form.parameter is not None and self.form.variable is not None:
 
-		if t_parameter_id is not None and t_variable_id is not None:
-
-			t_ep_curve = EquilibriumPointCurve(self.getModel())
-			t_ep_curve.setParameter(self.listOfConstants[t_parameter_id])
-			t_ep_curve.setVariable(self.listOfVariables[t_variable_id].getSbmlId())
-			t_ep_curve.setRange(from_value, to_value)
-			t_ep_curve.build()
-			t_ep_curve.run(self.callback_success, self.callback_error)
+				t_ep_curve = EquilibriumPointCurve(self.getModel())
+				t_ep_curve.setParameter(self.listOfConstants[self.form.parameter])
+				t_ep_curve.setVariable(self.listOfVariables[self.form.variable].getSbmlId())
+				t_ep_curve.setRange(self.form.fromValue, self.form.toValue)
+				t_ep_curve.setDs(self.form.ds)
+				t_ep_curve.setMaxSteps(self.form.maxSteps)
+				t_ep_curve.build()
+				t_ep_curve.run(self.callback_success, self.callback_error)
