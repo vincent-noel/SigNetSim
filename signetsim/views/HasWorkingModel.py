@@ -23,19 +23,13 @@
 """
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import PermissionDenied
 
 from signetsim.models import SbmlModel
 from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.Model import Model
-# from libsignetsim.model.ModelException import ModelException
 from signetsim.views.HasWorkingProject import HasWorkingProject
 import os
-import time
 import pickle
-import codecs
-# from sbml_diff import generate_dot, sbml_diff
-import sys
 from libsbml import Date
 import datetime
 
@@ -237,26 +231,23 @@ class HasWorkingModel(HasWorkingProject):
 		"""
 
 		# if there is a model_id in the session variable
-		if request.session.get('model_id') is not None:
-
-			# If the model with that model_id actually exists, we load the model id
-			if SbmlModel.objects.filter(
+		if request.session.get('model_id') is not None and self.project_id is not None and SbmlModel.objects.filter(
 					project=self.project_id,
 					id=int(request.session.get('model_id'))).exists():
 
 				self.model_id = int(request.session['model_id'])
+			# # Otherwise we just load the first one on the list
+			# elif self.list_of_models is not None and len(self.list_of_models) > 0:
+			# 		self.model_id = self.list_of_models[0].id
+			# else:
+			# 	raise PermissionDenied
 
-			# Otherwise we just load the first one on the list
-			else:
-				if self.list_of_models is not None and len(self.list_of_models) > 0:
-					self.model_id = self.list_of_models[0].id
-
-		# Otherwise we just load the first one on the list
-		else:
-			if self.list_of_models is not None and len(self.list_of_models) > 0:
+		# Otherwise we just load the first one on the list, if there is a lists
+		elif self.list_of_models is not None and len(self.list_of_models) > 0:
 				self.model_id = self.list_of_models[0].id
 
-
+		# else:
+		# 	raise PermissionDenied
 
 		# Now that we have a model id, we look if we have a pickled model in memory
 		# If it's the same, all good,
@@ -295,7 +286,7 @@ class HasWorkingModel(HasWorkingProject):
 
 	def __loadModelVariables(self):
 
-		if self.model_id is not None:
+		if self.model_id is not None and self.project_id is not None and SbmlModel.objects.filter(project=self.project_id, id=self.model_id).exists():
 
 			t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
 			self.model_filename = os.path.join(settings.MEDIA_ROOT, str(t_model.sbml_file))
@@ -315,7 +306,8 @@ class HasWorkingModel(HasWorkingProject):
 				if submodel.getModelRef() in self.model.parentDoc.listOfExternalModelDefinitions.sbmlIds():
 					self.model_list_of_submodels_names.append(self.model.parentDoc.listOfExternalModelDefinitions.getBySbmlId(submodel.getModelRef()).getNameOrSbmlId())
 					self.model_list_of_submodels_types.append(1)
-
+		else:
+			raise PermissionDenied
 
 	def __clearModelVariables(self):
 

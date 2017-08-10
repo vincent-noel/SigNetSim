@@ -23,15 +23,12 @@
 """
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
-from signetsim.views.HasUserLoggedIn import HasUserLoggedIn
 
+from signetsim.views.HasUserLoggedIn import HasUserLoggedIn
 from signetsim.models import SbmlModel, Project
 
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.Model import Model
-# from libsignetsim.model.ModelException import ModelException
 import os
+
 
 class HasWorkingProject(HasUserLoggedIn):
 
@@ -137,6 +134,11 @@ class HasWorkingProject(HasUserLoggedIn):
 		if self.project_id is not None and Project.objects.filter(id=self.project_id).exists():
 			self.project = Project.objects.get(id=self.project_id)
 			self.project_name = self.project.name
+		elif len(Project.objects.filter(access=Project.PUBLIC)) > 0:
+			self.project = Project.objects.filter(access=Project.PUBLIC)[0]
+			self.project_name = self.project.name
+			self.project_id = self.project.id
+
 
 
 	def __loadProjects(self, request):
