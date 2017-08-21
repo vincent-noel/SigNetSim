@@ -12,7 +12,6 @@ env:
   - DISTRIB=precise
   - DISTRIB=wheezy
   - DISTRIB=jessie
-  - DISTRIB=stretch
 
 
 before_install:
