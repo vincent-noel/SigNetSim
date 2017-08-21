@@ -61,7 +61,6 @@ class ModelReactionsForm(ModelParentForm):
 			self.saveProducts(reaction)
 
 			if self.reactionType == KineticLaw.UNDEFINED:
-				print "settings kinetic law"
 				reaction.setKineticLaw(self.reactionType, self.reversible, math=self.kineticLaw)
 			else:
 				t_parameters = [self.parent.listOfParameters[param] for param in self.listOfParameters]
@@ -110,7 +109,6 @@ class ModelReactionsForm(ModelParentForm):
 
 			self.kineticLaw = self.readString(request, 'reaction_kinetic_law',
 								"the formula of the reaction's kinetic law")
-			print self.kineticLaw
 
 		self.reversible = self.readOnOff(request, 'reaction_reversible',
 									"the reversible status of the reaction")

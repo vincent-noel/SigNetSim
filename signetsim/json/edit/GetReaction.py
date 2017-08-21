@@ -53,7 +53,7 @@ class GetReaction(JsonRequest, HasWorkingModel):
 
 		t_reaction_type = reaction.getReactionType()
 		t_reaction_parameters = reaction.getReactionParameters()
-		print t_reaction_parameters
+
 		t_reaction_parameters_index = []
 		if t_reaction_parameters is not None and None not in t_reaction_parameters:
 			for t_param in t_reaction_parameters:

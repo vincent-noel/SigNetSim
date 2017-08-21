@@ -132,9 +132,11 @@ def buildExperiment(experiment):
 
 	conditions = Condition.objects.filter(experiment=experiment)
 	t_experiment = SigNetSimExperiment(experiment.name)
+	t_experiment.notes = str(experiment.notes)
 
 	for condition in conditions:
 		t_condition = t_experiment.createCondition(str(condition.name))
+		t_condition.notes = str(condition.notes)
 		observed_data = Observation.objects.filter(condition=condition)
 
 		for data in observed_data:
