@@ -295,5 +295,5 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 				self.listOfSubstitutions.append((1,
 					substitution.getParentObject(),
 					[substitution.getSubmodelRef()],
-					substitution.getReplacingElement()
+					substitution.getReplacingElementObject()
 				))
