@@ -24,12 +24,13 @@
 
 from django.views.generic import TemplateView
 from django.conf import settings
+from django.core.files import File
 from signetsim.views.HasWorkingProject import HasWorkingProject
-from signetsim.models import SEDMLSimulation
+from signetsim.models import SEDMLSimulation, SbmlModel
 from signetsim.forms import DocumentForm
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.sedml.SedmlDocument import SedmlDocument
-from os.path import join, basename
+from os.path import join, basename, splitext
 from os import remove
 
 
@@ -127,8 +128,8 @@ class ListOfSimulationsView(TemplateView, HasWorkingProject):
 
 						sbml_model.name = doc.model.getName()
 						sbml_model.save()
-					except ModelException:
-						name = os.path.splitext(str(sbml_model.sbml_file))[0]
+					except Exception:
+						name = splitext(str(sbml_model.sbml_file))[0]
 						sbml_model.name = name
 						sbml_model.save()
 
