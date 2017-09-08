@@ -10,9 +10,9 @@ env:
   - DISTRIB=xenial
   - DISTRIB=trusty
   - DISTRIB=precise
+  - DISTRIB=stretch
   - DISTRIB=wheezy
   - DISTRIB=jessie
-
 
 before_install:
 - pip install coveralls
