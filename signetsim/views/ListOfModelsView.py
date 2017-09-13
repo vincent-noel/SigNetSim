@@ -35,10 +35,10 @@ from signetsim.models import SbmlModel, new_model_filename
 from signetsim.forms import DocumentForm
 
 from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.Model import Model
 from libsignetsim.model.ModelException import ModelException, MissingSubmodelException
 
 import os
+
 
 class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErrorMessages):
 
@@ -52,7 +52,6 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 		HasErrorMessages.__init__(self)
 
 		self.listOfModels = None
-		self.listOfModels_v2 = None
 		self.fileUploadForm = DocumentForm()
 
 
@@ -63,7 +62,6 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 
 		kwargs['form'] = self.fileUploadForm
 		kwargs['sbml_models'] = self.listOfModels
-		kwargs['sbml_models_v2'] = self.listOfModels_v2
 
 		return kwargs
 
@@ -101,6 +99,10 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 
 			elif request.POST['action'] == "new_model":
 				self.newModel(request)
+				self.load(request, *args, **kwargs)
+
+			elif request.POST['action'] == "load_biomodels":
+				self.loadBiomodels(request)
 				self.load(request, *args, **kwargs)
 
 
@@ -181,16 +183,32 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 		os.remove(os.path.join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		model.delete()
 
+	def loadBiomodels(self, request):
+
+		model_id = str(request.POST['model_id'])
+		model_filename = os.path.join(settings.MEDIA_ROOT, new_model_filename())
+
+		open(model_filename, "a")
+		new_model = SbmlModel(project=self.project, sbml_file=File(open(model_filename,"r")))
+		os.remove(model_filename)
+		new_model.save()
+
+
+		doc = SbmlDocument()
+		doc.readFromBiomodels(model_id)
+		doc.writeSbmlToFile(os.path.join(settings.MEDIA_ROOT, str(new_model.sbml_file)))
+		new_model.name = doc.model.getName()
+		new_model.save()
+
 
 	def loadModels(self, request, *args, **kwargs):
 
 		# self.projectId = str(args[0])
 		# self.project = ModelFolder.objects.get(user=request.user, id=self.projectId)
 		if self.project is not None:
-			self.listOfModels = SbmlModel.objects.filter(project=self.project)
-			self.listOfModels_v2 = []
-			for model in self.listOfModels:
+			self.listOfModels = []
+			for model in SbmlModel.objects.filter(project=self.project):
 				filename = str(model.sbml_file)
 				if filename.startswith(settings.MEDIA_ROOT):
 					filename = filename.replace(settings.MEDIA_ROOT, "")
-				self.listOfModels_v2.append((model.id, model.name, filename))
+				self.listOfModels.append((model.id, model.name, filename))

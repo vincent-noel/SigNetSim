@@ -34,7 +34,8 @@ from signetsim.json import GetSBOName, SetAccountActive, SetAccountStaff
 from signetsim.json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction, GetRule
 from signetsim.json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetListOfObjects
 from signetsim.json import GetUnitDefinition
-from signetsim.json import GetContinuationStatus, GetProject, GetExperiment, GetCondition, GetTreatment, GetObservation
+from signetsim.json import GetContinuationStatus, GetProject, SearchBiomodels
+from signetsim.json import GetExperiment, GetCondition, GetTreatment, GetObservation
 
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
 from views import DataOptimizationView, ModelOptimizationView
@@ -143,6 +144,8 @@ urlpatterns = [
 	url(r'^json/get_condition/$', GetCondition.as_view(), name='get_condition'),
 	url(r'^json/get_treatment/$', GetTreatment.as_view(), name='get_treatment'),
 	url(r'^json/get_observation/$', GetObservation.as_view(), name='get_observation'),
+
+	url(r'^json/search_biomodels/$', SearchBiomodels.as_view(), name='search_biomodels'),
 ]
 
 if settings.DEBUG:

@@ -34,3 +34,4 @@ from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdVal
 from GetContinuationFigure import GetContinuationFigure
 from GetContinuationStatus import GetContinuationStatus
 from GetProject import GetProject
+from SearchBiomodels import SearchBiomodels
