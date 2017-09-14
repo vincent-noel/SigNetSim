@@ -3,5 +3,6 @@ django-bootstrap3
 git+https://github.com/vincent-noel/libSigNetSim.git@develop
 mpld3
 dill
+cloudpickle
 matplotlib
 coveralls

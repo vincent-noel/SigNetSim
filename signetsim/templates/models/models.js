@@ -28,9 +28,31 @@ function search_biomodels()
 
                         $.each(element, function(subindex, subelement){
                             $("#table_search_results").append("\
-                                <tr class=\"row\" onclick=\"load_biomodels('" + subelement[0] + "')\">\
-                                <td class=\"col-xs-12\"><span role=\"button\" id=\"model_" + subindex.toString() + "_name\">" + subelement[1] + "</span></td>\
+                                <tr class=\"row\" onclick=\"load_biomodels('" + subelement + "')\">\
+                                <td class=\"col-xs-12\"><span role=\"button\" id=\"model_" + subindex.toString() + "_name\">Resolving model " + subelement + "...</span></td>\
                                 </tr>");
+                        });
+                        $("#searching_done").addClass("in");
+
+                        $.each(element, function(subindex, subelement){
+                            ajax_call(
+                                "POST", "{{csrf_token}}",
+                                "{% url 'get_biomodels_name' %}",
+                                {'model_id': subelement},
+                                function(data)
+                                {
+                                    $.each(data, function(index, element)
+                                    {
+                                       if (index == "name") {
+                                            $("#model_" + subindex.toString() + "_name").html(element);
+                                       }
+
+                                    });
+                                },
+                                function(){
+                                    $("#model_" + subindex.toString() + "_name").html("Resolution failed");
+                                }
+                            );
                         });
                         $("#searching_done").addClass("in");
 

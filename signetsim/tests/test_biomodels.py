@@ -71,17 +71,18 @@ class TestBiomodels(TestCase):
 
 		self.assertTrue('results' in json_response.keys())
 		self.assertTrue(len(json_response['results']) >= 11)
-		self.assertEqual(json_response['results'][0], ["BIOMD0000000005", "Tyson1991 - Cell Cycle 6 var"])
-		self.assertEqual(json_response['results'][1], ["BIOMD0000000006", "Tyson1991 - Cell Cycle 2 var"])
-		self.assertEqual(json_response['results'][2], ["BIOMD0000000036", "Tyson1999_CircClock"])
-		self.assertEqual(json_response['results'][3], ["BIOMD0000000195", "Tyson2001_Cell_Cycle_Regulation"])
-		self.assertEqual(json_response['results'][4], ["BIOMD0000000306", "Tyson2003_Activator_Inhibitor"])
-		self.assertEqual(json_response['results'][5], ["BIOMD0000000307", "Tyson2003_Substrate_Depletion_Osc"])
-		self.assertEqual(json_response['results'][6], ["BIOMD0000000308", "Tyson2003_NegFB_Oscillator"])
-		self.assertEqual(json_response['results'][7], ["BIOMD0000000309", "Tyson2003_NegFB_Homeostasis"])
-		self.assertEqual(json_response['results'][8], ["BIOMD0000000310", "Tyson2003_Mutual_Inhibition"])
-		self.assertEqual(json_response['results'][9], ["BIOMD0000000311", "Tyson2003_Mutual_Activation"])
-		self.assertEqual(json_response['results'][10], ["BIOMD0000000312", "Tyson2003_Perfect_Adaption"])
+
+		self.assertEqual(json_response['results'][0], u"BIOMD0000000005")
+		self.assertEqual(json_response['results'][1], u"BIOMD0000000006")
+		self.assertEqual(json_response['results'][2], u"BIOMD0000000036")
+		self.assertEqual(json_response['results'][3], u"BIOMD0000000195")
+		self.assertEqual(json_response['results'][4], u"BIOMD0000000306")
+		self.assertEqual(json_response['results'][5], u"BIOMD0000000307")
+		self.assertEqual(json_response['results'][6], u"BIOMD0000000308")
+		self.assertEqual(json_response['results'][7], u"BIOMD0000000309")
+		self.assertEqual(json_response['results'][8], u"BIOMD0000000310")
+		self.assertEqual(json_response['results'][9], u"BIOMD0000000311")
+		self.assertEqual(json_response['results'][10], u"BIOMD0000000312")
 
 		response_load_tyson = c.post('/models/', {
 			'action': 'load_biomodels',
@@ -95,10 +96,10 @@ class TestBiomodels(TestCase):
 			u'Tyson1991 - Cell Cycle 6 var'
 		)
 
-		# Should not work because of the non-ascii character for TGF-beta
-		# response_import_unicode = c.post('/models/', {
-		# 	'action': 'load_biomodels',
-		# 	'model_id': 'BIOMD0000000342'
-		# })
-		# self.assertEqual(response_import_unicode.status_code, 200)
+		#Should not work because of the non-ascii character for TGF-beta
+		response_import_unicode = c.post('/models/', {
+			'action': 'load_biomodels',
+			'model_id': 'BIOMD0000000342'
+		})
+		self.assertEqual(response_import_unicode.status_code, 200)
 

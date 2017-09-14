@@ -29,7 +29,7 @@ from signetsim.models import SbmlModel
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from signetsim.views.HasWorkingProject import HasWorkingProject
 import os
-import pickle
+import cloudpickle
 from libsbml import Date
 import datetime
 
@@ -325,7 +325,7 @@ class HasWorkingModel(HasWorkingProject):
 			self.model.cleanBeforePickle()
 
 			request.session['loaded_model_id'] = self.model_id
-			request.session['loaded_model_doc'] = pickle.dumps(self.model.parentDoc)
+			request.session['loaded_model_doc'] = cloudpickle.dumps(self.model.parentDoc)
 			request.session['loaded_model_submodel'] = self.model_submodel
 
 			if self.model_filename is None:
@@ -339,7 +339,7 @@ class HasWorkingModel(HasWorkingProject):
 	def __loadPickledModel(self, request):
 		# t0 = time.time()
 		# print request.session.get('loaded_model_doc')
-		t_doc = pickle.loads(request.session.get('loaded_model_doc'))
+		t_doc = cloudpickle.loads(request.session.get('loaded_model_doc'))
 		# print "> loaded pickled model in %.2gs" % (time.time()-t0)
 		self.model = t_doc.model
 		self.model_submodel = request.session['loaded_model_submodel']

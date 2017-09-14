@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" SearchBiomodel.py
+""" GetBiomodelsName.py
 
 
 	This file...
@@ -27,9 +27,8 @@ from signetsim.json import JsonRequest
 from signetsim.views.HasUserLoggedIn import HasUserLoggedIn
 from bioservices import BioModels
 
-from time import time
 
-class SearchBiomodels(JsonRequest, HasUserLoggedIn):
+class GetBiomodelsName(JsonRequest, HasUserLoggedIn):
 
 	def __init__(self):
 		JsonRequest.__init__(self)
@@ -40,30 +39,11 @@ class SearchBiomodels(JsonRequest, HasUserLoggedIn):
 
 		if self.isUserLoggedIn(request):
 
-			search_type = int(request.POST['search_type'])
-			search_string = str(request.POST['search_string'])
-
+			model_id = str(request.POST['model_id'])
 			biomodels = BioModels()
-			results = []
+			name = biomodels.getModelNameById(model_id)
 
-			if search_string != "":
-				search_res = None
-				if search_type == 0:
-					search_res = biomodels.getModelsIdByName(search_string)
-
-				elif search_type == 1:
-					search_res = biomodels.getModelsIdByPerson(search_string)
-
-				elif search_type == 2:
-					search_res = biomodels.getModelsIdByPublication(search_string)
-
-				elif search_type == 3:
-					search_res = biomodels.getModelsIdByTaxonomy(search_string)
-
-				elif search_type == 4:
-					search_res = biomodels.getModelsIdByUniprot(search_string)
-
-			self.data.update({'results': [model_id for model_id in sorted(search_res) if model_id.startswith("BIOMD")]})
+			self.data.update({'name': name})
 
 		return JsonRequest.post(self, request, *args, **kwargs)
 
