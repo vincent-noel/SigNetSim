@@ -107,7 +107,7 @@ class HasWorkingModel(HasWorkingProject):
 			return self.getModelInstance()
 		else:
 			t_list_submodels = self.model.parentDoc.listOfModelDefinitions.values()
-			return t_list_submodels[self.model_submodel-1].modelDefinition
+			return t_list_submodels[self.model_submodel-1]
 
 	def saveModel(self, request):
 		if self.model is not None:
