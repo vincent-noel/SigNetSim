@@ -27,15 +27,16 @@ from django.shortcuts import redirect
 from django.conf import settings
 
 from signetsim.views.HasWorkingProject import HasWorkingProject
+from signetsim.views.HasErrorMessages import HasErrorMessages
 from signetsim.models import SEDMLSimulation
 from signetsim.settings.Settings import Settings
 
 from libsignetsim.sedml.SedmlDocument import SedmlDocument
-
+from libsignetsim.sedml.SedmlException import SedmlException
 from os.path import join
 
 
-class SedmlSimulationView(TemplateView, HasWorkingProject):
+class SedmlSimulationView(TemplateView, HasWorkingProject, HasErrorMessages):
 
 	template_name = 'simulate/sedml_simulation.html'
 
@@ -43,13 +44,14 @@ class SedmlSimulationView(TemplateView, HasWorkingProject):
 
 		TemplateView.__init__(self, **kwargs)
 		HasWorkingProject.__init__(self)
-
+		HasErrorMessages.__init__(self)
 		self.listOfPlots2D = None
 
 
 	def get_context_data(self, **kwargs):
 
 		kwargs = HasWorkingProject.get_context_data(self, **kwargs)
+		kwargs = HasErrorMessages.get_context_data(self, **kwargs)
 		kwargs['plots_2d'] = self.listOfPlots2D
 		kwargs['colors'] = Settings.default_colors
 
@@ -77,15 +79,18 @@ class SedmlSimulationView(TemplateView, HasWorkingProject):
 
 	def load(self, request, *args, **kwargs):
 		HasWorkingProject.load(self, request, *args, **kwargs)
+		HasErrorMessages.clearErrors(self)
 
 	def loadSedmlSimulation(self, request, sedml_id):
 
 		sedml_files = SEDMLSimulation.objects.filter(project=self.project)
 		if sedml_id < len(sedml_files):
-			sedml_file = sedml_files[sedml_id]
-			sedml_doc = SedmlDocument()
-			sedml_doc.readSedmlFromFile(join(settings.MEDIA_ROOT, str(sedml_file.sedml_file)))
-			sedml_doc.run()
-			self.listOfPlots2D = sedml_doc.listOfOutputs.getPlots2D()
+			try:
+				sedml_file = sedml_files[sedml_id]
+				sedml_doc = SedmlDocument()
+				sedml_doc.readSedmlFromFile(join(settings.MEDIA_ROOT, str(sedml_file.sedml_file)))
+				sedml_doc.run()
+				self.listOfPlots2D = sedml_doc.listOfOutputs.getPlots2D()
 
-
+			except SedmlException as e:
+				self.addError("Invalid SEDML document : " + e.message)
