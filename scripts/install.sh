@@ -21,3 +21,9 @@ INSTALL_DIR=`dirname $DIR`
 ${DIR}/install_deps.sh
 ${DIR}/apache/install_apache.sh ${ROOT_DIR}
 ${DIR}/create_db.sh
+
+mkdir /var/www/.config
+chown www-data:www-data /var/www/.config
+
+mkdir /var/www/.cache
+chown www-data:www-data /var/www/.cache
