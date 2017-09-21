@@ -20,11 +20,12 @@ before_install:
 
 install:
 - docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/signetsim:$DISTRIB bash
+- docker exec test_env chown -R www-data:www-data /home/travis/build/vincent-noel/SigNetSim
 - docker exec test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/install.sh
 
 script:
-- docker exec test_env su - www-data -s /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/test_apache.sh
-- docker exec test_env su - www-data -s /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/run_tests.sh
+- docker exec -u www-data test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/test_apache.sh
+- docker exec -u www-data test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/run_tests.sh
 
 after_script:
 - coveralls
