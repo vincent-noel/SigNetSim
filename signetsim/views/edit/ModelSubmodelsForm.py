@@ -87,7 +87,8 @@ class ModelSubmodelsForm(ModelParentForm):
 			if self.listOfDeletions != None:
 				for deletion in self.listOfDeletions:
 
-					t_object = submodel.getModelObject().listOfSbmlObjects[self.listOfObjectsMetaIds[deletion]]
+					# t_object = submodel.getModelObject().listOfSbmlObjects[self.listOfObjectsMetaIds[deletion]]
+					t_object = submodel.getModelObject().listOfSbmlObjects.getByMetaId(self.listOfObjectsMetaIds[deletion])
 					t_deletion = submodel.listOfDeletions.new()
 
 					# here we need to choose how to address the object

@@ -42,7 +42,6 @@ class GetSubstitution(JsonRequest, HasWorkingModel):
 		substitution_id = int(request.POST['id'])
 		listOfSubstitutions = self.getModel().listOfSbmlObjects.getListOfSubstitutions()
 
-
 		if substitution_id < len(listOfSubstitutions):
 
 			substitution = listOfSubstitutions[substitution_id]
@@ -58,7 +57,7 @@ class GetSubstitution(JsonRequest, HasWorkingModel):
 					'object_name': substitution.getParentObject().getName(),
 				})
 
-				submodel = self.getModel().listOfSubmodels.getBySbmlIdRef(substitution.getSubmodelRef())
+				submodel = self.getModel().listOfSubmodels.getBySbmlId(substitution.getSubmodelRef())
 				submodel_objects = []
 				for t_object in submodel.getModelObject().listOfSbmlObjects.values():
 					if isinstance(t_object, Variable) and not t_object.isStoichiometry():
@@ -78,7 +77,7 @@ class GetSubstitution(JsonRequest, HasWorkingModel):
 					'object_name': substitution.getParentObject().getName(),
 				})
 
-				submodel = self.getModel().listOfSubmodels.getBySbmlIdRef(substitution.getSubmodelRef())
+				submodel = self.getModel().listOfSubmodels.getBySbmlId(substitution.getSubmodelRef())
 				submodel_objects = []
 				for t_object in submodel.getModelObject().listOfSbmlObjects.values():
 					if isinstance(t_object, Variable) and not t_object.isStoichiometry():
