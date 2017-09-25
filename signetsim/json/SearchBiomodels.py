@@ -43,27 +43,30 @@ class SearchBiomodels(JsonRequest, HasUserLoggedIn):
 			search_type = int(request.POST['search_type'])
 			search_string = str(request.POST['search_string'])
 
-			biomodels = BioModels()
-			results = []
+			try:
+				biomodels = BioModels()
+				search_res = []
 
-			if search_string != "":
-				search_res = None
-				if search_type == 0:
-					search_res = biomodels.getModelsIdByName(search_string)
+				if search_string != "":
+						if search_type == 0:
+							search_res = biomodels.getModelsIdByName(search_string)
 
-				elif search_type == 1:
-					search_res = biomodels.getModelsIdByPerson(search_string)
+						elif search_type == 1:
+							search_res = biomodels.getModelsIdByPerson(search_string)
 
-				elif search_type == 2:
-					search_res = biomodels.getModelsIdByPublication(search_string)
+						elif search_type == 2:
+							search_res = biomodels.getModelsIdByPublication(search_string)
 
-				elif search_type == 3:
-					search_res = biomodels.getModelsIdByTaxonomy(search_string)
+						elif search_type == 3:
+							search_res = biomodels.getModelsIdByTaxonomy(search_string)
 
-				elif search_type == 4:
-					search_res = biomodels.getModelsIdByUniprot(search_string)
+						elif search_type == 4:
+							search_res = biomodels.getModelsIdByUniprot(search_string)
 
-			self.data.update({'results': [model_id for model_id in sorted(search_res) if model_id.startswith("BIOMD")]})
+				self.data.update({'results': [model_id for model_id in sorted(search_res) if model_id.startswith("BIOMD")]})
+
+			except:
+				self.data.update({'error': "Unable to connect to Biomodels"})
 
 		return JsonRequest.post(self, request, *args, **kwargs)
 

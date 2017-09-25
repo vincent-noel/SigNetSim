@@ -40,10 +40,14 @@ class GetBiomodelsName(JsonRequest, HasUserLoggedIn):
 		if self.isUserLoggedIn(request):
 
 			model_id = str(request.POST['model_id'])
-			biomodels = BioModels()
-			name = biomodels.getModelNameById(model_id)
+			try:
+				biomodels = BioModels()
+				name = biomodels.getModelNameById(model_id)
 
-			self.data.update({'name': name})
+				self.data.update({'name': name})
+
+			except:
+				self.data.update({'error': "Unable to connect to Biomodels"})
 
 		return JsonRequest.post(self, request, *args, **kwargs)
 
