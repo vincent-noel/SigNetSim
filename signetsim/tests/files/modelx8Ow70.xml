@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" level="2" version="4">
+  <model metaid="_meta_id_0_" name="Enzymatic reaction">
+    <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+        <rdf:Description rdf:about="#_meta_id_0_">
+          <dc:creator>
+            <rdf:Bag>
+              <rdf:li rdf:parseType="Resource">
+                <vCard:N rdf:parseType="Resource">
+                  <vCard:Family>Noël</vCard:Family>
+                  <vCard:Given>Vincent</vCard:Given>
+                </vCard:N>
+                <vCard:EMAIL>vincent.noel@butantan.gov.br</vCard:EMAIL>
+                <vCard:ORG rdf:parseType="Resource">
+                  <vCard:Orgname>Instituto Butantan</vCard:Orgname>
+                </vCard:ORG>
+              </rdf:li>
+            </rdf:Bag>
+          </dc:creator>
+          <dcterms:created rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-05-19T16:56:08Z</dcterms:W3CDTF>
+          </dcterms:created>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-05-19T16:56:08Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-05-19T16:59:21Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-05-19T16:59:33Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-05-19T21:04:18Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-05-19T21:04:24Z</dcterms:W3CDTF>
+          </dcterms:modified>
+        </rdf:Description>
+      </rdf:RDF>
+    </annotation>
+    <listOfUnitDefinitions metaid="_meta_id_2_">
+      <unitDefinition id="substance" name="micromoles">
+        <listOfUnits>
+          <unit kind="mole" scale="-6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM_per_second" name="uM per second">
+        <listOfUnits>
+          <unit kind="mole" scale="-6"/>
+          <unit kind="litre" exponent="-1"/>
+          <unit kind="second" exponent="-1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="sec_inv" name="s−1">
+        <listOfUnits>
+          <unit kind="second" exponent="-1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM_inv_sec_inv" name="μM-1s-1">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="-6"/>
+          <unit kind="litre"/>
+          <unit kind="second" exponent="-1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM" name="μM">
+        <listOfUnits>
+          <unit kind="mole" scale="-6"/>
+          <unit kind="litre" exponent="-1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments metaid="_meta_id_4_">
+      <compartment metaid="_meta_id_3_" id="cell" name="cell" size="1"/>
+    </listOfCompartments>
+    <listOfSpecies metaid="_meta_id_13_">
+      <species metaid="_meta_id_9_" id="substrate" name="Substrate" compartment="cell" initialConcentration="12" substanceUnits="substance"/>
+      <species metaid="_meta_id_10_" id="enzyme" name="Enzyme" compartment="cell" initialConcentration="10" substanceUnits="substance"/>
+      <species metaid="_meta_id_11_" id="complexES" name="ES-complex" compartment="cell" initialConcentration="0" substanceUnits="substance"/>
+      <species metaid="_meta_id_12_" id="product" name="Product" compartment="cell" initialConcentration="0" substanceUnits="substance"/>
+    </listOfSpecies>
+    <listOfParameters metaid="_meta_id_8_">
+      <parameter metaid="_meta_id_5_" id="kf" name="Binding rate" value="1"/>
+      <parameter metaid="_meta_id_6_" id="kr" name="Unbinding rate" value="1"/>
+      <parameter metaid="_meta_id_7_" id="kcat" name="Catalytic rate" value="1"/>
+    </listOfParameters>
+    <listOfReactions metaid="_meta_id_28_">
+      <reaction metaid="_meta_id_14_" id="binding" name="Enzyme-Substrate complexification">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_15_" species="substrate"/>
+          <speciesReference metaid="_meta_id_16_" species="enzyme"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_18_" species="complexES"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cell </ci>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <cn type="integer"> -1 </cn>
+                  <ci> complexES </ci>
+                  <ci> kr </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> enzyme </ci>
+                  <ci> substrate </ci>
+                  <ci> kf </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_21_" id="catalysis" name="Catalytic reaction" reversible="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_22_" species="complexES"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_24_" species="enzyme"/>
+          <speciesReference metaid="_meta_id_25_" species="product"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> complexES </ci>
+              <ci> cell </ci>
+              <ci> kcat </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

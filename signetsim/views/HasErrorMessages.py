@@ -253,10 +253,14 @@ class HasErrorMessages(object):
 		if request.POST.get(field) is None:
 			if required:
 				self.addError("%s does not exist !" % name, reportField, field)
+			else:
+				return []
 
 		elif str(request.POST[field]) == "":
 			if required:
 				self.addError("%s is required !" % name, reportField, field)
+			else:
+				return []
 
 		else:
 			if request.POST.getlist(field) is not None:
@@ -279,9 +283,12 @@ class HasErrorMessages(object):
 					except ValueError:
 						self.addError("%s's elements must be integers !" % name, reportField, field)
 
-
 				else:
-					self.addError("plsease select at least one element in %s" % name, reportField, field)
+					self.addError("please select at least one element in %s" % name, reportField, field)
+					return []
 
 			elif required:
 				self.addError("%s is required !" % name, reportField, field)
+
+			else:
+				return []

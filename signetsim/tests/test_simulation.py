@@ -119,7 +119,7 @@ class TestSimulation(TestCase):
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
 		files_folder = join(dirname(__file__), "files")
-		model_filename = join(files_folder, "modelqlzB7i.xml")
+		model_filename = join(files_folder, "modelx8Ow70.xml")
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
@@ -129,3 +129,13 @@ class TestSimulation(TestCase):
 		self.assertEqual(response_load_model.status_code, 200)
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 1)
 
+		response_simulate_model = c.post('/simulate/steady_states/', {
+			'action': 'simulate_steady_states',
+			'species_selected': [0, 1, 2, 3],
+			'species_id': [3],
+			'ss_to_plot': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+			'time_max': 1000
+		})
+
+		self.assertEqual(response_simulate_model.status_code, 200)
+		self.assertEqual(response_simulate_model.context['form'].getErrors(), [])
