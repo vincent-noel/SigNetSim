@@ -41,7 +41,6 @@ class TestSimulation(TestCase):
 
 		settings.MEDIA_ROOT = "/tmp/"
 
-
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
@@ -96,3 +95,37 @@ class TestSimulation(TestCase):
 		self.assertEqual(response_save_simulation.status_code, 200)
 		self.assertEqual(response_save_simulation.context['form'].getErrors(), [])
 		self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 1)
+
+	def testSteadyStates(self):
+
+		settings.MEDIA_ROOT = "/tmp/"
+
+		user = User.objects.filter(username='test_user')[0]
+		self.assertEqual(len(Project.objects.filter(user=user)), 1)
+		project = Project.objects.filter(user=user)[0]
+
+		# This test can only run once with success, because the second time the comp model dependencies will
+		# actually be in the folder. So cleaning the project folder now
+		rmtree(join(join(settings.MEDIA_ROOT, str(project.folder))), "models")
+
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
+
+		c = Client()
+		self.assertTrue(c.login(username='test_user', password='password'))
+
+		response_choose_project = c.get('/project/%s/' % project.folder)
+		self.assertRedirects(response_choose_project, '/models/', status_code=302, target_status_code=200)
+
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
+
+		files_folder = join(dirname(__file__), "files")
+		model_filename = join(files_folder, "modelqlzB7i.xml")
+
+		response_load_model = c.post('/models/', {
+			'action': 'load_model',
+			'docfile': open(model_filename, 'r')
+		})
+
+		self.assertEqual(response_load_model.status_code, 200)
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 1)
+

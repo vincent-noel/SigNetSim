@@ -195,11 +195,16 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 
 
 		doc = SbmlDocument()
-		doc.readFromBiomodels(model_id)
-		doc.writeSbmlToFile(os.path.join(settings.MEDIA_ROOT, str(new_model.sbml_file)))
-		new_model.name = doc.model.getName()
-		new_model.save()
+		try:
 
+			doc.readFromBiomodels(model_id)
+			doc.writeSbmlToFile(os.path.join(settings.MEDIA_ROOT, str(new_model.sbml_file)))
+			new_model.name = doc.model.getName()
+			new_model.save()
+
+		except:
+			self.addError("Unable to load model from biomodels")
+			new_model.delete()
 
 	def loadModels(self, request, *args, **kwargs):
 

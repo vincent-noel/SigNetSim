@@ -128,51 +128,6 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 		self.simResults = t_y
 
 
-	# def read_timeseries(self, results):
-	#
-	# 	self.simResults = []
-	# 	for result in results:
-	# 		(t_t, t_y) = result
-	#
-	# 		y_filtered = {}
-	# 		if self.form.selectedSpeciesIds is not None:
-	# 			for var in self.form.selectedSpeciesIds:
-	# 				t_sbml_id = self.listOfVariables[var].getSbmlId()
-	# 				t_name = self.listOfVariables[var].getNameOrSbmlId()
-	# 				if self.form.showObservations == True:
-	# 					t_name += " (model)"
-	# 				y_filtered.update({t_name:t_y[t_sbml_id]})
-	#
-	# 		if self.form.selectedReactionsIds is not None:
-	# 			for var in self.form.selectedReactionsIds:
-	# 				t_sbml_id = self.listOfReactions[var].getSbmlId()
-	# 				t_name = self.listOfReactions[var].getNameOrSbmlId()
-	# 				y_filtered.update({t_name:t_y[t_sbml_id]})
-	#
-	# 		self.simResults.append((t_t, y_filtered))
-	#
-	#
-	# 	tmax=0
-	# 	for time, y_values in self.simResults:
-	# 		for key, value in y_values.items():
-	# 			for t_value in value:
-	# 				tmax = max(tmax, t_value)
-	#
-	# 	self.y_max = tmax*1.1
-	#
-		# if self.getModelInstance().timeUnits is not None:
-		# 	self.t_unit = self.getModelInstance().timeUnits.getName()
-		#
-		# if (self.form.selectedSpeciesIds is not None
-		# 	and len(self.form.selectedSpeciesIds) > 0
-		# 	and self.listOfVariables[self.form.selectedSpeciesIds[0]].getUnits() is not None):
-		# 	self.y_unit = self.listOfVariables[self.form.selectedSpeciesIds[0]].getUnits().getNameOrSbmlId()
-		#
-		# if (self.form.selectedReactionsIds is not None
-		# 	and len(self.form.selectedReactionsIds) > 0
-		# 	and self.listOfVariables[self.form.selectedReactionsIds[0]].getUnits() is not None):
-		# 	self.y_unit = self.listOfVariables[self.form.selectedReactionsIds[0]].getUnits().getNameOrSbmlId()
-
 	def simulateModel(self, request):
 
 		self.form.read(request)
