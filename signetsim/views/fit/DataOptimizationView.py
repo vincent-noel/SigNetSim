@@ -23,7 +23,6 @@
 """
 
 from django.views.generic import TemplateView
-from django.conf import settings
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.models import Optimization, SbmlModel, Experiment
@@ -32,7 +31,9 @@ from signetsim.views.fit.DataOptimizationForm import DataOptimizationForm
 from libsignetsim.optimization.ModelVsTimeseriesOptimization import ModelVsTimeseriesOptimization
 
 import threading
-import os
+
+from os.path import isdir, join
+from os import mkdir
 
 
 class DataOptimizationView(TemplateView, HasWorkingModel):
@@ -133,7 +134,11 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 							p_initial_moves=self.form.plsaInitialMoves,
 							s_neg_penalty=self.form.scoreNegativePenalty
 		)
-		t_optimization.setTempDirectory(os.path.join(self.getProjectFolder(), "optimizations"))
+
+		if not isdir(join(self.getProjectFolder(), "optimizations")):
+			mkdir(join(self.getProjectFolder(), "optimizations"))
+
+		t_optimization.setTempDirectory(join(self.getProjectFolder(), "optimizations"))
 		nb_procs = 2
 
 		t = threading.Thread(group=None,

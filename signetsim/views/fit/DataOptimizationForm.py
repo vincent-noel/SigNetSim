@@ -163,7 +163,6 @@ class DataOptimizationForm(HasErrorMessages):
 	#
 
 	def loadParameters(self, request):
-		print request.POST
 
 		self.selectedParameters = []
 
@@ -203,7 +202,7 @@ class DataOptimizationForm(HasErrorMessages):
 					request, 'parameter_%d_active' % i_parameter,
 					"the status of the parameter #%d" % i_parameter
 				)
-				print t_active
+
 				t_name = self.readString(
 					request, 'parameter_%d_name' % i_parameter,
 					"the name of the parameter #%d" % i_parameter
