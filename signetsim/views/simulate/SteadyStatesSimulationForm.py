@@ -50,7 +50,6 @@ class SteadyStateSimulationForm(HasErrorMessages):
 		self.read_selected_reactions(request)
 		self.read_options(request)
 
-
 	def read_selected_species(self, request):
 
 		self.selectedSpeciesIds = self.readListInt(request, 'species_selected',
@@ -68,8 +67,6 @@ class SteadyStateSimulationForm(HasErrorMessages):
 
 	def read_options(self, request):
 
-		# self.timeMin = self.readDuration(request, 'time_min',
-		# 					"the starting point of the simulation")
 		self.timeMax = self.readDuration(request, 'time_max',
 							"the end point of the simulation")
 

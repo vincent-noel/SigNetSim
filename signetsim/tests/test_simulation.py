@@ -133,9 +133,25 @@ class TestSimulation(TestCase):
 			'action': 'simulate_steady_states',
 			'species_selected': [0, 1, 2, 3],
 			'species_id': [3],
-			'ss_to_plot': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+			'ss_to_plot': "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10",
 			'time_max': 1000
 		})
 
 		self.assertEqual(response_simulate_model.status_code, 200)
 		self.assertEqual(response_simulate_model.context['form'].getErrors(), [])
+
+		for i in range(11):
+			self.assertAlmostEqual(response_simulate_model.context['sim_results']['ES-complex'][i], 0)
+			self.assertAlmostEqual(response_simulate_model.context['sim_results']['Enzyme'][i], 10)
+			self.assertAlmostEqual(response_simulate_model.context['sim_results']['Substrate'][i], 0)
+		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][0], 0)
+		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][1], 1)
+		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][2], 2)
+		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][3], 3)
+		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][4], 4)
+		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][5], 5)
+		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][6], 6)
+		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][7], 7)
+		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][8], 8)
+		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][9], 9)
+		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][10], 10)
