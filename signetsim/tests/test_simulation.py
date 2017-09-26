@@ -129,10 +129,13 @@ class TestSimulation(TestCase):
 		self.assertEqual(response_load_model.status_code, 200)
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 1)
 
+		response_get_steady_states = c.get('/simulate/steady_states/')
+		self.assertEqual(response_get_steady_states.status_code, 200)
+
 		response_simulate_model = c.post('/simulate/steady_states/', {
 			'action': 'simulate_steady_states',
 			'species_selected': [0, 1, 2, 3],
-			'species_id': [3],
+			'species_id': [species.getSbmlId() for species in response_get_steady_states.context['species']].index('substrate'),
 			'ss_to_plot': "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10",
 			'time_max': 1000
 		})
@@ -144,6 +147,7 @@ class TestSimulation(TestCase):
 			self.assertAlmostEqual(response_simulate_model.context['sim_results']['ES-complex'][i], 0)
 			self.assertAlmostEqual(response_simulate_model.context['sim_results']['Enzyme'][i], 10)
 			self.assertAlmostEqual(response_simulate_model.context['sim_results']['Substrate'][i], 0)
+
 		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][0], 0)
 		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][1], 1)
 		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][2], 2)
