@@ -133,7 +133,7 @@ class AnalyseMainView(TemplateView, HasWorkingModel):
 
 
 		self.latex_conslaws = []
-		for conslaw in self.modelInstance.getMathModel().listOfConservationLaws:
+		for conslaw in self.modelInstance.listOfConservationLaws:
 			conslaw_formula = conslaw.getFormula()#rawFormula=False)
 			cs_latex = latex(unevaluatedSubs(expand(conslaw_formula), function_subs), mul_symbol='dot', symbol_names=symbol_names)
 			self.latex_conslaws.append(cs_latex)

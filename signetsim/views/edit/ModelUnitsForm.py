@@ -68,6 +68,7 @@ class ModelUnitsForm(ModelParentForm):
 
 		self.listOfUnits = []
 		i = 0
+
 		while ("unit_id_%d" % i) in request.POST:
 			t_unit = self.readInt(
 				request, 'unit_id_%d' % i,

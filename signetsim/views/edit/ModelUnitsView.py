@@ -47,6 +47,7 @@ class ModelUnitsView(TemplateView, HasWorkingModel):
 
 		kwargs['unit_definitions'] = self.listOfUnitDefinitions
 		kwargs['unit_list'] = Unit.unit_id.values()
+		kwargs['form'] = self.form
 
 		return kwargs
 
