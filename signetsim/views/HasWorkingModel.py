@@ -1,24 +1,26 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright 2014-2017 Vincent Noel (vincent.noel@butantan.gov.br)
+#
+# This file is part of libSigNetSim.
+#
+# libSigNetSim is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# libSigNetSim is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with libSigNetSim.  If not, see <http://www.gnu.org/licenses/>.
+
 """ HasWorkingModel.py
 
-
 	This file ...
-
-
-	Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU Affero General Public License as published
-	by the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU Affero General Public License for more details.
-
-	You should have received a copy of the GNU Affero General Public License
-	along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 """
 
@@ -196,7 +198,7 @@ class HasWorkingModel(HasWorkingProject):
 
 		# print ">Switching to model %d : %s" % (self.list_of_models[int(request.POST['model_id'])].id, self.list_of_models[int(request.POST['model_id'])].name)
 		self.model_id = self.list_of_models[int(request.POST['model_id'])].id
-		self.model_submodel = None
+		self.model_submodel = 0
 		self.modelInstance = None
 		self.__loadModelVariables()
 		self.savePickledModel(request)
