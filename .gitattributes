@@ -1,0 +1,3 @@
+README.md merge=nomerge
+scripts/docker/Dockerfile merge=nomerge
+scripts/pip_requirements merge=nomerge
