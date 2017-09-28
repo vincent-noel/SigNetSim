@@ -198,7 +198,7 @@ class HasWorkingModel(HasWorkingProject):
 
 		# print ">Switching to model %d : %s" % (self.list_of_models[int(request.POST['model_id'])].id, self.list_of_models[int(request.POST['model_id'])].name)
 		self.model_id = self.list_of_models[int(request.POST['model_id'])].id
-		self.model_submodel = None
+		self.model_submodel = 0
 		self.modelInstance = None
 		self.__loadModelVariables()
 		self.savePickledModel(request)

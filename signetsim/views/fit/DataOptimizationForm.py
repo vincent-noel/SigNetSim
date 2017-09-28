@@ -26,15 +26,10 @@
 
 from django.conf import settings
 
-from signetsim.models import Experiment, Condition
-from signetsim.models import Observation, Treatment
+from signetsim.models import Experiment
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from libsignetsim.data.Experiment import Experiment as SigNetSimExperiment
-from libsignetsim.data.ExperimentalCondition import ExperimentalCondition
-from libsignetsim.data.ListOfExperimentalData import ListOfExperimentalData
-from libsignetsim.data.ExperimentalData import ExperimentalData
-
-from libsignetsim.settings.Settings import Settings
+from signetsim.managers.data import buildExperiment
+from libsignetsim import Settings
 
 class DataOptimizationForm(HasErrorMessages):
 
@@ -230,10 +225,9 @@ class DataOptimizationForm(HasErrorMessages):
 
 				i_parameter += 1
 
-		# print self.selectedParameters
 
 	def get_user_optimizations_path(self):
-		return '{0}/optimizations/{1}/{2}'.format(settings.MEDIA_ROOT,self.project.id, instance.optimization_id)
+		return '{0}/optimizations/{1}/{2}'.format(settings.MEDIA_ROOT, self.project.id, instance.optimization_id)
 
 
 	def buildExperiments(self, request, interpolate=False):
@@ -241,74 +235,7 @@ class DataOptimizationForm(HasErrorMessages):
 		list_of_experiments = []
 
 		for i, (experiment, _, _) in enumerate(self.selectedDataSets):
-
-			conditions = Condition.objects.filter(experiment=experiment)
-			speciesTreatments = []
-			speciesObservations = []
-			for t_condition in conditions:
-				t_data = Treatment.objects.filter(condition=t_condition).order_by('time')
-				speciesTreatments += [str(t_datapoint.species) for t_datapoint in t_data]
-				t_data = Observation.objects.filter(condition=t_condition).order_by('time')
-				speciesObservations += [str(t_datapoint.species) for t_datapoint in t_data]
-
-			speciesTreatments = list(set(speciesTreatments))
-			speciesObservations = list(set(speciesObservations))
-
-
-			mapping_treatment = {}
-			mapping_treatment_interpolation = {}
-			i_treatment = 0
-
-			while ("mapping_treatment_%d_%d" % (i, i_treatment)) in request.POST:
-				mapping_treatment.update({speciesTreatments[i_treatment]: str(request.POST["mapping_treatment_%d_%d" % (i, i_treatment)])})
-				mapping_treatment_interpolation.update({speciesTreatments[i_treatment]: bool(request.POST["mapping_treatment_%d_%d_interpolation" % (i, i_treatment)])})
-				i_treatment += 1
-
-
-			mapping_observation = {}
-			i_observation = 0
-
-			while ("mapping_observation_%d_%d" % (i, i_observation)) in request.POST:
-				mapping_observation.update({speciesObservations[i_observation]: str(request.POST["mapping_observation_%d_%d" % (i, i_observation)])})
-				i_observation += 1
-
-
-			t_experiment = SigNetSimExperiment()
-
-			for ii, condition in enumerate(conditions):
-				# print "> Condition %d" % ii
-				observed_data = Observation.objects.filter(condition=condition).order_by('time')
-				list_of_experimental_data = ListOfExperimentalData()
-				for data in observed_data:
-					t_experimental_data = ExperimentalData()
-					t_experimental_data.readDB(
-							str(data.species), data.time, data.value, data.stddev,
-							data.steady_state, data.min_steady_state,
-							data.max_steady_state)
-
-					list_of_experimental_data.add(t_experimental_data)
-
-				if interpolate:
-					list_of_experimental_data.interpolate()
-
-				input_data = Treatment.objects.filter(condition=condition).order_by('time')
-
-				list_of_input_data = ListOfExperimentalData()
-				for iii, data in enumerate(input_data):
-					t_experimental_data = ExperimentalData()
-					t_experimental_data.readDB(
-							str(data.species), data.time, data.value)
-					list_of_input_data.add(t_experimental_data)
-
-				if interpolate:
-					list_of_input_data.interpolate()
-
-				t_condition = ExperimentalCondition()
-				t_condition.read(list_of_input_data, list_of_experimental_data)
-				t_condition.name = condition.name
-				t_experiment.addCondition(t_condition)
-
-			t_experiment.name = experiment.name
+			t_experiment = buildExperiment(experiment)
 			list_of_experiments.append(t_experiment)
 
 

@@ -25,10 +25,13 @@
 """
 
 from django.test import TestCase, Client
-from signetsim.models import User, Project, SbmlModel
 from django.conf import settings
+
+from signetsim.models import User, Project, SbmlModel
+
 from os.path import dirname, join
 from json import loads
+
 
 class TestSubmodel(TestCase):
 

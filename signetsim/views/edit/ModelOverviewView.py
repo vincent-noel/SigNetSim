@@ -78,14 +78,15 @@ class ModelOverviewView(TemplateView, HasWorkingModel):
 	def load(self, request, *args, **kwargs):
 
 		HasWorkingModel.load(self, request, *args, **kwargs)
+		HasWorkingModel.load(self, request, *args, **kwargs)
 		if self.isModelLoaded():
 			if self.isCompModelDefinition():
 				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values()]
-				self.listOfReactions = []
+				self.listOfReactions = self.getModel().listOfReactions.values()
 
 			elif self.isCompInternalSubmodel():
 				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values()]
-				self.listOfReactions = []
+				self.listOfReactions = self.getModel().listOfReactions.values()
 
 			elif self.isFlattenModel():
 				# Would be nice to also draw the boundaries of the submodels here

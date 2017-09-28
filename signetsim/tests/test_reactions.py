@@ -28,12 +28,12 @@ from django.conf import settings
 from django.test import TestCase, Client
 
 from signetsim.models import User, Project, SbmlModel
-from signetsim.views.ListOfModelsView import ListOfModelsView
 
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.model.sbml.KineticLaw import KineticLaw
 from os.path import dirname, join
 from json import loads
+
 
 class TestReactions(TestCase):
 

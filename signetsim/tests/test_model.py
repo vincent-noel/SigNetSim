@@ -24,10 +24,9 @@
 
 """
 
-from django.test import TestCase, Client, RequestFactory
-from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import TestCase, Client
 from signetsim.models import User, Project, SbmlModel
-from signetsim.views.ListOfModelsView import ListOfModelsView
+
 from django.conf import settings
 from os.path import dirname, join
 from shutil import rmtree

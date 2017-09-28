@@ -36,6 +36,7 @@ from os.path import dirname, join
 from json import loads
 from sympy import simplify
 
+
 class TestEvent(TestCase):
 
 	fixtures = ["user_with_project.json"]

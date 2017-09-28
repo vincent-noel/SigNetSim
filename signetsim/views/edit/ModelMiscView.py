@@ -28,7 +28,7 @@ from django.views.generic import TemplateView
 from django.core.urlresolvers import reverse
 
 from libsignetsim.uris.URI import URI
-from libsignetsim.settings.Settings import Settings
+from libsignetsim import Settings
 
 from signetsim.models import SbmlModel
 from signetsim.views.HasWorkingModel import HasWorkingModel

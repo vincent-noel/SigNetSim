@@ -30,6 +30,7 @@ from libsignetsim.model.SbmlDocument import SbmlDocument
 from django.conf import settings
 from os.path import dirname, join
 
+
 class TestSelectSubmodel(TestCase):
 
 	fixtures = ["user_with_project.json"]

@@ -27,6 +27,7 @@
 from django.test import TestCase, Client
 from signetsim.models import User
 
+
 class TestAccounts(TestCase):
 
 	fixtures = ["basic.json"]

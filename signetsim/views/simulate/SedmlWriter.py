@@ -23,30 +23,7 @@
 	This file ...
 
 """
-
-from libsignetsim.model.Model import Model
-from libsignetsim.model.ModelException import ModelException
-from libsignetsim.simulation.TimeseriesSimulation import TimeseriesSimulation
-from libsignetsim.simulation.SimulationException import SimulationException
-from libsignetsim.data.ExperimentalCondition import ExperimentalCondition
-from libsignetsim.data.ExperimentalData import ExperimentalData
-from libsignetsim.data.ListOfExperimentalData import ListOfExperimentalData
-from libsignetsim.data.Experiment import Experiment as SigNetSimExperiment
-from libsignetsim.LibSigNetSimException import UnknownObservationException, UnknownTreatmentException
-from django.views.generic import TemplateView
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse
-from django.conf import settings
-from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.models import SbmlModel, Experiment, Condition, Observation, Treatment, SEDMLSimulation, new_sedml_filename
-from signetsim.settings.Settings import Settings
-from TimeSeriesSimulationForm import TimeSeriesSimulationForm
-from django.shortcuts import redirect
-
 from libsignetsim.sedml.SedmlDocument import SedmlDocument
-from os.path import basename, join
-from django.core.files import File
-
 
 class SedmlWriter(object):
 

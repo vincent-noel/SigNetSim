@@ -33,12 +33,12 @@ from signetsim.managers.data import deleteExperiment, copyExperiment, buildExper
 from signetsim.managers.simulations import deleteSimulation, copySimulation
 from signetsim.managers.optimizations import deleteOptimization
 
-from libsignetsim.combine.CombineArchive import CombineArchive
+from libsignetsim import CombineArchive
 from libsignetsim.combine.CombineException import CombineException
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from libsignetsim.sedml.SedmlDocument import SedmlDocument
 from libsignetsim.model.ModelException import ModelException
-from libsignetsim.settings.Settings import Settings
+from libsignetsim import Settings
 
 from os.path import isdir, isfile, join, splitext, basename, exists
 from os import remove

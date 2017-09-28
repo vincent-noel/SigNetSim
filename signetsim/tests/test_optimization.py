@@ -27,8 +27,7 @@
 from django.test import TestCase, Client
 from django.conf import settings
 
-from signetsim.models import User, Project, SbmlModel, Experiment, SEDMLSimulation
-from libsignetsim.combine.CombineArchive import CombineArchive
+from signetsim.models import User, Project, SbmlModel
 
 from os.path import dirname, join
 from shutil import rmtree
