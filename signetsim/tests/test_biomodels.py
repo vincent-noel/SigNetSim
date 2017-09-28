@@ -71,7 +71,7 @@ class TestBiomodels(TestCase):
 
 		self.assertTrue('results' in json_response.keys() or 'error' in json_response.keys())
 
-		if not 'error' in json_response.keys():
+		if 'error' not in json_response.keys():
 			self.assertTrue(len(json_response['results']) >= 11)
 
 			self.assertEqual(json_response['results'][0], u"BIOMD0000000005")
@@ -110,3 +110,14 @@ class TestBiomodels(TestCase):
 		})
 		self.assertEqual(response_import_unicode.status_code, 200)
 
+		response_search_name = c.post('/json/get_biomodels_name/', {
+			'model_id': "BIOMD0000000005"
+		})
+
+		self.assertEqual(response_search_name.status_code, 200)
+		json_response = loads(response_search_name.content)
+
+		self.assertTrue('name' in json_response.keys() or 'error' in json_response.keys())
+
+		if 'error' not in json_response.keys():
+			self.assertEqual(json_response['name'], u'Tyson1991 - Cell Cycle 6 var')
