@@ -241,6 +241,7 @@ class TestOptimization(TestCase):
 			'precision': 0.001,
 			'initial_temperature': 1,
 			'initial_moves': 2000,
+			'freeze_count': 100,
 			'negative_penalty': 0
 		})
 
@@ -261,9 +262,3 @@ class TestOptimization(TestCase):
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
 		self.assertEqual(response_list_optimizations.context['optimizations'][0][1], "Finished")
-
-
-
-
-
-

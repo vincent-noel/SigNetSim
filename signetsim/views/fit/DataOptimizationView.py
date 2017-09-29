@@ -107,22 +107,25 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 		self.form.readSettings(request)
 
 		t_parameters = []
+
 		for (ind, active, name, value, vmin, vmax) in self.form.selectedParameters:
 
 			if active:
 				t_parameter = None
-				if ind < self.model.listOfParameters:
-					t_parameter = self.model.listOfParameters.getByPos(ind)
+				if ind < self.getModelInstance().listOfParameters:
+					t_parameter = self.getModelInstance().listOfParameters.getByPos(ind)
 				else:
-					i_parameter = len(self.model.listOfParameters)
+					i_parameter = len(self.getModelInstance().listOfParameters)
 					i_reaction = 0
-					while (i_parameter + len(self.model.listOfReactions.getByPos(i_reaction).listOfLocalParameters)) < ind:
-						i_parameter += len(self.model.listOfReactions.getByPos(i_reaction).listOfLocalParameters)
+					while (i_parameter + len(self.getModelInstance().listOfReactions.getByPos(i_reaction).listOfLocalParameters)) < ind:
+						i_parameter += len(self.getModelInstance().listOfReactions.getByPos(i_reaction).listOfLocalParameters)
 						i_reaction += 1
-					t_parameter = self.model.listOfReactions.getByPos(i_reaction).listOfLocalParameters.getByPos(ind-i_parameter)
+					t_parameter = self.getModelInstance().listOfReactions.getByPos(i_reaction).listOfLocalParameters.getByPos(ind-i_parameter)
+
+				if self.getModelInstance().parentDoc.isCompEnabled():
+					t_parameter = self.getModelInstance().getDefinitionVariable(t_parameter)[0]
 
 				t_parameters.append((t_parameter, value, vmin, vmax))
-
 
 		experiments = self.form.buildExperiments(request)
 		t_optimization = ModelVsTimeseriesOptimization(
@@ -134,6 +137,7 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 							p_criterion=self.form.plsaCriterion,
 							p_initial_temperature=self.form.plsaInitialTemperature,
 							p_initial_moves=self.form.plsaInitialMoves,
+							p_freeze_count=self.form.plsaFreezeCount,
 							s_neg_penalty=self.form.scoreNegativePenalty
 		)
 

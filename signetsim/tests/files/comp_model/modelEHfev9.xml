@@ -1,63 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
   <model metaid="_meta_id_66_" id="model_0" name="Ras" substanceUnits="nmol" timeUnits="s" extentUnits="nmol">
+    <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+        <rdf:Description rdf:about="#_meta_id_66_">
+          <dcterms:creator>
+            <rdf:Bag>
+              <rdf:li rdf:parseType="Resource">
+                <vCard:N rdf:parseType="Resource">
+                  <vCard:Family>Noël</vCard:Family>
+                  <vCard:Given>Vincent</vCard:Given>
+                </vCard:N>
+                <vCard:EMAIL>vincent.noel@butantan.gov.br</vCard:EMAIL>
+                <vCard:ORG rdf:parseType="Resource">
+                  <vCard:Orgname>Instituto Butantan</vCard:Orgname>
+                </vCard:ORG>
+              </rdf:li>
+            </rdf:Bag>
+          </dcterms:creator>
+          <dcterms:created rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-09-28T22:45:24Z</dcterms:W3CDTF>
+          </dcterms:created>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-09-28T22:45:24Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-09-28T22:45:52Z</dcterms:W3CDTF>
+          </dcterms:modified>
+        </rdf:Description>
+      </rdf:RDF>
+    </annotation>
     <listOfUnitDefinitions metaid="_meta_id_1_">
-      <unitDefinition id="L" name="Litre">
+      <unitDefinition metaid="_meta_id_58_" id="L" name="Litre">
         <listOfUnits>
           <unit kind="litre" exponent="1" scale="1" multiplier="1"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="nmol" name="Nanomoles">
+      <unitDefinition metaid="_meta_id_40_" id="nmol" name="Nanomoles">
         <listOfUnits>
           <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="nmol_per_liter" name="Nanomoles per litre">
+      <unitDefinition metaid="_meta_id_153_" id="nmol_per_liter" name="Nanomoles per litre">
         <listOfUnits>
           <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
           <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="s" name="Seconds">
+      <unitDefinition metaid="_meta_id_96_" id="s" name="Seconds">
         <listOfUnits>
           <unit kind="second" exponent="1" scale="1" multiplier="1"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="s_1" name="per Seconds">
+      <unitDefinition metaid="_meta_id_85_" id="s_1" name="per Seconds">
         <listOfUnits>
           <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="nmol_1" name="per Nanomoles ">
+      <unitDefinition metaid="_meta_id_48_" id="nmol_1" name="per Nanomoles ">
         <listOfUnits>
           <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="dim_less" name="Dimensionless">
+      <unitDefinition metaid="_meta_id_77_" id="dim_less" name="Dimensionless">
         <listOfUnits>
           <unit kind="dimensionless" exponent="1" scale="1" multiplier="1"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="per_nmol_per_seconds" name="per Nanomoles per Seconds">
+      <unitDefinition metaid="_meta_id_87_" id="per_nmol_per_seconds" name="per Nanomoles per Seconds">
         <listOfUnits>
           <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
           <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="mnol_per_seconds" name="Nanomoles per seconds">
+      <unitDefinition metaid="_meta_id_52_" id="mnol_per_seconds" name="Nanomoles per seconds">
         <listOfUnits>
           <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
           <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="nmol_per_liter_per_seconds" name="Nanomoles per litre per seconds">
+      <unitDefinition metaid="_meta_id_93_" id="nmol_per_liter_per_seconds" name="Nanomoles per litre per seconds">
         <listOfUnits>
           <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
           <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
           <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="per_nmol_per_liter_per_seconds" name="per Nanomoles per liter per Seconds">
+      <unitDefinition metaid="_meta_id_145_" id="per_nmol_per_liter_per_seconds" name="per Nanomoles per liter per Seconds">
         <listOfUnits>
           <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
           <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
@@ -79,6 +108,7 @@
       <species metaid="_meta_id_53_" id="ras_n17" name="Ras-N17" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_54_" id="sos_ras_n17" name="SOS-Ras-N17" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species metaid="_meta_id_65_" id="gef_rasn17" name="GEF-RasN17" compartment="cell" initialConcentration="0" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_158_" id="total_ras_gtp" name="Total Ras-GTP" compartment="cell" substanceUnits="nmol" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
     <listOfParameters metaid="_meta_id_4_">
       <parameter metaid="_meta_id_5_" id="sos_ras_gdp_comp" name="SOS-Ras-GDP complexification constant" value="0.00011255" units="per_nmol_per_liter_per_seconds" constant="true"/>
@@ -104,6 +134,17 @@
       <parameter metaid="_meta_id_38_" id="gef_rasn17_comp" name="GEF Ras-N17 complexification" value="0.002" units="per_nmol_per_liter_per_seconds" constant="true"/>
       <parameter metaid="_meta_id_39_" id="gef_rasn17_decomp" name="GEF Ras-N17 decomplexification" value="1.92e-05" units="s_1" constant="true"/>
     </listOfParameters>
+    <listOfRules metaid="_meta_id_30_">
+      <assignmentRule metaid="_meta_id_159_" variable="total_ras_gtp">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <ci> ras_gtp </ci>
+            <ci> sos_ras_gtp </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+    </listOfRules>
     <listOfReactions metaid="_meta_id_79_">
       <reaction metaid="_meta_id_67_" id="reaction_2" name="SOS-Ras-GDP Complexification" reversible="true" fast="false">
         <listOfReactants>
