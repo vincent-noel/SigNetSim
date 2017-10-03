@@ -216,7 +216,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 
 			if self.form.experimentId is not None:
 
-				self.loadExperiments(request)
+				self.loadExperiments()
 				t_experiment_id = self.experiments[self.form.experimentId].id
 				experiment = Experiment.objects.get(id=t_experiment_id)
 				conditions = Condition.objects.filter(experiment=experiment)
