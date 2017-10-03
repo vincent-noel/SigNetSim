@@ -30,17 +30,18 @@ from django.core.exceptions import PermissionDenied
 from signetsim.models import SbmlModel
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from signetsim.views.HasWorkingProject import HasWorkingProject
+from signetsim.views.HasModelInSession import HasModelInSession
 import os
 import cloudpickle
 from libsbml import Date
 import datetime
 
-class HasWorkingModel(HasWorkingProject):
+class HasWorkingModel(HasWorkingProject, HasModelInSession):
 
 	def __init__(self):
 
 		HasWorkingProject.__init__(self)
-
+		HasModelInSession.__init__(self)
 		self.list_of_models = None
 
 		self.model = None
@@ -53,6 +54,7 @@ class HasWorkingModel(HasWorkingProject):
 		self.model_list_of_submodels_types = []
 		self.model_submodel = None
 
+		self.__request = None
 
 	def get_context_data(self, **kwargs):
 
@@ -68,11 +70,16 @@ class HasWorkingModel(HasWorkingProject):
 		return kwargs
 
 
-	def load(self, request, *args, **kwargs):
+	def load(self, request, recompute=True, *args, **kwargs):
 
 		HasWorkingProject.load(self, request, *args, **kwargs)
+		HasModelInSession.load(self, request, *args, **kwargs)
+
 		self.__loadModels(request)
 		self.__loadModel(request, *args)
+
+
+		# self.modelInstance = None
 
 
 	def isChooseModel(self, request):
@@ -96,8 +103,14 @@ class HasWorkingModel(HasWorkingProject):
 			return False
 
 	def getModelInstance(self):
-		if self.modelInstance is None and self.model is not None:
-			self.modelInstance = self.model.parentDoc.getModelInstance()
+		if self.modelInstance is None:
+			if self.hasModelInstanceInSession():
+				self.modelInstance = self.getModelInstanceFromSession()
+
+			elif self.model is not None:
+				self.modelInstance = self.model.parentDoc.getModelInstance()
+				self.saveModelInstanceInSession(self.modelInstance)
+
 		return self.modelInstance
 
 
@@ -105,8 +118,10 @@ class HasWorkingModel(HasWorkingProject):
 
 		if self.model_submodel is None or self.model_submodel == 0:
 			return self.model
+
 		elif self.model_submodel == -1:
 			return self.getModelInstance()
+
 		else:
 			t_list_submodels = self.model.parentDoc.listOfModelDefinitions.values()
 			return t_list_submodels[self.model_submodel-1]
@@ -114,6 +129,11 @@ class HasWorkingModel(HasWorkingProject):
 	def saveModel(self, request):
 		if self.model is not None:
 			self.savePickledModel(request)
+
+			# We need to recompute the instance
+			self.modelInstance = None
+			self.deleteModelInstanceFromSession()
+
 			if self.model_filename is not None:
 				self.saveModelHistory(request)
 				self.model.parentDoc.writeSbmlToFile(self.model_filename)
@@ -285,7 +305,6 @@ class HasWorkingModel(HasWorkingProject):
 				self.model_submodel = None
 
 
-
 	def __loadModelVariables(self):
 
 		if self.model_id is not None and self.project_id is not None and SbmlModel.objects.filter(project=self.project_id, id=self.model_id).exists():
@@ -319,8 +338,6 @@ class HasWorkingModel(HasWorkingProject):
 		self.model_submodel = None
 		self.modelInstance = None
 
-
-
 	def savePickledModel(self, request):
 
 		if self.model_id is not None:
@@ -337,6 +354,8 @@ class HasWorkingModel(HasWorkingProject):
 
 			request.session['loaded_model_filename'] = self.model_filename
 
+			if self.hasModelInstanceInSession():
+				self.deleteModelInstanceFromSession()
 
 	def __loadPickledModel(self, request):
 		# t0 = time.time()
@@ -354,7 +373,7 @@ class HasWorkingModel(HasWorkingProject):
 		del request.session['loaded_model_doc']
 		del request.session['loaded_model_submodel']
 		del request.session['loaded_model_filename']
-
+		# del request.session['loaded_model_instance']
 
 	def getModelSubmodels(self, request, model_id):
 		""" Returning the submodels of a model available within the project
