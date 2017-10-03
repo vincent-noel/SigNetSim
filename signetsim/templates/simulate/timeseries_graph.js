@@ -41,30 +41,31 @@ var config_{{forloop.counter0}}=
         },
         {% endfor %}
 
-        {% with t_observation=experiment_observations|my_lookup:forloop.counter0 %}
-        {% for name in t_observation.getSpecies %}
-        {
+        {% if form.showObservations == True %}
+            {% with t_observation=experiment_observations|my_lookup:forloop.counter0 %}
+            {% for name in t_observation.getSpecies %}
+            {
 
-            label: "{{name}} (Data)",
-            data: [
-                {% for data in t_observation.getByVariable|my_lookup:name %}
-                {x: {{data.t}}, y: {{data.value}}},
-                {% endfor %}
-            ],
+                label: "{{name}} (Data)",
+                data: [
+                    {% for data in t_observation.getByVariable|my_lookup:name %}
+                    {x: {{data.t}}, y: {{data.value}}},
+                    {% endfor %}
+                ],
 
-            fill: false,
+                fill: false,
 
-            {% with t_length=y.keys|length %}
-            {% with t_ind_color=forloop.counter0|add:t_length %}
-            backgroundColor: "{{colors|get_color:t_ind_color}}",
-            borderColor: "{{colors|get_color:t_ind_color}}",
-            showLine: false,
+                {% with t_length=y.keys|length %}
+                {% with t_ind_color=forloop.counter0|add:t_length %}
+                backgroundColor: "{{colors|get_color:t_ind_color}}",
+                borderColor: "{{colors|get_color:t_ind_color}}",
+                showLine: false,
+                {% endwith %}
+                {% endwith %}
+            },
+            {% endfor %}
             {% endwith %}
-            {% endwith %}
-        },
-        {% endfor %}
-        {% endwith %}
-
+        {% endif %}
         ],
     },
 
@@ -86,7 +87,7 @@ var config_{{forloop.counter0}}=
                     labelString: 'Concentration'
                 },
                 ticks: {
-//                    beginAtZero: true,
+{#                    beginAtZero: true,#}
 {#                    suggestedMax: {{y_max}},#}
                 }
             }],

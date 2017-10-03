@@ -60,10 +60,10 @@
 							{% endfor %}
 						</ul>
 					</div>
-					<input type="hidden" id="experiment_id" name="experiment_id" value="{% if experiment_id != None %}{{experiment_id}}{% else %}{% endif %}">
+					<input type="hidden" id="experiment_id" name="experiment_id" value="{% if form.experimentId != None %}{{form.experimentId}}{% else %}{% endif %}">
 					<br/>
 
-					<div class="collapse {% if experiment_id != None %}in{% endif %}" id="experiment_selected">
+					<div class="collapse {% if form.experimentId != None %}in{% endif %}" id="experiment_selected">
 						<table class="table table-striped">
 							<thead>
 								<tr onclick="toggle_observations();" >
