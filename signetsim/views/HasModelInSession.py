@@ -54,7 +54,8 @@ class HasModelInSession(object):
 		self.__request.session['loaded_model'] = cloudpickle.dumps(model)
 
 	def deleteModelFromSession(self):
-		del self.__request.session['loaded_model']
+		if self.hasModelInSession():
+			del self.__request.session['loaded_model']
 
 
 	# Model instance
@@ -68,7 +69,8 @@ class HasModelInSession(object):
 		self.__request.session['loaded_model_instance'] = cloudpickle.dumps(model_instance)
 
 	def deleteModelInstanceFromSession(self):
-		del self.__request.session['loaded_model_instance']
+		if self.hasModelInstanceInSession():
+			del self.__request.session['loaded_model_instance']
 
 	#
 	#
