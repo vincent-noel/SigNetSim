@@ -45,18 +45,45 @@ class HasModelInSession(object):
 
 	# Model
 	def hasModelInSession(self):
-		return self.__request.session.get('loaded_model') is not None
+		return (
+			self.__request.session.get('loaded_model_doc') is not None
+			and self.__request.session.get('loaded_model_id') is not None
+		)
 
 	def getModelFromSession(self):
-		return cloudpickle.loads(self.__request.session['loaded_model'])
+		return cloudpickle.loads(self.__request.session['loaded_model_doc']).model
 
-	def saveModelInSession(self, model):
-		self.__request.session['loaded_model'] = cloudpickle.dumps(model)
+	def getModelIdFromSession(self):
+		return self.__request.session.get('loaded_model_id')
+
+	def saveModelInSession(self, model, model_id):
+		self.model.cleanBeforePickle()
+		self.__request.session['loaded_model_doc'] = cloudpickle.dumps(model.parentDoc)
+		self.__request.session['loaded_model_id'] = model_id
 
 	def deleteModelFromSession(self):
 		if self.hasModelInSession():
-			del self.__request.session['loaded_model']
+			del self.__request.session['loaded_model_doc']
+			del self.__request.session['loaded_model_id']
 
+	def hasSubmodelInSession(self):
+		return self.__request.session.get('loaded_model_submodel') is not None
+
+	def getSubmodelIdFromSession(self):
+		submodel_id = str(self.__request.session['loaded_model_submodel'])
+		if submodel_id != "":
+			try:
+				return int(submodel_id)
+			except:
+				return None
+		else:
+			return None
+
+	def saveSubmodelInSession(self, submodel_id):
+		self.__request.session['loaded_model_submodel'] = submodel_id
+
+	def deleteSubmodelFromSession(self):
+		del self.__request.session['loaded_model_submodel']
 
 	# Model instance
 	def hasModelInstanceInSession(self):
