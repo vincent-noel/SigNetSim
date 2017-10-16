@@ -116,7 +116,7 @@ class ModelAnnotationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		self.form.readName(request)
 		self.form.saveName()
 		self.saveModel(request)
-		self.saveModelName(self.form.name)
+		self.saveModelName(request, self.form.name)
 
 	def setModelPublication(self, request):
 

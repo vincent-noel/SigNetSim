@@ -161,3 +161,6 @@ class HasWorkingProject(HasUserLoggedIn):
 			return SbmlModel.objects.filter(project=self.project)
 		else:
 			return []
+
+	def isProjectOwner(self, request):
+		return self.isUserLoggedIn(request) and self.project.user == request.user

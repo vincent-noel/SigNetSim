@@ -32,7 +32,6 @@ from libsignetsim.model.SbmlDocument import SbmlDocument
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from signetsim.views.HasModelInSession import HasModelInSession
 import os
-import cloudpickle
 from libsbml import Date
 import datetime
 
@@ -78,10 +77,6 @@ class HasWorkingModel(HasWorkingProject, HasModelInSession):
 		self.__loadModels(request)
 		self.__loadModel(request, *args)
 
-
-		# self.modelInstance = None
-
-
 	def isChooseModel(self, request):
 
 		if HasWorkingProject.isChooseProject(self, request):
@@ -104,12 +99,12 @@ class HasWorkingModel(HasWorkingProject, HasModelInSession):
 
 	def getModelInstance(self):
 		if self.modelInstance is None:
-			if self.hasModelInstanceInSession():
-				self.modelInstance = self.getModelInstanceFromSession()
+			if self.model.parentDoc.modelInstance is not None:
+				self.modelInstance = self.model.parentDoc.modelInstance
 
 			elif self.model is not None:
 				self.modelInstance = self.model.parentDoc.getModelInstance()
-				self.saveModelInstanceInSession(self.modelInstance)
+				self.saveModelInSession(self.model, self.model_id)
 
 		return self.modelInstance
 
@@ -127,12 +122,13 @@ class HasWorkingModel(HasWorkingProject, HasModelInSession):
 			return t_list_submodels[self.model_submodel-1]
 
 	def saveModel(self, request):
-		if self.model is not None:
+		if self.model is not None and self.isProjectOwner(request):
+
 			self.savePickledModel(request)
 
-			# We need to recompute the instance
+			# We need to reset the instance
 			self.modelInstance = None
-			self.deleteModelInstanceFromSession()
+			self.model.parentDoc.modelInstance = None
 
 			if self.model_filename is not None:
 				self.saveModelHistory(request)
@@ -155,8 +151,8 @@ class HasWorkingModel(HasWorkingProject, HasModelInSession):
 	def isCompInternalSubmodel(self):
 		return self.model_submodel is not None and self.model_submodel > 0
 
-	def saveModelName(self, name):
-		if self.model_submodel == 0:
+	def saveModelName(self, request, name):
+		if self.model_submodel == 0 and self.isProjectOwner(request):
 			db_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
 			db_model.name = name
 			db_model.save()
@@ -256,7 +252,7 @@ class HasWorkingModel(HasWorkingProject, HasModelInSession):
 
 	def savePickledModel(self, request):
 
-		if self.model_id is not None:
+		if self.model_id is not None and self.isProjectOwner(request):
 			self.saveModelInSession(self.model, self.model_id)
 			self.saveSubmodelInSession(self.model_submodel)
 
@@ -266,9 +262,6 @@ class HasWorkingModel(HasWorkingProject, HasModelInSession):
 					self.model_filename = t_model.sbml_file
 
 			request.session['loaded_model_filename'] = self.model_filename
-
-			if self.hasModelInstanceInSession():
-				self.deleteModelInstanceFromSession()
 
 	def __loadPickledModel(self, request):
 
