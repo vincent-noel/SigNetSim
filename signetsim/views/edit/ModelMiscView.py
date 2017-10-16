@@ -128,7 +128,7 @@ class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 			# elif request.POST['action'] == "set_model_publication":
 			# 	self.setModelPublication(request)
 
-		self.savePickledModel(request)
+		# self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
 

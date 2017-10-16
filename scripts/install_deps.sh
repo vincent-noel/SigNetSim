@@ -2,6 +2,8 @@
 EXEC_DIR=$PWD
 CMD=$0
 
+apt-get install -y realpath
+
 if [ "${CMD:0:1}" == "/" ]
 then
     # absolute path

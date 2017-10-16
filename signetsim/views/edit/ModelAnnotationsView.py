@@ -59,9 +59,6 @@ class ModelAnnotationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		kwargs['model_publication'] = self.modelPublication
 		kwargs['form'] = self.form
 
-
-
-
 		return kwargs
 
 
@@ -74,6 +71,7 @@ class ModelAnnotationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 	def post(self, request, *args, **kwargs):
 
 		self.load(request, *args, **kwargs)
+		# HasWorkingModel.load(self, request, *args, **kwargs)
 
 		if "action" in request.POST:
 			if HasWorkingModel.isChooseModel(self, request):
@@ -88,7 +86,7 @@ class ModelAnnotationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == "set_model_publication":
 				self.setModelPublication(request)
 
-		self.savePickledModel(request)
+		# self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
 

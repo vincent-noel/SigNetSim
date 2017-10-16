@@ -71,6 +71,7 @@ class HasWorkingModel(HasWorkingProject, HasModelInSession):
 
 	def load(self, request, recompute=True, *args, **kwargs):
 
+		# print "> Model loading"
 		HasWorkingProject.load(self, request, *args, **kwargs)
 		HasModelInSession.load(self, request, *args, **kwargs)
 

@@ -70,7 +70,7 @@ class ModelUnitsView(TemplateView, HasWorkingModel):
 			elif request.POST['action'] == "save":
 				self.saveUnitDefinition(request)
 
-		self.savePickledModel(request)
+		# self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
 	def deleteUnitDefinition(self, request):

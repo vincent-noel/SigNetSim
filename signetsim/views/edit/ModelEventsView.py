@@ -59,7 +59,7 @@ class ModelEventsView(TemplateView, HasWorkingModel, HasErrorMessages):
 	def get(self, request, *args, **kwargs):
 
 		self.load(request, *args, **kwargs)
-		self.savePickledModel(request)
+		# self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
 
@@ -77,7 +77,7 @@ class ModelEventsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == "save":
 				self.save(request)
 
-		self.savePickledModel(request)
+		# self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
 
