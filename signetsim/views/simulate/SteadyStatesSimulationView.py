@@ -108,7 +108,7 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 		if self.isModelLoaded():
 			self.loadVariables()
 			self.loadReactions()
-			self.loadExperiments(request)
+			self.loadExperiments()
 
 	def simulate_steady_states(self, request):
 
@@ -140,7 +140,7 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 			except LibSigNetSimException as e:
 				self.form.addError(e.message)
 
-	def loadExperiments(self, request):
+	def loadExperiments(self):
 		self.experiments = Experiment.objects.filter(project = self.project)
 
 	def loadVariables(self):

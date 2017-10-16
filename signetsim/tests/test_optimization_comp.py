@@ -18,9 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with libSigNetSim.  If not, see <http://www.gnu.org/licenses/>.
 
-""" test_optimization.py
+""" test_optimization_comp.py
 
-	This file...
+	This file tests the optimization for hierarchical models
 
 """
 
@@ -116,7 +116,6 @@ class TestOptimization(TestCase):
 			[u'Ras-GTP quantifications']
 		)
 
-
 		response_get_fit_data = c.get('/fit/data/')
 		self.assertEqual(response_get_fit_data.status_code, 200)
 		self.assertEqual(
@@ -174,7 +173,8 @@ class TestOptimization(TestCase):
 
 		sleep(10)
 
-		response_get_optimization = c.get('/fit/%s/' % response_list_optimizations.context['optimizations'][0][0].optimization_id)
+		optimization_id = response_list_optimizations.context['optimizations'][0][0].optimization_id
+		response_get_optimization = c.get('/fit/%s/' % optimization_id)
 		self.assertEqual(response_get_optimization.status_code, 200)
 
 		sleep(180)

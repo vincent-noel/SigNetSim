@@ -128,7 +128,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		if self.isModelLoaded():
 			self.loadVariables()
 			self.loadReactions()
-			self.loadExperiments(request)
+			self.loadExperiments()
 
 	def read_timeseries(self, results):
 
@@ -216,7 +216,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 
 			if self.form.experimentId is not None:
 
-				self.loadExperiments(request)
+				self.loadExperiments()
 				t_experiment_id = self.experiments[self.form.experimentId].id
 				experiment = Experiment.objects.get(id=t_experiment_id)
 				conditions = Condition.objects.filter(experiment=experiment)
@@ -275,7 +275,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 
 
 
-	def loadExperiments(self, request):
+	def loadExperiments(self):
 		self.experiments = Experiment.objects.filter(project=self.project)
 
 	def loadVariables(self):

@@ -117,13 +117,18 @@ class TestSimulation(TestCase):
 		})
 
 		self.assertEqual(response_choose_model.status_code, 200)
-		print [model.name for model in response_choose_model.context['sbml_models']]
-		print [species.getName() for species in response_choose_model.context['species']]
-		print [experiment.name for experiment in response_choose_model.context['experiments']]
 
+		self.assertEqual(
+			[species.getName() for species in response_choose_model.context['species']],
+			['SOS', 'Ras-GTP', 'ERK-PP', 'SOS_inactive', 'FGF2', 'Ras-GDP', 'SOS-Ras-GDP', 'SOS-Ras-GTP', 'GAP', 'GEF',
+			 'Ras-N17', 'SOS-Ras-N17', 'GEF-RasN17', 'Total Ras-GTP', 'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP', 'Mapk',
+			 'Mapk-P', 'Total MEK activated', 'Total MAPK activated']
+		)
 
-
-
+		self.assertEqual(
+			[experiment.name for experiment in response_choose_model.context['experiments']],
+			[u'Ras-GTP quantifications']
+		)
 
 		response_simulate_model = c.post('/simulate/timeseries/', {
 			'action': 'simulate_model',
@@ -131,24 +136,49 @@ class TestSimulation(TestCase):
 			'experiment_id': 0,
 			'time_min': 0,
 			'time_ech': 60,
-			'time_max': 3600
+			'time_max': 360
 		})
 
 		self.assertEqual(response_simulate_model.status_code, 200)
 		self.assertEqual(response_simulate_model.context['form'].getErrors(), [])
 
-		# self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 0)
-		# response_save_simulation = c.post('/simulate/timeseries/', {
-		# 	'action': 'save_simulation',
-		# 	'species_selected': [2, 21],
-		# 	'experiment_id': "",
-		# 	'time_min': 0,
-		# 	'time_ech': 60,
-		# 	'time_max': 3600
-		# })
-		#
-		# self.assertEqual(response_save_simulation.status_code, 200)
-		# self.assertEqual(response_save_simulation.context['form'].getErrors(), [])
-		# self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 1)
-		#
-	
+		self.assertEqual(len(response_simulate_model.context['sim_results']), 2)
+
+		self.assertEqual(
+			response_simulate_model.context['sim_results'][0][0],
+			[0.0, 60.0, 120.0, 180.0, 240.0, 300.0, 360.0]
+		)
+
+		self.assertEqual(
+			response_simulate_model.context['sim_results'][1][0],
+			[0.0, 60.0, 120.0, 180.0, 240.0, 300.0, 360.0]
+		)
+
+		self.assertEqual(
+			response_simulate_model.context['sim_results'][0][1].keys(),
+			[u'Total MEK activated', u'ERK-PP']
+		)
+		self.assertEqual(
+			response_simulate_model.context['sim_results'][1][1].keys(),
+			[u'Total MEK activated', u'ERK-PP']
+		)
+
+		self.assertEqual(
+			[name for _, _, name in response_simulate_model.context['sim_results']],
+			[u'Starved', u'FGF2']
+		)
+
+
+		self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 0)
+		response_save_simulation = c.post('/simulate/timeseries/', {
+			'action': 'save_simulation',
+			'species_selected': [2, 21],
+			'experiment_id': 0,
+			'time_min': 0,
+			'time_ech': 60,
+			'time_max': 360
+		})
+
+		self.assertEqual(response_save_simulation.status_code, 200)
+		self.assertEqual(response_save_simulation.context['form'].getErrors(), [])
+		self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 1)
