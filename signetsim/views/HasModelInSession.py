@@ -83,4 +83,5 @@ class HasModelInSession(object):
 		self.__request.session['loaded_model_submodel'] = submodel_id
 
 	def deleteSubmodelFromSession(self):
-		del self.__request.session['loaded_model_submodel']
+		if self.hasSubmodelInSession():
+			del self.__request.session['loaded_model_submodel']
