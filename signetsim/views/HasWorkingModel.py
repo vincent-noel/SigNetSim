@@ -25,6 +25,7 @@
 """
 
 from django.conf import settings
+from django.http import Http404
 from django.core.exceptions import PermissionDenied
 
 from signetsim.models import SbmlModel
@@ -74,6 +75,8 @@ class HasWorkingModel(HasWorkingProject, HasModelInSession):
 		# print "> Model loading"
 		HasWorkingProject.load(self, request, *args, **kwargs)
 		HasModelInSession.load(self, request, *args, **kwargs)
+
+		self.__request = request
 
 		self.__loadModels(request)
 		self.__loadModel(request, *args)
@@ -220,28 +223,33 @@ class HasWorkingModel(HasWorkingProject, HasModelInSession):
 
 	def __loadModelVariables(self):
 
-		if self.model_id is not None and self.project_id is not None and SbmlModel.objects.filter(project=self.project_id, id=self.model_id).exists():
+		if self.model_id is not None and SbmlModel.objects.filter(id=self.model_id).exists():
 
-			t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
-			self.model_filename = os.path.join(settings.MEDIA_ROOT, str(t_model.sbml_file))
+			t_model = SbmlModel.objects.get(id=self.model_id)
 
-			t_doc = SbmlDocument()
-			t_doc.readSbmlFromFile(self.model_filename)
-			self.model = t_doc.model
-			self.model_name = self.model.getName()
+			if self.isProjectOwner(self.__request) or t_model.project.access == "PU":
+				self.model_filename = os.path.join(settings.MEDIA_ROOT, str(t_model.sbml_file))
 
-			self.model_list_of_submodels = self.model.listOfSubmodels.values()
-			self.model_list_of_submodels_names = []
-			self.model_list_of_submodels_types = []
-			for submodel in self.model.listOfSubmodels.values():
-				if submodel.getModelRef() in self.model.parentDoc.listOfModelDefinitions.sbmlIds():
-					self.model_list_of_submodels_names.append(self.model.parentDoc.listOfModelDefinitions.getBySbmlId(submodel.getModelRef()).getNameOrSbmlId())
-					self.model_list_of_submodels_types.append(0)
-				if submodel.getModelRef() in self.model.parentDoc.listOfExternalModelDefinitions.sbmlIds():
-					self.model_list_of_submodels_names.append(self.model.parentDoc.listOfExternalModelDefinitions.getBySbmlId(submodel.getModelRef()).getNameOrSbmlId())
-					self.model_list_of_submodels_types.append(1)
+				t_doc = SbmlDocument()
+				t_doc.readSbmlFromFile(self.model_filename)
+				self.model = t_doc.model
+				self.model_name = self.model.getName()
+
+				self.model_list_of_submodels = self.model.listOfSubmodels.values()
+				self.model_list_of_submodels_names = []
+				self.model_list_of_submodels_types = []
+				for submodel in self.model.listOfSubmodels.values():
+					if submodel.getModelRef() in self.model.parentDoc.listOfModelDefinitions.sbmlIds():
+						self.model_list_of_submodels_names.append(self.model.parentDoc.listOfModelDefinitions.getBySbmlId(submodel.getModelRef()).getNameOrSbmlId())
+						self.model_list_of_submodels_types.append(0)
+					if submodel.getModelRef() in self.model.parentDoc.listOfExternalModelDefinitions.sbmlIds():
+						self.model_list_of_submodels_names.append(self.model.parentDoc.listOfExternalModelDefinitions.getBySbmlId(submodel.getModelRef()).getNameOrSbmlId())
+						self.model_list_of_submodels_types.append(1)
+			else:
+				raise PermissionDenied
+
 		else:
-			raise PermissionDenied
+			raise Http404("The model doesn't exist !")
 
 	def __clearModelVariables(self):
 

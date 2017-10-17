@@ -26,6 +26,8 @@
 
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
 
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from signetsim.models import Experiment, Condition, Observation, Treatment
@@ -141,4 +143,10 @@ class ExperimentView(TemplateView, HasWorkingProject):
 
 	def loadExperiment(self, request, *args, **kwargs):
 
-		self.experiment = Experiment.objects.get(id=args[0])
+		if Experiment.objects.filter(id=args[0]).exists():
+			self.experiment = Experiment.objects.get(id=args[0])
+			if not (self.experiment.project.user == request.user or self.experiment.project.access == "PU"):
+				raise PermissionDenied
+
+		else:
+			raise Http404("Experimental data doesn't exists !")

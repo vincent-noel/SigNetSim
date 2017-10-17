@@ -25,6 +25,8 @@
 """
 
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
 
 from signetsim.views.HasUserLoggedIn import HasUserLoggedIn
 from signetsim.models import SbmlModel, Project
@@ -94,6 +96,11 @@ class HasWorkingProject(HasUserLoggedIn):
 					if request.session.get('model_submodel') is not None:
 						del request.session['model_submodel']
 
+			else:
+				raise PermissionDenied
+		else:
+			raise Http404("Project doesn't exists")
+
 
 	def unsetProject(self, request):
 
@@ -140,7 +147,6 @@ class HasWorkingProject(HasUserLoggedIn):
 			self.project = Project.objects.filter(access=Project.PUBLIC)[0]
 			self.project_name = self.project.name
 			self.project_id = self.project.id
-
 
 
 	def __loadProjects(self, request):
