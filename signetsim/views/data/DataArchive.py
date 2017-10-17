@@ -25,8 +25,9 @@
 """
 
 from django.views.generic import TemplateView
-from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.http import HttpResponse, Http404
+from django.core.exceptions import PermissionDenied
 
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from signetsim.models import Experiment
@@ -49,13 +50,21 @@ class DataArchive(TemplateView, HasWorkingProject):
 
 		if len(args) > 0:
 
-			experiment = Experiment.objects.get(project=self.project, id=int(args[0]))
-			filename = exportExperiment(experiment)
+			if Experiment.objects.filter(id=int(args[0])).exists():
 
-			response = HttpResponse(open(filename, 'rb'), content_type='text/xml')
-			response['Content-Disposition'] = 'attachment; filename=' + basename(filename)
-			remove(filename)
+				experiment = Experiment.objects.get(id=int(args[0]))
+				if experiment.project.access == 'PU' or experiment.project.user == request.user:
+					filename = exportExperiment(experiment)
 
-			return response
+					response = HttpResponse(open(filename, 'rb'), content_type='text/xml')
+					response['Content-Disposition'] = 'attachment; filename=' + basename(filename)
+					remove(filename)
+
+					return response
+				else:
+					raise PermissionDenied
+
+			else:
+				raise Http404("Data doesn't exists")
 
 		redirect('experimental_data')

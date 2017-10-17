@@ -25,7 +25,9 @@
 """
 
 from django.views.generic import TemplateView
-from django.http import HttpResponse, Http404, HttpResponseForbidden
+from django.http import HttpResponse, Http404
+from django.core.exceptions import PermissionDenied
+
 from signetsim.models import Project
 from signetsim.managers.projects import exportProject
 from os.path import basename
@@ -53,7 +55,7 @@ class ProjectArchive(TemplateView):
 					return response
 
 				else:
-					raise HttpResponseForbidden
+					raise PermissionDenied
 			else:
 				raise Http404("Project doesn't exists")
 
