@@ -168,5 +168,8 @@ class TestPublicAccess(TestCase):
 		response_get_unknown_data = c_guest.get('/data/9999999999999999/')
 		self.assertEqual(response_get_unknown_data.status_code, 404)
 
+		response_get_unknown_condition = c_guest.get('/data/%d/9983742374/' % public_data.id)
+		self.assertEqual(response_get_unknown_condition.status_code, 404)
+
 		response_get_unknown_condition = c_guest.get('/data/999999999999/9983742374/')
 		self.assertEqual(response_get_unknown_condition.status_code, 404)

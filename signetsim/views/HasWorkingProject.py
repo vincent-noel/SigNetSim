@@ -67,10 +67,6 @@ class HasWorkingProject(HasUserLoggedIn):
 			self.__setProject(request)
 			return True
 
-		elif request.POST['action'] == "new_project":
-			self.__newProject(request)
-			return True
-
 		else:
 			return False
 
@@ -90,44 +86,16 @@ class HasWorkingProject(HasUserLoggedIn):
 				request.session['project_id'] = self.project_id
 				self.__loadProject(request)
 
-				# If a model was selected, we forget it
-				if request.session.get('model_id') is not None:
-					del request.session['model_id']
-					if request.session.get('model_submodel') is not None:
-						del request.session['model_submodel']
+				# # If a model was selected, we forget it
+				# if request.session.get('model_id') is not None:
+				# 	del request.session['model_id']
+				# 	if request.session.get('model_submodel') is not None:
+				# 		del request.session['model_submodel']
 
 			else:
 				raise PermissionDenied
 		else:
 			raise Http404("Project doesn't exists")
-
-
-	def unsetProject(self, request):
-
-		self.project_id = None
-		self.project_name = None
-		self.project = None
-		del request.session['project_id']
-
-
-	def __newProject(self, request):
-		folder_name = str(request.POST['project_name'])
-
-		if not Project.objects.filter(user=request.user, name=folder_name).exists():
-			self.project = Project(user=request.user, name=folder_name)
-			self.project.save()
-			self.project_id = self.project.id
-			self.project_name = self.project.name
-
-			request.session['project_id'] = self.project_id
-			os.mkdir(os.path.join(settings.MEDIA_ROOT, str(self.project.id)))
-			os.mkdir(os.path.join(settings.MEDIA_ROOT, str(self.project.id), "optimizations"))
-		else:
-			self.createFolderShow = True
-			self.createFolderError = "Project %s already exists !" % folder_name
-
-
-		self.__loadProjects(request)
 
 	def __setProject(self, request):
 

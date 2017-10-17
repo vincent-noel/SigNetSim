@@ -20,7 +20,7 @@
 
 """ test_project.py
 
-	This file tests the creation, copy, deletion and sharing of projects
+	This file tests the creation, copy, deletion, modification and sharing of projects
 
 """
 
@@ -32,7 +32,7 @@ from signetsim.models import User, Project
 from json import loads
 
 
-class TestAccounts(TestCase):
+class TestProjects(TestCase):
 
 	fixtures = ["users.json"]
 
@@ -104,6 +104,40 @@ class TestAccounts(TestCase):
 		self.assertEqual(json_response['name'], u'Project 1')
 		self.assertEqual(json_response['public'], 0)
 
+		response_set_project_public = c.post('/', {
 
+			'action': 'save_project',
+			'project_id': project.id,
+			'project_name': "Public project",
+			'project_access': 'on',
+		})
 
+		self.assertEqual(response_set_project_public.status_code, 200)
 
+		response_get_project = c.post('/json/get_project/', {
+			'id': project.id
+		})
+
+		self.assertEqual(response_get_project.status_code, 200)
+		json_response = loads(response_get_project.content)
+
+		self.assertEqual(json_response['name'], u'Public project')
+		self.assertEqual(json_response['public'], 1)
+
+		response_set_project_private = c.post('/', {
+
+			'action': 'save_project',
+			'project_id': project.id,
+			'project_name': "Private project",
+		})
+
+		self.assertEqual(response_set_project_private.status_code, 200)
+		response_get_project = c.post('/json/get_project/', {
+			'id': project.id
+		})
+
+		self.assertEqual(response_get_project.status_code, 200)
+		json_response = loads(response_get_project.content)
+
+		self.assertEqual(json_response['name'], u'Private project')
+		self.assertEqual(json_response['public'], 0)
