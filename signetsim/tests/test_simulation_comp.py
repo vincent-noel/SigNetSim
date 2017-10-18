@@ -182,3 +182,31 @@ class TestSimulation(TestCase):
 		self.assertEqual(response_save_simulation.status_code, 200)
 		self.assertEqual(response_save_simulation.context['form'].getErrors(), [])
 		self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 1)
+
+		saved_simulation = SEDMLSimulation.objects.filter(project=project)[0]
+
+		response_load_saved_simulation = c.get('/simulate/stored/%d/' % saved_simulation.id)
+		self.assertEqual(response_load_saved_simulation.status_code, 200)
+		self.assertEqual(
+			response_load_saved_simulation.context['plots_2d'][0].listOfCurves[0].getXData(),
+			[0.0, 60.0, 120.0, 180.0, 240.0, 300.0, 360.0]
+		)
+		expected_results = [
+			3.5, 1.939636741974182, 0.5366336676714862, 0.5164042464042035, 1.546548651250602, 0.7558169474328419,
+			0.4472116865099191
+		]
+		for i, y in enumerate(expected_results):
+			self.assertAlmostEqual(
+				response_load_saved_simulation.context['plots_2d'][0].listOfCurves[0].getYData()[i],
+				y, delta=y*1e-3
+			)
+
+		expected_results = [
+			30.0, 14.81260866089722, 8.165121865009306, 20.47692478996913, 24.42348326555909, 11.41597504856704,
+			15.96502932122009
+		]
+		for i, y in enumerate(expected_results):
+			self.assertAlmostEqual(
+				response_load_saved_simulation.context['plots_2d'][0].listOfCurves[1].getYData()[i],
+				y, delta=y*1e-3
+			)
