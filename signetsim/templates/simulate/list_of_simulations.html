@@ -42,7 +42,7 @@
              <div class="pull-right">
                <form class="form-inline" method="post" enctype="multipart/form-data">
                  {% csrf_token %}
-                 <input type="hidden" name="id" value="{{ forloop.counter0 }}">
+                 <input type="hidden" name="id" value="{{ simulation_id }}">
                  <a href="../../media/{{ path }}" style="display: inline-block" target="_blank">
                    <button type="button" class="btn btn-xs btn-default" title="Download">{% bootstrap_icon "download-alt" %}</button>
                  </a>
