@@ -78,21 +78,16 @@
 
 	<script>
 
+		{% block js %}
+		{% include 'commons/commons.js' %}
+		{% endblock js %}
 
-	{% block js %}
-	{% include 'commons/commons.js' %}
-	{% endblock js %}
+		$(window).on('resize', function()
+		{
+			$(".navbar-collapse").css({ maxHeight: $(window).height() - $(".navbar-header").height() + "px" });
+		});
 
-
-
-	$(window).on('resize', function(){
-	  $(".navbar-collapse").css({ maxHeight: $(window).height() - $(".navbar-header").height() + "px" });
-
-
-
-	});
-	$(".navbar-collapse").css({ maxHeight: $(window).height() - $(".navbar-header").height() + "px" });
-
+		$(".navbar-collapse").css({ maxHeight: $(window).height() - $(".navbar-header").height() + "px" });
 
 	</script>
 
@@ -108,7 +103,6 @@
 	  <img src="{% static 'images/wait_blue.svg' %}">
 	  </div>
 	</div>
-
 
   </body>
 </html>
