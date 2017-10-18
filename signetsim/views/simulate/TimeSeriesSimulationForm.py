@@ -49,6 +49,8 @@ class TimeSeriesSimulationForm(HasErrorMessages):
 
 		self.read_selected_species(request)
 		self.read_selected_reactions(request)
+		if (len(self.selectedReactionsIds) + len(self.selectedSpeciesIds)) == 0 and self.nbErrors == 0:
+			self.addError("Please choose something to plot")
 		self.read_options(request)
 
 

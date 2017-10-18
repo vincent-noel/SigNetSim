@@ -33,10 +33,10 @@
         </tr>
       </thead>
       <tbody>
-      {% for name, path in list_of_simulations %}
+      {% for simulation_id, name, path in list_of_simulations %}
         <tr class="row">
            <td class="col-xs-10 col-sm-10">
-             <a href="{% url 'sedml_simulation' forloop.counter0 %}">{{name}}</a>
+             <a href="{% url 'sedml_simulation' simulation_id %}">{{name}}</a>
            </td>
            <td class="col-xs-2 col-sm-2">
              <div class="pull-right">

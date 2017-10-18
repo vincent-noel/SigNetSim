@@ -89,7 +89,7 @@ class ListOfSimulationsView(TemplateView, HasWorkingProject):
 		self.listOfSimulations = []
 
 		for simulation in SEDMLSimulation.objects.filter(project=self.project):
-			self.listOfSimulations.append((simulation.name, str(simulation.sedml_file)))
+			self.listOfSimulations.append((simulation.id, simulation.name, str(simulation.sedml_file)))
 
 	def deleteSimulation(self, request):
 

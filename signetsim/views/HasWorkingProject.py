@@ -137,4 +137,7 @@ class HasWorkingProject(HasUserLoggedIn):
 			return []
 
 	def isProjectOwner(self, request):
-		return self.isUserLoggedIn(request) and self.project.user == request.user
+		return self.isUserLoggedIn(request) and self.project is not None and self.project.user == request.user
+
+	def isProjectPublic(self):
+		return self.project is not None and self.project.access == "PU"
