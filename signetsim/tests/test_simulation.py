@@ -216,3 +216,37 @@ class TestSimulation(TestCase):
 		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][8], 8)
 		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][9], 9)
 		self.assertAlmostEqual(response_simulate_model.context['sim_results']['Product'][10], 10)
+
+
+		self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 0)
+		response_save_simulation = c.post('/simulate/steady_states/', {
+			'action': 'save_simulation',
+			'species_selected': [0, 1, 2, 3],
+			'species_id': [species.getSbmlId() for species in response_get_steady_states.context['species']].index('substrate'),
+			'ss_to_plot': "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10",
+			'time_max': 1000
+		})
+
+		self.assertEqual(response_save_simulation.status_code, 200)
+		self.assertEqual(response_save_simulation.context['form'].getErrors(), [])
+		self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 1)
+
+		saved_simulation = SEDMLSimulation.objects.filter(project=project)[0]
+
+		response_load_saved_simulation = c.get('/simulate/stored/%d/' % saved_simulation.id)
+		self.assertEqual(response_load_saved_simulation.status_code, 200)
+
+		input_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+		self.assertAlmostEqual(
+			response_load_saved_simulation.context['plots_2d'][0].listOfCurves[0].getXData(),
+			input_values
+		)
+	
+		for i in range(11):
+			self.assertAlmostEqual(response_load_saved_simulation.context['plots_2d'][0].listOfCurves[0].getYData()[i], 0)
+			self.assertAlmostEqual(response_load_saved_simulation.context['plots_2d'][0].listOfCurves[1].getYData()[i], 10)
+			self.assertAlmostEqual(response_load_saved_simulation.context['plots_2d'][0].listOfCurves[2].getYData()[i], 0)
+			self.assertAlmostEqual(
+				response_load_saved_simulation.context['plots_2d'][0].listOfCurves[3].getYData()[i],
+				input_values[i]
+			)

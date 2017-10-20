@@ -40,7 +40,7 @@ from django.conf import settings
 from django.core.files import File
 from django.shortcuts import redirect
 
-from os.path import basename, join
+from os.path import join
 
 
 class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
@@ -91,18 +91,14 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		kwargs['y_unit'] = self.y_unit
 		kwargs['y_max'] = self.y_max
 		kwargs['colors'] = Settings.default_colors
-
-		# kwargs['simulation_results_loaded'] = self.simulationResultsLoaded
-
 		kwargs['form'] = self.form
-		return kwargs
 
+		return kwargs
 
 	def get(self, request, *args, **kwargs):
 
 		self.load(request, *args, **kwargs)
 		return TemplateView.get(self, request, *args, **kwargs)
-
 
 	def post(self, request, *args, **kwargs):
 
@@ -179,7 +175,6 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			and self.listOfVariables[self.form.selectedReactionsIds[0]].getUnits() is not None):
 			self.y_unit = self.listOfVariables[self.form.selectedReactionsIds[0]].getUnits().getNameOrSbmlId()
 
-
 	def simulateModel(self, request):
 
 		self.form.read(request)
@@ -206,13 +201,12 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			except LibSigNetSimException as e:
 				self.form.addError(e.message)
 
-
 	def saveSimulation(self, request):
 
 		self.form.read(request)
 		if not self.form.hasErrors():
-
-			self.createUniformTimecourse(self.form.timeMin, self.form.timeMax, self.form.timeEch)
+			self.createDocument()
+			timecourse = self.createUniformTimecourse(self.form.timeMin, self.form.timeMax, self.form.timeEch)
 
 			if self.form.experimentId is not None:
 
@@ -237,7 +231,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 						if var is not None:
 							modifications.append((var, data.value))
 
-					self.addModel(self.model_filename, modifications)
+					model = self.addModel(self.model_filename, modifications)
 
 					variables = []
 					if self.form.selectedSpeciesIds is not None:
@@ -248,10 +242,10 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 						for id_var in self.form.selectedReactionsIds:
 							variables.append(self.listOfVariables[id_var])
 
-					self.addTimeseries(condition.name, variables)
+					self.addTimeseriesCurve(timecourse, model, condition.name, variables)
 			else:
 
-				self.addModel(self.model_filename)
+				model = self.addModel(self.model_filename)
 
 				variables = []
 				if self.form.selectedSpeciesIds is not None:
@@ -262,7 +256,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 					for id_var in self.form.selectedReactionsIds:
 						variables.append(self.listOfVariables[id_var])
 
-				self.addTimeseries("Simulation", variables)
+				self.addTimeseriesCurve(timecourse, model, "Simulation", variables)
 
 			simulation_filename = join(settings.MEDIA_ROOT, new_sedml_filename())
 			open(simulation_filename, "a")
@@ -271,9 +265,6 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			filename = join(settings.MEDIA_ROOT, str(new_simulation.sedml_file))
 
 			self.saveSedml(filename)
-
-
-
 
 	def loadExperiments(self):
 		self.experiments = Experiment.objects.filter(project=self.project)

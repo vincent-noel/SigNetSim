@@ -24,18 +24,23 @@
 
 """
 
-from signetsim.models import SbmlModel, Experiment, Condition, Observation, Treatment
+from django.views.generic import TemplateView
 
 from libsignetsim.LibSigNetSimException import LibSigNetSimException
 from libsignetsim.simulation.SteadyStatesSimulation import SteadyStatesSimulation
 
-from django.views.generic import TemplateView
-
 from signetsim.views.HasWorkingModel import HasWorkingModel
+from signetsim.views.simulate.SedmlWriter import SedmlWriter
 from signetsim.views.simulate.SteadyStatesSimulationForm import SteadyStateSimulationForm
+from signetsim.models import Experiment, SEDMLSimulation, new_sedml_filename
 from signetsim.settings.Settings import Settings
 
-class SteadyStateSimulationView(TemplateView, HasWorkingModel):
+from django.conf import settings
+from django.core.files import File
+
+from os.path import join
+
+class SteadyStateSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 
 	template_name = 'simulate/steady_states.html'
 
@@ -43,6 +48,7 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 
 		TemplateView.__init__(self, **kwargs)
 		HasWorkingModel.__init__(self)
+		SedmlWriter.__init__(self)
 
 		self.form = SteadyStateSimulationForm(self)
 
@@ -76,11 +82,8 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 		kwargs['y_max'] = self.y_max
 		kwargs['colors'] = Settings.default_colors
 
-		# kwargs['simulation_results_loaded'] = self.simulationResultsLoaded
-
 		kwargs['form'] = self.form
 		return kwargs
-
 
 	def get(self, request, *args, **kwargs):
 
@@ -99,6 +102,9 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 			elif request.POST['action'] == "simulate_steady_states":
 				self.simulateModel(request)
 
+			elif request.POST['action'] == "save_simulation":
+				self.saveSimulation(request)
+
 		return TemplateView.get(self, request, *args, **kwargs)
 
 	def load(self, request, *args, **kwargs):
@@ -111,7 +117,6 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 			self.loadExperiments()
 
 	def simulate_steady_states(self, request):
-
 
 		t_simulation = SteadyStatesSimulation(
 							list_of_models=[self.model],
@@ -129,7 +134,6 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 			t_y.update({self.listOfReactions[reaction].getNameOrSbmlId(): t_list})
 		self.simResults = t_y
 
-
 	def simulateModel(self, request):
 
 		self.form.read(request)
@@ -139,6 +143,33 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel):
 
 			except LibSigNetSimException as e:
 				self.form.addError(e.message)
+
+	def saveSimulation(self, request):
+
+		self.form.read(request)
+		if not self.form.hasErrors():
+			self.createDocument()
+			steady_states = self.createSteadyStates()
+
+			variables = []
+			if self.form.selectedSpeciesIds is not None:
+				for id_var in self.form.selectedSpeciesIds:
+					variables.append(self.listOfVariables[id_var])
+
+			if self.form.selectedReactionsIds is not None:
+				for id_var in self.form.selectedReactionsIds:
+					variables.append(self.listOfVariables[id_var])
+
+			model = self.addModel(self.model_filename, var_input=self.listOfVariables[self.form.speciesId])
+			self.addSteadyStatesCurve(steady_states, model, "Simulation", variables, self.form.steady_states, self.listOfVariables[self.form.speciesId])
+
+			simulation_filename = join(settings.MEDIA_ROOT, new_sedml_filename())
+			open(simulation_filename, "a")
+			new_simulation = SEDMLSimulation(project=self.project, name="Simulation", sedml_file=File(open(simulation_filename, "r")))
+			new_simulation.save()
+			filename = join(settings.MEDIA_ROOT, str(new_simulation.sedml_file))
+
+			self.saveSedml(filename)
 
 	def loadExperiments(self):
 		self.experiments = Experiment.objects.filter(project = self.project)
