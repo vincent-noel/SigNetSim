@@ -35,7 +35,7 @@ var config_{{forloop.counter0}}=
             fill: false,
             backgroundColor: "{{colors|get_color:forloop.counter0}}",
             borderColor: "{{colors|get_color:forloop.counter0}}",
-            cubicInterpolationMode: "monotone",
+//            cubicInterpolationMode: "monotone",
 
         },
         {% endfor %}

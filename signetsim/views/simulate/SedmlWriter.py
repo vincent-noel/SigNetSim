@@ -111,6 +111,38 @@ class SedmlWriter(object):
 			curve.setYData(data)
 
 
+	def addPhaseSpaceCurve(self, timecourse, model, name, variables, x_axis_variable):
+
+		sedml_task = self.sedml_doc.listOfTasks.createTask()
+		sedml_task.setModel(model)
+		sedml_task.setSimulation(timecourse)
+
+		data_x = self.sedml_doc.listOfDataGenerators.createDataGenerator()
+		data_x.setName(x_axis_variable.getNameOrSbmlId())
+		var_x = data_x.listOfVariables.createVariable()
+		var_x.setTask(sedml_task)
+		var_x.setModel(model)
+		var_x.setTarget(x_axis_variable)
+		data_x.getMath().setInternalMathFormula(var_x.getSympySymbol())
+
+		plot2D = self.sedml_doc.listOfOutputs.createPlot2D()
+
+		plot2D.setName(str(name))
+
+		for i_var, variable in enumerate(variables):
+
+			data = self.sedml_doc.listOfDataGenerators.createDataGenerator()
+			data.setName(variable.getNameOrSbmlId())
+			var = data.listOfVariables.createVariable()
+			var.setTask(sedml_task)
+			var.setModel(model)
+			var.setTarget(variable)
+			data.getMath().setInternalMathFormula(var.getSympySymbol())
+
+			curve = plot2D.listOfCurves.createCurve()
+			curve.setXData(data_x)
+			curve.setYData(data)
+
 	def addSteadyStatesCurve(self, steady_states, model, name, variables, values, variable_input):
 
 		task = self.sedml_doc.listOfTasks.createTask()

@@ -261,7 +261,8 @@ class PhasePlaneSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 					for id_var in self.form.selectedReactionsIds:
 						variables.append(self.listOfVariables[id_var])
 
-				self.addTimeseriesCurve(timecourse, model, "Simulation", variables)
+				x_axis_variable = self.listOfVariables[self.form.speciesId]
+				self.addPhaseSpaceCurve(timecourse, model, "Simulation", variables, x_axis_variable)
 
 			simulation_filename = join(settings.MEDIA_ROOT, new_sedml_filename())
 			open(simulation_filename, "a")
