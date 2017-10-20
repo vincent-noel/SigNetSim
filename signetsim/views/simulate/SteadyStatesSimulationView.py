@@ -175,7 +175,7 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		self.experiments = Experiment.objects.filter(project = self.project)
 
 	def loadVariables(self):
-		self.listOfVariables = [obj for obj in self.getModelInstance().listOfVariables.values() if not obj.constant and (obj.isSpecies() or obj.isParameter() or obj.isCompartment())]
+		self.listOfVariables = [obj for obj in self.getModelInstance().listOfVariables.values() if (obj.isSpecies() or obj.isParameter() or obj.isCompartment())]
 
 	def loadReactions(self):
 		self.listOfReactions = [obj for obj in self.getModelInstance().listOfVariables.values() if obj.isReaction()]
