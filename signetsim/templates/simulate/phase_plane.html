@@ -1,0 +1,138 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% load static from staticfiles %}
+{% load bootstrap3 %}
+{% load tags %}
+
+{% block view_name %}Simulate model{% endblock view_name %}
+{% block view_sidebar %}{% include 'simulate/menu.html' %}{% endblock view_sidebar %}
+{% block header_js %}
+	<script src="{% static 'chart.js/dist/Chart.js' %}"></script>
+{% endblock header_js %}
+
+{% block view_content %}
+<div class="container-fluid" id="view">
+  <h4>Timeseries simulations</h4>
+  <hr/><br/>
+  {% include 'commons/error_modal.html' %}
+  <div class="container-fluid">
+    <div class="form-group">
+      <form class="form" method="POST">
+        {% csrf_token %}
+        {% include 'simulate/form_variable_selector.html' %}
+        <div class="collapse" id="options">
+          <label>Start time</label>
+          <input type="text" ID="time_min" Class="form-control" name="time_min" value="{% if form.timeMin %}{{form.timeMin}}{% else %}0{% endif %}"/>
+          <br/>
+          <label>Sampling</label>
+          <input type="text" ID="time_ech" Class="form-control" name="time_ech" value="{% if form.timeEch %}{{form.timeEch}}{% else %}10{% endif %}"/>
+          <br/>
+        </div>
+        <label>Duration</label>
+        <input type="text" ID="time_max" Class="form-control" name="time_max" value="{% if form.timeMax %}{{form.timeMax}}{% else %}100{% endif %}"/>
+        <br/>
+				<label>X-axis species</label>
+        <input type="hidden" name="species_id" value="{{ form.speciesId }}" id="species_id">
+        <div class="dropdown">
+          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+            <span id="species_name">{% if form.speciesName %}{{ form.speciesName }}{% else %}Choose a species {% endif %}</span>
+            <span class="caret"></span>
+          </button>
+          <ul id="species_list" class="dropdown-menu">
+              {% for t_species in species %}
+              <li><a>{{ t_species.getNameOrSbmlId }}</a></li>
+              {% endfor %}
+          </ul>
+        </div>
+        <br/>
+        <div class="collapse" id="options_2">
+					<label>Use initial conditions from experiment</label>
+					<div class="dropdown" style="width:100%">
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" style="width:100%" data-toggle="dropdown">
+							<span id="experiment_name" class="dropdown-text">{% if form.experimentId != None %}{{experiment_name}}{% else %}Select an experiment{% endif %}</span>
+							<span class="glyphicon glyphicon-triangle-bottom"></span>
+						</button>
+						<ul id="experiment_list" class="dropdown-menu" style="width:100%">
+							{% for experiment in experiments %}
+								<li><a>{{ experiment.name }}</a></li>
+							{% endfor %}
+						</ul>
+					</div>
+					<input type="hidden" id="experiment_id" name="experiment_id" value="{% if form.experimentId != None %}{{form.experimentId}}{% else %}{% endif %}">
+					<br/>
+
+					<div class="collapse {% if form.experimentId != None %}in{% endif %}" id="experiment_selected">
+						<table class="table table-striped">
+							<thead>
+								<tr onclick="toggle_observations();" >
+									<th class="col-xs-8">Show observations</th>
+									<th class="col-xs-4 text-right">
+										<span class="col-xs-12 input-group">
+											<label class="switch">
+												<input type="checkbox" name="show_observations" id="show_observations" {% if form.showObservations == True %}checked{% endif %}>
+												<div class="slider round"></div>
+											</label>
+										</span>
+									</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+    		</div>
+
+        <input type="hidden" name="action" value="simulate_model">
+        <br/>
+        <div class="row">
+          <div class="col-xs-4">
+            <button type="submit"  name="action" value="simulate_model" class="btn btn-primary">Simulate</button>
+          </div>
+          <div class="col-xs-4 text-center">
+            {% if sim_results|length > 0 %}
+            <button type="submit"  name="action" value="save_simulation" class="btn btn-primary">Save</button>
+            {% endif %}
+          </div>
+          <div class="col-xs-4 text-right">
+            <button type="button" id="toggle_options" class="btn btn-primary">More</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+	<div class="container-fluid" id="plots_container">
+
+		{% for t, y in sim_results %}
+		<br/><br/>
+		<div>
+				<canvas id="canvas_{{forloop.counter0}}"></canvas>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock view_content %}
+{% block js %}
+
+$('#species_list li').on('click', function(){
+  $("#species_name").html($(this).text());
+  $('#species_id').val($(this).index());
+});
+
+	{{ block.super }}
+	{% include 'simulate/phase_plane_graph.js' %}
+{% endblock js %}

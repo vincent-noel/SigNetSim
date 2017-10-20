@@ -26,5 +26,6 @@
 
 from TimeSeriesSimulationView import TimeSeriesSimulationView
 from SteadyStatesSimulationView import SteadyStateSimulationView
+from PhasePlaneSimulationView import PhasePlaneSimulationView
 from ListOfSimulationsView import ListOfSimulationsView
 from SedmlSimulationView import SedmlSimulationView
