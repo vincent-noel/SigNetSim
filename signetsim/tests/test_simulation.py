@@ -191,7 +191,7 @@ class TestSimulation(TestCase):
 
 		response_simulate_model = c.post('/simulate/steady_states/', {
 			'action': 'simulate_steady_states',
-			'species_selected': [0, 1, 2, 3],
+			'species_selected': [4,5,6,7],
 			'species_id': [species.getSbmlId() for species in response_get_steady_states.context['species']].index('substrate'),
 			'ss_to_plot': "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10",
 			'time_max': 1000
@@ -221,7 +221,7 @@ class TestSimulation(TestCase):
 		self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 0)
 		response_save_simulation = c.post('/simulate/steady_states/', {
 			'action': 'save_simulation',
-			'species_selected': [0, 1, 2, 3],
+			'species_selected': [4,5,6,7],
 			'species_id': [species.getSbmlId() for species in response_get_steady_states.context['species']].index('substrate'),
 			'ss_to_plot': "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10",
 			'time_max': 1000
