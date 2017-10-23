@@ -6,7 +6,7 @@
 <div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New species" id="modal_species">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form class="form" method="POST" enctype="multipart/form-data" id="species_form">
+      <form class="form" method="POST" enctype="multipart/form-data" id="species_form" onsubmit="return save_species();">
         {% csrf_token %}
         <input type="hidden" name="species_id" id="species_id" value="">
         <input type="hidden" name="action" value="save">
@@ -238,7 +238,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" onclick="save_species();" class="btn btn-primary">Save changes</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
         </div>
       </form>
     </div>

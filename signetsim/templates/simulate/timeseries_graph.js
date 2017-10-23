@@ -149,10 +149,12 @@ $('#toggle_options').on('click', function(){
   if($("#options").hasClass("in")) {
     $("#options").removeClass("in");
     $("#options_2").removeClass("in");
+    $("#toggle_options").html("<span class=\"glyphicon glyphicon-chevron-down\"> More");
 
   } else {
     $("#options").addClass("in");
     $("#options_2").addClass("in");
+    $("#toggle_options").html("<span class=\"glyphicon glyphicon-chevron-up\"> Less");
   }
 });
 

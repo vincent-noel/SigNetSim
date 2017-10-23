@@ -70,7 +70,7 @@
 						{% endif %}
 					</div>
          <div class="col-xs-4 text-right">
-            <button type="button" class="btn btn-primary" id="toggle_options">More options</button>
+            <button type="button" class="btn btn-primary" id="toggle_options"><span class="glyphicon glyphicon-chevron-down"> More</button>
           </div>
         </div>
 
@@ -120,11 +120,11 @@ $('#toggle_options').on('click', function(){
 
   if($("#options").hasClass("in")) {
     $("#options").removeClass("in");
-{#    $("#options_2").removeClass("in");#}
+    $("#toggle_options").html("<span class=\"glyphicon glyphicon-chevron-down\"> More");
 
   } else {
     $("#options").addClass("in");
-{#    $("#options_2").addClass("in");#}
+    $("#toggle_options").html("<span class=\"glyphicon glyphicon-chevron-up\"> Less");
   }
 });
 {% endblock js %}

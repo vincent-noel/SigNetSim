@@ -94,20 +94,18 @@ var form_value_error = "";
 
 $("#species_value").on('paste keyup', function()
 {
-    if ($("#species_value").val() != "")
-    {
-        ajax_call(
-            "POST", "{{csrf_token}}",
-            "{% url 'float_validator' %}", {'value' : $("#species_value").val()},
-            function(data) {
-               $.each(data, function(index, element) {
-                 if (index == "error") {form_value_error=element.toString();}
-               });
-            },
-            function(){}
-        );
-    }
-
+    ajax_call(
+        "POST", "{{csrf_token}}",
+        "{% url 'float_validator' %}",
+        {'value' : $("#species_value").val(), 'required' : 'false'},
+        function(data) {
+           $.each(data, function(index, element) {
+             if (index == "error") {form_value_error=element.toString();}
+             else {form_value_error = "";}
+           });
+        },
+        function(){}
+    );
 });
 
 
@@ -137,6 +135,8 @@ function new_species()
     reset_errors();
     old_sbml_id = "";
     $("#general").tab('show');
+    $("#modal_species").on('shown.bs.modal', function() { $("#species_name").focus(); });
+
 }
 
 function view_species(sbml_id)
@@ -184,13 +184,13 @@ function view_species(sbml_id)
                        $("#species_value_type_label").html("Amount");
                    }
                }
-               else if (index == "notes") {
-                   $("#specie_notes").val(element.toString());
+               else if (index == "notes") { $("#specie_notes").val(element.toString()); }
 
-               }
-                else if (index == "sboterm") {
+               else if (index == "sboterm") {
                    $("#sboterm").val(element.toString());
-                   $("#sboterm_link").attr("href", "http://www.ebi.ac.uk/sbo/main/display?nodeId=" + element.toString());
+                   $("#sboterm_link").attr(
+                       "href", "http://www.ebi.ac.uk/sbo/main/display?nodeId=" + element.toString()
+                   );
                }
                else if (index == "sboterm_name") { $("#sboterm_name").html(element.toString()); }
            });
@@ -200,8 +200,12 @@ function view_species(sbml_id)
         },
         function() { console.log("failed"); }
     )
+
     $("#general").tab('show');
     $('#modal_species').modal('show');
+
+    $("#modal_species").on('shown.bs.modal', function() { $("#species_name").focus(); });
+
 
 }
 
@@ -223,8 +227,9 @@ function save_species()
     }
     if (nb_errors == 0)
     {
-        $("#species_form").submit();
+        $("#modal_species").modal("hide");
     }
+    return (nb_errors == 0);
 }
 
 function reset_errors()
