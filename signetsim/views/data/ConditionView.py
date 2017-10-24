@@ -26,6 +26,9 @@
 
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
+
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from signetsim.views.data.ObservationForm import ObservationForm
 from signetsim.views.data.TreatmentForm import TreatmentForm
@@ -153,12 +156,19 @@ class ConditionView(TemplateView, HasWorkingProject):
 
 	def loadExperiment(self, request, *args):
 
-		self.experiment = Experiment.objects.get(id=args[0])
-
+		if Experiment.objects.filter(id=args[0]).exists():
+			self.experiment = Experiment.objects.get(id=args[0])
+			if not (self.experiment.project.access == "PU" or self.experiment.project.user == request.user):
+				raise PermissionDenied
+		else:
+			raise Http404("The experiment doesn't exists")
 
 	def loadCondition(self, request, *args):
 
-		self.condition = Condition.objects.get(id=args[1])
+		if Condition.objects.filter(id=args[1]).exists():
+			self.condition = Condition.objects.get(id=args[1])
+		else:
+			raise Http404("The condition doesn't exists")
 
 
 	def loadObservations(self):

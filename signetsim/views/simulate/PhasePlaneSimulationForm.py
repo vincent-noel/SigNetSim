@@ -26,7 +26,7 @@
 
 from signetsim.views.HasErrorMessages import HasErrorMessages
 
-class TimeSeriesSimulationForm(HasErrorMessages):
+class PhasePlaneSimulationForm(HasErrorMessages):
 
 
 	def __init__(self, parent_view):
@@ -43,7 +43,8 @@ class TimeSeriesSimulationForm(HasErrorMessages):
 		self.timeEch = None
 		self.timeMax = None
 		self.showObservations = None
-
+		self.speciesId = None
+		self.speciesName = None
 
 	def read(self, request):
 
@@ -87,3 +88,6 @@ class TimeSeriesSimulationForm(HasErrorMessages):
 		if self.experimentId is not None:
 			self.showObservations = self.readOnOff(request, 'show_observations',
 										"the checkbox to plot the observations")
+
+		self.speciesId = int(request.POST['species_id'])
+		self.speciesName = self.parent_view.listOfVariables[self.speciesId].getNameOrSbmlId()

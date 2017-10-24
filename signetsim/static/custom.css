@@ -31,6 +31,7 @@ body {
  */
 .navbar-fixed-top {
   border: 0;
+  z-index: 10;
 }
 
 /* Main content
@@ -60,7 +61,7 @@ body {
   background:rgba(255, 255, 255, 0.9);
   text-align:center;
   color:#111;
-  z-index: 1100;
+  z-index: 8;
 
 }
 
@@ -70,7 +71,7 @@ body {
   height:4%;
   top: 48%;
   left: 48%;
-  z-index: 1200;
+  z-index: 9;
 }
 
 .loading-anim {

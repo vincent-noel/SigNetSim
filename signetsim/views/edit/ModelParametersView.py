@@ -64,7 +64,7 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 	def get(self, request, *args, **kwargs):
 
 		self.load(request, *args, **kwargs)
-		self.savePickledModel(request)
+		# self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
 	def post(self, request, *args, **kwargs):
@@ -81,7 +81,7 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 			elif request.POST['action'] == "save":
 				self.saveParameter(request)
 
-		self.savePickledModel(request)
+		# self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
 	def load(self, request, *args, **kwargs):

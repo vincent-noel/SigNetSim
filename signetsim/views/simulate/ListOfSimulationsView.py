@@ -89,12 +89,12 @@ class ListOfSimulationsView(TemplateView, HasWorkingProject):
 		self.listOfSimulations = []
 
 		for simulation in SEDMLSimulation.objects.filter(project=self.project):
-			self.listOfSimulations.append((simulation.name, str(simulation.sedml_file)))
+			self.listOfSimulations.append((simulation.id, simulation.name, str(simulation.sedml_file)))
 
 	def deleteSimulation(self, request):
 
 		if 'id' in request.POST and request.POST['id'] != "":
-			t_simulation = SEDMLSimulation.objects.filter(project=self.project)[int(request.POST['id'])]
+			t_simulation = SEDMLSimulation.objects.get(project=self.project, id=int(request.POST['id']))
 			remove(join(settings.MEDIA_ROOT, str(t_simulation.sedml_file)))
 			t_simulation.delete()
 			self.loadListOfSimulations()

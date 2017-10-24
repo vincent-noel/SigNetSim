@@ -71,14 +71,15 @@ class TestSedml(TestCase):
 		self.assertEqual(response_import_sedml.status_code, 200)
 		self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 1)
 
-		response_simulate_sedml = c.get('/simulate/stored/0/')
+		saved_simulation = SEDMLSimulation.objects.filter(project=project)[0]
+		response_simulate_sedml = c.get('/simulate/stored/%d/' % saved_simulation.id)
 
 		self.assertEqual(response_simulate_sedml.status_code, 200)
 		self.assertEqual(len(response_simulate_sedml.context['plots_2d']), 3)
 
 		response_delete_sedml = c.post('/simulate/stored/', {
 			'action': 'delete_simulation',
-			'id': 0
+			'id': saved_simulation.id
 		})
 		self.assertEqual(response_delete_sedml.status_code, 200)
 		self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 0)

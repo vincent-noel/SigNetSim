@@ -33,7 +33,7 @@
   {% include 'commons/error_modal.html' %}
   <div class="container-fluid">
     <div class="form-group">
-      <form class="form" method="POST" action="{% url 'simulate_model' %}">
+      <form class="form" method="POST">
         {% csrf_token %}
         {% include 'simulate/form_variable_selector.html' %}
         <div class="collapse" id="options">
@@ -46,6 +46,20 @@
         </div>
         <label>Duration</label>
         <input type="text" ID="time_max" Class="form-control" name="time_max" value="{% if form.timeMax %}{{form.timeMax}}{% else %}100{% endif %}"/>
+        <br/>
+				<label>X-axis species</label>
+        <input type="hidden" name="species_id" value="{{ form.speciesId }}" id="species_id">
+        <div class="dropdown">
+          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+            <span id="species_name">{% if form.speciesName %}{{ form.speciesName }}{% else %}Choose a species {% endif %}</span>
+            <span class="caret"></span>
+          </button>
+          <ul id="species_list" class="dropdown-menu">
+              {% for t_species in species %}
+              <li><a>{{ t_species.getNameOrSbmlId }}</a></li>
+              {% endfor %}
+          </ul>
+        </div>
         <br/>
         <div class="collapse" id="options_2">
 					<label>Use initial conditions from experiment</label>
@@ -113,6 +127,12 @@
 
 {% endblock view_content %}
 {% block js %}
+
+$('#species_list li').on('click', function(){
+  $("#species_name").html($(this).text());
+  $('#species_id').val($(this).index());
+});
+
 	{{ block.super }}
-	{% include 'simulate/timeseries_graph.js' %}
+	{% include 'simulate/phase_plane_graph.js' %}
 {% endblock js %}

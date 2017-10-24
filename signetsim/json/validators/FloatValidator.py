@@ -32,15 +32,20 @@ class FloatValidator(JsonRequest):
 		JsonRequest.__init__(self)
 
 	def post(self, request, *args, **kwargs):
+
 		field = str(request.POST['value'])
-		self.data.update({'error': self.readFloat(field)})
+		required = not ("required" in request.POST.keys() and str(request.POST['required']) == "false")
+
+		self.data.update({'error': self.readFloat(field, required)})
 		return JsonRequest.post(self, request, *args, **kwargs)
 
-	def readFloat(self, field):
+	def readFloat(self, field, required=True):
 
 		if field == "":
-			return "is empty !"
-
+			if required:
+				return "is empty !"
+			else:
+				return ""
 		else:
 			try:
 				t_float = float(field)

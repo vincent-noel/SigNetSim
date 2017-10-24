@@ -27,6 +27,8 @@
 from django.views.generic import TemplateView
 from django.shortcuts import redirect
 from django.conf import settings
+from django.http import Http404
+from django.core.exceptions import PermissionDenied
 
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from signetsim.views.HasErrorMessages import HasErrorMessages
@@ -85,14 +87,21 @@ class SedmlSimulationView(TemplateView, HasWorkingProject, HasErrorMessages):
 
 	def loadSedmlSimulation(self, request, sedml_id):
 
-		sedml_files = SEDMLSimulation.objects.filter(project=self.project)
-		if sedml_id < len(sedml_files):
-			try:
-				sedml_file = sedml_files[sedml_id]
-				sedml_doc = SedmlDocument()
-				sedml_doc.readSedmlFromFile(join(settings.MEDIA_ROOT, str(sedml_file.sedml_file)))
-				sedml_doc.run()
-				self.listOfPlots2D = sedml_doc.listOfOutputs.getPlots2D()
+		if SEDMLSimulation.objects.filter(id=sedml_id).exists():
+			sedml_file = SEDMLSimulation.objects.get(id=sedml_id)
 
-			except SedmlException as e:
-				self.addError("Invalid SEDML document : " + e.message)
+			if sedml_file.project.user == request.user or sedml_file.project.access == "PU":
+				try:
+					sedml_doc = SedmlDocument()
+					sedml_doc.readSedmlFromFile(join(settings.MEDIA_ROOT, str(sedml_file.sedml_file)))
+					sedml_doc.run()
+					self.listOfPlots2D = sedml_doc.listOfOutputs.getPlots2D()
+
+				except SedmlException as e:
+					self.addError("Invalid SEDML document : " + e.message)
+
+			else:
+				raise PermissionDenied
+
+		else:
+			raise Http404("The simulation doesn't exist !")

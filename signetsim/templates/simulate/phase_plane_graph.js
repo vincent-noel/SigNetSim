@@ -37,7 +37,7 @@ var config_{{forloop.counter0}}=
             fill: false,
             backgroundColor: "{{colors|get_color:forloop.counter0}}",
             borderColor: "{{colors|get_color:forloop.counter0}}",
-            cubicInterpolationMode: "monotone",
+//            cubicInterpolationMode: "monotone",
         },
         {% endfor %}
 
@@ -150,7 +150,6 @@ $('#toggle_options').on('click', function(){
     $("#options").removeClass("in");
     $("#options_2").removeClass("in");
     $("#toggle_options").html("<span class=\"glyphicon glyphicon-chevron-down\"> More");
-
   } else {
     $("#options").addClass("in");
     $("#options_2").addClass("in");

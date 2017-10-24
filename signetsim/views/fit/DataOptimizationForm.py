@@ -49,6 +49,7 @@ class DataOptimizationForm(HasErrorMessages):
 		self.plsaCriterion = Settings.defaultPlsaCriterion
 		self.plsaInitialTemperature = Settings.defaultPlsaInitialTemperature
 		self.plsaInitialMoves = Settings.defaultPlsaInitialMoves
+		self.plsaFreezeCount = Settings.defaultPlsaFreezeCount
 		self.scoreNegativePenalty = Settings.defaultScoreNegativePenalty
 
 	def readSettings(self, request):
@@ -57,6 +58,7 @@ class DataOptimizationForm(HasErrorMessages):
 		self.plsaCriterion = self.readFloat(request, 'precision', "the precision setting")
 		self.plsaInitialTemperature = self.readFloat(request, 'initial_temperature', "the initial temperature setting")
 		self.plsaInitialMoves = self.readFloat(request, 'initial_moves', "the initial moves setting")
+		self.plsaFreezeCount = self.readFloat(request, 'freeze_count', "the freeze count setting")
 		self.scoreNegativePenalty = self.readFloat(request, 'negative_penalty', "the negative penalty setting")
 
 	def removeDataset(self, request):
@@ -167,7 +169,7 @@ class DataOptimizationForm(HasErrorMessages):
 
 			# Default parameters
 			i_parameter = 0
-			for parameter in self.view.model.listOfParameters.values():
+			for parameter in self.view.getModelInstance().listOfParameters.values():
 
 				self.selectedParameters.append(
 					(
@@ -179,7 +181,7 @@ class DataOptimizationForm(HasErrorMessages):
 
 				i_parameter += 1
 
-			for reaction in self.view.model.listOfReactions.values():
+			for reaction in self.view.getModelInstance().listOfReactions.values():
 				for parameter in reaction.listOfLocalParameters.values():
 
 					self.selectedParameters.append(

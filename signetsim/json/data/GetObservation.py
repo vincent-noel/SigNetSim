@@ -50,8 +50,8 @@ class GetObservation(JsonRequest, HasWorkingProject):
 				'value': observation.value,
 				'stddev': observation.stddev,
 				'steady_state': 1 if observation.steady_state else 0,
-				'min_steady_state': observation.min_steady_state,
-				'max_steady_state': observation.max_steady_state
+				'min_steady_state': 0 if observation.min_steady_state is None else observation.min_steady_state,
+				'max_steady_state': 0 if observation.max_steady_state is None else observation.max_steady_state
 			})
 
 		return JsonRequest.post(self, request, *args, **kwargs)

@@ -52,7 +52,7 @@ from views import ModelReactionsView, ModelRulesView, ModelSubmodelsView
 from views import ModelSpeciesView, ModelParametersView
 from views import ModelUnitsView, ModelEventsView, ModelMiscView
 from views import SignUpView, SignUpSuccessView, ValidateEmailView
-from views import TimeSeriesSimulationView, SteadyStateSimulationView
+from views import TimeSeriesSimulationView, SteadyStateSimulationView, PhasePlaneSimulationView
 
 urlpatterns = [
 
@@ -95,6 +95,7 @@ urlpatterns = [
 	# Simulation
 	url(r'^simulate/timeseries/$', TimeSeriesSimulationView.as_view(), name='simulate_model'),
 	url(r'^simulate/steady_states/$', SteadyStateSimulationView.as_view(), name='simulate_steady_states'),
+	url(r'^simulate/phase_plane/$', PhasePlaneSimulationView.as_view(), name='simulate_phase_plane'),
 	url(r'^simulate/stored/$', ListOfSimulationsView.as_view(), name='list_of_simulations'),
 	url(r'^simulate/stored/([^/]+)/$', SedmlSimulationView.as_view(), name='sedml_simulation'),
 

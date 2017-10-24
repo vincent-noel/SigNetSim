@@ -71,7 +71,7 @@ class ModelReactionsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 	def get(self, request, *args, **kwargs):
 		self.load(request, *args, **kwargs)
-		self.savePickledModel(request)
+		# self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
 
@@ -94,7 +94,7 @@ class ModelReactionsView(TemplateView, HasWorkingModel, HasErrorMessages):
 				self.form.editKineticLaw(request)
 
 		self.load(request, *args, **kwargs)
-		self.savePickledModel(request)
+		# self.savePickledModel(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
 

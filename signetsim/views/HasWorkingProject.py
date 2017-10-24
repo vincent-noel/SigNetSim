@@ -25,6 +25,8 @@
 """
 
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
 
 from signetsim.views.HasUserLoggedIn import HasUserLoggedIn
 from signetsim.models import SbmlModel, Project
@@ -65,10 +67,6 @@ class HasWorkingProject(HasUserLoggedIn):
 			self.__setProject(request)
 			return True
 
-		elif request.POST['action'] == "new_project":
-			self.__newProject(request)
-			return True
-
 		else:
 			return False
 
@@ -88,39 +86,16 @@ class HasWorkingProject(HasUserLoggedIn):
 				request.session['project_id'] = self.project_id
 				self.__loadProject(request)
 
-				# If a model was selected, we forget it
-				if request.session.get('model_id') is not None:
-					del request.session['model_id']
-					if request.session.get('model_submodel') is not None:
-						del request.session['model_submodel']
+				# # If a model was selected, we forget it
+				# if request.session.get('model_id') is not None:
+				# 	del request.session['model_id']
+				# 	if request.session.get('model_submodel') is not None:
+				# 		del request.session['model_submodel']
 
-
-	def unsetProject(self, request):
-
-		self.project_id = None
-		self.project_name = None
-		self.project = None
-		del request.session['project_id']
-
-
-	def __newProject(self, request):
-		folder_name = str(request.POST['project_name'])
-
-		if not Project.objects.filter(user=request.user, name=folder_name).exists():
-			self.project = Project(user=request.user, name=folder_name)
-			self.project.save()
-			self.project_id = self.project.id
-			self.project_name = self.project.name
-
-			request.session['project_id'] = self.project_id
-			os.mkdir(os.path.join(settings.MEDIA_ROOT, str(self.project.id)))
-			os.mkdir(os.path.join(settings.MEDIA_ROOT, str(self.project.id), "optimizations"))
+			else:
+				raise PermissionDenied
 		else:
-			self.createFolderShow = True
-			self.createFolderError = "Project %s already exists !" % folder_name
-
-
-		self.__loadProjects(request)
+			raise Http404("Project doesn't exists")
 
 	def __setProject(self, request):
 
@@ -142,7 +117,6 @@ class HasWorkingProject(HasUserLoggedIn):
 			self.project_id = self.project.id
 
 
-
 	def __loadProjects(self, request):
 		if self.isUserLoggedIn(request):
 			self.listOfProjects = (Project.objects.filter(user=request.user)
@@ -161,3 +135,9 @@ class HasWorkingProject(HasUserLoggedIn):
 			return SbmlModel.objects.filter(project=self.project)
 		else:
 			return []
+
+	def isProjectOwner(self, request):
+		return self.isUserLoggedIn(request) and self.project is not None and self.project.user == request.user
+
+	def isProjectPublic(self):
+		return self.project is not None and self.project.access == "PU"

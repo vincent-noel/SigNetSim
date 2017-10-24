@@ -28,7 +28,7 @@ from django.views.generic import TemplateView
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.simulate.SedmlWriter import SedmlWriter
 
-from signetsim.views.simulate.TimeSeriesSimulationForm import TimeSeriesSimulationForm
+from signetsim.views.simulate.PhasePlaneSimulationForm import PhasePlaneSimulationForm
 from signetsim.models import Experiment, Condition, Treatment, SEDMLSimulation, new_sedml_filename
 from signetsim.managers.data import buildExperiment
 from signetsim.settings.Settings import Settings
@@ -43,9 +43,9 @@ from django.shortcuts import redirect
 from os.path import join
 
 
-class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
+class PhasePlaneSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 
-	template_name = 'simulate/timeseries.html'
+	template_name = 'simulate/phase_plane.html'
 
 	def __init__(self, **kwargs):
 
@@ -53,7 +53,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		HasWorkingModel.__init__(self)
 		SedmlWriter.__init__(self)
 
-		self.form = TimeSeriesSimulationForm(self)
+		self.form = PhasePlaneSimulationForm(self)
 
 		self.listOfVariables = None
 		self.listOfReactions = None
@@ -131,7 +131,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		# generating results
 		self.simResults = []
 		for i, result in enumerate(results):
-			(t_t, t_y) = result
+			(_, t_y) = result
 
 			y_filtered = {}
 			if self.form.selectedSpeciesIds is not None:
@@ -148,10 +148,15 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 					t_name = self.listOfReactions[var].getNameOrSbmlId()
 					y_filtered.update({t_name: t_y[t_sbml_id]})
 
+			if self.form.speciesId is not None:
+				var = self.listOfVariables[self.form.speciesId]
+				x_species_y = t_y[var.getSbmlId()]
+
+
 			if self.experiment is not None:
-				self.simResults.append((t_t, y_filtered, self.experiment.listOfConditions[i].name))
+				self.simResults.append((x_species_y, y_filtered, self.experiment.listOfConditions[i].name))
 			else:
-				self.simResults.append((t_t, y_filtered, ""))
+				self.simResults.append((x_species_y, y_filtered, ""))
 
 		# Units and max
 		tmax=0
@@ -162,8 +167,8 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 
 		self.y_max = tmax*1.1
 
-		if self.getModelInstance().timeUnits is not None:
-			self.t_unit = self.getModelInstance().timeUnits.getName()
+		if self.listOfVariables[self.form.speciesId].getUnits() is not None:
+			self.t_unit = self.listOfVariables[self.form.speciesId].getUnits().getNameOrSbmlId()
 
 		if (self.form.selectedSpeciesIds is not None
 			and len(self.form.selectedSpeciesIds) > 0
@@ -256,7 +261,8 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 					for id_var in self.form.selectedReactionsIds:
 						variables.append(self.listOfVariables[id_var])
 
-				self.addTimeseriesCurve(timecourse, model, "Simulation", variables)
+				x_axis_variable = self.listOfVariables[self.form.speciesId]
+				self.addPhaseSpaceCurve(timecourse, model, "Simulation", variables, x_axis_variable)
 
 			simulation_filename = join(settings.MEDIA_ROOT, new_sedml_filename())
 			open(simulation_filename, "a")

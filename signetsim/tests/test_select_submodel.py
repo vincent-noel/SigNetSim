@@ -135,7 +135,7 @@ class TestSelectSubmodel(TestCase):
 			[species.getNameOrSbmlId() for species in response_choose_model.context['list_of_species']],
 			[
 				'SOS', 'Ras-GDP', 'Ras-GTP', 'SOS-Ras-GDP', 'SOS-Ras-GTP',
-				'GAP', 'GEF', 'Ras-N17', 'SOS-Ras-N17', 'GEF-RasN17'
+				'GAP', 'GEF', 'Ras-N17', 'SOS-Ras-N17', 'GEF-RasN17', 'Total Ras-GTP'
 			]
 		)
 
@@ -200,7 +200,7 @@ class TestSelectSubmodel(TestCase):
 		self.assertEqual(
 			[species.getNameOrSbmlId() for species in response_choose_submodel.context['list_of_species']],
 			['SOS', 'Ras-GTP', 'ERK-PP', 'SOS_inactive', 'FGF2', 'Ras-GDP', 'SOS-Ras-GDP', 'SOS-Ras-GTP', 'GAP', 'GEF',
-			 'Ras-N17', 'SOS-Ras-N17', 'GEF-RasN17', 'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP', 'Mapk',
+			 'Ras-N17', 'SOS-Ras-N17', 'GEF-RasN17', 'Total Ras-GTP', 'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP', 'Mapk',
 			 'Mapk-P', 'Total MEK activated', 'Total MAPK activated']
 		)
 
@@ -213,7 +213,7 @@ class TestSelectSubmodel(TestCase):
 		self.assertEqual(
 			[species.getNameOrSbmlId() for species in response_choose_submodel.context['list_of_species']],
 			['SOS', 'Ras-GTP', 'ERK-PP', 'SOS_inactive', 'FGF2', 'Ras-GDP', 'SOS-Ras-GDP', 'SOS-Ras-GTP', 'GAP', 'GEF',
-			 'Ras-N17', 'SOS-Ras-N17', 'GEF-RasN17', 'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP', 'Mapk',
+			 'Ras-N17', 'SOS-Ras-N17', 'GEF-RasN17', 'Total Ras-GTP', 'Raf', 'Raf-P', 'Mek', 'Mek-P', 'Mek-PP', 'Mapk',
 			 'Mapk-P', 'Total MEK activated', 'Total MAPK activated']
 		)
 

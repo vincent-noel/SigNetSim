@@ -61,11 +61,16 @@
 				</div>
 				<br/><br/>
         <div class="row">
-          <div class="col-xs-6">
+          <div class="col-xs-4">
             <button type="submit" name="action" value="simulate_steady_states" class="btn btn-primary">Simulate</button>
           </div>
-          <div class="col-xs-6 text-right">
-            <button type="button" class="btn btn-primary" id="toggle_options">More options</button>
+					<div class="col-xs-4 text-center">
+						{% if sim_results|length > 0 %}
+						<button type="submit"  name="action" value="save_simulation" class="btn btn-primary">Save</button>
+						{% endif %}
+					</div>
+         <div class="col-xs-4 text-right">
+            <button type="button" class="btn btn-primary" id="toggle_options"><span class="glyphicon glyphicon-chevron-down"> More</button>
           </div>
         </div>
 
@@ -115,11 +120,11 @@ $('#toggle_options').on('click', function(){
 
   if($("#options").hasClass("in")) {
     $("#options").removeClass("in");
-{#    $("#options_2").removeClass("in");#}
+    $("#toggle_options").html("<span class=\"glyphicon glyphicon-chevron-down\"> More");
 
   } else {
     $("#options").addClass("in");
-{#    $("#options_2").addClass("in");#}
+    $("#toggle_options").html("<span class=\"glyphicon glyphicon-chevron-up\"> Less");
   }
 });
 {% endblock js %}

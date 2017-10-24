@@ -79,7 +79,7 @@
   position: fixed;
   top: 65px;
   right: 15px;
-  z-index: 1000;
+  z-index: 6;
   visibility: visible;
 }
 
@@ -184,7 +184,7 @@
 /* Dropdowns style within sidebar */
 .sidebar-nav .dropdown-menu {
 	overflow: visible;
-	z-index: 1000000000000000000000000;
+	z-index: 20;
 
 
 }
