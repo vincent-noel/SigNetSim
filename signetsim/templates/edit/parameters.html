@@ -22,6 +22,7 @@
 {% load static from staticfiles %}
 
 {% block title %} Parameters | {{ block.super }}{% endblock title %}
+{% block header_js %}<script src="{% static 'form.js' %}"></script>{% endblock header_js %}
 
 {% block edit_item %}active{% endblock edit_item %}
 

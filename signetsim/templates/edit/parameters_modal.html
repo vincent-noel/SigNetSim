@@ -6,7 +6,7 @@
 <div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New parameter" id="modal_parameter">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form id="parameter_form" class="form" method="POST" action="" label="Save parameter">
+      <form id="parameter_form" class="form" method="POST" action="" label="Save parameter" onsubmit="return save_parameter();">
         {% csrf_token %}
         <input type="hidden" name="action" value="save">
         <input type="hidden" id="parameter_id" name="parameter_id" value="">
@@ -50,13 +50,13 @@
                       <input type="text" class="form-control input-sm" id="parameter_sbml_id" placeholder="<Input name>" name="parameter_sbml_id" value="">
                     </td>
                     <td class="col-xs-1" style="vertical-align:middle">
-                      <div id="sbmlid_validating" class="pull-right collapse">
+                      <div id="parameter_sbml_id_validating" class="pull-right collapse">
                         <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
                       </div>
-                      <div id="sbmlid_valid" class="pull-right collapse">
+                      <div id="parameter_sbml_id_valid" class="pull-right collapse">
                         <span class="glyphicon glyphicon-ok" style="color:#5cb85c; font-size: 1.5em"></span>
                       </div>
-                      <div id="sbmlid_invalid" class="pull-right collapse">
+                      <div id="parameter_sbml_id_invalid" class="pull-right collapse">
                       <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
                       </div>
                     </td>
@@ -204,7 +204,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" onclick="save_parameter()" class="btn btn-primary">Save changes</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
         </div>
       </form>
     </div>

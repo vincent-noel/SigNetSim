@@ -1,14 +1,15 @@
 {% extends '_layouts/menupage.html' %}
-{% block title %} Species | {{ block.super }}{% endblock title %}
 
-{% block edit_item %}active{% endblock edit_item %}
-{% block view_name %}Model species{% endblock view_name %}
-{% block view_sidebar %}{% include 'edit/menu.html' with page="species" %}{% endblock view_sidebar %}
-{% block view_content %}
 {% load static from staticfiles %}
 {% load bootstrap3 %}
 {% load tags %}
 
+{% block title %} Species | {{ block.super }}{% endblock title %}
+{% block header_js %}<script src="{% static 'form.js' %}"></script>{% endblock header_js %}
+{% block edit_item %}active{% endblock edit_item %}
+{% block view_name %}Model species{% endblock view_name %}
+{% block view_sidebar %}{% include 'edit/menu.html' with page="species" %}{% endblock view_sidebar %}
+{% block view_content %}
 <div class="container-fluid" id="view">
   <h4>Species</h4>
   <hr/>

@@ -88,7 +88,7 @@ $("#rule_expression").on('change paste keyup', function()
 {
   setExpressionValidating();
   ajax_call(
-      "POST", "{{csrf_token}}",
+      "POST",
       "{% url 'math_validator' %}",
       {
           'math': $("#rule_expression").val(),
@@ -146,7 +146,7 @@ $("#rule_expression_alg").on('change paste keyup', function()
 {
   setExpressionAlgValidating();
   ajax_call(
-      "POST", "{{csrf_token}}",
+      "POST",
       "{% url 'math_validator' %}",
       {
           'math': $("#rule_expression_alg").val(),
@@ -177,7 +177,7 @@ function view_rule(rule_ind)
     setExpressionAlgEmpty();
     setExpressionEmpty();
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_rule' %}", {'rule_ind': rule_ind},
         function(data)
         {

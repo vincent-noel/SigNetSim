@@ -56,7 +56,7 @@ $("#submodel_sbml_id").on('change paste keyup', function()
   {
     setSbmlIdValidating();
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'sbml_id_validator' %}", {'sbml_id': new_sbml_id},
         function(data)
         {
@@ -159,7 +159,7 @@ function update_list_submodels(submodel_source)
 
     setSubmodelsRefsLoading();
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_submodels' %}", {'model_id': submodel_source},
         function(data)
         {
@@ -300,7 +300,7 @@ function updateListOfObjects(model_id, submodel_id)
 
   setListOfObjectsLoading();
   ajax_call(
-      "POST", "{{csrf_token}}",
+      "POST",
       "{% url 'get_list_of_objects' %}", {'model_id': model_id, 'submodel_id': submodel_id},
       function(data)
       {
@@ -391,7 +391,7 @@ function view_submodel(submodel_id)
  $("#modal_submodel-title").html("Edit submodel");
 
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_submodel' %}", {'id': submodel_id},
         function(data)
         {

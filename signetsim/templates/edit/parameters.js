@@ -1,3 +1,5 @@
+{% include 'commons/js/forms.js' %}
+
 $('#parameter_scope_dropdown li').on('click', function(){
   $("#parameter_scope_label").html($(this).text());
   $('#parameter_scope').val($(this).index());
@@ -11,113 +13,13 @@ $('#unit_list li').on('click', function(){
 
 
 
-function toggle_slide(slide_id) {
-  if ($('#' + slide_id).prop('checked') == true) {
-    $('#' + slide_id).prop("checked", false);
-  } else {
-    $('#' + slide_id).prop("checked", true);
-  }
-}
-
-
 // Value validator
-
-var form_value_error = "";
-
-$("#parameter_value").on('paste keyup', function()
-{
-    if ($("#parameter_value").val() != "")
-    {
-        ajax_call(
-            "POST", "{{csrf_token}}",
-            "{% url 'float_validator' %}", {'value' : $("#parameter_value").val()},
-            function(data) {
-               $.each(data, function(index, element) {
-                 if (index == "error") {form_value_error=element.toString();}
-               });
-            },
-            function(){}
-        );
-    }
-
-});
-
-
+let form_value = new FloatForm("parameter_value", "The value of the parameter", false);
+$("#parameter_value").on('paste keyup', () => { form_value.check(); });
 
 // SbmlId Validation
-
-var form_sbml_id_error= "";
-var old_sbml_id = "";
-
-function setSbmlIdEmpty()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-}
-
-function setSbmlIdValid()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").addClass("in");
-}
-
-function setSbmlIdInvalid()
-{
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_invalid").addClass("in");
-}
-
-function setSbmlIdValidating()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_validating").addClass("in");
-}
-
-$("#parameter_sbml_id").on('paste keyup', function()
-{
-    check_sbml_id_validity();
-});
-
-
-function check_sbml_id_validity()
-{
-    new_sbml_id = $.trim($("#parameter_sbml_id").val());
-
-    reaction_id = "";
-    if (parseInt($("#parameter_scope").val()) > 0) {
-        reaction_id = parseInt($("#parameter_scope").val()) - 1;
-    }
-
-    if (old_sbml_id === "" || new_sbml_id !== old_sbml_id) {
-        setSbmlIdValidating();
-        ajax_call(
-            "POST", "{{csrf_token}}",
-            "{% url 'sbml_id_validator' %}", {'sbml_id': new_sbml_id, 'reaction_id': reaction_id},
-            function (data) {
-                $.each(data, function (index, element) {
-                    if (index == 'error' && element == '') {
-                        setSbmlIdValid()
-                        form_sbml_id_error = "";
-                    } else {
-                        setSbmlIdInvalid();
-                        form_sbml_id_error = element.toString();
-                    }
-                });
-            },
-            function () {
-                setSbmlIdInvalid();
-            }
-        );
-    }
-    else if (new_sbml_id === old_sbml_id) {
-        setSbmlIdValid();
-    }
-}
-
+let form_sbmlid = new SbmlIdForm("parameter_sbml_id", "The identifier of the parameter");
+$("#parameter_sbml_id").on('paste keyup', () => { form_sbmlid.check(); });
 
 $('#new_parameter_button').on('click', function()
 {
@@ -138,10 +40,16 @@ function new_parameter()
     $("#parameter_reaction_id").val("");
     $("#parameter_scope").val(0);
     $("#parameter_scope_label").html("Global");
-    old_sbml_id = "";
-    setSbmlIdEmpty();
+
+    form_value.clearError();
+    form_sbmlid.clearError();
+    form_sbmlid.setValue("");
+    form_sbmlid.setIndicatorEmpty();
+
     reset_errors();
     $("#general").tab('show');
+    $("#modal_parameter").on('shown.bs.modal', function() { $("#parameter_name").focus(); });
+
 }
 
 
@@ -151,7 +59,7 @@ function view_parameter(sbml_id, reaction)
     $("#modal_title").html("Edit parameter");
 
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_parameter' %}", {'sbml_id': sbml_id, 'reaction': reaction},
         function(data)
         {
@@ -175,7 +83,7 @@ function view_parameter(sbml_id, reaction)
 
                    }
                }
-               else if (index == "sbml_id") { $("#parameter_sbml_id").val(element.toString()); old_sbml_id=element; }
+               else if (index == "sbml_id") { $("#parameter_sbml_id").val(element.toString()); form_sbmlid.setValue(element.toString()); }
                else if (index == "name") { $("#parameter_name").val(element.toString()); }
 
                else if (index == "value") {
@@ -201,20 +109,21 @@ function view_parameter(sbml_id, reaction)
                 else if (index == "sboterm_name") { $("#sboterm_name").html(element.toString()); }
            });
 
-           setSbmlIdEmpty();
+           form_sbmlid.check();
            reset_errors();
         },
         function() { console.log("failed"); }
     )
     $("#general").tab('show');
     $('#modal_parameter').modal('show');
+    $("#modal_parameter").on('shown.bs.modal', function() { $("#parameter_name").focus(); });
 
 }
 function reset_errors()
 {
-   form_remove_error_highlight("parameter_sbml_id");
-   form_remove_error_highlight("parameter_value");
-   $("#error_modal").empty();
+    form_value.unhighlight();
+    form_sbmlid.unhighlight();
+    $("#error_modal").empty();
 
 }
 
@@ -223,19 +132,21 @@ function save_parameter()
     var nb_errors = 0;
     reset_errors();
 
-    if ($("#sbmlid_invalid").hasClass("in")){
-        add_error_modal("invalid_sbml_id", "Parameter " + form_sbml_id_error);
-        form_add_error_highlight("species_sbml_id");
+    if (form_sbmlid.hasError()){
+        add_error_modal_v3(form_sbmlid);
+        form_sbmlid.highlight();
         nb_errors++;
     }
 
-    if (form_value_error != ""){
-        add_error_modal("invalid_value", "Parameter value " + form_value_error);
-        form_add_error_highlight("parameter_value");
+    if (form_value.hasError()){
+        add_error_modal_v3(form_value);
+        form_value.highlight();
         nb_errors++;
     }
+
     if (nb_errors == 0)
     {
-        $("#parameter_form").submit();
+        $("#modal_parameter").modal("hide");
     }
+    return (nb_errors == 0);
 }

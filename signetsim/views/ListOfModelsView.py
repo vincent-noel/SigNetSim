@@ -71,6 +71,7 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 	def get(self, request, *args, **kwargs):
 
 		if len(args) > 0:
+			HasWorkingProject.load(self, request, *args, **kwargs)
 			self.setProject(request, args[0])
 			return redirect('models')
 

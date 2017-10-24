@@ -125,7 +125,7 @@ function view_unit_definition(unit_id)
     $("#modal_title").html("Edit unit");
     remove_units();
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_unit_definition' %}", {'id': unit_id},
         function(data)
         {

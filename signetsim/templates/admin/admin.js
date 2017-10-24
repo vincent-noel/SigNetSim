@@ -3,7 +3,7 @@
 $( "#is_active_{{forloop.counter0}}" ).change(function()
 {
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'set_account_active' %}", {'username' : '{{user.username}}', 'status': $("#is_active_{{forloop.counter0}}").prop('checked')},
         function(data) {
            $.each(data, function(index, element) {
@@ -29,7 +29,7 @@ $( "#is_active_{{forloop.counter0}}" ).change(function()
 $( "#is_staff_{{forloop.counter0}}" ).change(function()
 {
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'set_account_staff' %}", {'username' : '{{user.username}}', 'status': $("#is_staff_{{forloop.counter0}}").prop('checked')},
         function(data) {
            $.each(data, function(index, element) {

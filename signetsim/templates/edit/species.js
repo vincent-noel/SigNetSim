@@ -1,5 +1,6 @@
 {% load bootstrap3 %}
 {% load tags %}
+{% include 'commons/js/forms.js' %}
 
 $('#species_value_type_dropdown li').on('click', function()
 {
@@ -27,91 +28,12 @@ $('#new_species_button').on('click', function()
 });
 
 // SbmlId Validation
-
-var old_sbml_id = "";
-
-function setSbmlIdEmpty()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-}
-
-function setSbmlIdValid()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").addClass("in");
-}
-
-function setSbmlIdInvalid()
-{
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_invalid").addClass("in");
-}
-
-function setSbmlIdValidating()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_validating").addClass("in");
-}
-
-var form_sbml_id_error = "";
-
-$("#species_sbml_id").on('paste keyup', function()
-{
-  new_sbml_id = $.trim($("#species_sbml_id").val());
-  if (old_sbml_id === "" || new_sbml_id !== old_sbml_id)
-  {
-    setSbmlIdValidating();
-
-    ajax_call(
-        "POST", "{{csrf_token}}",
-        "{% url 'sbml_id_validator' %}", {'sbml_id' : new_sbml_id},
-        function(data) {
-           $.each(data, function(index, element) {
-             if (index == 'error' && element == '') {setSbmlIdValid(); form_sbml_id_error = element.toString();}
-             else {setSbmlIdInvalid(); form_sbml_id_error = element.toString();}
-           });
-        },
-        function()
-        {
-          setSbmlIdInvalid();
-        }
-    )
-  }
-  else if (new_sbml_id === old_sbml_id)
-  {
-    setSbmlIdValid();
-  }
-});
+let form_sbmlid = new SbmlIdForm("species_sbml_id", "The identifier of the species");
+$("#" + form_sbmlid.field).on('paste keyup', () => { form_sbmlid.check(); });
 
 // Value validator
-
-var form_value_error = "";
-
-$("#species_value").on('paste keyup', function()
-{
-    ajax_call(
-        "POST", "{{csrf_token}}",
-        "{% url 'float_validator' %}",
-        {'value' : $("#species_value").val(), 'required' : 'false'},
-        function(data) {
-           $.each(data, function(index, element) {
-             if (index == "error") {form_value_error=element.toString();}
-             else {form_value_error = "";}
-           });
-        },
-        function(){}
-    );
-});
-
-
-
-
-
+let form_value = new FloatForm("species_value", "The initial value of the species", false);
+$("#" + form_value.field).on('paste keyup', () => { form_value.check(); });
 
 function new_species()
 {
@@ -131,9 +53,11 @@ function new_species()
     $("#species_unit").attr("value", "");
     $("#species_constant").attr("value", 0);
     $("#species_boundary").attr("value", 0);
-    setSbmlIdEmpty();
+    form_value.clearError();
+    form_sbmlid.clearError();
+    form_sbmlid.setValue("");
+    form_sbmlid.setIndicatorEmpty();
     reset_errors();
-    old_sbml_id = "";
     $("#general").tab('show');
     $("#modal_species").on('shown.bs.modal', function() { $("#species_name").focus(); });
 
@@ -145,14 +69,14 @@ function view_species(sbml_id)
     $("#modal_title").html("Edit species");
 
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_species' %}", {'sbml_id': sbml_id},
         function(data)
         {
            $.each(data, function(index, element)
            {
                if (index == "id") { $("#species_id").val(element.toString()); }
-               else if (index == "sbml_id") { $("#species_sbml_id").val(element.toString()); old_sbml_id=element; }
+               else if (index == "sbml_id") { $("#species_sbml_id").val(element.toString()); form_sbmlid.setValue(element.toString()); }
                else if (index == "name") { $("#species_name").val(element.toString()); }
 
                else if (index == "value") {
@@ -195,7 +119,7 @@ function view_species(sbml_id)
                else if (index == "sboterm_name") { $("#sboterm_name").html(element.toString()); }
            });
 
-           setSbmlIdEmpty();
+           form_sbmlid.check();
            reset_errors();
         },
         function() { console.log("failed"); }
@@ -214,28 +138,29 @@ function save_species()
     var nb_errors = 0;
     reset_errors();
 
-    if ($("#sbmlid_invalid").hasClass("in")){
-        add_error_modal("invalid_sbml_id", "Species " + form_sbml_id_error);
-        form_add_error_highlight("species_sbml_id");
+    if (form_sbmlid.hasError()){
+        add_error_modal_v3(form_sbmlid);
+        form_sbmlid.highlight();
+        nb_errors++;
+    }
+    if (form_value.hasError()){
+        add_error_modal_v3(form_value);
+        form_value.highlight();
         nb_errors++;
     }
 
-    if (form_value_error != ""){
-        add_error_modal("invalid_value", "Species initial value " + form_value_error);
-        form_add_error_highlight("species_value");
-        nb_errors++;
-    }
     if (nb_errors == 0)
     {
         $("#modal_species").modal("hide");
     }
+
     return (nb_errors == 0);
 }
 
 function reset_errors()
 {
-   form_remove_error_highlight("species_sbml_id");
-   form_remove_error_highlight("species_value");
+   form_sbmlid.unhighlight();
+   form_value.unhighlight();
    $("#error_modal").empty();
 
 }

@@ -15,6 +15,8 @@
 {#   You should have received a copy of the GNU Affero General Public License #}
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
+{% include 'commons/js/forms.js' %}
+
 
 $('#unit_list li').on('click', function(){
   $("#compartment_unit_label").html($(this).text());
@@ -27,87 +29,16 @@ $('#constant_list li').on('click', function(){
 });
 
 // Value validator
+let form_value = new FloatForm("compartment_size", "The size of the compartment", false);
 
-var form_value_error = "";
-
-$("#compartment_size").on('paste keyup', function()
-{
-    if ($("#compartment_size").val() != "")
-    {
-        ajax_call(
-            "POST", "{{csrf_token}}",
-            "{% url 'float_validator' %}", {'value' : $("#compartment_size").val()},
-            function(data) {
-               $.each(data, function(index, element) {
-                 if (index == "error") {form_value_error=element.toString();}
-               });
-            },
-            function(){}
-        );
-    }
-    else { form_value_error = "";}
-
-});
+$("#compartment_size").on('paste keyup', function(){ form_value.check(); });
 
 
 // SbmlId Validation
 
-var old_sbml_id = "";
-var form_sbml_id_error = "";
+let form_sbmlid = new SbmlIdForm("compartment_sbml_id", "The identifier of the compartment");
 
-function setSbmlIdEmpty()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-}
-
-function setSbmlIdValid()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").addClass("in");
-}
-
-function setSbmlIdInvalid()
-{
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_invalid").addClass("in");
-}
-
-function setSbmlIdValidating()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_validating").addClass("in");
-}
-
-
-$("#compartment_sbml_id").on('change paste keyup', function()
-{
-  new_sbml_id = $.trim($("#compartment_sbml_id").val());
-  if (old_sbml_id === "" || new_sbml_id !== old_sbml_id)
-  {
-    setSbmlIdValidating();
-    ajax_call(
-        "POST", "{{csrf_token}}",
-        "{% url 'sbml_id_validator' %}", {'sbml_id': new_sbml_id },
-        function(data)
-        {
-            $.each(data, function(index, element) {
-                if (index === 'error') {
-                    setSbmlIdValid(); form_sbml_id_error = element.toString();
-                }
-            });
-        },
-        function()
-        {
-          setSbmlIdInvalid();
-        }
-    );
-  }
-});
+$("#compartment_sbml_id").on('change paste keyup', () => { form_sbmlid.check(); });
 
 
 $('#new_compartment_button').on('click', function(){
@@ -127,11 +58,13 @@ function new_compartment()
     $("#compartment_unit").val("");
     $("#compartment_constant_label").html("True");
     $("#compartment_constant").val(1);
-    old_sbml_id = "";
-    form_sbml_id_error = "";
-    form_value_error = "";
-    $('#general').tab('show');
 
+    form_value.clearError();
+    form_sbmlid.clearError();
+    form_sbmlid.setValue("");
+    form_sbmlid.setIndicatorEmpty();
+    $('#general').tab('show');
+    $("#modal_compartment").on('shown.bs.modal', function() { $("#compartment_name").focus(); });
 }
 
 
@@ -141,14 +74,14 @@ function view_compartment(sbml_id)
     $("#modal_title").html("Edit compartment");
 
     ajax_call(
-        "POST", "{{csrf_token}}",
-        "{% url 'get_compartment' %}", {'sbml_id': sbml_id},
+        "POST", "{% url 'get_compartment' %}",
+        {'sbml_id': sbml_id},
         function(data)
         {
            $.each(data, function(index, element)
            {
                if (index == "id") { $("#compartment_id").val(element.toString()); }
-               else if (index == "sbml_id") { $("#compartment_sbml_id").val(element.toString()); old_sbml_id=element; }
+               else if (index == "sbml_id") { $("#compartment_sbml_id").val(element.toString()); form_sbmlid.setValue(element.toString()); }
                else if (index == "name") { $("#compartment_name").val(element.toString()); }
 
                else if (index == "value") {
@@ -174,20 +107,22 @@ function view_compartment(sbml_id)
                else if (index == "sboterm_name") { $("#sboterm_name").html(element.toString()); }
            });
 
-           setSbmlIdEmpty();
+           form_sbmlid.check();
            reset_errors();
         },
         function() { console.log("failed"); }
     )
     $("#general").tab('show');
+
     $('#modal_compartment').modal('show');
+    $("#modal_compartment").on('shown.bs.modal', function() { $("#compartment_name").focus(); });
 
 }
 function reset_errors()
 {
-   form_remove_error_highlight("compartment_sbml_id");
-   form_remove_error_highlight("compartment_value");
-   $("#error_modal").empty();
+    form_sbmlid.unhighlight();
+    form_value.unhighlight();
+    $("#error_modal").empty();
 
 }
 
@@ -196,19 +131,19 @@ function save_compartment()
     var nb_errors = 0;
     reset_errors();
 
-    if ($("#sbmlid_invalid").hasClass("in")){
-        add_error_modal("invalid_sbml_id", "Compartment " + form_sbml_id_error);
-        form_add_error_highlight("species_sbml_id");
+    if (form_sbmlid.hasError()){
+        add_error_modal_v3(form_sbmlid);
+        form_sbmlid.highlight();
         nb_errors++;
     }
-
-    if (form_value_error != ""){
-        add_error_modal("invalid_value", "Compartment value " + form_value_error);
-        form_add_error_highlight("compartment_value");
+    if (form_value.hasError()){
+        add_error_modal_v3(form_value);
+        form_value.highlight();
         nb_errors++;
     }
     if (nb_errors == 0)
     {
-        $("#compartment_form").submit();
+        $("#modal_compartment").modal("hide");
     }
+    return (nb_errors == 0);
 }
