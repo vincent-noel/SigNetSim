@@ -5,7 +5,6 @@ class Form
         this.field = field;
         this.description = description;
         this.error_message = "";
-        $("#" + this.field).on('paste keyup', () => { this.check(); });
     }
 
     setError(error_message){
@@ -26,7 +25,9 @@ class Form
         $("#" + this.field + "_label").removeClass("text-danger");
         $("#" + this.field + "_group").removeClass("has-error");
     }
+}
 
+let HasIndicator = (superclass) => class extends superclass {
     setIndicatorValid(){
         $("#" + this.field + "_validating").removeClass("in");
         $("#" + this.field + "_invalid").removeClass("in");

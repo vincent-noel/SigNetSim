@@ -23,6 +23,7 @@ let dropdown_unit = new Dropdown("compartment_unit");
 let form_value = new FloatForm("compartment_size", "The size of the compartment", false);
 let form_sbmlid = new SbmlIdForm("compartment_sbml_id", "The identifier of the compartment");
 
+let form_sboterm = new SBOTermInput("compartment_sboterm");
 
 $('#new_compartment_button').on('click', function(){
 
@@ -83,10 +84,10 @@ function view_compartment(sbml_id)
 
                }
                else if (index == "sboterm") {
-                   $("#sboterm").val(element.toString());
-                   $("#sboterm_link").attr("href", "http://www.ebi.ac.uk/sbo/main/display?nodeId=" + element.toString());
+                   $("#compartment_sboterm").val(element.toString());
+                   $("#compartment_sboterm_link").attr("href", "http://www.ebi.ac.uk/sbo/main/display?nodeId=" + element.toString());
                }
-               else if (index == "sboterm_name") { $("#sboterm_name").html(element.toString()); }
+               else if (index == "sboterm_name") { $("#compartment_sboterm_name").html(element.toString()); }
            });
 
            form_sbmlid.check();

@@ -1,14 +1,9 @@
 {% include 'commons/js/forms.js' %}
 
-$('#parameter_scope_dropdown li').on('click', function(){
-  $("#parameter_scope_label").html($(this).text());
-  $('#parameter_scope').val($(this).index());
-  check_sbml_id_validity();
-});
-
-let dropdown_unit = new Dropdown("parameter_unit");
 let form_value = new FloatForm("parameter_value", "The value of the parameter", false);
-let form_sbmlid = new SbmlIdForm("parameter_sbml_id", "The identifier of the parameter");
+let form_sbmlid = new SbmlIdForm("parameter_sbml_id", "The identifier of the parameter", has_scope=true, scope_field="parameter_scope_value");
+let dropdown_unit = new Dropdown("parameter_unit");
+let dropdown_scope = new Dropdown("parameter_scope", () => {form_sbmlid.check();});
 
 function new_parameter()
 {
@@ -51,9 +46,10 @@ function view_parameter(sbml_id, reaction)
                    if (element.toString() == ""){
                        $("#parameter_scope").val(0);
                        $("#parameter_scope_label").html("Global");
+                       form_sbmlid.setScope(0);
                    } else {
                        $("#parameter_scope").val(parseInt(element)+1);
-
+                       form_sbmlid.setScope(parseInt(element)+1);
                        switch(element) {
                            {% for reaction in list_of_reactions %}
                            case {{forloop.counter0}}:

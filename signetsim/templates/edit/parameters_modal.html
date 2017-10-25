@@ -23,39 +23,45 @@
           </ul>
           <div class="tab-content">
             <div id="general" class="tab-pane fade in active">
-							{% include 'commons/html/name_input.html' with name="Name" id="parameter_name" placeholder="Input the name of the parameter" default="" %}
-							{% include 'commons/html/sbmlid_input.html' with name="Indentifier" id="parameter_sbml_id" placeholder="Input the identifier of the parameter" default="" %}
-              <table class="table table-striped" id="">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-12">Scope</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-12">
-                      <input type="hidden" name="parameter_scope" id="parameter_scope" value="0">
-                      <div class="dropdown">
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                          <span id="parameter_scope_label">Global</span>
-                          <span class="caret"></span>
-                        </button>
-                        <ul id="parameter_scope_dropdown" class="dropdown-menu">
-                          <li><a>Global</a></li>
-                          {% for reaction in list_of_reactions %}
-                          <li><a>{{reaction.getName}}</a></li>
-                          {% endfor %}
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+							{% include 'commons/html/name_input.html' with
+								name="Name"
+								id="parameter_name"
+								placeholder="Input the name of the parameter"
+								default=""
+							%}
+							{% include 'commons/html/sbmlid_input.html' with
+								name="Indentifier"
+								id="parameter_sbml_id"
+								placeholder="Input the identifier of the parameter"
+								default=""
+							%}
+							{% include 'commons/html/dropdown.html' with
+								name="Scope"
+								id="parameter_scope"
+								list=list_of_reactions
+								default_label="Global"
+								default="0"
+							%}
             </div>
             <div id="math" class="tab-pane fade in">
-							{% include 'commons/html/float_input.html' with name="Value" id="parameter_value" placeholder="Input parameter value" default="" %}
-							{% include 'commons/html/toggle_switch.html' with name="Constant" id="parameter_contant" default="" %}
-							{% include 'commons/html/dropdown.html' with list=list_of_units name="Unit" id="parameter_unit" default="Choose an unit" %}
+							{% include 'commons/html/float_input.html' with
+								name="Value"
+								id="parameter_value"
+								placeholder="Input parameter value"
+								default=""
+							%}
+							{% include 'commons/html/toggle_switch.html' with
+								name="Constant"
+								id="parameter_contant"
+								default=""
+							%}
+							{% include 'commons/html/dropdown.html' with
+								list=list_of_units
+								name="Unit"
+								id="parameter_unit"
+								default_label="Choose an unit"
+								default=""
+							%}
             </div>
             <div id="annotation" class="tab-pane fade in">
               <table class="table table-striped">

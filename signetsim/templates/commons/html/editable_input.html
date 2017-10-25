@@ -1,0 +1,35 @@
+{% load bootstrap3 %}
+
+<table class="table table-striped">
+	<thead>
+		<tr class="row">
+			<th class="col-xs-10">{{ name }}</th>
+			<th class="col-xs-2"></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="row">
+			<td class="col-xs-10 text-center">
+				<div class="collapse in" id="{{ id }}_edit_off">
+					<a id="{{ id }}_link" target="_blank">
+						<span id="{{ id }}_name">{{ default_label }}</span>
+					</a>
+				</div>
+				<div class="collapse out" id="{{ id }}_edit_on">
+					<input type="text" class="form-control input-sm" placeholder="{{ placeholder }}" id="{{ id }}" name="{{ id }}" value="{{ default }}">
+				</div>
+			</td>
+			<td class="col-xs-2">
+				{% if user.is_authenticated %}
+				<div class="pull-right collapse in" id="{{ id }}_edit_on_actions">
+						<button type="button" class="btn btn-primary btn-xs btn-primary" id="{{ id }}_edit">{% bootstrap_icon "pencil" %}</button>
+				</div>
+				<div class="pull-right collapse" id="{{ id }}_edit_off_actions">
+					<button type="button" class="btn btn-primary btn-xs btn-danger" id="{{ id }}_edit_cancel">{% bootstrap_icon "remove" %}</button>
+					<button type="button" onclick="{{ validate }}" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
+				</div>
+				{% endif %}
+			</td>
+		</tr>
+	</tbody>
+</table>

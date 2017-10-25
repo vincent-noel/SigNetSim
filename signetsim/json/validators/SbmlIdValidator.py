@@ -43,8 +43,9 @@ class SbmlIdValidator(JsonRequest, HasWorkingModel):
 		if (
 			'reaction_id' in request.POST
 			and request.POST['reaction_id'] != ""
+			and int(request.POST['reaction_id']) > 0
 		):
-			t_reaction = self.getModel().listOfReactions[int(request.POST['reaction_id'])]
+			t_reaction = self.getModel().listOfReactions[int(request.POST['reaction_id'])-1]
 
 			if t_reaction.listOfLocalParameters.containsSbmlId(t_sbml_id):
 
