@@ -17,34 +17,16 @@
 
 {% include 'commons/js/forms.js' %}
 
-
-$('#unit_list li').on('click', function(){
-  $("#compartment_unit_label").html($(this).text());
-  $('#compartment_unit').val($(this).index());
-});
-
-$('#constant_list li').on('click', function(){
-  $("#compartment_constant_label").html($(this).text());
-  $('#compartment_constant').val($(this).index());
-});
+let dropdown_unit = new Dropdown("compartment_unit");
 
 // Value validator
 let form_value = new FloatForm("compartment_size", "The size of the compartment", false);
-
-$("#compartment_size").on('paste keyup', function(){ form_value.check(); });
-
-
-// SbmlId Validation
-
 let form_sbmlid = new SbmlIdForm("compartment_sbml_id", "The identifier of the compartment");
-
-$("#compartment_sbml_id").on('change paste keyup', () => { form_sbmlid.check(); });
 
 
 $('#new_compartment_button').on('click', function(){
 
     new_compartment();
-    $('#modal_compartment').modal('show');
 });
 
 function new_compartment()
@@ -59,11 +41,11 @@ function new_compartment()
     $("#compartment_constant_label").html("True");
     $("#compartment_constant").val(1);
 
-    form_value.clearError();
-    form_sbmlid.clearError();
-    form_sbmlid.setValue("");
-    form_sbmlid.setIndicatorEmpty();
+    form_value.clear();
+    form_sbmlid.clear();
+
     $('#general').tab('show');
+    $('#modal_compartment').modal('show');
     $("#modal_compartment").on('shown.bs.modal', function() { $("#compartment_name").focus(); });
 }
 

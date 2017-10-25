@@ -20,6 +20,9 @@ class FloatForm extends Form
             () => { this.setError("couldn't be validated : unable to connect"); }
         );
     }
+    clear() {
+        super.clearError();
+    }
 }
 
 class SbmlIdForm extends Form
@@ -62,5 +65,9 @@ class SbmlIdForm extends Form
             }
         );} else { this.setIndicatorValid(); }
     }
-
+    clear(){
+        super.clearError();
+        super.unhighlight();
+        super.setIndicatorEmpty();
+    }
 }

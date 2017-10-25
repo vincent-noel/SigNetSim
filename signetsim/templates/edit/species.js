@@ -29,11 +29,7 @@ $('#new_species_button').on('click', function()
 
 // SbmlId Validation
 let form_sbmlid = new SbmlIdForm("species_sbml_id", "The identifier of the species");
-$("#" + form_sbmlid.field).on('paste keyup', () => { form_sbmlid.check(); });
-
-// Value validator
 let form_value = new FloatForm("species_value", "The initial value of the species", false);
-$("#" + form_value.field).on('paste keyup', () => { form_value.check(); });
 
 function new_species()
 {

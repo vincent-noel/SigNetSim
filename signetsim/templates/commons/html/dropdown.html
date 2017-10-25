@@ -1,0 +1,25 @@
+<table class="table table-striped">
+	<thead>
+		<tr class="row">
+			<th class="col-xs-12">{{ name }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="row">
+			<td class="col-xs-12">
+					<input type="hidden" name="{{ id }}" id="{{ id }}_value" value="">
+					<div class="dropdown" id="{{ id }}_dropdown">
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" style="width:100%" data-toggle="dropdown">
+							<span id="{{ id }}_label">{{ default }}</span>
+							<span class="caret"></span>
+						</button>
+						<ul id="{{ id }}_list" class="dropdown-menu">
+							{% for object in list %}
+							<li><a>{{object}}</a></li>
+							{% endfor %}
+						</ul>
+					</div>
+			</td>
+		</tr>
+	</tbody>
+</table>

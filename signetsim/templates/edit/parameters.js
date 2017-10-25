@@ -6,26 +6,9 @@ $('#parameter_scope_dropdown li').on('click', function(){
   check_sbml_id_validity();
 });
 
-$('#unit_list li').on('click', function(){
-  $("#parameter_unit_label").html($(this).text());
-  $('#parameter_unit').val($(this).index());
-});
-
-
-
-// Value validator
+let dropdown_unit = new Dropdown("parameter_unit");
 let form_value = new FloatForm("parameter_value", "The value of the parameter", false);
-$("#parameter_value").on('paste keyup', () => { form_value.check(); });
-
-// SbmlId Validation
 let form_sbmlid = new SbmlIdForm("parameter_sbml_id", "The identifier of the parameter");
-$("#parameter_sbml_id").on('paste keyup', () => { form_sbmlid.check(); });
-
-$('#new_parameter_button').on('click', function()
-{
-    new_parameter();
-    $('#modal_parameter').modal('show');
-});
 
 function new_parameter()
 {
@@ -41,15 +24,13 @@ function new_parameter()
     $("#parameter_scope").val(0);
     $("#parameter_scope_label").html("Global");
 
-    form_value.clearError();
-    form_sbmlid.clearError();
-    form_sbmlid.setValue("");
-    form_sbmlid.setIndicatorEmpty();
+    form_value.clear();
+    form_sbmlid.clear();
 
     reset_errors();
     $("#general").tab('show');
     $("#modal_parameter").on('shown.bs.modal', function() { $("#parameter_name").focus(); });
-
+    $('#modal_parameter').modal('show');
 }
 
 

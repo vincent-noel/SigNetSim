@@ -5,6 +5,7 @@ class Form
         this.field = field;
         this.description = description;
         this.error_message = "";
+        $("#" + this.field).on('paste keyup', () => { this.check(); });
     }
 
     setError(error_message){

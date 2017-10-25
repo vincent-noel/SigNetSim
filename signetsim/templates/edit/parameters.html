@@ -22,7 +22,10 @@
 {% load static from staticfiles %}
 
 {% block title %} Parameters | {{ block.super }}{% endblock title %}
-{% block header_js %}<script src="{% static 'form.js' %}"></script>{% endblock header_js %}
+{% block header_js %}
+	<script src="{% static 'js/form.js' %}"></script>
+	<script src="{% static 'js/dropdown.js' %}"></script>
+{% endblock header_js %}
 
 {% block edit_item %}active{% endblock edit_item %}
 
@@ -74,7 +77,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-      <button type="button" class="btn btn-primary btn-sm" id="new_parameter_button">{% bootstrap_icon "file" %} Create new parameter</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="new_parameter();">{% bootstrap_icon "file" %} Create new parameter</button>
   </div>
   {% endif %}
   {% endif %}
