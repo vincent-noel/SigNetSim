@@ -25,6 +25,7 @@
 {% block header_js %}
 	<script src="{% static 'js/form.js' %}"></script>
 	<script src="{% static 'js/dropdown.js' %}"></script>
+	<script src="{% static 'js/form_group.js' %}"></script>
 {% endblock header_js %}
 {% block view_name %}Model compartments{% endblock view_name %}
 {% block view_sidebar %}{% include 'edit/menu.html' with page="compartments" %}{% endblock view_sidebar %}
@@ -68,7 +69,9 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-    <button type="button" class="btn btn-primary btn-sm" id="new_compartment_button">{% bootstrap_icon "file" %} Create new compartment</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="new_compartment();">
+			{% bootstrap_icon "file" %} Create new compartment
+		</button>
   </div>
   {% endif %}
   {% endif %}

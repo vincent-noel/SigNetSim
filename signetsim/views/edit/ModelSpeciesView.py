@@ -53,6 +53,7 @@ class ModelSpeciesView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 		kwargs['list_of_species'] = self.listOfSpecies
 		kwargs['list_of_compartments'] = [comp.getNameOrSbmlId() for comp in self.listOfCompartments]
+		kwargs['list_of_species_type'] = ["Amount", "Concentration"]
 		kwargs['list_of_units'] = [unit.getName() for unit in self.listOfUnits]
 
 		kwargs['form'] = self.form

@@ -15,41 +15,41 @@
 {#   You should have received a copy of the GNU Affero General Public License #}
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
-{% include 'commons/js/forms.js' %}
+{% include 'commons/js/sbmlid_form.js' %}
+{% include 'commons/js/float_form.js' %}
+{% include 'commons/js/sboterm_input.js' %}
 
-let dropdown_unit = new Dropdown("compartment_unit");
 
-// Value validator
-let form_value = new FloatForm("compartment_size", "The size of the compartment", false);
-let form_sbmlid = new SbmlIdForm("compartment_sbml_id", "The identifier of the compartment");
+let form_group = new FormGroup();
+
+let dropdown_unit = new Dropdown("compartment_unit", post_treatment=null, default_value="", default_label="Choose an unit");
+form_group.addForm(dropdown_unit);
+
+let form_value = new FloatForm("compartment_size", "The size of the compartment", false, default_value=1);
+form_group.addForm(form_value, error_checking=true);
+
+let form_sbmlid = new SbmlIdForm("compartment_sbml_id", "The identifier of the compartment", default_value="");
+form_group.addForm(form_sbmlid, error_checking=true);
 
 let form_sboterm = new SBOTermInput("compartment_sboterm");
+form_group.addForm(form_sboterm);
 
-$('#new_compartment_button').on('click', function(){
-
-    new_compartment();
-});
-
+function modal_show()
+{
+    $('#general').tab('show');
+    $('#modal_compartment').modal('show');
+    $("#modal_compartment").on('shown.bs.modal', () => { $("#compartment_name").focus(); });
+}
 function new_compartment()
 {
     $("#modal_title").html("New compartment");
     $("#compartment_id").val("");
     $("#compartment_name").val("");
-    $("#compartment_sbml_id").val("");
-    $("#compartment_size").val(1);
-    $("#compartment_unit_label").html("Choose a unit");
-    $("#compartment_unit").val("");
-    $("#compartment_constant_label").html("True");
     $("#compartment_constant").val(1);
 
-    form_value.clear();
-    form_sbmlid.clear();
-
-    $('#general').tab('show');
-    $('#modal_compartment').modal('show');
-    $("#modal_compartment").on('shown.bs.modal', function() { $("#compartment_name").focus(); });
+    form_group.clearForms();
+    modal_show();
 }
-
 
 function view_compartment(sbml_id)
 {
@@ -59,74 +59,64 @@ function view_compartment(sbml_id)
     ajax_call(
         "POST", "{% url 'get_compartment' %}",
         {'sbml_id': sbml_id},
-        function(data)
+        (data) =>
         {
-           $.each(data, function(index, element)
+           $.each(data, (index, element) =>
            {
-               if (index == "id") { $("#compartment_id").val(element.toString()); }
-               else if (index == "sbml_id") { $("#compartment_sbml_id").val(element.toString()); form_sbmlid.setValue(element.toString()); }
-               else if (index == "name") { $("#compartment_name").val(element.toString()); }
+               if (index == "id") {
+                   $("#compartment_id").val(element.toString());
 
-               else if (index == "value") {
+               } else if (index == "sbml_id") {
+                   form_sbmlid.setValue(element.toString());
+                   form_sbmlid.setInitialValue(element.toString());
+
+               } else if (index == "name") {
+                   $("#compartment_name").val(element.toString());
+
+               } else if (index == "value") {
                    if (element == null) { $("#compartment_size").val(""); }
                    else { $("#compartment_size").val(element.toString()); }
-               }
 
-               else if (index == "unit_name") { $("#compartment_unit_label").html(element.toString()); }
-               else if (index == "unit_id") { $("#compartment_unit").val(element.toString()); }
+               } else if (index == "unit_name") {
+                   dropdown_unit.setLabel(element.toString());
 
-               else if (index == "constant") {
+               } else if (index == "unit_id") {
+                   dropdown_unit.setValue(element.toString());
+
+               } else if (index == "constant") {
                    if (element == "1") { $("#compartment_constant").prop('checked', true); }
                    else { $("#compartment_constant").prop('checked', false); }
-               }
-               else if (index == "notes") {
+
+               } else if (index == "notes") {
                    $("#compartment_notes").val(element.toString());
 
+               } else if (index == "sboterm") {
+                   form_sboterm.setValue(element.toString());
+                   form_sboterm.setLink(element.toString());
+
+               } else if (index == "sboterm_name") {
+                   form_sboterm.setName(element.toString());
                }
-               else if (index == "sboterm") {
-                   $("#compartment_sboterm").val(element.toString());
-                   $("#compartment_sboterm_link").attr("href", "http://www.ebi.ac.uk/sbo/main/display?nodeId=" + element.toString());
-               }
-               else if (index == "sboterm_name") { $("#compartment_sboterm_name").html(element.toString()); }
            });
 
            form_sbmlid.check();
-           reset_errors();
+           form_group.resetErrors();
         },
-        function() { console.log("failed"); }
+        () => { console.log("compartment data retrieving failed"); }
     )
-    $("#general").tab('show');
 
-    $('#modal_compartment').modal('show');
-    $("#modal_compartment").on('shown.bs.modal', function() { $("#compartment_name").focus(); });
-
-}
-function reset_errors()
-{
-    form_sbmlid.unhighlight();
-    form_value.unhighlight();
-    $("#error_modal").empty();
+    modal_show();
 
 }
 
 function save_compartment()
 {
-    var nb_errors = 0;
-    reset_errors();
+    form_group.checkErrors();
 
-    if (form_sbmlid.hasError()){
-        add_error_modal_v3(form_sbmlid);
-        form_sbmlid.highlight();
-        nb_errors++;
-    }
-    if (form_value.hasError()){
-        add_error_modal_v3(form_value);
-        form_value.highlight();
-        nb_errors++;
-    }
-    if (nb_errors == 0)
+    if (form_group.nb_errors == 0)
     {
         $("#modal_compartment").modal("hide");
     }
-    return (nb_errors == 0);
+
+    return (form_group.nb_errors == 0);
 }

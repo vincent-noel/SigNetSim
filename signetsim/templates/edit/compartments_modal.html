@@ -65,22 +65,13 @@
 								placeholder="Input the compartment SBO term"
 								validate="form_sboterm.resolve();"
 							%}
-            <table class="table table-striped">
-              <thead>
-                <tr class="row">
-                  <th class="col-sm-12">Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="row">
-                  <td class="col-sm-12">
-                   <textarea class="form-control" name="compartment_notes" id="compartment_notes" rows="6"></textarea>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+							{% include 'commons/html/notes_input.html' with
+								name="Notes"
+								id="compartment_notes"
+								nb_lines=6
+							%}
+						</div>
+					</div>
           <div class="container-fluid" id="error_modal">
           </div>
         </div>
