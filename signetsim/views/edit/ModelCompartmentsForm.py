@@ -33,7 +33,6 @@ from libsignetsim.model.ModelException import ModelException
 
 class ModelCompartmentsForm(ModelParentForm):
 
-
 	def __init__(self, parent):
 
 		ModelParentForm.__init__(self, parent)
@@ -44,7 +43,6 @@ class ModelCompartmentsForm(ModelParentForm):
 		self.unit = None
 		self.constant = True
 		self.SBOTerm = None
-
 
 	def save(self, compartment):
 
@@ -64,30 +62,44 @@ class ModelCompartmentsForm(ModelParentForm):
 		except ModelException as e:
 			self.addError(e.message)
 
-
 	def read(self, request):
 
-		self.id = self.readInt(request, 'compartment_id',
-								"The indice of the compartment",
-								required=False)
+		self.id = self.readInt(
+			request, 'compartment_id',
+			"The indice of the compartment",
+			required=False
+		)
 
-		self.name = self.readString(request, 'compartment_name',
-								"The name of the compartment", required=False)
+		self.name = self.readString(
+			request, 'compartment_name',
+			"The name of the compartment",
+			required=False
+		)
 
-		self.sbmlId = self.readString(request, 'compartment_sbml_id',
-								"The identifier of the compartment")
+		self.sbmlId = self.readString(
+			request, 'compartment_sbml_id',
+			"The identifier of the compartment"
+		)
 
-		self.size = self.readFloat(request, 'compartment_size',
-								"The size of the compartment")
+		self.size = self.readFloat(
+			request, 'compartment_size',
+			"The size of the compartment"
+		)
 
-		self.unit = self.readInt(request, 'compartment_unit',
-								"The indice of the unit of the compartment",
-								max_value=len(self.parent.listOfUnits),
-								required=False)
+		self.unit = self.readInt(
+			request, 'compartment_unit',
+			"The indice of the unit of the compartment",
+			max_value=len(self.parent.listOfUnits),
+			required=False
+		)
 
-		self.constant = self.readOnOff(request, 'compartment_constant',
-								"The constant property of the compartment")
+		self.constant = self.readOnOff(
+			request, 'compartment_constant',
+			"The constant property of the compartment"
+		)
 
-		self.SBOTerm = self.readInt(request, 'compartment_sboterm',
-								"The SBO term of the compartment",
-								required=False)
+		self.SBOTerm = self.readInt(
+			request, 'compartment_sboterm',
+			"The SBO term of the compartment",
+			required=False
+		)

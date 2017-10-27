@@ -18,6 +18,7 @@
 {% include 'commons/js/sbmlid_form.js' %}
 {% include 'commons/js/float_form.js' %}
 {% include 'commons/js/sboterm_input.js' %}
+{% include 'commons/js/slider_form.js' %}
 
 
 let form_group = new FormGroup();
@@ -34,6 +35,18 @@ form_group.addForm(form_sbmlid, error_checking=true);
 let form_sboterm = new SBOTermInput("compartment_sboterm");
 form_group.addForm(form_sboterm);
 
+let form_constant = new SliderForm("compartment_constant", "The constant parameter of the compartment", default_value=1);
+form_group.addForm(form_constant);
+
+let form_name = new Form("compartment_name", "The name of the compartment", default_value="");
+form_group.addForm(form_name);
+
+let form_id = new Form("compartment_id", "The id of the compartment", default_value="");
+form_group.addForm(form_id);
+
+let form_notes = new Form("compartment_notes", "The notes of the compartment", default_value="");
+form_group.addForm(form_notes);
+
 function modal_show()
 {
     $('#general').tab('show');
@@ -43,10 +56,6 @@ function modal_show()
 function new_compartment()
 {
     $("#modal_title").html("New compartment");
-    $("#compartment_id").val("");
-    $("#compartment_name").val("");
-    $("#compartment_constant").val(1);
-
     form_group.clearForms();
     modal_show();
 }
@@ -64,18 +73,18 @@ function view_compartment(sbml_id)
            $.each(data, (index, element) =>
            {
                if (index == "id") {
-                   $("#compartment_id").val(element.toString());
+                   form_id.setValue(element.toString());
 
                } else if (index == "sbml_id") {
                    form_sbmlid.setValue(element.toString());
                    form_sbmlid.setInitialValue(element.toString());
 
                } else if (index == "name") {
-                   $("#compartment_name").val(element.toString());
+                   form_name.setValue(element.toString());
 
                } else if (index == "value") {
-                   if (element == null) { $("#compartment_size").val(""); }
-                   else { $("#compartment_size").val(element.toString()); }
+                   if (element == null) { form_value.setValue(""); }
+                   else { form_value.setValue(element.toString()); }
 
                } else if (index == "unit_name") {
                    dropdown_unit.setLabel(element.toString());
@@ -84,11 +93,11 @@ function view_compartment(sbml_id)
                    dropdown_unit.setValue(element.toString());
 
                } else if (index == "constant") {
-                   if (element == "1") { $("#compartment_constant").prop('checked', true); }
-                   else { $("#compartment_constant").prop('checked', false); }
+                   if (element == "1") { form_constant.switch_on(); }
+                   else { form_constant.switch_off(); }
 
                } else if (index == "notes") {
-                   $("#compartment_notes").val(element.toString());
+                   form_notes.setValue(element.toString());
 
                } else if (index == "sboterm") {
                    form_sboterm.setValue(element.toString());

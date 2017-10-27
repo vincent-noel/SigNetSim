@@ -1,6 +1,6 @@
 class Form
 {
-    constructor(field, description, default_value){
+    constructor(field, description, default_value=""){
 
         this.field = field;
         this.description = description;
@@ -47,6 +47,7 @@ class Form
     }
 
 }
+
 
 let HasIndicator = (superclass) => class extends superclass {
     setIndicatorValid(){

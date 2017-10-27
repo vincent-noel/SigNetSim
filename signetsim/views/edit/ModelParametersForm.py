@@ -61,37 +61,52 @@ class ModelParametersForm(ModelParentForm):
 
 		except ModelException as e:
 			self.addError(e.message)
-
 			self.printErrors()
 
 	def read(self, request):
 
-		self.id = self.readInt(request, 'parameter_id',
-								"The indice of the parameter",
-								required=False)
+		self.id = self.readInt(
+			request, 'parameter_id',
+			"The indice of the parameter",
+			required=False
+		)
 
-		self.name = self.readString(request, 'parameter_name',
-								"The name of the parameter")
+		self.name = self.readString(
+			request, 'parameter_name',
+			"The name of the parameter"
+		)
 
-		self.sbmlId = self.readString(request, 'parameter_sbml_id',
-								"The identifier of the parameter")
+		self.sbmlId = self.readString(
+			request, 'parameter_sbml_id',
+			"The identifier of the parameter"
+		)
 
-		self.value = self.readMath(request, 'parameter_value',
-								"The size of the parameter",
-								   required=False)
+		self.value = self.readMath(
+			request, 'parameter_value',
+			"The size of the parameter",
+			required=False
+		)
 
-		self.unit = self.readInt(request, 'parameter_unit',
-								"The indice of the unit of the parameter",
-								max_value=len(self.parent.listOfUnits),
-								required=False)
+		self.unit = self.readInt(
+			request, 'parameter_unit',
+			"The indice of the unit of the parameter",
+			max_value=len(self.parent.listOfUnits),
+			required=False
+		)
 
-		self.constant = self.readOnOff(request, 'parameter_constant',
-								"The constant property of the parameter")
+		self.constant = self.readOnOff(
+			request, 'parameter_constant',
+			"The constant property of the parameter"
+		)
 
-		self.scope = self.readInt(request, 'parameter_scope',
-								  "The scope of the parameter",
-								  max_value=(len(self.parent.listOfReactions)+1))
+		self.scope = self.readInt(
+			request, 'parameter_scope',
+			"The scope of the parameter",
+			max_value=(len(self.parent.listOfReactions)+1)
+		)
 
-		self.SBOTerm = self.readInt(request, 'parameter_sboterm',
-									"The SBO term of the parameter",
-									required=False)
+		self.SBOTerm = self.readInt(
+			request, 'parameter_sboterm',
+			"The SBO term of the parameter",
+			required=False
+		)
