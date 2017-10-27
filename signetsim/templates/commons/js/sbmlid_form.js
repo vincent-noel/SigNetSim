@@ -23,12 +23,15 @@ class SbmlIdForm extends HasIndicator(Form)
         this.initial_scope = scope;
     }
 
+    getScope() {
+        return parseInt($("#" + this.scope_field).val());
+    }
+
     check()
     {
         let sbml_id = this.getValue();
         let scope;
-        if (this.hasScope)
-             scope = parseInt($("#" + this.scope_field).val());
+        if (this.hasScope){ scope = this.getScope(); }
 
         // We actually only need to check
         if (
@@ -36,7 +39,7 @@ class SbmlIdForm extends HasIndicator(Form)
             (!this.hasScope && this.initial_value !== sbml_id)
 
             // Or if there is a scope, and either the value or the scope has been changed
-            || (this.hasScope && (this.initial_value !== sbml_id || this.scope !== scope))
+            || (this.hasScope && (this.initial_value !== sbml_id || this.initial_scope !== scope))
         ){
 
             this.setIndicatorValidating();
