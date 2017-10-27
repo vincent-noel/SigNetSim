@@ -32,6 +32,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+#######################################################################
+# HACK ATTACK: this allows Django template tags to span multiple lines.
+#######################################################################
+import re
+from django.template import base
+
+base.tag_re = re.compile(base.tag_re.pattern, re.DOTALL)
 
 # Loading signetsim settings
 settings = json.loads(open(os.path.join(BASE_DIR, 'settings/settings.json')).read())
