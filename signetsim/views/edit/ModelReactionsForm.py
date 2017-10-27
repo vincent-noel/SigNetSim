@@ -77,8 +77,7 @@ class ModelReactionsForm(ModelParentForm):
 					t_parameter.new(param_name, param_value)
 					reaction.listOfLocalParameters.add(t_parameter)
 
-			if self.SBOTerm is not None:
-				reaction.getAnnotation().setSBOTerm(self.SBOTerm)
+			reaction.getAnnotation().setSBOTerm(self.SBOTerm)
 		except ModelException as e:
 			self.addError(e.message)
 

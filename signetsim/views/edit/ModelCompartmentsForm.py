@@ -59,10 +59,7 @@ class ModelCompartmentsForm(ModelParentForm):
 				compartment.setUnits(None)
 
 			compartment.constant = self.constant
-			if self.SBOTerm is not None:
-				compartment.getAnnotation().setSBOTerm(self.SBOTerm)
-			else:
-				compartment.getAnnotation().unsetSBOTerm()
+			compartment.getAnnotation().setSBOTerm(self.SBOTerm)
 
 		except ModelException as e:
 			self.addError(e.message)

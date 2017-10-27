@@ -57,9 +57,7 @@ class ModelParametersForm(ModelParentForm):
 				parameter.setUnits(None)
 
 			parameter.setNotes(self.notes)
-
-			if self.SBOTerm is not None:
-				parameter.getAnnotation().setSBOTerm(self.SBOTerm)
+			parameter.getAnnotation().setSBOTerm(self.SBOTerm)
 
 		except ModelException as e:
 			self.addError(e.message)

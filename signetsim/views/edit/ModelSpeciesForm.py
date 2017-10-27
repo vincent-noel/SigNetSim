@@ -64,8 +64,7 @@ class ModelSpeciesForm(ModelParentForm):
 				species.setUnits(None)
 
 			species.setNotes(self.notes)
-			if self.SBOTerm is not None:
-				species.getAnnotation().setSBOTerm(self.SBOTerm)
+			species.getAnnotation().setSBOTerm(self.SBOTerm)
 
 		except ModelException as e:
 			self.addError(e.message)
