@@ -37,12 +37,17 @@ class GetSBOName(JsonRequest):
 
 	def post(self, request, *args, **kwargs):
 
-		uri = URI()
-		uri.setSBO(int(request.POST['sboterm']))
-		name = uri.getName()
+		if "sboterm" in request.POST.keys():
 
-		self.data.update({
-			'name': "" if name is None else name,
-		})
+			name = None
+			if request.POST['sboterm'] != "":
+				uri = URI()
+				uri.setSBO(int(request.POST['sboterm']))
+				name = uri.getName()
+
+			self.data.update({
+				'name': "" if name is None else name,
+			})
+
 
 		return JsonRequest.post(self, request, *args, **kwargs)

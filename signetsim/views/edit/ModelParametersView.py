@@ -55,7 +55,7 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 		kwargs = HasErrorMessages.get_context_data(self, **kwargs)
 
 		kwargs['list_of_parameters'] = self.listOfParameters
-		kwargs['list_of_reactions'] = self.listOfReactions
+		kwargs['list_of_reactions'] = ["Global"] + [reaction.getNameOrSbmlId() for reaction in self.listOfReactions]
 		kwargs['list_of_units'] = [unit.getNameOrSbmlId() for unit in self.listOfUnits]
 		kwargs['form'] = self.form
 

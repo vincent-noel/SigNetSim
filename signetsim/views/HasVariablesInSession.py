@@ -24,24 +24,32 @@
 
 """
 
-from django.conf import settings
-from django.core.exceptions import PermissionDenied
-
-from signetsim.models import SbmlModel
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from signetsim.views.HasWorkingProject import HasWorkingProject
-import os
 import cloudpickle
-from libsbml import Date
-import datetime
 
-class HasModelInSession(object):
+
+class HasVariablesInSession(object):
 
 	def __init__(self):
 		self.__request = None
 
 	def load(self, request, *args, **kwargs):
 		self.__request = request
+
+	# Project
+	def hasProjectInSession(self):
+		return self.__request.session.get('project_id') is not None
+
+	def getProjectFromSession(self):
+		return self.__request.session.get('project_id')
+
+	def saveProjectInSession(self, project_id):
+		self.__request.session['project_id'] = project_id
+		self.deleteModelFromSession()
+
+	def deleteProjectFromSession(self):
+		if self.hasProjectInSession():
+			del self.__request.session['project_id']
+			self.deleteModelFromSession()
 
 	# Model
 	def hasModelInSession(self):
@@ -67,6 +75,8 @@ class HasModelInSession(object):
 		if self.hasModelInSession():
 			del self.__request.session['loaded_model_doc']
 			del self.__request.session['loaded_model_id']
+			if self.hasSubmodelInSession():
+				self.deleteSubmodelFromSession()
 
 	def hasSubmodelInSession(self):
 		return self.__request.session.get('loaded_model_submodel') is not None

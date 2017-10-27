@@ -111,7 +111,7 @@ function view_event(event_ind)
     $("#body_assignments").children("tr").remove();
     nb_assignments = -1;
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_event' %}", {'event_ind': event_ind},
         function(data)
         {

@@ -35,10 +35,10 @@ pip install -r ${DIR}/pip_requirements
 # JS Dependencies
 curl -sL https://deb.nodesource.com/setup_6.x | bash -
 apt-get install -y nodejs
-npm install -g bower
+npm install -g yarn
 
 cd $INSTALL_DIR
 
-bower --allow-root install
+yarn install
 
 cd $EXEC_DIR

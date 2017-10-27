@@ -31,17 +31,17 @@ from django.core.exceptions import PermissionDenied
 from signetsim.models import SbmlModel
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from signetsim.views.HasWorkingProject import HasWorkingProject
-from signetsim.views.HasModelInSession import HasModelInSession
+from signetsim.views.HasVariablesInSession import HasVariablesInSession
 import os
 from libsbml import Date
 import datetime
 
-class HasWorkingModel(HasWorkingProject, HasModelInSession):
+class HasWorkingModel(HasWorkingProject, HasVariablesInSession):
 
 	def __init__(self):
 
 		HasWorkingProject.__init__(self)
-		HasModelInSession.__init__(self)
+		HasVariablesInSession.__init__(self)
 		self.list_of_models = None
 
 		self.model = None
@@ -74,7 +74,7 @@ class HasWorkingModel(HasWorkingProject, HasModelInSession):
 
 		# print "> Model loading"
 		HasWorkingProject.load(self, request, *args, **kwargs)
-		HasModelInSession.load(self, request, *args, **kwargs)
+		HasVariablesInSession.load(self, request, *args, **kwargs)
 
 		self.__request = request
 

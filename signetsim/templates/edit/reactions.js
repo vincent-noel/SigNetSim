@@ -596,7 +596,7 @@ function view_reaction(sbml_id)
     removeProducts();
     removeLocalParameters();
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_reaction' %}", {'sbml_id': sbml_id},
         function(data)
         {
@@ -715,7 +715,7 @@ $(window).on('load',function()
 function load_reaction_kinetic_law(reaction_id)
 {
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_reaction_kinetic_law' %}", {'reaction_id': reaction_id.toString()},
         function(data) {
             $.each(data, function(index, element) {
@@ -756,7 +756,7 @@ $("#kineticlaw_input").on('change paste keyup', function()
 {
   setKineticLawValidating();
   ajax_call(
-      "POST", "{{csrf_token}}",
+      "POST",
       "{% url 'math_validator' %}", 
       {
           'math': $("#kineticlaw_input").val(),
@@ -818,7 +818,7 @@ $("#reaction_sbml_id").on('change paste keyup', function()
 
     setSbmlIdValidating();
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'sbml_id_validator' %}",
         {'sbml_id': $("#reaction_sbml_id").val()},
         function(data)

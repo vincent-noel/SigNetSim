@@ -142,7 +142,7 @@ function view_substitution(submodel_id)
  $("#modal_substitution-title").html("Edit substitution");
 
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_substitution' %}", {'id': submodel_id},
         function(data)
         {

@@ -14,7 +14,7 @@ function search_biomodels()
     $("#searching_failed").removeClass("in");
     $("#searching_wait").addClass("in");
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'search_biomodels' %}",
         {'search_type': search_type, 'search_string': search_string},
         function(data)
@@ -36,7 +36,7 @@ function search_biomodels()
 
                         $.each(element, function(subindex, subelement){
                             ajax_call(
-                                "POST", "{{csrf_token}}",
+                                "POST",
                                 "{% url 'get_biomodels_name' %}",
                                 {'model_id': subelement},
                                 function(data)

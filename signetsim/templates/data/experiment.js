@@ -15,7 +15,7 @@ function view_condition(condition_id)
     $("#modal_condition-title").html("Edit condition");
 
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_condition' %}", {'id': condition_id},
         function(data)
         {

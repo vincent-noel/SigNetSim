@@ -15,7 +15,7 @@ function view_experiment(experiment_id)
     $("#modal_experiment-title").html("Edit experiment");
 
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_experiment' %}", {'id': experiment_id},
         function(data)
         {

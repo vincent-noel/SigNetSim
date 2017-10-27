@@ -1,14 +1,19 @@
 {% extends '_layouts/menupage.html' %}
-{% block title %} Species | {{ block.super }}{% endblock title %}
 
-{% block edit_item %}active{% endblock edit_item %}
-{% block view_name %}Model species{% endblock view_name %}
-{% block view_sidebar %}{% include 'edit/menu.html' with page="species" %}{% endblock view_sidebar %}
-{% block view_content %}
 {% load static from staticfiles %}
 {% load bootstrap3 %}
 {% load tags %}
 
+{% block title %} Species | {{ block.super }}{% endblock title %}
+{% block header_js %}
+	<script src="{% static 'js/form.js' %}"></script>
+	<script src="{% static 'js/dropdown.js' %}"></script>
+	<script src="{% static 'js/form_group.js' %}"></script>
+{% endblock header_js %}
+{% block edit_item %}active{% endblock edit_item %}
+{% block view_name %}Model species{% endblock view_name %}
+{% block view_sidebar %}{% include 'edit/menu.html' with page="species" %}{% endblock view_sidebar %}
+{% block view_content %}
 <div class="container-fluid" id="view">
   <h4>Species</h4>
   <hr/>
@@ -51,7 +56,9 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-      <button type="button" id="new_species_button" class="btn btn-primary btn-sm">{% bootstrap_icon "file" %} Create new species</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="new_species();">
+				{% bootstrap_icon "file" %} Create new species
+			</button>
   </div>
   {% endif %}
   {% endif %}

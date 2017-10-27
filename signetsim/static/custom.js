@@ -3,27 +3,6 @@ function csrfSafeMethod(method) {
 	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
-function ajax_call(ajax_method, csrf_token, ajax_url, ajax_data, ajax_done, ajax_fail)
-{
-	$.ajaxSetup({
-		beforeSend: function(xhr, settings) {
-			if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-				xhr.setRequestHeader("X-CSRFToken", csrf_token);
-			}
-		}
-	});
-	$.ajax(
-	{
-		type: ajax_method,
-		url: ajax_url,
-		data: ajax_data
-
-	})
-	.done(ajax_done)
-	.fail(ajax_fail)
-}
-
-
 function toggle_slide(slide_id)
 {
 	if ($('#' + slide_id).prop('checked') == true) {
@@ -34,15 +13,53 @@ function toggle_slide(slide_id)
 }
 
 function add_error_modal(message_id, message) {
-	if ($("#error_modal").children().length == 0) {
+	if ($("#error_modal").children().length === 0) {
 		$("#error_modal").append("\
 			<div class=\"alert alert-danger fade in\" id=\"error_modal_list\">\
 				<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\
 			</div>\
 		");
 	}
-	if ($("#error_modal_list").find("#error_message_" + message_id).length == 0){
+	if ($("#error_modal_list").find("#error_message_" + message_id).length === 0){
 	$("#error_modal_list").append("<span id=\"error_message_" + message_id + "\"><strong>Error : </strong>" + message + "</span><br/>");}
+}
+
+
+function add_error_modal_v2(form, message_prefix) {
+    error_modal = $("#error_modal");
+	if (error_modal.children().length === 0) {
+		error_modal.append(
+			"<div class=\"alert alert-danger fade in\" id=\"error_modal_list\">\
+				<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\
+			</div>"
+		);
+	}
+	if ($("#error_modal_list").find("#error_message_" + form.id).length === 0){
+        $("#error_modal_list").append(
+            "<span id=\"error_message_" + form.id
+            + "\"><strong>Error : </strong>" + message_prefix
+            + " " + form.error_message + "</span><br/>"
+        );
+	}
+}
+
+
+function add_error_modal_v3(form) {
+
+ 	if ($("#error_modal").children().length === 0) {
+		$("#error_modal").append(
+			"<div class=\"alert alert-danger fade in\" id=\"error_modal_list\">\
+				<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\
+			</div>"
+		);
+	}
+	if ($("#error_modal_list").find("#error_message_" + form.field).length === 0){
+        $("#error_modal_list").append(
+            "<span id=\"error_message_" + form.field + "\">\
+                <strong>Error : </strong>" + form.description + " " + form.error_message + "\
+            </span><br/>"
+        );
+	}
 }
 
 function form_add_error_highlight(form_id)
@@ -58,3 +75,17 @@ function form_remove_error_highlight(form_id)
 
 }
 
+
+$('#edit_SBO_term').on('click', function(){
+    $("#edit_SBO_term_on").addClass("in");
+    $("#edit_SBO_term_off").removeClass("in");
+    $("#edit_SBO_term_off_actions").addClass("in");
+    $("#edit_SBO_term_on_actions").removeClass("in");
+});
+
+$('#edit_SBO_term_cancel').on('click', function(){
+  $("#edit_SBO_term_off").addClass("in");
+  $("#edit_SBO_term_on").removeClass("in");
+  $("#edit_SBO_term_on_actions").addClass("in");
+  $("#edit_SBO_term_off_actions").removeClass("in");
+});
