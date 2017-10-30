@@ -67,7 +67,7 @@ function view_species(sbml_id)
            $.each(data, (index, element) =>
            {
                if (index == "id") {
-                   form_species.setValue(element.toString());
+                   form_id.setValue(element.toString());
 
                } else if (index == "sbml_id") {
                    form_sbmlid.setValue(element.toString());

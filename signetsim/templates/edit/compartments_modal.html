@@ -5,7 +5,7 @@
 <div class="modal fade in" id="modal_compartment" tabindex="1" role="dialog" aria-labelledby="New compartment">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form method="post" enctype="multipart/form-data" onsubmit="return save_compartment();">
+      <form method="post" enctype="multipart/form-data" onsubmit="return form_compartment.save();">
         {% csrf_token %}
         <input type="hidden" id="compartment_id" name="compartment_id" value="" >
         <input type="hidden" name="action" value="save" >
@@ -47,7 +47,7 @@
 								name="Constant"
 								id="compartment_constant"
 								default="checked"
-								onclick="form_constant.toggle();"
+								onclick="form_compartment.form_constant.toggle();"
 							%}
 							{% include 'commons/html/dropdown.html' with
 								list=list_of_units
@@ -64,7 +64,7 @@
 								default=""
 								default_label=""
 								placeholder="Input the compartment SBO term"
-								validate="form_sboterm.resolve();"
+								validate="form_compartment.form_sboterm.resolve();"
 							%}
 							{% include 'commons/html/notes_input.html' with
 								name="Notes"

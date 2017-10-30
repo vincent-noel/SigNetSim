@@ -55,7 +55,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                {% csrf_token %}
                <input type="hidden" name="compartment_id" value="{{ forloop.counter0 }}">
-               <button type="button" onclick="view_compartment('{{compartment.getSbmlId}}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+               <button type="button" onclick="form_compartment.load('{{compartment.getSbmlId}}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
               </form>
               {% endif %}
@@ -69,7 +69,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-    <button type="button" class="btn btn-primary btn-sm" onclick="new_compartment();">
+    <button type="button" class="btn btn-primary btn-sm" onclick="form_compartment.new();">
 			{% bootstrap_icon "file" %} Create new compartment
 		</button>
   </div>

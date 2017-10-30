@@ -16,14 +16,127 @@
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
 {% load tags %}
+{% include 'commons/js/sbmlid_form.js' %}
+{% include 'commons/js/math_form.js' %}
+{% include 'commons/js/list_form.js' %}
 
-var nb_reactants = -1;
-var nb_modifiers = -1;
-var nb_products = -1;
+let form_group = new FormGroup();
+
+
+let form_sbmlid = new SbmlIdForm("reaction_sbml_id", "The identifier of the reaction", default_value="");
+form_group.addForm(form_sbmlid, error_checking=true);
+
+let form_kinetic_law = new MathForm("reaction_kinetic_law", "The kinetic law of the reaction", default_value="");
+form_group.addForm(form_kinetic_law, error_checking=true);
+
+
+class ListOfSpeciesReference extends ListForm{
+
+    add(species_stoichiometry="1", species_id="", species_name="Choose a species"){
+        super.add(
+            [
+                $("<td>").attr('class', 'col-xs-3').append(
+                    $("<input>").attr({
+                        'type': 'text', 'class': 'form-control input-sm text-center',
+                        'placeholder': 'Input stoichiometry',
+                        'name': this.field + '_' + this.index + "_stoichiometry",
+                        'value': species_stoichiometry
+                    })
+                ),
+                $("<td>").attr('class', 'col-xs-7').append(
+                    $("<input>").attr({
+                        'type': 'hidden',
+                        'id': this.field + '_' + this.index + '_value',
+                        'name': this.field + '_' + this.index,
+                        'value': species_id
+                    }),
+                    $("<div>").attr('class', 'dropdown').append(
+                        $("<button>").attr({
+                            'type': 'button', 'class': 'btn btn-primary btn-sm dropdown-toggle',
+                            'data-toggle': 'dropdown'
+                        }).append(
+                            $("<span>").attr({
+                                'id': this.field + '_' + this.index + '_label'
+                            }).text(species_name),
+                            $("<span>").attr('class', 'caret')
+                        ),
+                        $("<ul>").attr({
+                            'class': 'dropdown-menu',
+                            'id': this.field + '_' + this.index + '_list'
+                        }).append(
+                            {% for species in list_of_species %}
+                            $("<li>").append($("<a>").attr("href", "#").text("{{ species }}")),
+                            {% endfor %}
+                        )
+                    )
+                )
+            ],
+
+        "var " + this.field + "_" + this.index + "_dropdown = new Dropdown('" + this.field + "_" + this.index + "', " + this.post_treatment + ", default_value='');"
+        );
+        this.update();
+    }
+
+    remove(element_id){
+        super.remove(element_id);
+        this.update();
+    }
+
+    update(){
+        let m_id = 0;
+
+        $("#body_" + this.field + "s").children("tr").each((tr_id, tr)=>
+        {
+            $('input', $(tr)).each((input_id, input) =>
+            {
+                let id = new RegExp('^' + this.field + '_[0-9]+$');
+                if (id.test($(input).attr('name')))
+                {
+                    $(input).attr('name', this.field + '_' + m_id.toString());
+                }
+
+                let exp = new RegExp('^' + this.field + '_[0-9]+_stoichiometry');
+                if (exp.test($(input).attr('name')))
+                {
+                    $(input).attr('name', this.field + '_' + m_id.toString() + '_stoichiometry');
+                }
+            });
+            m_id = m_id + 1;
+        })
+        super.update();
+    }
+
+    getSpecies(){
+        let result = "";
+        $("#body_" + this.field + "s").children("tr").each((index) =>
+        {
+            if ($("#" + this.field + "_" + index.toString()).val() != "") {
+                if (result != "") {
+                    result += " + "
+                }
+            result += $("#" + this.field + "_" + index.toString() + "_label").html();
+            }
+        });
+        return result;
+    }
+}
+
+
+let form_list_reactants = new ListOfSpeciesReference("reaction_reactant", "The list of reactants", "form_list_reactants", post_treatment=()=>{buildReactionDescription();});
+form_group(form_list_reactants);
+
+let form_list_modifiers = new ListOfSpeciesReference("reaction_modifier", "The list of modifiers", "form_list_modifiers", post_treatment=()=>{buildReactionDescription();});
+form_group(form_list_modifiers);
+
+let form_list_products = new ListOfSpeciesReference("reaction_product", "The list of products", "form_list_products", post_treatment=()=>{buildReactionDescription();});
+form_group(form_list_products);
+
 var nb_local_parameters = -1;
 var nb_parameters = {{ list_of_parameters|length }};
 var local_parameters = [];
 var selected_parameters = [];
+
+
 
 
 function get_species_name(species_id)
@@ -35,7 +148,6 @@ function get_species_name(species_id)
             return "{{species}}";
         {% endfor %}
     }
-
 }
 
 function get_parameter_name(parameter_id)
@@ -49,279 +161,12 @@ function get_parameter_name(parameter_id)
     }
 }
 
-function updateReactantsForm()
-{
-    var r_id = 0;
-
-    $("#body_reactants").children("tr").each(function()
-    {
-        $('input', $(this)).each(function()
-        {
-            var id = new RegExp('^reaction_reactant_[0-9]+_id$');
-            if (id.test($(this).attr('name')))
-            {
-              $(this).attr('name', 'reaction_reactant_' + r_id.toString() + '_id');
-            }
-
-            var exp = new RegExp('^reaction_reactant_[0-9]+_expression$');
-            if (exp.test($(this).attr('name')))
-            {
-                $(this).attr('name', 'reaction_reactant_' + r_id.toString() + '_expression');
-            }
-        });
-        r_id = r_id + 1;
-    });
-    buildReactionDescription();
-}
-
-function add_reactant(){
-    nb_reactants = nb_reactants + 1;
-    $("#body_reactants").append("\
-    <tr class=\"row\" id=\"reaction_reactant_" + nb_reactants.toString() + "_tr\">\
-      <td class=\"col-xs-3\">\
-        <input type=\"text\" class=\"form-control input-sm text-center\" placeholder=\"Input stoichiometry\" \
-          name=\"reaction_reactant_" + nb_reactants.toString() + "_stoichiometry\" value=\"1\">\
-      </td>\
-      <td class=\"col-xs-7\">\
-        <input type=\"hidden\" id=\"reaction_reactant_" + nb_reactants.toString() + "\"\
-          name=\"reaction_reactant_" + nb_reactants.toString() + "\" value=\"\">\
-        <div class=\"dropdown\">\
-          <button type=\"button\" class=\"btn btn-primary btn-sm dropdown-toggle\" data-toggle=\"dropdown\">\
-            <span id=\"reaction_reactant_" + nb_reactants.toString() + "_label\">Choose a specie</span>\
-            <span class=\"caret\"></span>\
-          </button>\
-          <ul id=\"reaction_reactant_" + nb_reactants.toString() + "_dropdown\" class=\"dropdown-menu\">\
-            {% for species in list_of_species %}<li><a href=\"#\">{{ species }}</a></li>{% endfor %}\
-          </ul>\
-        </div>\
-      </td>\
-      <td class=\"col-xs-2 text-right\">\
-        <button type=\"button\" onclick=\"remove_reactant(" + nb_reactants.toString() + ");\"\
-          class=\"btn btn-danger btn-xs\"><span class=\"glyphicon glyphicon-remove\"></span></button>\
-      </td>\
-    </tr>\
-    ");
-
-    $('<script>')
-      .attr('type', 'text/javascript')
-      .text("\
-        $('#reaction_reactant_" + nb_reactants.toString() + "_dropdown li').on('click', function(){\
-          $('#reaction_reactant_" + nb_reactants.toString() + "_label').html($(this).text());\
-          $('#reaction_reactant_" + nb_reactants.toString() + "').val($(this).index());\
-          buildReactionDescription();});\
-          ")
-      .appendTo('#reaction_reactant_' + nb_reactants.toString());
-
-    updateReactantsForm();
-
-}
-
-function remove_reactant(reactant_id)
-{
-    $("#reaction_reactant_" + reactant_id + "_tr").remove();
-    updateReactantsForm();
-}
-
-
-function updateModifiersForm()
-{
-    var m_id = 0;
-
-    $("#body_modifiers").children("tr").each(function()
-    {
-        $('input', $(this)).each(function()
-        {
-            var id = new RegExp('^reaction_modifier_[0-9]+_id$');
-            if (id.test($(this).attr('name')))
-            {
-              $(this).attr('name', 'reaction_modifier_' + m_id.toString() + '_id');
-            }
-
-            var exp = new RegExp('^reaction_modifier_[0-9]+_expression$');
-            if (exp.test($(this).attr('name')))
-            {
-                $(this).attr('name', 'reaction_modifier_' + m_id.toString() + '_expression');
-            }
-        });
-        m_id = m_id + 1;
-    });
-    buildReactionDescription();
-}
-
-function add_modifier(){
-    nb_modifiers = nb_modifiers + 1;
-    $("#body_modifiers").append("\
-    <tr class=\"row\" id=\"reaction_modifier_" + nb_modifiers.toString() + "_tr\">\
-      <td class=\"col-xs-3\">\
-        <input type=\"text\" class=\"form-control input-sm text-center\" placeholder=\"Input stoichiometry\" \
-          name=\"reaction_modifier_" + nb_modifiers.toString() + "_stoichiometry\" value=\"1\">\
-      </td>\
-      <td class=\"col-xs-7\">\
-        <input type=\"hidden\" id=\"reaction_modifier_" + nb_modifiers.toString() + "\"\
-          name=\"reaction_modifier_" + nb_modifiers.toString() + "\" value=\"\">\
-        <div class=\"dropdown\">\
-          <button type=\"button\" class=\"btn btn-primary btn-sm dropdown-toggle\" data-toggle=\"dropdown\">\
-            <span id=\"reaction_modifier_" + nb_modifiers.toString() + "_label\">Choose a specie</span>\
-            <span class=\"caret\"></span>\
-          </button>\
-          <ul id=\"reaction_modifier_" + nb_modifiers.toString() + "_dropdown\" class=\"dropdown-menu\">\
-            {% for species in list_of_species %}<li><a href=\"#\">{{ species }}</a></li>{% endfor %}\
-          </ul>\
-        </div>\
-      </td>\
-      <td class=\"col-xs-2 text-right\">\
-        <button type=\"button\" onclick=\"remove_modifier(" + nb_modifiers.toString() + ");\"\
-          class=\"btn btn-danger btn-xs\"><span class=\"glyphicon glyphicon-remove\"></span></button>\
-      </td>\
-    </tr>\
-    ");
-
-    $('<script>')
-      .attr('type', 'text/javascript')
-      .text("\
-        $('#reaction_modifier_" + nb_modifiers.toString() + "_dropdown li').on('click', function(){\
-          $('#reaction_modifier_" + nb_modifiers.toString() + "_label').html($(this).text());\
-          $('#reaction_modifier_" + nb_modifiers.toString() + "').val($(this).index());\
-          buildReactionDescription();});\
-          ")
-      .appendTo('#reaction_modifier_' + nb_modifiers.toString());
-      updateModifiersForm();
-
-}
-
-function remove_modifier(modifier_id)
-{
-    $("#reaction_modifier_" + modifier_id + "_tr").remove();
-    updateModifiersForm();
-}
-
-function updateProductsForm()
-{
-    var p_id = 0;
-
-    $("#body_products").children("tr").each(function()
-    {
-        $('input', $(this)).each(function()
-        {
-            var id = new RegExp('^reaction_product_[0-9]+_id$');
-            if (id.test($(this).attr('name')))
-            {
-              $(this).attr('name', 'reaction_product_' + p_id.toString() + '_id');
-            }
-
-            var exp = new RegExp('^reaction_product_[0-9]+_expression$');
-            if (exp.test($(this).attr('name')))
-            {
-                $(this).attr('name', 'reaction_product_' + p_id.toString() + '_expression');
-            }
-        });
-        p_id = p_id + 1;
-    });
-    buildReactionDescription();
-}
-
-function add_product(){
-    nb_products = nb_products + 1;
-    $("#body_products").append("\
-    <tr class=\"row\" id=\"reaction_product_" + nb_products.toString() + "_tr\">\
-      <td class=\"col-xs-3\">\
-        <input type=\"text\" class=\"form-control input-sm text-center\" placeholder=\"Input stoichiometry\" \
-          name=\"reaction_product_" + nb_products.toString() + "_stoichiometry\" value=\"1\">\
-      </td>\
-      <td class=\"col-xs-7\">\
-        <input type=\"hidden\" id=\"reaction_product_" + nb_products.toString() + "\"\
-          name=\"reaction_product_" + nb_products.toString() + "\" value=\"\">\
-        <div class=\"dropdown\">\
-          <button type=\"button\" class=\"btn btn-primary btn-sm dropdown-toggle\" data-toggle=\"dropdown\">\
-            <span id=\"reaction_product_" + nb_products.toString() + "_label\">Choose a specie</span>\
-            <span class=\"caret\"></span>\
-          </button>\
-          <ul id=\"reaction_product_" + nb_products.toString() + "_dropdown\" class=\"dropdown-menu\">\
-            {% for species in list_of_species %}<li><a href=\"#\">{{ species }}</a></li>{% endfor %}\
-          </ul>\
-        </div>\
-      </td>\
-      <td class=\"col-xs-2 text-right\">\
-        <button type=\"button\" onclick=\"remove_product(" + nb_products.toString() + ");\"\
-          class=\"btn btn-danger btn-xs\"><span class=\"glyphicon glyphicon-remove\"></span></button>\
-      </td>\
-    </tr>\
-    ");
-
-    $("<script>").attr("type", "text/javascript").text("\
-        $('#reaction_product_" + nb_products.toString() + "_dropdown li').on('click', function(){\
-          $('#reaction_product_" + nb_products.toString() + "_label').html($(this).text());\
-          $('#reaction_product_" + nb_products.toString() + "').val($(this).index());\
-          buildReactionDescription();});")
-      .appendTo('#reaction_product_' + nb_products.toString() + '_tr');
-    updateProductsForm();
-
-}
-
-function remove_product(product_id)
-{
-    $("#reaction_product_" + product_id + "_tr").remove();
-    updateProductsForm();
-}
-
-function removeReactants()
-{
-  $("#body_reactants").children("tr").each(function() {
-    $(this).remove();
-  });
-  nb_reactants = -1;
-}
-
-function removeModifiers()
-{
-  $("#body_modifiers").children("tr").each(function() {
-    $(this).remove();
-  });
-  nb_modifiers = -1;
-}
-
-function removeProducts()
-{
-  $("#body_products").children("tr").each(function() {
-    $(this).remove();
-  });
-  nb_products = -1;
-}
 
 function buildReactionDescription() {
 
-  result_reactants = "";
-  $("#body_reactants").children("tr").each(function(index)
-  {
-    if ($("#reaction_reactant_" + index.toString()).val() != "") {
-      if (result_reactants != "") {
-        result_reactants += " + "
-      }
-      result_reactants += $("#reaction_reactant_" + index.toString() + "_label").html()
-    }
-  });
-
-  result_modifiers = "";
-  $("#body_modifiers").children("tr").each(function(index)
-  {
-    if ($("#reaction_modifier_" + index.toString()).val() != "") {
-      if (result_modifiers != "") {
-        result_modifiers += " + "
-      }
-      result_modifiers += $("#reaction_modifier_" + index.toString() + "_label").html()
-    }
-  });
-
-  result_products = ""
-  $("#body_products").children("tr").each(function(index)
-  {
-    if ($("#reaction_product_" + index.toString() + "").val() != "") {
-      if (result_products != "") {
-        result_products += " + "
-      }
-      result_products += $("#reaction_product_" + index.toString() + "_label").html()
-    }
-  });
+    result_reactants = form_list_reactants.getSpecies();
+    result_modifiers = form_list_modifiers.getSpecies();
+    result_products = form_list_products.getSpecies();
 
   result = result_reactants;
   if (result_modifiers != ""){
@@ -566,34 +411,14 @@ function updateLocalParametersForm()
 }
 
 
-
-function clearForm()
-{
-  $("#edit_reaction_name").val("")
-  $("#edit_reaction_id").val("")
-
-  removeReactants();
-  removeModifiers();
-  removeProducts();
-  buildReactionDescription();
-
-  $("#new_reaction_type_label").html("{{reaction_types|my_lookup:0}}");
-  $('#new_reaction_type').val(0);
-  updateReversibleToggle(0);
-  updateParameters(0, true);
-  $("#input_parameters").addClass('in');
-  $("#reaction_reversible").prop('checked', true);
-  $("#reaction_notes").val("");
-}
-
 function view_reaction(sbml_id)
 {
     $("#modal_reaction-title").html("Edit reaction");
     $("#loading_wait").addClass("in");
     $("#loading_done").removeClass("in");
-    removeReactants();
-    removeModifiers();
-    removeProducts();
+    form_list_reactants.clear();
+    form_list_modifiers.clear();
+    form_list_products.clear();
     removeLocalParameters();
     ajax_call(
         "POST",
@@ -602,32 +427,31 @@ function view_reaction(sbml_id)
         {
             $.each(data, function(index, element)
             {
-                if (index === "id") { $("#reaction_id").val(element.toString()); }
-                else if (index === "sbml_id") { $("#reaction_sbml_id").val(element.toString()); old_sbml_id=element; }
-                else if (index === "name") { $("#reaction_name").val(element.toString()); }
-                else if (index === "list_of_reactants") {
+                if (index === "id") {
+                    $("#reaction_id").val(element.toString());
+
+                } else if (index === "sbml_id") {
+                    form_sbmlid.setValue(element.toString());
+                    form_sbmlid.setInitialValue(element.toString());
+
+                } else if (index === "name") {
+                    $("#reaction_name").val(element.toString());
+
+                } else if (index === "list_of_reactants") {
                     $.each(element, function(index, subelement) {
-                        add_reactant();
-                        $("#reaction_reactant_" + nb_reactants.toString() + "_stoichiometry").val(subelement[1]);
-                        $("#reaction_reactant_" + nb_reactants.toString()).val(subelement[0]);
-                        $("#reaction_reactant_" + nb_reactants.toString() + "_label").html(get_species_name(subelement[0]));
+                        form_list_reactants.add(subelement[1], subelement[0], get_species_name(subelement[0]));
                     });
+
                 }
                 else if (index === "list_of_modifiers") {
                     $.each(element, function (index, subelement) {
-                        add_modifier();
-                        $("#reaction_modifier_" + nb_modifiers.toString() + "_stoichiometry").val(subelement[1]);
-                        $("#reaction_modifier_" + nb_modifiers.toString()).val(subelement[0]);
-                        $("#reaction_modifier_" + nb_modifiers.toString() + "_label").html(get_species_name(subelement[0]));
+                        form_list_modifiers.add(subelement[1], subelement[0], get_species_name(subelement[0]));
+
                     });
                 }
                 else if (index === "list_of_products") {
                     $.each(element, function(index, subelement) {
-
-                        add_product();
-                        $("#reaction_product_" + nb_products.toString() + "_stoichiometry").val(subelement[1]);
-                        $("#reaction_product_" + nb_products.toString()).val(subelement[0]);
-                        $("#reaction_product_" + nb_products.toString() + "_label").html(get_species_name(subelement[0]));
+                        form_list_products.add(subelement[1], subelement[0], get_species_name(subelement[0]));
                     });
                 }
 
@@ -650,7 +474,7 @@ function view_reaction(sbml_id)
                 }
 
                 else if (index === "kinetic_law"){
-                    $("#kineticlaw_input").val(element);
+                    form_kinetic_law.setValue(element);
                 }
                 else if (index == "list_of_local_parameters"){
 
@@ -683,8 +507,8 @@ function view_reaction(sbml_id)
                }
            });
            buildReactionDescription();
-           setSbmlIdEmpty();
-           setKineticLawEmpty();
+            form_sbmlid.check();
+           form_kinetic_law.check();
            $("#loading_wait").removeClass("in");
            $("#loading_done").addClass("in");
            $("#summary").tab('show');
@@ -694,14 +518,33 @@ function view_reaction(sbml_id)
         function() { console.log("failed"); }
     );
 
+    modal_show();
+
+}
+function modal_show()
+{
+    $("#summary").tab('show');
+    $("#modal_reaction").on('shown.bs.modal', () => { $("#reaction_name").focus(); });
     $('#modal_reaction').modal('show');
 
 }
 
+function newReaction()
+{
+    $("#edit_reaction_name").val("");
+    $("#edit_reaction_id").val("");
 
-function newReaction() {
-  clearForm();
-  $('#modal_reaction').modal('show');
+    form_group.clearForms();
+    buildReactionDescription();
+
+    $("#new_reaction_type_label").html("{{reaction_types|my_lookup:0}}");
+    $('#new_reaction_type').val(0);
+    updateReversibleToggle(0);
+    updateParameters(0, true);
+    $("#input_parameters").addClass('in');
+    $("#reaction_reversible").prop('checked', true);
+    $("#reaction_notes").val("");
+    modal_show();
 }
 
 $(window).on('load',function()
@@ -726,136 +569,22 @@ function load_reaction_kinetic_law(reaction_id)
     );
 }
 
-function setKineticLawEmpty()
-{
-$("#kineticlaw_invalid").removeClass("in");
-  $("#kineticlaw_valid").removeClass("in");
-  $("#kineticlaw_validating").removeClass("in");
-
-}
-function setKineticLawValidating()
-{
-$("#kineticlaw_invalid").removeClass("in");
-  $("#kineticlaw_valid").removeClass("in");
-  $("#kineticlaw_validating").addClass("in");
-
-}
-function setKineticLawValid()
-{
-    $("#kineticlaw_invalid").removeClass("in");
-    $("#kineticlaw_validating").removeClass("in");
-    $("#kineticlaw_valid").addClass("in");
-}
-function setKineticLawInvalid()
-{
-    $("#kineticlaw_validating").removeClass("in");
-    $("#kineticlaw_valid").removeClass("in");
-    $("#kineticlaw_invalid").addClass("in");
-}
-$("#kineticlaw_input").on('change paste keyup', function()
-{
-  setKineticLawValidating();
-  ajax_call(
-      "POST",
-      "{% url 'math_validator' %}", 
-      {
-          'math': $("#kineticlaw_input").val(),
-      },
-      function(data)
-      {
-        $.each(data, function(index, element) {
-            if (index === 'valid' && element === 'true') {
-                setKineticLawValid();
-            } else {
-                setKineticLawInvalid();
-            }
-        });
-      }, 
-      function()
-      {
-        setKineticLawInvalid();
-      });
-
-});
-
-// SbmlId Validation
-
-var old_sbml_id = "";
-
-function setSbmlIdEmpty()
-{
-    $("#sbmlid_invalid").removeClass("in");
-    $("#sbmlid_validating").removeClass("in");
-    $("#sbmlid_valid").removeClass("in");
-}
-
-function setSbmlIdValid()
-{
-    $("#sbmlid_invalid").removeClass("in");
-    $("#sbmlid_validating").removeClass("in");
-    $("#sbmlid_valid").addClass("in");
-}
-
-function setSbmlIdInvalid()
-{
-    $("#sbmlid_validating").removeClass("in");
-    $("#sbmlid_valid").removeClass("in");
-    $("#sbmlid_invalid").addClass("in");
-}
-
-function setSbmlIdValidating()
-{
-    $("#sbmlid_invalid").removeClass("in");
-    $("#sbmlid_valid").removeClass("in");
-    $("#sbmlid_validating").addClass("in");
-}
-
-$("#reaction_sbml_id").on('change paste keyup', function()
-{
-
-  if (old_sbml_id === "" || $("#reaction_sbml_id").val() !== old_sbml_id)
-  {
-
-    setSbmlIdValidating();
-    ajax_call(
-        "POST",
-        "{% url 'sbml_id_validator' %}",
-        {'sbml_id': $("#reaction_sbml_id").val()},
-        function(data)
-        {
-           $.each(data, function(index, element) {
-             if (index === 'error' && element === '') {
-                setSbmlIdValid();
-             } else {
-                setSbmlIdInvalid();
-             }
-           });
-        },
-        function()
-        {
-            setSbmlIdInvalid();
-        }
-    );
-  }
-});
 
 function save_reaction()
 {
-    var nb_errors = 0;
-    reset_errors();
-    if ($("#sbmlid_invalid").hasClass("in")){
-        add_error_modal("invalid_sbml_id", "Sbml id is invalid");
-        nb_errors++;
-    }
+    form_group.checkErrors();
 
-    if (nb_errors == 0)
+    if (form_group.nb_errors == 0)
     {
-        $("#save_reaction_form").submit();
+        $("#modal_reaction").hide();
     }
+
+    return (form_group.nb_errors == 0);
 }
 
-
-function reset_errors()
-{
-   $("#error_modal").empty();
-}
+//
+//function reset_errors()
+//{
+//   $("#error_modal").empty();
+//   form_group.resetErrors();
+//}

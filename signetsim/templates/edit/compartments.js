@@ -21,111 +21,115 @@
 {% include 'commons/js/slider_form.js' %}
 
 
-let form_group = new FormGroup();
+class CompartmentForm extends FormGroup{
 
-let dropdown_unit = new Dropdown("compartment_unit", post_treatment=null, default_value="", default_label="Choose an unit");
-form_group.addForm(dropdown_unit);
+    constructor(field){
+        super();
+        this.field = field;
 
-let form_value = new FloatForm("compartment_size", "The size of the compartment", false, default_value=1);
-form_group.addForm(form_value, error_checking=true);
+        this.dropdown_unit = new Dropdown("compartment_unit", null, "", "Choose an unit");
+        this.addForm(this.dropdown_unit);
 
-let form_sbmlid = new SbmlIdForm("compartment_sbml_id", "The identifier of the compartment", default_value="");
-form_group.addForm(form_sbmlid, error_checking=true);
+        this.form_value = new FloatForm("compartment_size", "The size of the compartment", false, 1);
+        this.addForm(this.form_value, true);
 
-let form_sboterm = new SBOTermInput("compartment_sboterm");
-form_group.addForm(form_sboterm);
+        this.form_sbmlid = new SbmlIdForm("compartment_sbml_id", "The identifier of the compartment", "");
+        this.addForm(this.form_sbmlid, true);
 
-let form_constant = new SliderForm("compartment_constant", "The constant parameter of the compartment", default_value=1);
-form_group.addForm(form_constant);
+        this.form_sboterm = new SBOTermInput("compartment_sboterm");
+        this.addForm(this.form_sboterm);
 
-let form_name = new Form("compartment_name", "The name of the compartment", default_value="");
-form_group.addForm(form_name);
+        this.form_constant = new SliderForm("compartment_constant", "The constant parameter of the compartment", 1);
+        this.addForm(this.form_constant);
 
-let form_id = new Form("compartment_id", "The id of the compartment", default_value="");
-form_group.addForm(form_id);
+        this.form_name = new Form("compartment_name", "The name of the compartment", "");
+        this.addForm(this.form_name);
 
-let form_notes = new Form("compartment_notes", "The notes of the compartment", default_value="");
-form_group.addForm(form_notes);
+        this.form_id = new Form("compartment_id", "The id of the compartment", "");
+        this.addForm(this.form_id);
 
-function modal_show()
-{
-    $('#general').tab('show');
-    $('#modal_compartment').modal('show');
-    $("#modal_compartment").on('shown.bs.modal', () => { $("#compartment_name").focus(); });
-}
-function new_compartment()
-{
-    $("#modal_title").html("New compartment");
-    form_group.clearForms();
-    modal_show();
-}
+        this.form_notes = new Form("compartment_notes", "The notes of the compartment", "");
+        this.addForm(this.form_notes);
 
-function view_compartment(sbml_id)
-{
-
-    $("#modal_title").html("Edit compartment");
-
-    ajax_call(
-        "POST", "{% url 'get_compartment' %}",
-        {'sbml_id': sbml_id},
-        (data) =>
-        {
-           $.each(data, (index, element) =>
-           {
-               if (index == "id") {
-                   form_id.setValue(element.toString());
-
-               } else if (index == "sbml_id") {
-                   form_sbmlid.setValue(element.toString());
-                   form_sbmlid.setInitialValue(element.toString());
-
-               } else if (index == "name") {
-                   form_name.setValue(element.toString());
-
-               } else if (index == "value") {
-                   if (element == null) { form_value.setValue(""); }
-                   else { form_value.setValue(element.toString()); }
-
-               } else if (index == "unit_name") {
-                   dropdown_unit.setLabel(element.toString());
-
-               } else if (index == "unit_id") {
-                   dropdown_unit.setValue(element.toString());
-
-               } else if (index == "constant") {
-                   if (element == "1") { form_constant.switch_on(); }
-                   else { form_constant.switch_off(); }
-
-               } else if (index == "notes") {
-                   form_notes.setValue(element.toString());
-
-               } else if (index == "sboterm") {
-                   form_sboterm.setValue(element.toString());
-                   form_sboterm.setLink(element.toString());
-
-               } else if (index == "sboterm_name") {
-                   form_sboterm.setName(element.toString());
-               }
-           });
-
-           form_sbmlid.check();
-           form_group.resetErrors();
-        },
-        () => { console.log("compartment data retrieving failed"); }
-    )
-
-    modal_show();
-
-}
-
-function save_compartment()
-{
-    form_group.checkErrors();
-
-    if (form_group.nb_errors == 0)
-    {
-        $("#modal_compartment").modal("hide");
     }
 
-    return (form_group.nb_errors == 0);
+    show(){
+        $('#general').tab('show');
+        $('#' + this.field).modal('show');
+        $("#" + this.field).on('shown.bs.modal', () => { $("#compartment_name").focus(); });
+    }
+
+    new(){
+        $("#modal_title").html("New compartment");
+        this.clearForms();
+        this.show();
+    }
+
+    load(sbml_id){
+        $("#modal_title").html("Edit compartment");
+
+        ajax_call(
+            "POST", "{% url 'get_compartment' %}",
+            {'sbml_id': sbml_id},
+            (data) =>
+            {
+               $.each(data, (index, element) =>
+               {
+                   if (index == "id") {
+                       this.form_id.setValue(element.toString());
+
+                   } else if (index == "sbml_id") {
+                       this.form_sbmlid.setValue(element.toString());
+                       this.form_sbmlid.setInitialValue(element.toString());
+
+                   } else if (index == "name") {
+                       this.form_name.setValue(element.toString());
+
+                   } else if (index == "value") {
+                       if (element == null) { this.form_value.setValue(""); }
+                       else { this.form_value.setValue(element.toString()); }
+
+                   } else if (index == "unit_name") {
+                       this.dropdown_unit.setLabel(element.toString());
+
+                   } else if (index == "unit_id") {
+                       this.dropdown_unit.setValue(element.toString());
+
+                   } else if (index == "constant") {
+                       if (element == "1") { this.form_constant.switch_on(); }
+                       else { this.form_constant.switch_off(); }
+
+                   } else if (index == "notes") {
+                       this.form_notes.setValue(element.toString());
+
+                   } else if (index == "sboterm") {
+                       this.form_sboterm.setValue(element.toString());
+                       this.form_sboterm.setLink(element.toString());
+
+                   } else if (index == "sboterm_name") {
+                       this.form_sboterm.setName(element.toString());
+                   }
+               });
+
+               this.form_sbmlid.check();
+               this.resetErrors();
+            },
+            () => { console.log("compartment data retrieving failed"); }
+        )
+
+        this.show();
+    }
+
+    save(){
+        this.checkErrors();
+
+        if (this.nb_errors == 0)
+        {
+            $("#" + this.field).modal("hide");
+        }
+
+        return (this.nb_errors == 0);
+    }
 }
+
+let form_compartment = new CompartmentForm("modal_compartment");

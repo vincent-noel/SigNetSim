@@ -19,9 +19,9 @@
 
 {% load static from staticfiles %}
 
-class FloatForm extends Form
+class MathForm extends HasIndicator(Form)
 {
-    constructor(field, description, required, default_value=1)
+    constructor(field, description, required, default_value="")
     {
         super(field, description, default_value);
         this.required = required;
@@ -29,19 +29,32 @@ class FloatForm extends Form
 
     }
 
-    check() {
+    check()
+    {
+        this.setIndicatorValidating();
+
         ajax_call(
-            "POST", "{% url 'float_validator' %}",
-            {'value' : $.trim($("#" + this.field).val()), 'required': this.required},
+            "POST", "{% url 'math_validator' %}",
+            {'math' : $.trim($("#" + this.field).val())},
             (data) => {
                 $.each(data, (index, element) => {
-                    if (index == "error"){ this.setError(element.toString()); }
-                    else { this.setError("couldn't be validated : unknown response"); }
+                    if (index === "valid" && element === "true"){
+//                        this.setError(element.toString());
+                        this.setIndicatorValid();
+
+                    } else {
+                        this.setError("is invalid");
+                        this.setIndicatorInvalid();
+                    }
                 });
             },
-            () => { this.setError("couldn't be validated : unable to connect"); }
+            () => {
+                this.setError("couldn't be validated : unable to connect");
+                this.setIndicatorInvalid();
+            }
         );
     }
+
     clear() {
         super.clearError();
     }
