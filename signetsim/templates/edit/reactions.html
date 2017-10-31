@@ -58,7 +58,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="reaction_id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="view_reaction('{{reaction.getSbmlId}}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" onclick="form_reaction.load('{{reaction.getSbmlId}}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
               </form>
             </div>
@@ -72,7 +72,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-    <button type="button" class="btn btn-primary btn-sm" onclick="newReaction();">{% bootstrap_icon "file" %} Create new reaction</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="form_reaction.new();">{% bootstrap_icon "file" %} Create new reaction</button>
   </div>
   {% endif %}
   {% endif %}

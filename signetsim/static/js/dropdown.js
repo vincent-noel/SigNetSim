@@ -10,7 +10,6 @@ class Dropdown {
             this.setValue($(element.currentTarget).index());
 
             if (post_treatment !== null) {
-                console.log(post_treatment);
                 post_treatment();
             }
         });
@@ -21,6 +20,14 @@ class Dropdown {
 
     setValue(value){
         $("#" + this.field + "_value").val(value);
+    }
+
+    getLabel(){
+        return $("#" + this.field + "_label").html();
+    }
+
+    getValue(){
+        return parseInt($("#" + this.field + "_value").val());
     }
 
     clear(){

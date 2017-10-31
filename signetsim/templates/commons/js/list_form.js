@@ -21,52 +21,70 @@
 {% load static from staticfiles %}
 
 class ListForm {
-    constructor(field, description, form_name, post_treatment=null) {
+    constructor(field, description, form_name, post_treatment=null, removable=true) {
         this.field = field;
         this.description = description;
         this.form_name = form_name;
         this.index = 0;
         this.post_treatment = post_treatment;
+        this.removable = removable;
     }
 
-    add(content="", script=""){
+    add(content="", script="")
+    {
+        if (this.removable) {
 
-        $("#body_" + this.field + "s")
-        .append($("<tr>").attr({'class': 'row', 'id': this.field + "_" + this.index.toString() + "_tr"})
-            .append(
-                content,
-                $("<td>").attr({'class': 'col-xs-2 text-right'})
+            $("#body_" + this.field + "s")
+            .append($("<tr>").attr({'class': 'row', 'id': this.field + "_" + this.index.toString() + "_tr"})
                 .append(
-                    $("<button>").attr({
-                        'type': 'button',
-                        'onclick': this.form_name + ".remove(" + this.index + ")",
-                        'class': 'btn btn-danger btn-xs'
-                    })
+                    content,
+                    $("<td>").attr({'class': 'col-xs-2 text-right'})
                     .append(
-                        $("<span>").attr({
-                            'class': 'glyphicon glyphicon-remove'
+                        $("<button>").attr({
+                            'type': 'button',
+                            'onclick': this.form_name + ".remove(" + this.index + ")",
+                            'class': 'btn btn-danger btn-xs'
                         })
-                    )
-                ),
-                $("<script>").attr('type', 'application/javascript')
-                .text(script)
-            )
-        );
+                        .append(
+                            $("<span>").attr({
+                                'class': 'glyphicon glyphicon-remove'
+                            })
+                        )
+                    ),
+                    $("<script>").attr('type', 'application/javascript')
+                    .text(script)
+                )
+            );
+
+        } else {
+             $("#body_" + this.field + "s")
+            .append(
+                $("<tr>").attr({'class': 'row', 'id': this.field + "_" + this.index.toString() + "_tr"})
+                .append(
+                    content,
+                    $("<script>").attr('type', 'application/javascript')
+                    .text(script)
+                )
+            );
+        }
 
         this.index++;
     }
 
-    remove(element_id){
+    remove(element_id)
+    {
         $("#" + this.field + "_" + element_id + "_tr").remove();
     }
 
-    update(){
+    update()
+    {
         if (this.post_treatment !== null) {
             this.post_treatment();
         }
     }
 
-    clear(){
+    clear()
+    {
         $("#body_" + this.field + "s").children("tr").each((index, element) => {$(element).remove();});
         this.index = 0;
     }

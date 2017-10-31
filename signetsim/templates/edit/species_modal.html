@@ -6,7 +6,7 @@
 <div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New species" id="modal_species">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form class="form" method="POST" enctype="multipart/form-data" id="species_form" onsubmit="return save_species();">
+      <form class="form" method="POST" enctype="multipart/form-data" id="species_form" onsubmit="return form_species.save();">
         {% csrf_token %}
         <input type="hidden" name="species_id" id="species_id" value="">
         <input type="hidden" name="action" value="save">
@@ -70,13 +70,13 @@
 								name="Constant"
 								id="species_constant"
 								default=""
-								onclick="form_constant.toggle();"
+								onclick="form_species.form_constant.toggle();"
 							%}
 							{% include 'commons/html/toggle_switch.html' with
 								name="Boundary condition"
 								id="species_boundary"
 								default=""
-							  onclick="form_boundary.toggle();"
+							  onclick="form_species.form_boundary.toggle();"
 							%}
 							{% include 'commons/html/dropdown.html' with
 								name="Unit"
@@ -93,7 +93,7 @@
 								default=""
 								default_label=""
 								placeholder="Input the species SBO term"
-								validate="form_sboterm.resolve();"
+								validate="form_species.form_sboterm.resolve();"
 							%}
 							{% include 'commons/html/notes_input.html' with
 								name="Notes"

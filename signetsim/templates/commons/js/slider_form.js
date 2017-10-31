@@ -21,21 +21,25 @@
 
 class SliderForm extends Form
 {
-    constructor(field, description, default_value=1)
+    constructor(field, description, default_value=1, post_treatment=null)
     {
         super(field, description, default_value);
         this.disabled = false;
+        this.post_treatment = post_treatment;
     }
 
     getValue()
     {
-        return ($('#' + this.field).prop('checked') == true);
+        return $('#' + this.field).prop('checked');
     }
 
     switch_on()
     {
         if (!this.disabled) {
             $('#' + this.field).prop('checked', true);
+            if (this.post_treatment !== null){
+                this.post_treatment();
+            }
         }
     }
 
@@ -43,6 +47,9 @@ class SliderForm extends Form
     {
         if (!this.disabled){
             $('#' + this.field).prop('checked', false);
+            if (this.post_treatment !== null){
+                this.post_treatment();
+            }
         }
     }
 

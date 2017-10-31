@@ -27,11 +27,15 @@ class FormGroup {
 
         this.resetErrors();
 
-        for (var [index, form] of this.list.entries()) {
-            if (this.listErrorChecking[index] && form.hasError()){
-                add_error_modal_v3(form);
-                form.highlight();
-                this.nb_errors++;
+        for (var [index, form] of this.list.entries())
+        {
+            if (this.listErrorChecking[index]){
+                form.check();
+                if (form.hasError()){
+                    add_error_modal_v3(form);
+                    form.highlight();
+                    this.nb_errors++;
+                }
             }
         }
 

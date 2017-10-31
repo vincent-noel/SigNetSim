@@ -42,7 +42,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="species_id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="view_species('{{species.getSbmlId}}')" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" onclick="form_species.load('{{species.getSbmlId}}')" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
              </form>
           </div>
@@ -56,7 +56,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-      <button type="button" class="btn btn-primary btn-sm" onclick="new_species();">
+      <button type="button" class="btn btn-primary btn-sm" onclick="form_species.new();">
 				{% bootstrap_icon "file" %} Create new species
 			</button>
   </div>

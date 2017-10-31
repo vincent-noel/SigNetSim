@@ -1,11 +1,18 @@
 class Form
 {
-    constructor(field, description, default_value=""){
+    constructor(field, description, default_value="", on_input=null){
 
         this.field = field;
         this.description = description;
         this.default_value = default_value;
         this.error_message = "";
+
+        if (on_input !== null) {
+            $('#' + this.field).on('paste keyup', () => { on_input(); });
+//                changed_local_parameter_name(" + nb_local_parameters.toString() + ");
+//            });
+        }
+
     }
 
     clearValue() {
