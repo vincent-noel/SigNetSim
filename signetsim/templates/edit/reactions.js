@@ -20,6 +20,7 @@
 {% include 'commons/js/math_form.js' %}
 {% include 'commons/js/list_form.js' %}
 {% include 'commons/js/slider_form.js' %}
+{% include 'commons/js/sboterm_input.js' %}
 
 class ListOfSpeciesReference extends ListForm{
 
@@ -168,10 +169,8 @@ class ListOfParameters extends ListForm{
 
     update()
     {
-
         $("#body_" + this.field + "s").children("tr").each((index, element) =>
         {
-
             let list_dropdown = $("#" + this.field + "_" + index.toString() + "_list");
             list_dropdown.empty();
 
@@ -183,7 +182,6 @@ class ListOfParameters extends ListForm{
                 });
 
                 list_dropdown.append("<li role='separator' class='divider'></li>");
-
             }
 
             for (var counter = 0; counter < this.nb_parameters; counter++) {
@@ -198,7 +196,6 @@ class ListOfParameters extends ListForm{
                     "var " + this.field + "_" + index.toString() + "_dropdown = new Dropdown('" + this.field + "_" + index.toString() + "', null, default_value='', default_label='Choose a parameter');"
                 )
             );
-
         });
     }
 }
@@ -324,14 +321,14 @@ class FormReaction extends FormGroup{
             "reaction_reactant",
             "The list of reactants",
             "form_list_reactants",
-            ()=>{this.buildReactionDescription();},
+            ()=>{this.buildReactionDescription();}
         );
         this.addForm(this.form_list_reactants);
 
         this.form_list_modifiers = new ListOfSpeciesReference(
             "reaction_modifier",
             "The list of modifiers",
-            "form_list_modifiers", ()=>{this.buildReactionDescription();},
+            "form_list_modifiers", ()=>{this.buildReactionDescription();}
         );
         this.addForm(this.form_list_modifiers);
 
@@ -339,7 +336,7 @@ class FormReaction extends FormGroup{
             "reaction_product",
             "The list of products",
             "form_list_products",
-            ()=>{this.buildReactionDescription();},
+            ()=>{this.buildReactionDescription();}
         );
         this.addForm(this.form_list_products);
 
@@ -365,7 +362,8 @@ class FormReaction extends FormGroup{
         this.form_reaction_type = new Dropdown(
             "reaction_type",
             ()=>{this.select_reaction_type();},
-            "0", "{{reaction_types|my_lookup:0}}"
+            "0",
+            "{{reaction_types|my_lookup:0}}"
         )
         this.addForm(this.form_reaction_type);
 
@@ -378,6 +376,18 @@ class FormReaction extends FormGroup{
             }
         );
         this.addForm(this.form_reversible);
+
+        this.form_sboterm = new SBOTermInput("reaction_sboterm");
+        this.addForm(this.form_sboterm);
+
+        this.form_notes = new Form("reaction_notes", "The notes of the reaction", "");
+        this.addForm(this.form_notes);
+
+        this.form_id = new Form("reaction_id", "The id of the reaction", "");
+        this.addForm(this.form_id);
+
+        this.form_name = new Form("reaction_name", "The name of the reaction", "");
+        this.addForm(this.form_name);
 
 
     }
@@ -498,15 +508,17 @@ class FormReaction extends FormGroup{
     }
 
     new(){
-        $("#edit_reaction_name").val("");
-        $("#edit_reaction_id").val("");
+{#        $("#edit_reaction_name").val("");#}
+{#        $("#edit_reaction_id").val("");#}
 
         this.clearForms();
         this.buildReactionDescription();
-        this.updateReversibleToggle();
-        this.updateParameters();
-        $("#input_parameters").addClass('in');
-        $("#reaction_notes").val("");
+        this.select_reaction_type();
+{#        this.updateReversibleToggle();#}
+{#        this.updateParameters();#}
+{#        $("#input_parameters").addClass('in');#}
+{#        $("#input_kinetic_law").removeClass('in');#}
+        // $("#reaction_notes").val("");
         this.show();
     }
 
@@ -525,14 +537,14 @@ class FormReaction extends FormGroup{
                 $.each(data, (index, element) =>
                 {
                     if (index === "id") {
-                        $("#reaction_id").val(element.toString());
+                        this.form_id.setValue(element.toString());
 
                     } else if (index === "sbml_id") {
                         this.form_sbmlid.setValue(element.toString());
                         this.form_sbmlid.setInitialValue(element.toString());
 
                     } else if (index === "name") {
-                        $("#reaction_name").val(element.toString());
+                        this.form_name.setValue(element.toString());
 
                     } else if (index === "list_of_reactants") {
                         $.each(element, (index, subelement) => {
@@ -582,14 +594,16 @@ class FormReaction extends FormGroup{
                     }
 
                     else if (index == "notes") {
-                        $("#specie_notes").val(element.toString());
+                        this.form_notes.setValue(element.toString());
 
                     }
                     else if (index == "sboterm") {
-                       $("#sboterm").val(element.toString());
-                       $("#sboterm_link").attr("href", "http://www.ebi.ac.uk/sbo/main/display?nodeId=" + element.toString());
+                       this.form_sboterm.setValue(element.toString());
+                       this.form_sboterm.setLink(element.toString());
                     }
-                    else if (index == "sboterm_name") { $("#sboterm_name").html(element.toString()); }
+                    else if (index == "sboterm_name") {
+                        this.form_sboterm.setLabel(element.toString());
+                    }
                 });
 
                $.each(data, (index, element) => {
