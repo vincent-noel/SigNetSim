@@ -17,7 +17,7 @@
 
 {% extends '_layouts/menupage.html' %}
 {% block view_name %}Stored simulations{% endblock view_name %}
-{% block view_sidebar %}{% include 'simulate/menu.html' %}{% endblock view_sidebar %}
+{% block view_sidebar %}{% include 'simulate/menu.html' with page="stored_simulations" %}{% endblock view_sidebar %}
 {% block view_content %}
 {% load bootstrap3 %}
 

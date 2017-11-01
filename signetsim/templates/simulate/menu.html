@@ -29,23 +29,23 @@
       </thead>
       <tbody>
         {% if user.is_authenticated %}
-        <tr>
+        <tr{% if page == "timeseries" %} class="item_active"{% endif %}>
           <td>
             <a href="{% url 'simulate_model' %}">Timeseries</a>
           </td>
         </tr>
-        <tr>
+        <tr{% if page == "steady_states" %} class="item_active"{% endif %}>
           <td>
             <a href="{% url 'simulate_steady_states' %}">Steady states</a>
           </td>
         </tr>
-				<tr>
+				<tr{% if page == "phase_plane" %} class="item_active"{% endif %}>
           <td>
             <a href="{% url 'simulate_phase_plane' %}">Phase plane</a>
           </td>
         </tr>
         {% endif %}
-        <tr>
+        <tr{% if page == "stored_simulations" %}  class="item_active"{% endif %}>
           <td>
             <a href="{% url 'list_of_simulations' %}">Stored simulations</a>
           </td>

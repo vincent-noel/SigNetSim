@@ -63,7 +63,7 @@
 									placeholder="Input reaction name"
 									default=""
 								%}
-								{% include 'commons/html/sbmlid_input.html' with
+								{% include 'commons/html/validated_input.html' with
 									name="Reaction identifier"
 									id="reaction_sbml_id"
 									placeholder="Input reaction identifier"
@@ -122,7 +122,7 @@
 									onclick="form_reaction.form_reversible.toggle();"
 								%}
                 <div id="input_kinetic_law" class="collapse">
-									{% include 'commons/html/sbmlid_input.html' with
+									{% include 'commons/html/validated_input.html' with
 										name="Kinetic law"
 										id="reaction_kinetic_law"
 										placeholder="Input kinetic law"

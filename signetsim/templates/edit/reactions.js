@@ -1,4 +1,4 @@
-{#   _layout/base.html : This is the top template 							  #}
+{#   edit/reactions.js : Javascript methods for reactions   				  #}
 
 {#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
 
@@ -15,12 +15,8 @@
 {#   You should have received a copy of the GNU Affero General Public License #}
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
+{% load static from staticfiles %}
 {% load tags %}
-{% include 'commons/js/sbmlid_form.js' %}
-{% include 'commons/js/math_form.js' %}
-{% include 'commons/js/list_form.js' %}
-{% include 'commons/js/slider_form.js' %}
-{% include 'commons/js/sboterm_input.js' %}
 
 class ListOfSpeciesReference extends ListForm{
 
@@ -508,17 +504,9 @@ class FormReaction extends FormGroup{
     }
 
     new(){
-{#        $("#edit_reaction_name").val("");#}
-{#        $("#edit_reaction_id").val("");#}
-
         this.clearForms();
         this.buildReactionDescription();
         this.select_reaction_type();
-{#        this.updateReversibleToggle();#}
-{#        this.updateParameters();#}
-{#        $("#input_parameters").addClass('in');#}
-{#        $("#input_kinetic_law").removeClass('in');#}
-        // $("#reaction_notes").val("");
         this.show();
     }
 

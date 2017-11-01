@@ -20,6 +20,8 @@
 
 {% block title %} Optimization results | {{ block.super }}{% endblock title %}
 {% block header_js %}
+{{ block.super }}
+
   <script src="{% static "chart.js/dist/Chart.js" %}"></script>
 {% endblock header_js %}
 {% block view_name %}Optimization_results{% endblock view_name %}

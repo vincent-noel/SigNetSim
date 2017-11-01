@@ -21,10 +21,8 @@
 {% load tags %}
 
 {% block view_name %}Simulate model{% endblock view_name %}
-{% block view_sidebar %}{% include 'simulate/menu.html' %}{% endblock view_sidebar %}
-{% block header_js %}
-	<script src="{% static 'chart.js/dist/Chart.js' %}"></script>
-{% endblock header_js %}
+{% block view_sidebar %}{% include 'simulate/menu.html' with page="timeseries" %}{% endblock view_sidebar %}
+{% block sim_item %}active{% endblock sim_item %}
 
 {% block view_content %}
 <div class="container-fluid" id="view">
@@ -112,6 +110,12 @@
 </div>
 
 {% endblock view_content %}
+
+{% block footer_js %}
+{{ block.super }}
+	<script src="{% static 'chart.js/dist/Chart.js' %}"></script>
+{% endblock footer_js %}
+
 {% block js %}
 	{{ block.super }}
 	{% include 'simulate/timeseries_graph.js' %}

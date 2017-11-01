@@ -5,11 +5,7 @@
 {% load tags %}
 
 {% block title %} Species | {{ block.super }}{% endblock title %}
-{% block header_js %}
-	<script src="{% static 'js/form.js' %}"></script>
-	<script src="{% static 'js/dropdown.js' %}"></script>
-	<script src="{% static 'js/form_group.js' %}"></script>
-{% endblock header_js %}
+
 {% block edit_item %}active{% endblock edit_item %}
 {% block view_name %}Model species{% endblock view_name %}
 {% block view_sidebar %}{% include 'edit/menu.html' with page="species" %}{% endblock view_sidebar %}
@@ -72,6 +68,10 @@
 {% include 'edit/species_modal.html' %}
 {% endblock view_modal %}
 
+{% block footer_js %}
+{{ block.super }}
+<script src="{% static 'js/forms.js' %}"></script>
+{% endblock footer_js %}
 
 {% block js %}
 

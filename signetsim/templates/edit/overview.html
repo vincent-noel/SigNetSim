@@ -20,6 +20,8 @@
 {% load bootstrap3 %}
 
 {% block title %} Overview | {{ block.super }}{% endblock title %}
+{% block edit_item %}active{% endblock edit_item %}
+
 {% block header %}
 <script src="{% static 'cytoscape/dist/cytoscape.js' %}"></script>
 <script src="{% static 'cytoscape-cola/cola.js' %}"></script>

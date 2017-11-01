@@ -10,9 +10,14 @@
 	<tbody>
 		<tr class="row">
 			<td class="col-xs-11">
-				<input type="text" class="form-control input-sm" placeholder="{{ placeholder }}"
-							 name="{{ id }}" id="{{ id }}" value="{{ default }}"
-				>
+				{% if pre or post %}<div class="input-group">{% endif %}
+
+					{% if pre %}<span class="input-group-addon">{{ pre }}</span>{% endif %}
+					<input type="text" class="form-control input-sm" placeholder="{{ placeholder }}"
+								 name="{{ id }}" id="{{ id }}" value="{{ default }}"
+					>
+					{% if post %}<span class="input-group-addon">{{ post }}</span>{% endif %}
+				{% if pre or post %}</div>{% endif %}
 			</td>
 			<td class="col-xs-1" style="vertical-align:middle">
 				<div id="{{ id }}_validating" class="pull-right collapse">

@@ -21,10 +21,8 @@
 {% load tags %}
 
 {% block view_name %}Simulate model{% endblock view_name %}
-{% block view_sidebar %}{% include 'simulate/menu.html' %}{% endblock view_sidebar %}
-{% block header_js %}
-	<script src="{% static 'chart.js/dist/Chart.js' %}"></script>
-{% endblock header_js %}
+{% block view_sidebar %}{% include 'simulate/menu.html' with page="phase_plane" %}{% endblock view_sidebar %}
+{% block sim_item %}active{% endblock sim_item %}
 
 {% block view_content %}
 <div class="container-fluid" id="view">
@@ -126,13 +124,20 @@
 </div>
 
 {% endblock view_content %}
+
+{% block footer_js %}
+{{ block.super }}
+	<script src="{% static 'chart.js/dist/Chart.js' %}"></script>
+{% endblock footer_js %}
+
+
 {% block js %}
+{{ block.super }}
 
 $('#species_list li').on('click', function(){
   $("#species_name").html($(this).text());
   $('#species_id').val($(this).index());
 });
 
-	{{ block.super }}
 	{% include 'simulate/phase_plane_graph.js' %}
 {% endblock js %}
