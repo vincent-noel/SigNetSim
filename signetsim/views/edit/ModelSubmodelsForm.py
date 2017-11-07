@@ -133,7 +133,7 @@ class ModelSubmodelsForm(ModelParentForm):
 
 			self.parent.loadModelSubModels(request, self.source)
 
-			self.submodelRef = self.readInt(request, 'submodel_submodel_ref',
+			self.submodelRef = self.readInt(request, 'submodel_submodel',
 								"The index of the submodel in the submodel",
 								required=True,
 								max_value=len(self.parent.listOfSubmodelsRefs))

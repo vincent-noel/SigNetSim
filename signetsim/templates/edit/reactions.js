@@ -316,7 +316,7 @@ class FormReaction extends FormGroup{
         this.form_list_reactants = new ListOfSpeciesReference(
             "reaction_reactant",
             "The list of reactants",
-            "form_list_reactants",
+            "form_reaction.form_list_reactants",
             ()=>{this.buildReactionDescription();}
         );
         this.addForm(this.form_list_reactants);
@@ -324,14 +324,14 @@ class FormReaction extends FormGroup{
         this.form_list_modifiers = new ListOfSpeciesReference(
             "reaction_modifier",
             "The list of modifiers",
-            "form_list_modifiers", ()=>{this.buildReactionDescription();}
+            "form_reaction.form_list_modifiers", ()=>{this.buildReactionDescription();}
         );
         this.addForm(this.form_list_modifiers);
 
         this.form_list_products = new ListOfSpeciesReference(
             "reaction_product",
             "The list of products",
-            "form_list_products",
+            "form_reaction.form_list_products",
             ()=>{this.buildReactionDescription();}
         );
         this.addForm(this.form_list_products);
@@ -339,7 +339,7 @@ class FormReaction extends FormGroup{
         this.form_parameters = new ListOfParameters(
             "reaction_parameter",
             "The list of reaction parameters",
-            "form_parameters",
+            "form_reaction.form_parameters",
             null,
             nb_parameters
         );
@@ -348,7 +348,7 @@ class FormReaction extends FormGroup{
         this.form_local_parameters = new ListOfLocalParameters(
             "local_parameter",
             "The list of local parameters",
-            "form_local_parameters",
+            "form_reaction.form_local_parameters",
             null,
             this.form_parameters
         );
@@ -357,6 +357,7 @@ class FormReaction extends FormGroup{
 
         this.form_reaction_type = new Dropdown(
             "reaction_type",
+            "The type of the reaction",
             ()=>{this.select_reaction_type();},
             "0",
             "{{reaction_types|my_lookup:0}}"
@@ -384,8 +385,6 @@ class FormReaction extends FormGroup{
 
         this.form_name = new Form("reaction_name", "The name of the reaction", "");
         this.addForm(this.form_name);
-
-
     }
 
 

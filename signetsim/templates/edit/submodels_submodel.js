@@ -3,459 +3,337 @@
 //////////////////////////////////////////////////////////////////////////////
 // General tab, selection of type, id and name
 
-$('#submodel_type_dropdown li').on('click', function(){
+class ListOfDeletedObjects extends ListForm{
 
-  if ($(this).index() == 0)
-  {
-    $("#tabs_external").removeClass("in");
-    $("#tabs_internal").addClass("in");
-
-  }
-  else
-  {
-    $("#tabs_internal").removeClass("in");
-    $("#tabs_external").addClass("in");
-  }
-  $("#submodel_type_label").html($(this).text());
-  $('#submodel_type').val($(this).index());
-
-});
-
-
-
-// SbmlId Validation
-
-var old_sbml_id = "{% if form.isEditing == True and form.sbmlId != None %}{{form.sbmlId}}{% endif %}";
-
-function setSbmlIdValid()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").addClass("in");
-}
-
-function setSbmlIdInvalid()
-{
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_invalid").addClass("in");
-}
-
-function setSbmlIdValidating()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_validating").addClass("in");
-}
-
-
-$("#submodel_sbml_id").on('change paste keyup', function()
-{
-  new_sbml_id = $.trim($("#submodel_sbml_id").val());
-  if (old_sbml_id === "" || new_sbml_id !== old_sbml_id)
-  {
-    setSbmlIdValidating();
-    ajax_call(
-        "POST",
-        "{% url 'sbml_id_validator' %}", {'sbml_id': new_sbml_id},
-        function(data)
-        {
-           $.each(data, function(index, element) {
-             if (index === 'error' && element === '') {
-               setSbmlIdValid();
-             } else {
-               setSbmlIdInvalid();
-             }
-           });
-        },
-        function(){
-            setSbmlIdInvalid();
-        }
-    );
-  }
-  else if (new_sbml_id === old_sbml_id)
-  {
-    setSbmlIdValid();
-  }
-});
-
-
-//////////////////////////////////////////////////////////////////////////////
-// External model tab
-
-function setSubmodelsRefsLoading()
-{
-  $("#submodel_refs_loaded").removeClass("in");
-  $("#submodel_refs_loading_failed").removeClass("in");
-  $("#submodel_refs_loading").addClass("in");
-
-}
-
-function setSubmodelsRefsLoaded()
-{
-  $("#submodel_refs_loading").removeClass("in");
-  $("#submodel_refs_loading_failed").removeClass("in");
-  $("#submodel_refs_loaded").addClass("in");
-}
-
-function setSubmodelsRefsLoadingFailed()
-{
-  $("#submodel_refs_loading").removeClass("in");
-  $("#submodel_refs_loaded").removeClass("in");
-  $("#submodel_refs_loading_failed").addClass("in");
-
-}
-
-
-function loadSubmodelRefs(submodels_refs)
-{
-    var list_models = "";
-    var i;
-    for (i=0; i < submodels_refs.length; i++)
-    {
-        if (i==0)
-            list_models += "<li><a href=\"#\">" + submodels_refs[i].toString() + " (Main model)</a></li>";
-
-        else
-            list_models += "<li><a href=\"#\">" + submodels_refs[i].toString() + "</a></li>";
+    constructor(field, description, form_name, post_treatment=null) {
+        super(field, description, form_name, post_treatment, true);
     }
 
-    $("#submodel_refs_loaded").children().each(function() {
-      $(this).remove();
-    });
+    add(object_id="", object_name="Object"){
+        super.add(
+            [
+                $("<td>").attr('class', 'col-xs-10').append(
+                    $("<input>").attr({
+                        'type': 'hidden',
+                        'name': this.field + '_id_' + this.index + "_",
+                        'value': object_id
+                    })
+                ).text(object_name),
+            ],
 
-    $("#submodel_refs_loaded").append("\
-    <input type=\"hidden\" name=\"submodel_submodel_ref\" id=\"submodel_submodel_ref\" value=\"0\">\
-    <div class=\"dropdown\">\
-      <button type=\"button\" class=\"btn btn-primary btn-sm dropdown-toggle\" data-toggle=\"dropdown\">\
-        <span id=\"submodel_submodel_ref_label\">" + submodels_refs[0].toString() + " (Main model)</span>\
-        <span class=\"caret\"></span>\
-      </button>\
-      <ul id=\"submodel_submodel_ref_dropdown\" class=\"dropdown-menu\">" + list_models.toString() + "</ul>\
-    </div>\
-    ");
+        ""
+        );
+        this.update();
+    }
 
-    $("<script>").attr("type", "text/javascript").text("\
-        $(\"#submodel_submodel_ref_dropdown li\").on(\"click\", function(){\
-          $(\"#submodel_submodel_ref_label\").html($(this).text());\
-          $(\"#submodel_submodel_ref\").val($(this).index());});\
-          updateListOfObjects($(\"#submodel_source\").val(), $(this).index());")
-      .appendTo('#submodel_refs_loaded');
-}
+    remove(element_id){
+        super.remove(element_id);
+        this.update();
+    }
 
+    update(){
 
-
-
-$('#submodel_source_dropdown li').on('click', function(){
-  $("#submodel_source_label").html($(this).text());
-  $('#submodel_source').val($(this).index());
-
-  update_list_submodels($('#submodel_source').val());
-
-});
-
-function update_list_submodels(submodel_source)
-{
-
-    setSubmodelsRefsLoading();
-    ajax_call(
-        "POST",
-        "{% url 'get_submodels' %}", {'model_id': submodel_source},
-        function(data)
+        $("#body_" + this.field + "s").children("tr").each((tr_id, tr)=>
         {
-           $.each(data, function(index, element) {
-             if (index == 'list' && element.length > 0)
-             {
-                setSubmodelsRefsLoaded();
-                loadSubmodelRefs(element);
-             }
-           });
-        },
-        function(){
-          setSubmodelsRefsLoadingFailed();
-        }
-    );
-}
-
-
-$('#submodel_submodel_ref_dropdown li').on('click', function(){
-  $("#submodel_submodel_ref_label").html($(this).text());
-  $('#submodel_submodel_ref').val($(this).index());
-});
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Time conversion factor
-$('#time_conversion_factor_dropdown li').on('click', function(){
-  if ($(this).index() == 0) {
-    $("#time_conversion_factor_label").html("Select a time conversion factor");
-    $('#time_conversion_factor').val("");
-  } else {
-    $("#time_conversion_factor_label").html($(this).text());
-    $('#time_conversion_factor').val($(this).index()-2);
-  }
-});
-
-///////////////////////////////////////////////////////////////////////////////
-// Extent conversion factor
-$('#extent_conversion_factor_dropdown li').on('click', function(){
-  if ($(this).index() == 0) {
-    $("#extent_conversion_factor_label").html("Select an extent conversion factor");
-    $('#extent_conversion_factor').val("");
-  } else {
-    $("#extent_conversion_factor_label").html($(this).text());
-    $('#extent_conversion_factor').val($(this).index()-2);
-  }
-});
-
-// Deletions
-var nb_deletions = {% if form.listOfDeletions != None %}{{form.listOfDeletions|my_len}}{% else %}0{% endif %};
-var list_of_deletions = [{% if form.listOfDeletions != None %}{% for deletion in form.listOfDeletions %}{{deletion}}, {% endfor %}{% endif %}];
-var list_of_objects_names = [{% for object in form.listOfObjects %}"{{object}}", {% endfor %}];
-
-function addDeletion(index){
-
-  if ($.inArray(index, list_of_deletions) == -1)
-  {
-    nb_deletions = nb_deletions + 1;
-    list_of_deletions.push(index);
-    var t_name = list_of_objects_names[index];
-
-    $("#body_list_of_deletions").append("\
-    <tr class=\"row\" id=\"deletion_" + nb_deletions.toString() + "\">\
-      <input type=\"hidden\" name=\"deletion_id_" + nb_deletions.toString() + "_\" id=\"deletion_id_" + nb_deletions.toString() + "_\" value=\"" + index.toString() + "\">\
-      <td class=\"col-xs-10\">" + t_name.toString() + "</td>\
-      <td class=\"col-xs-2 text-right\">\
-        <button type=\"button\" id=\"deletion_button_" + nb_deletions.toString() + "\" class=\"btn btn-danger btn-xs\"><span class=\"glyphicon glyphicon-remove\"></span></button>\
-      </td>\
-    </tr>\
-    ");
-
-    $("<script>").attr("type", "text/javascript").text("\
-        $(\"#deletion_button_" + nb_deletions.toString() + "\").on(\"click\", function(){\
-          list_of_deletions.splice( $.inArray($(\"#deletion_id_" + nb_deletions.toString() + "_\").val(), list_of_deletions), 1 );\
-          $(\"#deletion_" + nb_deletions.toString() + "\").remove();\
-          updateDeletionsForm();});")
-      .appendTo("#deletion_" + nb_deletions.toString());
-
-    updateDeletionsForm();
-  }
-}
-$('#objects_to_delete_dropdown li').on('click', function(){
-  addDeletion($(this).index());
-});
-
-
-function updateDeletionsForm()
-{
-    var m_id = 0;
-
-    $("#body_list_of_deletions").children("tr").each(function()
-    {
-        $('input', $(this)).each(function()
-        {
-            var id = new RegExp('^deletion_id_[0-9]+_$');
-            if (id.test($(this).attr('name')))
+            $('input', $(tr)).each((input_id, input) =>
             {
-              $(this).attr('name', 'deletion_id_' + m_id.toString() + '_');
-            }
-        });
-        m_id = m_id + 1;
-    });
-}
+                let id = new RegExp('^' + this.field + '_[0-9]+$');
+                if (id.test($(input).attr('name')))
+                {
+                    $(input).attr('name', this.field + '_' + input_id.toString());
+                }
 
-
-function setListOfObjectsLoading()
-{
-  $("#list_of_objects_loaded").removeClass("in");
-  $("#list_of_objects_loading_failed").removeClass("in");
-  $("#list_of_objects_loading").addClass("in");
-
-}
-
-function setListOfObjectsLoaded()
-{
-  $("#list_of_objects_loading").removeClass("in");
-  $("#list_of_objects_loading_failed").removeClass("in");
-  $("#list_of_objects_loaded").addClass("in");
-}
-
-function setListOfObjectsLoadingFailed()
-{
-  $("#list_of_objects_loading").removeClass("in");
-  $("#list_of_objects_loaded").removeClass("in");
-  $("#list_of_objects_loading_failed").addClass("in");
-
-}
-
-function updateListOfObjects(model_id, submodel_id)
-{
-  $("#list_of_objects_loaded").children().each(function() {
-    $(this).remove();
-  });
-  nb_deletions = 0;
-  $("#body_list_of_deletions").children().each(function() {
-    $(this).remove();
-  });
-
-  setListOfObjectsLoading();
-  ajax_call(
-      "POST",
-      "{% url 'get_list_of_objects' %}", {'model_id': model_id, 'submodel_id': submodel_id},
-      function(data)
-      {
-         $.each(data, function(index, element) {
-           if (index == 'list' && element.length > 0)
-           {
-              setListOfObjectsLoaded();
-              loadSubmodelObjects(element);
-
-           }
-         });
-      },
-      function()
-      {
-        setListOfObjectsLoadingFailed();
-      }
-
-  );
-
-}
-
-
-function loadSubmodelObjects(submodels_objects)
-{
-    var list_objects = "";
-    list_of_objects_names = submodels_objects;
-    var i;
-    for (i=0; i < submodels_objects.length; i++)
-        list_objects += "<li><a href=\"#\">" + submodels_objects[i].toString() + "</a></li>";
-
-    $("#list_of_objects_loaded").append("\
-    <div class=\"dropdown\">\
-      <button type=\"button\" class=\"btn btn-primary btn-sm dropdown-toggle\" data-toggle=\"dropdown\">\
-        <span>Select an object to delete in the submodel</span>\
-        <span class=\"caret\"></span>\
-      </button>\
-      <ul id=\"objects_to_delete_dropdown\" class=\"dropdown-menu\">" + list_objects.toString() + "</ul>\
-    </div>\
-    ");
-
-    $("<script>").attr("type", "text/javascript").text("\
-      $('#objects_to_delete_dropdown li').on('click', function(){\
-      addDeletion($(this).index());});")
-    .appendTo('#list_of_objects_loaded');
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// New submodel
-$('#new_submodels_button').on('click', function(){
-
-    $("#modal_title").html("New submodel");
-
-    $("#submodel_name").val("");
-    $("#submodel_sbml_id").val("");
-
-    $("#submodel_type").val("value", 0);
-    $("#submodel_type_label").html("Internal model definition");
-
-    $("#submodel_source").val("");
-    $("#submodel_source_label").html("Select a model within your project");
-
-    $("#submodel_submodel_ref").val("");
-    $("#submodel_submodel_ref_label").html("Choose a submodel");
-
-    $('#submodel_type').val($(this).index());
-    $("#source").removeClass('active in');
-    $("#general").addClass('active in');
-    $("#tabs_external").removeClass("in");
-    $("#tabs_internal").addClass("in");
-    reset_errors();
-
-    $('#modal_submodel').modal('show');
-
-    nb_deletions = 0;
-    $("#body_list_of_deletions").children().each(function() {
-      $(this).remove();
-    });
-
-    old_sbml_id = ""
-});
-
-
-
-function view_submodel(submodel_id)
-{
-
- $("#modal_submodel-title").html("Edit submodel");
-
-    ajax_call(
-        "POST",
-        "{% url 'get_submodel' %}", {'id': submodel_id},
-        function(data)
-        {
-           $.each(data, function(index, element)
-           {
-               if (index === "id") { $("#modal_submodel_id").val(element.toString()); }
-               else if (index === "name") { $("#submodel_name").val(element.toString()); }
-               else if (index === "sbml_id") { $("#submodel_sbml_id").val(element.toString()); }
-               else if (index === "type") {
-                   if (element === 0)
-                   {
-                        $("#submodel_type_label").html("Internal model definition");
-                        $('#submodel_type').val(element);
-
-                        $("#tabs_external").removeClass("in");
-                        $("#tabs_internal").addClass("in");
-                   } else {
-                        $("#submodel_type_label").html("External model definition");
-                        $('#submodel_type').val(element);
-
-                        $("#tabs_internal").removeClass("in");
-                        $("#tabs_external").addClass("in");
-                   }
-               }
-               else if (index === "source") { $("#submodel_source").val(element.toString()); update_list_submodels(element); }
-               else if (index === "source_name") { $("#submodel_source_label").html(element.toString()); }
-               else if (index === "source_submodel_ref") { $("#submodel_submodel_ref").val(element.toString()); updateListOfObjects(element.toString());}
-               else if (index === "source_submodel_ref_name") { $("#submodel_submodel_ref_label").html(element.toString()) }
-
-           });
-
-        },
-        function() { console.log("failed"); }
-    )
-
-    $('.nav-tabs a[href="#general"]').tab('show')
-    $("#modal_submodel").modal('show');
-
-}
-
-
-function reset_errors()
-{
-   $("#error_modal").empty();
-}
-
-function save_submodel()
-{
-    var nb_errors = 0;
-    reset_errors();
-
-    if ($("#submodel_sbml_id").val() == "") {
-        add_error_modal("invalid_submodel_sbmlid", "Please choose an identifier");
-        nb_errors++;
+                let exp = new RegExp('^' + this.field + '_[0-9]+_stoichiometry');
+                if (exp.test($(input).attr('name')))
+                {
+                    $(input).attr('name', this.field + '_' + input_id.toString() + '_stoichiometry');
+                }
+            });
+        })
+        super.update();
     }
 
-    if ($("#submodel_type").val() == 1) {
-        if ($("#submodel_source").val() == "") {
-            add_error_modal("invalid_submodel source", "Please select an existing model in the project");
-            nb_errors++;
+
+}
+
+
+class SubmodelForm extends FormGroup {
+
+    constructor(field) {
+        super();
+        this.field = field;
+
+        this.submodel_type = new Dropdown(
+            "submodel_type", "The type of submodel",
+            () => { this.updateSubmodelType(); },
+            0, "Internal model definition",
+            true
+        );
+        this.addForm(this.submodel_type);
+
+        this.submodel_name = new Form("submodel_name", "The name of the submodel", "");
+        this.addForm(this.submodel_name);
+
+        this.submodel_sbmlid = new SbmlIdForm("submodel_sbml_id", "The identifier of the submodel", "");
+        this.addForm(this.submodel_sbmlid, true);
+
+        this.time_conversion = new NoneDropdown(
+            "time_conversion_factor", "The time conversion factor of the submodel",
+            null,
+            "", "Select a time conversion factor"
+        );
+        this.addForm(this.time_conversion);
+
+        this.extent_conversion = new NoneDropdown(
+            "extent_conversion_factor", "The extent conversion factor of the submodel",
+            null,
+            "", "Select an extent conversion factor"
+        );
+        this.addForm(this.time_conversion);
+
+        this.submodel_source = new Dropdown(
+            "submodel_source", "The source of the external submodel",
+            () => { this.loadSubmodels(); },
+            "", "Select a model within your project"
+        );
+        this.addForm(this.submodel_source);
+
+        this.submodel_ref = new Dropdown(
+            "submodel_submodel", "The submodel reference from the choosen model",
+            () => { this.loadListOfObjects(); },
+            "", "Select a submodel within the model"
+        );
+        this.addForm(this.submodel_ref);
+
+        this.submodel_list_of_objects = new Dropdown(
+            "submodel_list_of_objects", "The list of objects of the submodel",
+            () => {
+                this.addDeletedObject();
+            },
+            "", "Select an object to delete"
+        );
+        this.addForm(this.submodel_list_of_objects);
+
+         this.list_deletions = new ListOfDeletedObjects(
+            "deletion",
+            "The list of objects to be deleted",
+            "form_submodel.list_deletions", null
+        );
+        this.addForm(this.list_deletions);
+    }
+
+    updateSubmodelType()
+    {
+        if (this.submodel_type.getValue() == 0) {
+            $("#tabs_external").removeClass("in");
+            $("#tabs_internal").addClass("in");
+            $("#source").removeClass('active in');
+
+        } else {
+            $("#tabs_internal").removeClass("in");
+            $("#tabs_external").addClass("in");
+            $("#source").addClass('in');
         }
     }
 
-    if (nb_errors == 0) {
-        $("#submodel_form").submit()
+    loadSubmodels()
+    {
+
+        this.submodel_ref.showLoading();
+        ajax_call(
+            "POST",
+            "{% url 'get_submodels' %}", {'model_id': this.submodel_source.getValue()},
+            (data) =>
+            {
+               $.each(data, (index, element) =>
+               {
+                 if (index == 'list' && element.length > 0)
+                 {
+                    this.submodel_ref.showLoaded();
+                    this.submodel_ref.setList(element);
+                 }
+               });
+            },
+            () => {
+                this.submodel_ref.showLoadingFailed();
+            }
+        );
+    }
+
+    loadListOfObjects(){
+        this.submodel_list_of_objects.showLoading();
+        ajax_call(
+            "POST",
+            "{% url 'get_list_of_objects' %}",
+            {'model_id': this.submodel_source.getValue(), 'submodel_id': this.submodel_ref.getValue()},
+            (data) =>
+            {
+                $.each(data, (index, element) => {
+                    if (index == 'list' && element.length > 0)
+                    {
+                        this.submodel_list_of_objects.showLoaded();
+                        this.submodel_list_of_objects.setList(element);
+
+                    }
+                });
+            },
+            () =>
+            {
+                this.submodel_list_of_objects.showLoadingFailed();
+            }
+
+        );
+    }
+
+    addDeletedObject(){
+
+        this.list_deletions.add(this.submodel_list_of_objects.getValue(), this.submodel_list_of_objects.getLabel());
+    }
+
+    show(){
+        $("#" + this.field).on('shown.bs.modal', () => { $("#submodel_name").focus(); });
+        $("#" + this.field).modal('show');
+        $('.nav-tabs a[href="#general"]').tab('show');
+    }
+
+    new()
+    {
+        $("#modal_title").html("New submodel");
+
+
+        this.clearForms();
+
+        $("#submodel_submodel_ref").val("");
+        $("#submodel_submodel_ref_label").html("Choose a submodel");
+
+        $("#general").addClass('active in');
+        this.updateSubmodelType();
+        this.resetErrors();
+
+        this.show();
+        this.nb_deletions = 0;
+        $("#body_list_of_deletions").children().each(function() {
+          $(this).remove();
+        });
+    }
+
+    load(submodel_id)
+    {
+
+        $("#modal_submodel-title").html("Edit submodel");
+
+        let model_loaded = 0;
+        ajax_call(
+            "POST",
+            "{% url 'get_submodel' %}", {'id': submodel_id},
+            (data) =>
+            {
+               $.each(data, (index, element) =>
+               {
+                   if (index === "id") {
+                       $("#modal_submodel_id").val(element.toString());
+
+                   } else if (index === "name") {
+                       this.submodel_name.setValue(element);
+
+                   } else if (index === "sbml_id") {
+                       this.submodel_sbmlid.setValue(element);
+
+                   } else if (index === "type") {
+
+                        this.submodel_type.setValue(element);
+
+                        if (element === 0) {
+                            this.submodel_type.setLabel("Internal model definition");
+                        } else {
+                            this.submodel_type.setLabel("External model definition");
+                        }
+
+                        this.updateSubmodelType();
+
+                   } else if (index === "source") {
+                       this.submodel_source.setValue(element);
+                       this.loadSubmodels();
+                        model_loaded++;
+
+                   } else if (index === "source_name") {
+                       this.submodel_source.setLabel(element);
+
+                   } else if (index === "source_submodel_ref") {
+                       this.submodel_ref.setValue(element);
+                       model_loaded++;
+
+                   } else if (index === "source_submodel_ref_name") {
+                       this.submodel_ref.setLabel(element);
+
+                   } else if (index === "time_conversion_factor") {
+                       this.time_conversion.setValue(element);
+
+                   } else if (index === "time_conversion_factor_name") {
+
+                       if (element !== ""){
+                           this.time_conversion.setLabel(element);
+
+                       } else {
+                           this.time_conversion.setLabel("Select a time conversion factor");
+
+                       }
+
+                   } else if (index === "extent_conversion_factor") {
+                       this.extent_conversion.setValue(element);
+
+                   } else if (index === "extent_conversion_factor_name") {
+
+                       if (element !== ""){
+                           this.extent_conversion.setLabel(element);
+
+                       } else {
+                           this.extent_conversion.setLabel("Select an extent conversion factor");
+
+                       }
+                   }
+                   if (model_loaded == 2) { model_loaded = 0; this.loadListOfObjects(); }
+               });
+               this.submodel_sbmlid.check();
+               this.resetErrors();
+            },
+            () => { console.log("failed"); }
+        )
+
+        this.show();
+    }
+
+    checkErrors()
+    {
+        super.checkErrors();
+
+        if (this.submodel_type.getValue() === 1){
+
+            this.submodel_source.check();
+
+            if (this.submodel_source.hasError())
+            {
+                this.addError(this.submodel_source);
+                this.submodel_source.highlight();
+                this.nb_errors++;
+            }
+        }
+
+    }
+
+    save()
+    {
+        this.resetErrors();
+        this.checkErrors();
+
+        if (this.nb_errors == 0) {
+            $("#modal_submodel").hide();
+        }
+
+        return (this.nb_errors == 0);
     }
 }
+
+
+let form_submodel = new SubmodelForm("modal_submodel");
+

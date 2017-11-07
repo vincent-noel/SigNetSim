@@ -120,6 +120,8 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 	def saveParameter(self, request):
 
 		self.form.read(request)
+
+		self.form.printErrors()
 		if not self.form.hasErrors():
 
 			if self.form.isNew():
@@ -140,6 +142,7 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.saveModel(request)
 			self.loadParameters()
 			self.form.clear()
+
 
 	def loadParameters(self):
 

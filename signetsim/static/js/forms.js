@@ -146,7 +146,7 @@ class FloatForm extends Form
 
 class SbmlIdForm extends HasIndicator(Form)
 {
-    constructor(field, description, has_scope=false, scope_field="", default_value="")
+    constructor(field, description, default_value="", has_scope=false, scope_field="")
     {
         super(field, description, default_value, () => { this.check(); });
         this.initial_value = "";
@@ -176,51 +176,60 @@ class SbmlIdForm extends HasIndicator(Form)
         let scope;
         if (this.hasScope){ scope = this.getScope(); }
 
-        // We actually only need to check
-        if (
-            // If there is no scope, but the value has been changed
-            (!this.hasScope && this.initial_value !== sbml_id)
+        if (sbml_id !== "")
+        {
+            // We actually only need to check
+            if (
+                // If there is no scope, but the value has been changed
+                (!this.hasScope && this.initial_value !== sbml_id)
 
-            // Or if there is a scope, and either the value or the scope has been changed
-            || (this.hasScope && (this.initial_value !== sbml_id || this.initial_scope !== scope))
-        ){
+                // Or if there is a scope, and either the value or the scope has been changed
+                || (this.hasScope && (this.initial_value !== sbml_id || this.initial_scope !== scope))
+            ){
 
-            this.setIndicatorValidating();
-            let post_data;
-            if (!this.hasScope){
-                post_data = {'sbml_id': sbml_id };}
-            else{
-                post_data = {'sbml_id': sbml_id, 'reaction_id': scope};}
+                this.setIndicatorValidating();
+                let post_data;
+                if (!this.hasScope){
+                    post_data = {'sbml_id': sbml_id };}
+                else{
+                    post_data = {'sbml_id': sbml_id, 'reaction_id': scope};}
 
-            ajax_call(
-                "POST", getSbmlIdValidatorURL(),
-                post_data,
-                (data) => {
-                    $.each(data, (index, element) => {
-                        if (index === 'error')
-                        {
-                            this.setError(element.toString());
-                            if (element == "") {
-                                this.setIndicatorValid();
-                            } else {
+                ajax_call(
+                    "POST", getSbmlIdValidatorURL(),
+                    post_data,
+                    (data) => {
+                        $.each(data, (index, element) => {
+                            if (index === 'error')
+                            {
+                                this.setError(element.toString());
+                                if (element == "") {
+                                    this.setIndicatorValid();
+                                } else {
+                                    this.setIndicatorInvalid();
+                                }
+                            }
+                            else
+                            {
+                                this.setError("Unkown error while checking the identifier");
                                 this.setIndicatorInvalid();
                             }
-                        }
-                        else
-                        {
-                            this.setError("Unkown error while checking the identifier");
-                            this.setIndicatorInValid();
-                        }
-                    });
-                },
-                () => {
-                    this.setError("Connection failed while checking the identifier");
-                    this.setIndicatorInvalid();
-                }
-            );
+                        });
+                    },
+                    () => {
+                        this.setError("Connection failed while checking the identifier");
+                        this.setIndicatorInvalid();
+                    }
+                );
+            }
+            // Otherwise no need to check, it's valid
+            else { this.setIndicatorValid(); super.clearError(); }
         }
-        // Otherwise no need to check, it's valid
-        else { this.setIndicatorValid(); super.clearError(); }
+        else
+        {
+            this.setError("Please input an identifier");
+            this.setIndicatorInvalid();
+        }
+
     }
 
     clear()
@@ -345,6 +354,7 @@ class Dropdown extends Form {
 
         this.default_label = default_label;
         this.required = required;
+        this.post_treatment = post_treatment;
         $("#" + this.field + "_list li").on('click', (element) =>
         {
             this.clearError();
@@ -384,6 +394,76 @@ class Dropdown extends Form {
         if (this.required && Number.isNaN(this.getValue())){
             this.setError("isn't selected");
         }
+    }
+
+    setList(list) {
+        let ul_element = $("#" + this.field + "_list");
+        ul_element.empty();
+
+        for (var value of list) {
+            ul_element.append($("<li>").append($("<a>").attr('href', '#').text(value)));
+        }
+        $("#" + this.field + "_list li").on('click', (element) =>
+        {
+            this.clearError();
+            this.setLabel($(element.currentTarget).text());
+            this.setValue($(element.currentTarget).index());
+
+            if (this.post_treatment !== null) {
+                this.post_treatment();
+            }
+            if (this.required){
+                this.check();
+            }
+        });
+    }
+
+    hide()
+    {
+        $("#" + this.field + "_loaded").removeClass("in");
+        $("#" + this.field + "_loading_failed").removeClass("in");
+        $("#" + this.field + "_loading").removeClass("in");
+    }
+
+    showLoading()
+    {
+        $("#" + this.field + "_loaded").removeClass("in");
+        $("#" + this.field + "_loading_failed").removeClass("in");
+        $("#" + this.field + "_loading").addClass("in");
+    }
+
+    showLoaded()
+    {
+        $("#" + this.field + "_loading").removeClass("in");
+        $("#" + this.field + "_loading_failed").removeClass("in");
+        $("#" + this.field + "_loaded").addClass("in");
+    }
+
+    showLoadingFailed(){
+        $("#" + this.field + "_loading").removeClass("in");
+        $("#" + this.field + "_loaded").removeClass("in");
+        $("#" + this.field + "_loading_failed").addClass("in");
+    }
+}
+
+
+class NoneDropdown extends Dropdown {
+    constructor(field, description="", post_treatment=null, default_value="", default_label="Choose an item", required=false) {
+
+        super(field, description, post_treatment, default_value, default_label, required);
+        $("#" + this.field + "_list li").on('click', (element) =>
+        {
+            this.clearError();
+            this.setLabel($(element.currentTarget).text());
+            this.setValue($(element.currentTarget).index()-2);
+
+            if (post_treatment !== null) {
+                post_treatment();
+            }
+            if (this.required){
+                this.check();
+            }
+        });
     }
 }
 

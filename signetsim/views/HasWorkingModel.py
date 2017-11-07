@@ -286,7 +286,8 @@ class HasWorkingModel(HasWorkingProject, HasVariablesInSession):
 		self.deleteModelFromSession()
 		self.deleteSubmodelFromSession()
 
-		del request.session['loaded_model_filename']
+		if 'loaded_model_filename' in request.session.keys():
+			del request.session['loaded_model_filename']
 
 	def getModelSubmodels(self, request, model_id):
 		""" Returning the submodels of a model available within the project

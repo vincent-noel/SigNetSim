@@ -23,7 +23,7 @@ class CompartmentForm extends FormGroup{
         super();
         this.field = field;
 
-        this.dropdown_unit = new Dropdown("compartment_unit", null, "", "Choose an unit");
+        this.dropdown_unit = new Dropdown("compartment_unit", "The compartment of the species", null, "", "Choose an unit");
         this.addForm(this.dropdown_unit);
 
         this.form_value = new FloatForm("compartment_size", "The size of the compartment", false, 1);

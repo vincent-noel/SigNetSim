@@ -26,13 +26,13 @@ class ParameterForm extends FormGroup{
         this.form_value = new FloatForm("parameter_value", "The value of the parameter", false, "1");
         this.addForm(this.form_value, true);
 
-        this.form_sbmlid = new SbmlIdForm("parameter_sbml_id", "The identifier of the parameter", true, "parameter_scope_value", "");
+        this.form_sbmlid = new SbmlIdForm("parameter_sbml_id", "The identifier of the parameter", "", true, "parameter_scope_value");
         this.addForm(this.form_sbmlid, true);
 
-        this.dropdown_unit = new Dropdown("parameter_unit", null, "", "Choose an unit");
+        this.dropdown_unit = new Dropdown("parameter_unit", "The unit of the parameter", null, "", "Choose an unit");
         this.addForm(this.dropdown_unit);
 
-        this.dropdown_scope = new Dropdown("parameter_scope", () => {form_sbmlid.check();}, "0", "Global");
+        this.dropdown_scope = new Dropdown("parameter_scope", "The scope of the parameter", () => {form_sbmlid.check();}, "0", "Global");
         this.addForm(this.dropdown_scope);
 
         this.form_sboterm = new SBOTermInput("parameter_sboterm");

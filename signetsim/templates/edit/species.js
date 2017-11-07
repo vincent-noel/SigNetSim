@@ -26,13 +26,13 @@ class SpeciesForm extends FormGroup{
         super();
         this.field = field;
 
-        this.form_value_type = new Dropdown("species_value_type", null, "1", "Concentration");
+        this.form_value_type = new Dropdown("species_value_type", "The type of the value of the species", null, "1", "Concentration");
         this.addForm(this.form_value_type);
 
-        this.form_units = new Dropdown("species_unit", null, "", "Choose an unit");
+        this.form_units = new Dropdown("species_unit", "The unit of the species", null, "", "Choose an unit");
         this.addForm(this.form_units);
 
-        this.form_compartment = new Dropdown("species_compartment", null, "0", "{{ list_of_compartments|my_lookup:0 }}");
+        this.form_compartment = new Dropdown("species_compartment", "The compartment of the species", null, "0", "{{ list_of_compartments|my_lookup:0 }}");
         this.addForm(this.form_compartment);
 
         this.form_sbmlid = new SbmlIdForm("species_sbml_id", "The identifier of the species", "");
