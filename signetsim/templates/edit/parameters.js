@@ -38,7 +38,7 @@ class ParameterForm extends FormGroup{
         this.form_sboterm = new SBOTermInput("parameter_sboterm");
         this.addForm(this.form_sboterm);
 
-        this.form_constant = new SliderForm("parameter_constant", "The constant setting of the parameter", 1);
+        this.form_constant = new SliderForm("parameter_constant", "The constant setting of the parameter", true);
         this.addForm(this.form_constant);
 
         this.form_name = new Form("parameter_name", "The name of the parameter", "");

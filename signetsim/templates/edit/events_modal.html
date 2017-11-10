@@ -1,0 +1,114 @@
+{% load bootstrap3 %}
+
+<div class="modal fade in" id="modal_event" tabindex="1" role="dialog" aria-labelledby="New event">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method="post" enctype="multipart/form-data" onsubmit="return form_event.save();">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="save">
+        <input type="hidden" id="event_id" name="event_id" value="">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="modal_event-title">New event</h4>
+        </div>
+        <div class="modal-body">
+					<ul class="nav nav-tabs text-center">
+            <li class="active"><a data-toggle="tab" href="#general">General</a></li>
+            <li><a data-toggle="tab" href="#trigger">Options</a></li>
+            <li><a data-toggle="tab" href="#assignments">Assignments</a></li>
+            <li><a data-toggle="tab" href="#annotation">Annotation</a></li>
+          </ul>
+          <div class="tab-content">
+            <div id="general" class="tab-pane fade in active">
+							{% include 'commons/html/name_input.html' with
+								name="Name"
+								id="event_name"
+								default=""
+								placeholder="Input the name of the event"
+							%}
+							{% include 'commons/html/validated_input.html' with
+								name="Identifier"
+								id="event_sbmlid"
+								placeholder="Input the identifier of the event"
+								default=""
+							%}
+							{% include 'commons/html/validated_input.html' with
+								name="Trigger"
+								id="event_trigger"
+								placeholder="Input the formula for the trigger"
+								default=""
+							%}
+						</div>
+						<div id="trigger" class="tab-pane fade in">
+							{% include 'commons/html/validated_input.html' with
+								name="Priority"
+								id="event_priority"
+								placeholder="Input the formula for the trigger's priority"
+								default=""
+							%}
+							{% include 'commons/html/validated_input.html' with
+								name="Delay"
+								id="event_delay"
+								placeholder="Input the formula for the trigger's delay"
+								default=""
+							%}
+							{% include 'commons/html/toggle_switch.html' with
+								name="Is persistent"
+								id="event_persistent"
+								default=""
+								onclick="form_event.persistent.toggle();"
+							%}
+							{% include 'commons/html/toggle_switch.html' with
+								name="Initial value"
+								id="event_initialvalue"
+								default=""
+								onclick="form_event.initial_value.toggle();"
+							%}
+							{% include 'commons/html/toggle_switch.html' with
+								name="Use values from trigger time"
+								id="event_usetriggertime"
+								default=""
+								onclick="form_event.usetriggertime.toggle();"
+							%}
+						</div>
+						<div id="assignments" class="tab-pane fade in">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th colspan="4" class="col-xs-10">Assignments</th>
+										<th class="col-xs-2 text-right">
+											<button type="button" class="btn btn-primary btn-xs" onclick="form_event.assignments.add();">{% bootstrap_icon "plus" %}</button>
+										</th>
+									</tr>
+								</thead>
+								<tbody id="body_event_assignments">
+								</tbody>
+							</table>
+						</div>
+						<div id="annotation" class="tab-pane fade in">
+								{% include 'commons/html/editable_input.html' with
+								name="SBO term"
+								id="event_sboterm"
+								default=""
+								default_label=""
+								placeholder="Input the event SBO term"
+								validate="form_event.form_sboterm.resolve();"
+							%}
+							{% include 'commons/html/notes_input.html' with
+								name="Notes"
+								id="event_notes"
+								nb_lines=6
+							%}
+						</div>
+					</div>
+          <div class="container-fluid" id="error_modal">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

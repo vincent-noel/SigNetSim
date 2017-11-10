@@ -33,6 +33,7 @@ class ModelEventsForm(ModelParentForm):
 		ModelParentForm.__init__(self, parent)
 
 		self.name = None
+		self.sbmlId = None
 		self.trigger = ""
 		self.delay = None
 		self.priority = None
@@ -45,6 +46,7 @@ class ModelEventsForm(ModelParentForm):
 	def save(self, event):
 
 		event.setName(self.name)
+		event.setSbmlId(self.sbmlId)
 		event.setTrigger(self.trigger)
 		event.setDelay(self.delay)
 		event.setPriority(self.priority)
@@ -69,11 +71,14 @@ class ModelEventsForm(ModelParentForm):
 
 		self.name = self.readString(request, 'event_name',
 									"The name of the event", required=False)
+		self.sbmlId = self.readString(request, 'event_sbmlid',
+									"The identifier of the event")
 
 		self.readTrigger(request)
 		self.readAssignments(request)
 		self.readOptions(request)
 
+		self.printErrors()
 	def readTrigger(self, request):
 
 		self.trigger = self.readMath(request, 'event_trigger',
@@ -119,11 +124,15 @@ class ModelEventsForm(ModelParentForm):
 		self.persistent = self.readOnOff(request, 'event_persistent',
 										"The persistent property of the event")
 
+		print self.persistent
 
 		self.initialvalue = self.readOnOff(request, 'event_initialvalue',
 											"The initial value of the event")
 
+		print self.initialvalue
 
 		self.useValuesFromTriggerTime = self.readOnOff(request,
 														'event_usetriggertime',
 					"The use values from trigger time property of the event")
+
+		print self.useValuesFromTriggerTime

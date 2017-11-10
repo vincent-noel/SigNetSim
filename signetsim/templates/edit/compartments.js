@@ -35,7 +35,7 @@ class CompartmentForm extends FormGroup{
         this.form_sboterm = new SBOTermInput("compartment_sboterm");
         this.addForm(this.form_sboterm);
 
-        this.form_constant = new SliderForm("compartment_constant", "The constant parameter of the compartment", 1);
+        this.form_constant = new SliderForm("compartment_constant", "The constant parameter of the compartment", true);
         this.addForm(this.form_constant);
 
         this.form_name = new Form("compartment_name", "The name of the compartment", "");

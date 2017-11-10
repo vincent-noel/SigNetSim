@@ -210,13 +210,13 @@ class SbmlIdForm extends HasIndicator(Form)
                             }
                             else
                             {
-                                this.setError("Unkown error while checking the identifier");
+                                this.setError("couldn't be verified : unknown error");
                                 this.setIndicatorInvalid();
                             }
                         });
                     },
                     () => {
-                        this.setError("Connection failed while checking the identifier");
+                        this.setError("couldn't be verified : connection failed.");
                         this.setIndicatorInvalid();
                     }
                 );
@@ -226,7 +226,7 @@ class SbmlIdForm extends HasIndicator(Form)
         }
         else
         {
-            this.setError("Please input an identifier");
+            this.setError("is empty !");
             this.setIndicatorInvalid();
         }
 
@@ -244,9 +244,10 @@ class SbmlIdForm extends HasIndicator(Form)
 
 class MathForm extends HasIndicator(Form)
 {
-    constructor(field, description, default_value="")
+    constructor(field, description, default_value="", required=false)
     {
         super(field, description, default_value);
+        this.required = required;
         $("#" + this.field).on('paste keyup', () => { this.check(); });
 
     }
@@ -255,26 +256,37 @@ class MathForm extends HasIndicator(Form)
     {
         this.setIndicatorValidating();
 
-        ajax_call(
-            "POST", getMathValidatorURL(),
-            {'math' : this.getValue()},
-            (data) => {
-                $.each(data, (index, element) => {
-                    if (index === "valid" && element === "true"){
-                        this.clearError();
-                        this.setIndicatorValid();
-
-                    } else {
-                        this.setError("is invalid");
-                        this.setIndicatorInvalid();
-                    }
-                });
-            },
-            () => {
-                this.setError("couldn't be validated : unable to connect");
+        if (this.getValue() === "") {
+            if (this.required) {
+                this.setError("is empty !");
                 this.setIndicatorInvalid();
             }
-        );
+            else{
+                this.setIndicatorEmpty();
+            }
+        } else {
+            ajax_call(
+                "POST", getMathValidatorURL(),
+                {'math' : this.getValue()},
+                (data) => {
+                    $.each(data, (index, element) => {
+                        if (index === "valid" && element === "true"){
+                            this.clearError();
+                            this.setIndicatorValid();
+
+                        } else {
+                            this.setError("is invalid");
+                            this.setIndicatorInvalid();
+                        }
+                    });
+                },
+                () => {
+                    this.setError("couldn't be validated : unable to connect");
+                    this.setIndicatorInvalid();
+                }
+            );
+        }
+
     }
 
     clear() {
@@ -294,6 +306,16 @@ class SliderForm extends Form
     getValue()
     {
         return $('#' + this.field).prop('checked');
+    }
+
+    setValue(value){
+        if (parseInt(value) === 1){
+            this.switch_on();
+
+        } else {
+            this.switch_off();
+
+        }
     }
 
     switch_on()
@@ -337,9 +359,7 @@ class SliderForm extends Form
 
     clear()
     {
-        super.clear();
-
-        if (this.default_value === 1) {
+        if (this.default_value) {
             this.switch_on();
         } else {
             this.switch_off();
@@ -546,13 +566,15 @@ class SBOTermInput extends EditableInput
 
 
 class ListForm {
-    constructor(field, description, form_name, post_treatment=null, removable=true) {
+    constructor(field, description, parent_form_name, form_name, post_treatment=null, removable=true) {
         this.field = field;
         this.description = description;
+        this.parent_form_name = parent_form_name;
         this.form_name = form_name;
         this.index = 0;
         this.post_treatment = post_treatment;
         this.removable = removable;
+        this.error_messages = [];
     }
 
     add(content="", script="")
@@ -567,7 +589,7 @@ class ListForm {
                     .append(
                         $("<button>").attr({
                             'type': 'button',
-                            'onclick': this.form_name + ".remove(" + this.index + ")",
+                            'onclick': this.parent_form_name + "." + this.form_name + ".remove(" + this.index + ")",
                             'class': 'btn btn-danger btn-xs'
                         })
                         .append(
@@ -603,6 +625,7 @@ class ListForm {
 
     update()
     {
+
         if (this.post_treatment !== null) {
             this.post_treatment();
         }
@@ -610,7 +633,7 @@ class ListForm {
 
     clear()
     {
-        $("#body_" + this.field + "s").children("tr").each((index, element) => {$(element).remove();});
+        $("#body_" + this.field + "s").empty();
         this.index = 0;
     }
 }
@@ -647,6 +670,13 @@ class FormGroup {
                     <strong>Error : </strong>" + form.description + " " + form.error_message + "\
                 </span><br/>"
             );
+        }
+    }
+    removeForm(form){
+        let t_index = this.list.indexOf(form);
+        if (t_index > -1){
+            this.list.splice(t_index, 1);
+            this.listErrorChecking.splice(t_index, 1);
         }
     }
 

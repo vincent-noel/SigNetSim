@@ -5,8 +5,8 @@
 
 class ListOfDeletedObjects extends ListForm{
 
-    constructor(field, description, form_name, post_treatment=null) {
-        super(field, description, form_name, post_treatment, true);
+    constructor(field, description, parent_form_name, form_name, post_treatment=null) {
+        super(field, description, parent_form_name, form_name, post_treatment, true);
     }
 
     add(object_id="", object_name="Object"){
@@ -117,7 +117,7 @@ class SubmodelForm extends FormGroup {
          this.list_deletions = new ListOfDeletedObjects(
             "deletion",
             "The list of objects to be deleted",
-            "form_submodel.list_deletions", null
+            "form_submodel", "list_deletions", null
         );
         this.addForm(this.list_deletions);
     }

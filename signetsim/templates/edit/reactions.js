@@ -20,8 +20,8 @@
 
 class ListOfSpeciesReference extends ListForm{
 
-    constructor(field, description, form_name, post_treatment=null) {
-        super(field, description, form_name, post_treatment, true);
+    constructor(field, description, parent_form_name, form_name, post_treatment=null) {
+        super(field, description, parent_form_name, form_name, post_treatment, true);
     }
 
     add(species_stoichiometry="1", species_id="", species_name="Choose a species"){
@@ -115,8 +115,8 @@ class ListOfSpeciesReference extends ListForm{
 
 class ListOfParameters extends ListForm{
 
-    constructor(field, description, form_name, post_treatment=null, nb_parameters=0) {
-        super(field, description, form_name, post_treatment, false);
+    constructor(field, description, parent_form_name, form_name, post_treatment=null, nb_parameters=0) {
+        super(field, description, parent_form_name, form_name, post_treatment, false);
         this.nb_parameters = nb_parameters;
         this.form_local_parameters = null;
     }
@@ -198,8 +198,8 @@ class ListOfParameters extends ListForm{
 
 class ListOfLocalParameters extends ListForm{
 
-    constructor(field, description, form_name, post_treatment=null, list_of_parameters=null) {
-        super(field, description, form_name, post_treatment, true);
+    constructor(field, description, parent_form_name, form_name, post_treatment=null, list_of_parameters=null) {
+        super(field, description, parent_form_name, form_name, post_treatment, true);
         this.local_parameters = [];
         this.list_of_parameters = list_of_parameters
     }
@@ -307,6 +307,12 @@ class FormReaction extends FormGroup{
         this.nb_parameters = nb_parameters;
         this.selected_parameters = []
 
+        this.form_id = new Form("reaction_id", "The id of the reaction", "");
+        this.addForm(this.form_id);
+
+        this.form_name = new Form("reaction_name", "The name of the reaction", "");
+        this.addForm(this.form_name);
+
         this.form_sbmlid = new SbmlIdForm("reaction_sbml_id", "The identifier of the reaction", "");
         this.addForm(this.form_sbmlid, true);
 
@@ -316,7 +322,7 @@ class FormReaction extends FormGroup{
         this.form_list_reactants = new ListOfSpeciesReference(
             "reaction_reactant",
             "The list of reactants",
-            "form_reaction.form_list_reactants",
+            "form_reaction", "form_list_reactants",
             ()=>{this.buildReactionDescription();}
         );
         this.addForm(this.form_list_reactants);
@@ -324,14 +330,14 @@ class FormReaction extends FormGroup{
         this.form_list_modifiers = new ListOfSpeciesReference(
             "reaction_modifier",
             "The list of modifiers",
-            "form_reaction.form_list_modifiers", ()=>{this.buildReactionDescription();}
+            "form_reaction", "form_list_modifiers", ()=>{this.buildReactionDescription();}
         );
         this.addForm(this.form_list_modifiers);
 
         this.form_list_products = new ListOfSpeciesReference(
             "reaction_product",
             "The list of products",
-            "form_reaction.form_list_products",
+            "form_reaction", "form_list_products",
             ()=>{this.buildReactionDescription();}
         );
         this.addForm(this.form_list_products);
@@ -339,7 +345,7 @@ class FormReaction extends FormGroup{
         this.form_parameters = new ListOfParameters(
             "reaction_parameter",
             "The list of reaction parameters",
-            "form_reaction.form_parameters",
+            "form_reaction", "form_parameters",
             null,
             nb_parameters
         );
@@ -348,7 +354,7 @@ class FormReaction extends FormGroup{
         this.form_local_parameters = new ListOfLocalParameters(
             "local_parameter",
             "The list of local parameters",
-            "form_reaction.form_local_parameters",
+            "form_reaction", "form_local_parameters",
             null,
             this.form_parameters
         );
@@ -359,7 +365,7 @@ class FormReaction extends FormGroup{
             "reaction_type",
             "The type of the reaction",
             ()=>{this.select_reaction_type();},
-            "0",
+            false,
             "{{reaction_types|my_lookup:0}}"
         )
         this.addForm(this.form_reaction_type);
@@ -380,13 +386,8 @@ class FormReaction extends FormGroup{
         this.form_notes = new Form("reaction_notes", "The notes of the reaction", "");
         this.addForm(this.form_notes);
 
-        this.form_id = new Form("reaction_id", "The id of the reaction", "");
-        this.addForm(this.form_id);
 
-        this.form_name = new Form("reaction_name", "The name of the reaction", "");
-        this.addForm(this.form_name);
     }
-
 
     buildReactionDescription()
     {
