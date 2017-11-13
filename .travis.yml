@@ -15,10 +15,10 @@ env:
 
 before_install:
 - pip install coveralls
-- docker pull signetsim/signetsim:$DISTRIB
+- docker pull signetsim/travis_testenv:$DISTRIB
 
 install:
-- docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/signetsim:$DISTRIB bash
+- docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/travis_testenv:$DISTRIB bash
 - docker exec test_env chown -R www-data:www-data /home/travis/build/vincent-noel/SigNetSim
 - docker exec test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/install.sh
 

@@ -96,6 +96,7 @@ class TestEvent(TestCase):
 		response_save_event = c.post('/edit/events/', {
 			'action': 'save',
 			'event_id': '',
+			'event_sbmlid': 'test_event',
 			'event_name': "Test event",
 			'event_trigger': "time==0",
 			'event_priority': "",
@@ -151,6 +152,7 @@ class TestEvent(TestCase):
 		response_save_event = c.post('/edit/events/', {
 			'action': 'save',
 			'event_id': '0',
+			'event_sbmlid': 'test_event',
 			'event_name': "Test event",
 			'event_trigger': "time==100",
 			'event_priority': "",

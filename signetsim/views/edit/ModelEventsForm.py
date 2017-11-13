@@ -124,15 +124,9 @@ class ModelEventsForm(ModelParentForm):
 		self.persistent = self.readOnOff(request, 'event_persistent',
 										"The persistent property of the event")
 
-		print self.persistent
-
 		self.initialvalue = self.readOnOff(request, 'event_initialvalue',
 											"The initial value of the event")
-
-		print self.initialvalue
 
 		self.useValuesFromTriggerTime = self.readOnOff(request,
 														'event_usetriggertime',
 					"The use values from trigger time property of the event")
-
-		print self.useValuesFromTriggerTime
