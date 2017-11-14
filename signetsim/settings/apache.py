@@ -41,7 +41,7 @@ from django.template import base
 base.tag_re = re.compile(base.tag_re.pattern, re.DOTALL)
 
 # Loading signetsim settings
-settings = json.loads(open(os.path.join(BASE_DIR, 'settings/settings.json')).read())
+settings = json.loads(open(os.path.join(BASE_DIR, 'data/settings/settings.json')).read())
 
 BASE_URL = str(settings['base_url'])
 
