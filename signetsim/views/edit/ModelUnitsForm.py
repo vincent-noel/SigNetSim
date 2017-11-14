@@ -72,25 +72,25 @@ class ModelUnitsForm(ModelParentForm):
 		self.listOfUnits = []
 		i = 0
 
-		while ("unit_id_%d" % i) in request.POST:
+		while ("subunit_id_%d" % i) in request.POST:
 			t_unit = self.readInt(
-				request, 'unit_id_%d' % i,
+				request, 'subunit_id_%d' % i,
 				"the kind of the unit #%d" % i,
 				max_value=len(Unit.unit_id)
 			)
 
 			t_exponent = self.readInt(
-				request, 'unit_exponent_%d' % i,
+				request, 'subunit_exponent_%d' % i,
 				"the exponent of the unit #%d" % i
 			)
 
 			t_scale = self.readInt(
-				request, 'unit_scale_%d' % i,
+				request, 'subunit_scale_%d' % i,
 				"the scale of the unit #%d" % i
 			)
 
 			t_multiplier = self.readFloat(
-				request, 'unit_multiplier_%d' % i,
+				request, 'subunit_multiplier_%d' % i,
 				"the multiplier of the unit #%d" % i
 			)
 

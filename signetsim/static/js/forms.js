@@ -566,7 +566,7 @@ class SBOTermInput extends EditableInput
 
 
 class ListForm {
-    constructor(field, description, parent_form_name, form_name, post_treatment=null, removable=true) {
+    constructor(field, description, parent_form_name, form_name, post_treatment=null, removable=true, editable=false) {
         this.field = field;
         this.description = description;
         this.parent_form_name = parent_form_name;
@@ -574,44 +574,65 @@ class ListForm {
         this.index = 0;
         this.post_treatment = post_treatment;
         this.removable = removable;
+        this.editable = editable;
         this.error_messages = [];
     }
 
     add(content="", script="")
     {
-        if (this.removable) {
+        if (this.removable || this.editable)
+        {
+//            let buttons = $("<td>").attr({'class': 'col-xs-2 text-right'});
+            let buttons = $("<div>").attr({'class': 'form-inline pull-right'});
 
-            $("#body_" + this.field + "s")
-            .append($("<tr>").attr({'class': 'row', 'id': this.field + "_" + this.index.toString() + "_tr"})
-                .append(
-                    content,
-                    $("<td>").attr({'class': 'col-xs-2 text-right'})
+            if (this.editable){
+                buttons.append(
+                    $("<button>").attr({
+                        'type': 'button',
+                        'onclick': this.parent_form_name + "." + this.form_name + ".edit(" + this.index + ")",
+                        'class': 'btn btn-primary btn-xs'
+                    })
                     .append(
-                        $("<button>").attr({
-                            'type': 'button',
-                            'onclick': this.parent_form_name + "." + this.form_name + ".remove(" + this.index + ")",
-                            'class': 'btn btn-danger btn-xs'
+                        $("<span>").attr({
+                            'class': 'glyphicon glyphicon-pencil'
                         })
-                        .append(
-                            $("<span>").attr({
-                                'class': 'glyphicon glyphicon-remove'
-                            })
-                        )
-                    ),
-                    $("<script>").attr('type', 'application/javascript')
-                    .text(script)
+                    )
+                );
+            }
+
+            if (this.removable){
+                if (this.editable) {
+                    buttons.append("&nbsp;");
+                }
+
+                buttons.append(
+                    $("<button>").attr({
+                        'type': 'button',
+                        'onclick': this.parent_form_name + "." + this.form_name + ".remove(" + this.index + ")",
+                        'class': 'btn btn-danger btn-xs'
+                    })
+                    .append(
+                        $("<span>").attr({
+                            'class': 'glyphicon glyphicon-remove'
+                        })
+                    )
+                );
+            }
+
+            $("#body_" + this.field + "s").append(
+                $("<tr>").attr({'class': 'row', 'id': this.field + "_" + this.index.toString() + "_tr"}).append(
+                    content,
+                    $("<td>").attr({'class': 'col-xs-2 text-right'}).append(buttons),
+                    $("<script>").attr('type', 'application/javascript').text(script)
                 )
             );
 
         } else {
-             $("#body_" + this.field + "s")
-            .append(
-                $("<tr>").attr({'class': 'row', 'id': this.field + "_" + this.index.toString() + "_tr"})
-                .append(
-                    content,
-                    $("<script>").attr('type', 'application/javascript')
-                    .text(script)
-                )
+
+            $("#body_" + this.field + "s").append(
+                content,
+                $("<script>").attr('type', 'application/javascript')
+                .text(script)
             );
         }
 
@@ -621,6 +642,11 @@ class ListForm {
     remove(element_id)
     {
         $("#" + this.field + "_" + element_id + "_tr").remove();
+    }
+
+    edit(element_id)
+    {
+
     }
 
     update()

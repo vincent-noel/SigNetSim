@@ -97,14 +97,14 @@ class TestUnits(TestCase):
 			'unit_definition_id': '',
 			'unit_definition_name': "Nanomolars",
 			'unit_definition_identifier': "nanomolars",
-			'unit_id_0': Unit.unit_id.values().index("mole"),
-			'unit_exponent_0': 1,
-			'unit_scale_0': -9,
-			'unit_multiplier_0': 1,
-			'unit_id_1': Unit.unit_id.values().index("litre"),
-			'unit_exponent_1': -1,
-			'unit_scale_1': 1,
-			'unit_multiplier_1': 1,
+			'subunit_id_0': Unit.unit_id.values().index("mole"),
+			'subunit_exponent_0': 1,
+			'subunit_scale_0': -9,
+			'subunit_multiplier_0': 1,
+			'subunit_id_1': Unit.unit_id.values().index("litre"),
+			'subunit_exponent_1': -1,
+			'subunit_scale_1': 1,
+			'subunit_multiplier_1': 1,
 		})
 
 		self.assertEqual(response_save_unit.status_code, 200)
