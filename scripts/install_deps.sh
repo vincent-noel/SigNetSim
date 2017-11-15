@@ -2,6 +2,7 @@
 EXEC_DIR=$PWD
 CMD=$0
 
+apt-get -qq update
 apt-get install -y realpath
 
 if [ "${CMD:0:1}" == "/" ]
