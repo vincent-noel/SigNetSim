@@ -144,8 +144,8 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 		folder_id = str(request.POST['id'])
 
-		if self.project_id == int(folder_id):
-			self.unsetProject(request)
+		# if self.project_id == int(folder_id):
+		# 	self.unsetProject(request)
 
 		if Project.objects.filter(user=request.user, id=folder_id).exists():
 
