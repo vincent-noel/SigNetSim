@@ -9,7 +9,7 @@ if [ $1 = "docker" ]; then
         docker-compose build || exit 1;
 
     elif [ $2 = "test" ]; then
-        docker push signetsim/signetsim:test_submodules || exit 1;
+        docker push signetsim/signetsim:develop || exit 1;
 
     fi
 
