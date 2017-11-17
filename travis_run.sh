@@ -5,10 +5,10 @@ if [ $1 = "docker" ]; then
         docker login -u signetsim -p $3
 
     elif [ $2 = "install" ]; then
-        docker build -t signetsim/signetsim:develop scripts/docker || exit 1;
+        docker-compose build || exit 1;
 
     elif [ $2 = "test" ]; then
-        docker push signetsim/signetsim:develop || exit 1;
+        docker push signetsim/signetsim:test_submodules || exit 1;
 
     fi
 

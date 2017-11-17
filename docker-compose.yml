@@ -1,0 +1,8 @@
+#docker-compose.yml
+version: '3.3'
+services:
+  signetsim:
+    build:
+      context: ./
+      dockerfile: ./scripts/docker/Dockerfile
+    image: signetsim/signetsim:test_submodules
