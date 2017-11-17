@@ -6,15 +6,9 @@ liblapack-dev
 libblas-dev
 libatlas-dev
 libatlas-base-dev
-git
 python-pip
-python-dev
-gcc
-g++
-make
 wget
 curl
 realpath
-gnupg
 apache2
 libapache2-mod-wsgi

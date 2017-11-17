@@ -1,6 +1,6 @@
 Django<1.9
 django-bootstrap3
-git+https://github.com/vincent-noel/libSigNetSim.git@develop
+git+https://github.com/vincent-noel/libSigNetSim.git@test_submodules
 mpld3
 dill
 cloudpickle

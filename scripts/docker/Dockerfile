@@ -2,8 +2,8 @@ FROM debian:stretch
 
 MAINTAINER Vincent Noel version: 0.1
 
-RUN apt-get -qq update; apt-get install -y git
-RUN git clone -b develop https://github.com/vincent-noel/SigNetSim.git
+RUN apt-get -qq update
+ADD . /SigNetSim
 RUN /bin/bash /SigNetSim/scripts/install.sh
 
 EXPOSE 80
