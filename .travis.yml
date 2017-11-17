@@ -26,7 +26,7 @@ install:
 - /bin/bash travis_run.sh $DISTRIB install
 
 script:
-- /bin/bash travis_run.sh $DISTRIB test
+- /bin/bash travis_run.sh $DISTRIB script
 
 after_script:
-- coveralls
+- /bin/bash travis_run.sh $DISTRIB after_script
