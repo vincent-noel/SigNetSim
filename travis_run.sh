@@ -2,6 +2,7 @@
 
 if [ $1 = "docker" ]; then
     if [ $2 = "before_install" ]; then
+        pip install -U docker-compose || exit 1;
         docker login -u signetsim -p $3
 
     elif [ $2 = "install" ]; then
