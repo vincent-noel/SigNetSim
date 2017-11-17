@@ -9,8 +9,8 @@ if [ $1 = "docker" ]; then
         docker-compose build || exit 1;
 
     elif [ $2 = "script" ]; then
-        docker run --name signetsim -p 8080:80 -d signetsim/signetsim:develop || exit 1;
-        APACHE_RETURN=`wget -q -O - localhost:8080 | grep \<title\> | cut -d" " -f2`
+        docker run --name signetsim -p 80:80 -d signetsim/signetsim:develop || exit 1;
+        APACHE_RETURN=`wget -q -O - localhost:80 | grep \<title\> | cut -d" " -f2`
         exit `expr ${APACHE_RETURN} != Projects`
 
     elif [ $2 = "after_script" ]; then

@@ -34,9 +34,9 @@ from signetsim.managers.simulations import deleteSimulation, copySimulation
 from signetsim.managers.optimizations import deleteOptimization
 
 from libsignetsim import CombineArchive
-from libsignetsim.combine.CombineException import CombineException
+from libsignetsim import CombineException
 from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.sedml.SedmlDocument import SedmlDocument
+from libsignetsim import SedmlDocument
 from libsignetsim.model.ModelException import ModelException
 from libsignetsim import Settings
 

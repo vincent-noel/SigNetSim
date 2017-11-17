@@ -27,7 +27,7 @@
 from django.views.generic import TemplateView
 
 from libsignetsim.LibSigNetSimException import LibSigNetSimException
-from libsignetsim.simulation.SteadyStatesSimulation import SteadyStatesSimulation
+from libsignetsim import SteadyStatesSimulation
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.simulate.SedmlWriter import SedmlWriter

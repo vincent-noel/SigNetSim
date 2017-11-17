@@ -30,7 +30,7 @@ from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.models import Optimization, SbmlModel, Experiment
 from signetsim.views.fit.DataOptimizationForm import DataOptimizationForm
 
-from libsignetsim.optimization.ModelVsTimeseriesOptimization import ModelVsTimeseriesOptimization
+from libsignetsim import ModelVsTimeseriesOptimization
 
 import threading
 

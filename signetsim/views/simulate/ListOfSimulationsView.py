@@ -31,7 +31,7 @@ from signetsim.views.HasWorkingProject import HasWorkingProject
 from signetsim.models import SEDMLSimulation, SbmlModel
 from signetsim.forms import DocumentForm
 from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.sedml.SedmlDocument import SedmlDocument
+from libsignetsim import SedmlDocument
 from os.path import join, basename, splitext
 from os import remove
 

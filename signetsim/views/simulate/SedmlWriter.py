@@ -23,7 +23,7 @@
 	This file ...
 
 """
-from libsignetsim.sedml.SedmlDocument import SedmlDocument
+from libsignetsim import SedmlDocument
 
 class SedmlWriter(object):
 
