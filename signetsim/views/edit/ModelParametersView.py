@@ -30,7 +30,7 @@ from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from signetsim.views.edit.ModelParametersForm import ModelParametersForm
 
-from libsignetsim.model.ModelException import ModelException
+from libsignetsim import ModelException
 
 
 class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):

@@ -24,7 +24,7 @@
 
 """
 
-from libsignetsim.model.math.MathFormula import MathFormula
+from libsignetsim import MathFormula
 
 from re import match
 

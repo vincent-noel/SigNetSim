@@ -25,7 +25,7 @@
 """
 
 from django.views.generic import TemplateView
-from libsignetsim.model.ModelException import ModelException
+from libsignetsim import ModelException
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from ModelSpeciesForm import ModelSpeciesForm

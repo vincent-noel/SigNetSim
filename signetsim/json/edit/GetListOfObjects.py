@@ -25,7 +25,7 @@
 """
 
 from django.conf import settings
-from libsignetsim.model.SbmlDocument import SbmlDocument
+from libsignetsim import SbmlDocument
 from libsignetsim.model.Variable import Variable
 from os.path import join
 

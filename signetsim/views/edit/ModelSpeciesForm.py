@@ -24,7 +24,7 @@
 
 """
 
-from libsignetsim.model.ModelException import ModelException
+from libsignetsim import ModelException
 from ModelParentForm import ModelParentForm
 
 class ModelSpeciesForm(ModelParentForm):

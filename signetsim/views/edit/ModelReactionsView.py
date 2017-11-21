@@ -27,8 +27,7 @@
 from django.views.generic import TemplateView
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from libsignetsim.model.sbml.KineticLaw import KineticLaw
-from libsignetsim.model.ModelException import ModelException
+from libsignetsim import KineticLaw, ModelException
 from ModelReactionsForm import ModelReactionsForm
 
 class ModelReactionsView(TemplateView, HasWorkingModel, HasErrorMessages):

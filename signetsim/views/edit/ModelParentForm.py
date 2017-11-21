@@ -24,8 +24,6 @@
 
 """
 
-from libsignetsim.model.math.MathFormula import MathFormula
-from libsignetsim.model.ModelException import ModelException
 from signetsim.views.HasErrorMessages import HasErrorMessages
 
 

@@ -26,7 +26,7 @@
 
 from django.test import TestCase, Client
 from signetsim.models import User, Project, SbmlModel
-from libsignetsim.model.SbmlDocument import SbmlDocument
+from libsignetsim import SbmlDocument
 from django.conf import settings
 from os.path import dirname, join
 

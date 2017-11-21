@@ -24,12 +24,7 @@
 
 """
 
-from django.conf import settings
-from libsignetsim.model.Model import Model
-from libsignetsim.model.ModelException import ModelException
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.sbml.KineticLaw import KineticLaw
-from os.path import join
+from libsignetsim import KineticLaw
 
 from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel

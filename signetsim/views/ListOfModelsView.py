@@ -36,8 +36,7 @@ from django.shortcuts import redirect
 from signetsim.models import SbmlModel, new_model_filename
 from signetsim.forms import DocumentForm
 
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.ModelException import ModelException, MissingSubmodelException
+from libsignetsim import SbmlDocument, ModelException, MissingSubmodelException
 
 import os
 

@@ -24,8 +24,7 @@
 
 """
 
-from libsignetsim.model.ModelException import ModelException
-from libsignetsim.model.math.MathFormula import MathFormula
+from libsignetsim import ModelException, MathFormula
 
 from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel

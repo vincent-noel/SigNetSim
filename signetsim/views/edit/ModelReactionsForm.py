@@ -24,9 +24,7 @@
 
 """
 
-from libsignetsim.model.ModelException import ModelException
-from libsignetsim.model.math.MathFormula import MathFormula
-from libsignetsim.model.sbml.KineticLaw import KineticLaw
+from libsignetsim import ModelException, KineticLaw
 from signetsim.views.edit.ModelParentForm import ModelParentForm
 
 class ModelReactionsForm(ModelParentForm):

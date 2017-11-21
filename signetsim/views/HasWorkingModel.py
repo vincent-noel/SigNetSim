@@ -29,7 +29,7 @@ from django.http import Http404
 from django.core.exceptions import PermissionDenied
 
 from signetsim.models import SbmlModel
-from libsignetsim.model.SbmlDocument import SbmlDocument
+from libsignetsim import SbmlDocument
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from signetsim.views.HasVariablesInSession import HasVariablesInSession
 import os

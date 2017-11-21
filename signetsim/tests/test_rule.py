@@ -29,8 +29,7 @@ from django.test import TestCase, Client
 
 from signetsim.models import User, Project, SbmlModel
 
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.math.MathFormula import MathFormula
+from libsignetsim import SbmlDocument, MathFormula
 
 from os.path import dirname, join
 from json import loads

@@ -33,8 +33,7 @@ from signetsim.models import Experiment, Condition, Treatment, SEDMLSimulation, 
 from signetsim.managers.data import buildExperiment
 from signetsim.settings.Settings import Settings
 
-from libsignetsim import TimeseriesSimulation
-from libsignetsim.LibSigNetSimException import LibSigNetSimException
+from libsignetsim import TimeseriesSimulation, LibSigNetSimException
 
 from django.conf import settings
 from django.core.files import File

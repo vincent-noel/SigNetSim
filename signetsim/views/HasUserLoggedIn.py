@@ -24,15 +24,6 @@
 
 """
 
-from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
-
-from signetsim.models import SbmlModel
-
-from libsignetsim.model.Model import Model
-from libsignetsim.model.ModelException import ModelException
-# from signetsim.views.HasWorkingProject import HasWorkingProject
-import os
 
 class HasUserLoggedIn(object):
 

@@ -29,7 +29,7 @@ from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from ModelSubmodelsForm import ModelSubmodelsForm
 from ModelSubmodelSubstitutionForm import ModelSubmodelSubstitutionForm
-from libsignetsim.model.ModelException import ModelException
+from libsignetsim import ModelException
 from libsignetsim.model.Variable import Variable
 from libsignetsim.model.sbml.ReplacedElement import ReplacedElement
 from libsignetsim.model.sbml.ReplacedBy import ReplacedBy

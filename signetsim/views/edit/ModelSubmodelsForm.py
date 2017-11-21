@@ -24,8 +24,7 @@
 
 """
 
-from libsignetsim.model.ModelException import ModelException
-from libsignetsim.model.sbml.container.ListOf import ListOf
+from libsignetsim import ModelException
 from libsignetsim.model.Variable import Variable
 from signetsim.views.edit.ModelParentForm import ModelParentForm
 import os

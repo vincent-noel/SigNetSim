@@ -24,12 +24,6 @@
 
 """
 
-from django.conf import settings
-from libsignetsim.model.Model import Model
-from libsignetsim.model.ModelException import ModelException
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from os.path import join
-
 from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
 

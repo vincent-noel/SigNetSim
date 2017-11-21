@@ -29,8 +29,7 @@ from django.test import TestCase, Client
 
 from signetsim.models import User, Project, SbmlModel
 
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.sbml.KineticLaw import KineticLaw
+from libsignetsim import SbmlDocument, KineticLaw
 from os.path import dirname, join
 from json import loads
 

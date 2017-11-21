@@ -26,16 +26,16 @@
 
 from django.conf import settings
 from django.views.generic import TemplateView
-from django.core.exceptions import ObjectDoesNotExist
 
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.ModelException import ModelException
-from signetsim.models import SbmlModel, Optimization#, FittedSbmlModel
+from libsignetsim import SbmlDocument, ModelException
+from signetsim.models import SbmlModel, Optimization
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 from time import time
 from os.path import dirname, isdir, isfile, join, exists, getsize
 from shutil import rmtree
+
+
 class ListOfOptimizationsView(TemplateView, HasWorkingModel):
 
 	template_name = 'fit/list_of_optimizations.html'
