@@ -32,7 +32,7 @@ class ParameterForm extends FormGroup{
         this.dropdown_unit = new Dropdown("parameter_unit", "The unit of the parameter", null, "", "Choose an unit");
         this.addForm(this.dropdown_unit);
 
-        this.dropdown_scope = new Dropdown("parameter_scope", "The scope of the parameter", () => {form_sbmlid.check();}, "0", "Global");
+        this.dropdown_scope = new Dropdown("parameter_scope", "The scope of the parameter", () => {this.form_sbmlid.check();}, "0", "Global");
         this.addForm(this.dropdown_scope);
 
         this.form_sboterm = new SBOTermInput("parameter_sboterm");

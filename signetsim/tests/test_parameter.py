@@ -157,10 +157,151 @@ class TestParameter(TestCase):
 		self.assertEqual(parameter.getUnits(), sbml_model.listOfUnitDefinitions[2])
 		self.assertEqual(parameter.constant, False)
 
-
 		response_delete_parameter = c.post('/edit/parameters/', {
 			'action': 'delete',
 			'parameter_id': sbml_model.listOfParameters.values().index(parameter)
 		})
 		self.assertEqual(response_delete_parameter.status_code, 200)
 		self.assertEqual(response_delete_parameter.context['getErrors'], [])
+
+
+	def testLocalParameter(self):
+
+		settings.MEDIA_ROOT = "/tmp/"
+
+		user = User.objects.filter(username='test_user')[0]
+		self.assertEqual(len(Project.objects.filter(user=user)), 1)
+		project = Project.objects.filter(user=user)[0]
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
+
+		c = Client()
+		self.assertTrue(c.login(username='test_user', password='password'))
+
+		response_choose_project = c.get('/project/%s/' % project.folder)
+		self.assertRedirects(response_choose_project, '/models/', status_code=302, target_status_code=200)
+
+		files_folder = join(dirname(__file__), "files")
+		model_filename = join(files_folder, "modelqlzB7i.xml")
+
+		response_load_model = c.post('/models/', {
+			'action': 'load_model',
+			'docfile': open(model_filename, 'r')
+		})
+
+		self.assertEqual(response_load_model.status_code, 200)
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 1)
+
+		model = SbmlModel.objects.filter(project=project)[0]
+		sbml_doc = SbmlDocument()
+		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
+		sbml_model = sbml_doc.getModelInstance()
+		parameter = sbml_model.listOfParameters.getBySbmlId('sos_ras_gdp_comp')
+
+		response_get_reaction = c.post('/json/get_reaction/', {
+			'sbml_id': 'reaction_2',
+		})
+
+		self.assertEqual(response_get_reaction.status_code, 200)
+		json_response = loads(response_get_reaction.content)
+		self.assertEqual(json_response[u'kinetic_law'], '-1 * sos_ras_gdp * sos_ras_gdp_decomp + ras_gdp * sos * sos_ras_gdp_comp')
+
+		response_get_parameter = c.post('/json/get_parameter/', {
+			'sbml_id': 'sos_ras_gdp_comp',
+			'reaction': ''
+		})
+
+		self.assertEqual(response_get_parameter.status_code, 200)
+		json_response = loads(response_get_parameter.content)
+		self.assertEqual(json_response[u'id'], sbml_model.listOfParameters.values().index(parameter))
+		self.assertEqual(json_response[u'reaction_id'], "")
+
+		response_to_local_parameter = c.post('/edit/parameters/', {
+			'action': 'save',
+			'parameter_id': json_response[u'id'],
+			'parameter_name': json_response[u'name'],
+			'parameter_sbml_id': json_response[u'sbml_id'],
+			'parameter_value': json_response[u'value'],
+			'parameter_unit': json_response[u'unit_id'],
+			'parameter_constant': "on" if json_response[u'constant'] == 1 else "",
+			'parameter_scope': 1,
+			'parameter_sboterm': "",
+		})
+
+		self.assertEqual(response_to_local_parameter.status_code, 200)
+		self.assertEqual(response_to_local_parameter.context['getErrors'], [])
+		self.assertEqual(response_to_local_parameter.context['form'].getErrors(), [])
+
+		response_get_reaction = c.post('/json/get_reaction/', {
+			'sbml_id': 'reaction_2',
+		})
+
+		self.assertEqual(response_get_reaction.status_code, 200)
+		json_response = loads(response_get_reaction.content)
+		self.assertEqual(
+			json_response[u'kinetic_law'],
+			'-1 * sos_ras_gdp * sos_ras_gdp_decomp + sos_ras_gdp_comp * ras_gdp * sos'
+		)
+
+		sbml_doc = SbmlDocument()
+		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
+		sbml_model = sbml_doc.getModelInstance()
+		reaction = sbml_model.listOfReactions.getBySbmlId('reaction_2')
+		self.assertEqual(
+			str(reaction.kineticLaw.getDefinition().getInternalMathFormula()),
+			"_local_0_sos_ras_gdp_comp*(ras_gdp*sos) + (-sos_ras_gdp)*sos_ras_gdp_decomp"
+		)
+
+		self.assertEqual(sbml_model.listOfParameters.getBySbmlId("sos_ras_gdp_comp"), None)
+
+		response_get_parameter = c.post('/json/get_parameter/', {
+			'sbml_id': 'sos_ras_gdp_comp',
+			'reaction': '1'
+		})
+
+		self.assertEqual(response_get_parameter.status_code, 200)
+		json_response = loads(response_get_parameter.content)
+
+		response_list_parameters = c.get('/edit/parameters/')
+		self.assertEqual(response_list_parameters.status_code, 200)
+		list_of_parameters = [param.getSbmlId() for param in response_list_parameters.context['list_of_parameters']]
+
+
+
+		response_to_global_parameter = c.post('/edit/parameters/', {
+			'action': 'save',
+			'parameter_id': list_of_parameters.index("sos_ras_gdp_comp"),
+			'parameter_name': json_response[u'name'],
+			'parameter_sbml_id': json_response[u'sbml_id'],
+			'parameter_value': json_response[u'value'],
+			'parameter_unit': json_response[u'unit_id'],
+			'parameter_constant': "on" if json_response[u'constant'] == 1 else "",
+			'parameter_scope': 0,
+			'parameter_sboterm': "",
+		})
+
+		self.assertEqual(response_to_global_parameter.status_code, 200)
+		self.assertEqual(response_to_global_parameter.context['getErrors'], [])
+		self.assertEqual(response_to_global_parameter.context['form'].getErrors(), [])
+
+		response_get_reaction = c.post('/json/get_reaction/', {
+			'sbml_id': 'reaction_2',
+		})
+
+		self.assertEqual(response_get_reaction.status_code, 200)
+		json_response = loads(response_get_reaction.content)
+		# print json_response
+		self.assertEqual(
+			json_response[u'kinetic_law'],
+			'-1 * sos_ras_gdp * sos_ras_gdp_decomp + ras_gdp * sos * sos_ras_gdp_comp'
+		)
+
+		sbml_doc = SbmlDocument()
+		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
+		sbml_model = sbml_doc.getModelInstance()
+		reaction = sbml_model.listOfReactions.getBySbmlId('reaction_2')
+		self.assertEqual(
+			str(reaction.kineticLaw.getDefinition().getInternalMathFormula()),
+			"sos*(ras_gdp*sos_ras_gdp_comp) + (-sos_ras_gdp)*sos_ras_gdp_decomp"
+		)
+
+		self.assertEqual(sbml_model.listOfParameters.getBySbmlId("sos_ras_gdp_comp").getSbmlId(), "sos_ras_gdp_comp")

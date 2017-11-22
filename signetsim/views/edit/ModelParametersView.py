@@ -133,12 +133,18 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 			else:
 				if (self.form.scope == 0):
-					parameter = self.getModel().listOfParameters[self.form.id]
+					parameter = self.listOfParameters[self.form.id]
+					if parameter.reaction is not None:
+						# This was a local parameter, being promoted !
+						parameter.toGlobal()
+
 				else:
-					parameter = self.getModel().listOfReactions[self.form.scope-1].listOfLocalParameters[self.form.id]
+					parameter = self.listOfParameters[self.form.id]
+					if parameter.reaction is None:
+						# This was a global parameter, becoming local !
+						parameter.toLocal(self.listOfReactions[self.form.scope-1])
 
 				self.form.save(parameter)
-
 			self.saveModel(request)
 			self.loadParameters()
 			self.form.clear()
@@ -149,7 +155,6 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 		self.listOfParameters = [param for param in self.getModel().listOfParameters.values()]
 		for reaction in self.getModel().listOfReactions.values():
 			self.listOfParameters += [param for param in reaction.listOfLocalParameters.values()]
-			# self.listOfParameters += reaction.listOfLocalParameters.values()
 
 	def loadReactions(self):
 		self.listOfReactions = self.getModel().listOfReactions.values()
