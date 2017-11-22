@@ -39,8 +39,15 @@ class MathValidator(JsonRequest, HasWorkingModel):
 	def post(self, request, *args, **kwargs):
 		self.load(request, *args, **kwargs)
 
+
 		try:
-			t_math = MathFormula(self.model)
+			if 'scope' in request.POST:
+				reaction = self.model.listOfReactions[int(request.POST['scope'])]
+				t_math = MathFormula(self.model, isFromReaction=reaction)
+
+			else:
+				t_math = MathFormula(self.model)
+
 			t_math.setPrettyPrintMathFormula(str(request.POST['math']))
 			self.data.update({'valid': 'true'})
 

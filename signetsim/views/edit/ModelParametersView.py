@@ -105,9 +105,10 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 		try:
 			t_parameter = self.listOfParameters[parameter_id]
 
-			if parameter_id >= len(self.getModel().listOfParameters):
+			if t_parameter.reaction != None:
 				t_reaction = t_parameter.reaction
 				t_reaction.listOfLocalParameters.remove(t_parameter)
+
 			else:
 				self.getModel().listOfParameters.remove(t_parameter)
 
@@ -121,7 +122,6 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 		self.form.read(request)
 
-		self.form.printErrors()
 		if not self.form.hasErrors():
 
 			if self.form.isNew():
@@ -146,9 +146,10 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 	def loadParameters(self):
 
-		self.listOfParameters = self.getModel().listOfParameters.values()
+		self.listOfParameters = [param for param in self.getModel().listOfParameters.values()]
 		for reaction in self.getModel().listOfReactions.values():
-			self.listOfParameters += reaction.listOfLocalParameters.values()
+			self.listOfParameters += [param for param in reaction.listOfLocalParameters.values()]
+			# self.listOfParameters += reaction.listOfLocalParameters.values()
 
 	def loadReactions(self):
 		self.listOfReactions = self.getModel().listOfReactions.values()

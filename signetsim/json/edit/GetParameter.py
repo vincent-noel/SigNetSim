@@ -46,10 +46,10 @@ class GetParameter(JsonRequest, HasWorkingModel):
 				"reaction_id": "", "reaction_name": "", "id": self.getModel().listOfParameters.values().index(parameter)
 			})
 		else:
-			reaction = self.getModel().listOfReactions[int(request.POST['reaction'])]
+			reaction = self.getModel().listOfReactions[int(request.POST['reaction'])-1]
 			parameter = reaction.listOfLocalParameters.getBySbmlId(str(request.POST['sbml_id']))
 			self.data.update({
-				"reaction_id": int(request.POST['reaction']), "reaction_name": reaction.getName(),
+				"reaction_id": (int(request.POST['reaction'])-1), "reaction_name": reaction.getName(),
 				"id": reaction.listOfLocalParameters.values().index(parameter)
 			})
 

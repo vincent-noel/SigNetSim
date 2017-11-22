@@ -113,11 +113,10 @@ class ListOfSpeciesReference extends ListForm{
     }
 }
 
-class ListOfParameters extends ListForm{
+class ListOfParameters extends ListForm {
 
-    constructor(field, description, parent_form_name, form_name, post_treatment=null, nb_parameters=0) {
+    constructor(field, description, parent_form_name, form_name, post_treatment=null) {
         super(field, description, parent_form_name, form_name, post_treatment, false);
-        this.nb_parameters = nb_parameters;
         this.form_local_parameters = null;
     }
 
@@ -180,16 +179,16 @@ class ListOfParameters extends ListForm{
                 list_dropdown.append("<li role='separator' class='divider'></li>");
             }
 
-            for (var counter = 0; counter < this.nb_parameters; counter++) {
-                list_dropdown.append("<li><a>" + get_parameter_name(counter) + "</a></li>")
-            }
+            {% for t_parameter in list_of_parameters %}
+                list_dropdown.append("<li><a>{{ t_parameter }}</a></li>")
+            {% endfor %}
 
             list_dropdown.append(
                 $("<script>").attr({
                 "type": "application/javascript",
                 })
                 .text(
-                    "var " + this.field + "_" + index.toString() + "_dropdown = new Dropdown('" + this.field + "_" + index.toString() + "', null, default_value='', default_label='Choose a parameter');"
+                    "var " + this.field + "_" + index.toString() + "_dropdown = new Dropdown('" + this.field + "_" + index.toString() + "', 'The " + index.toString() + "th parameter', null, default_value='', default_label='Choose a parameter');"
                 )
             );
         });
@@ -236,7 +235,7 @@ class ListOfLocalParameters extends ListForm{
                         'placeholder': "Input parameter's value",
                         'id': 'local_parameter_' + this.index + "_value",
                         'name': 'local_parameter_' + this.index + "_value",
-                        'value': name
+                        'value': value
                     })
                 )
             ],
@@ -301,10 +300,9 @@ class ListOfLocalParameters extends ListForm{
 
 class FormReaction extends FormGroup{
 
-    constructor(field, nb_parameters){
+    constructor(field){
         super();
         this.field = field;
-        this.nb_parameters = nb_parameters;
         this.selected_parameters = []
 
         this.form_id = new Form("reaction_id", "The id of the reaction", "");
@@ -347,7 +345,6 @@ class FormReaction extends FormGroup{
             "The list of reaction parameters",
             "form_reaction", "form_parameters",
             null,
-            nb_parameters
         );
         this.addForm(this.form_parameters);
 
@@ -365,7 +362,7 @@ class FormReaction extends FormGroup{
             "reaction_type",
             "The type of the reaction",
             ()=>{this.select_reaction_type();},
-            false,
+            0,
             "{{reaction_types|my_lookup:0}}"
         )
         this.addForm(this.form_reaction_type);
@@ -483,7 +480,7 @@ class FormReaction extends FormGroup{
 
     select_reaction_type ()
     {
-
+//        this.form_reaction_type.getValue()
         this.updateReversibleToggle();
         this.updateParameters();
         if (this.form_reaction_type.getValue() === 2) {
@@ -492,6 +489,7 @@ class FormReaction extends FormGroup{
         } else {
             $("#input_kinetic_law").removeClass("in");
             $("#input_parameters").addClass("in");
+
         }
     }
 
@@ -526,6 +524,7 @@ class FormReaction extends FormGroup{
                 {
                     if (index === "id") {
                         this.form_id.setValue(element.toString());
+                        this.form_kinetic_law.setScope(parseInt(element));
 
                     } else if (index === "sbml_id") {
                         this.form_sbmlid.setValue(element.toString());
@@ -597,9 +596,9 @@ class FormReaction extends FormGroup{
                $.each(data, (index, element) => {
                    if (index === "list_of_parameters") {
                        $.each(element, (sub_index, subelement) => {
-                           this.selected_parameters.push(element);
-                           $("#reaction_parameter_" + sub_index.toString()).val(subelement);
-                           $("#reaction_parameter_" + sub_index.toString() + "_label").html(get_parameter_name(subelement));
+                           this.selected_parameters.push(element[0]);
+                           $("#reaction_parameter_" + sub_index.toString() + "_value").val(subelement[0]);
+                           $("#reaction_parameter_" + sub_index.toString() + "_label").html(subelement[1]);
                        });
                        this.form_parameters.update();
 
@@ -631,7 +630,7 @@ class FormReaction extends FormGroup{
     }
 }
 
-let form_reaction = new FormReaction("modal_reaction", {{ list_of_parameters|length }});
+let form_reaction = new FormReaction("modal_reaction");
 
 
 function get_species_name(species_id)
@@ -645,16 +644,6 @@ function get_species_name(species_id)
     }
 }
 
-function get_parameter_name(parameter_id)
-{
-    switch(parameter_id)
-    {
-        {% for t_parameter in list_of_parameters %}
-        case {{forloop.counter0}}:
-            return "{{ t_parameter }}";
-        {% endfor %}
-    }
-}
 
 
 $(window).on('load',() =>

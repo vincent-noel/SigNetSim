@@ -85,7 +85,7 @@ class ParameterForm extends FormGroup{
 
                         this.form_reaction_id.setValue(element.toString());
 
-                        if (element.toString() == ""){
+                        if (element.toString() === ""){
                             this.dropdown_scope.setValue(0);
                             this.dropdown_scope.setLabel("Global");
                             this.form_sbmlid.setInitialScope(0);
@@ -94,10 +94,10 @@ class ParameterForm extends FormGroup{
                             this.dropdown_scope.setValue(parseInt(element)+1);
                             this.form_sbmlid.setInitialScope(parseInt(element)+1);
 
-                            switch(element) {
+                            switch(parseInt(element)+1) {
                                 {% for reaction in list_of_reactions %}
                                 case {{forloop.counter0}}:
-                                    this.dropdown_scope.setLabel("{{reaction.getName}}");
+                                    this.dropdown_scope.setLabel("{{reaction}}");
                                     break;
                                 {% endfor %}
                             }

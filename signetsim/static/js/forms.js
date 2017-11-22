@@ -248,8 +248,13 @@ class MathForm extends HasIndicator(Form)
     {
         super(field, description, default_value);
         this.required = required;
+        this.scope = -1;
         $("#" + this.field).on('paste keyup', () => { this.check(); });
 
+    }
+
+    setScope(scope){
+        this.scope = scope;
     }
 
     check()
@@ -265,9 +270,17 @@ class MathForm extends HasIndicator(Form)
                 this.setIndicatorEmpty();
             }
         } else {
+            let post_data;
+
+            if (this.scope >= 0){
+                post_data = {'math': this.getValue(), 'scope': this.scope}
+            } else {
+                post_data = {'math': this.getValue()}
+            }
+
             ajax_call(
                 "POST", getMathValidatorURL(),
-                {'math' : this.getValue()},
+                post_data,
                 (data) => {
                     $.each(data, (index, element) => {
                         if (index === "valid" && element === "true"){
@@ -630,9 +643,12 @@ class ListForm {
         } else {
 
             $("#body_" + this.field + "s").append(
-                content,
-                $("<script>").attr('type', 'application/javascript')
-                .text(script)
+                $("<tr>").attr({'class': 'row', 'id': this.field + "_" + this.index.toString() + "_tr"}).append(
+
+                    content,
+                    $("<script>").attr('type', 'application/javascript')
+                    .text(script)
+                )
             );
         }
 

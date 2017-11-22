@@ -56,7 +56,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="parameter_id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="form_parameter.load('{{parameter.getSbmlId}}', '{% if parameter.reaction != None %}{{list_of_reactions|my_index:parameter.reaction}}{% endif %}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" onclick="form_parameter.load('{{parameter.getSbmlId}}', '{% if parameter.reaction != None %}{{list_of_reactions|my_index:parameter.reaction.getName}}{% endif %}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
               </form>
               </div>
