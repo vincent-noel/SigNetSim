@@ -17,10 +17,18 @@ Should work for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretc
 
 ## Running within a docker
 
-	bash scripts/run_docker.sh [local data folder]
+	docker pull signetsim/signetsim:develop
+	docker run --name signetsim -d signetsim/signetsim:develop
 
-The server will run on localhost:8080, with a default Admin with admin:admin credentials.
-If you inform a local data folder, it will be use to locally store persistent data.
+The server will run on localhost:80, with a default Admin with admin:admin credentials.
+
+If you want to locally store persistent data, use :
+
+    docker run --name signetsim -v <data folder>:/SigNetSim/data -d signetsim/signetsim:develop
+
+If you want to run it on a different port :
+
+    docker run --name signetsim -p <port>:80 -d signetsim/signetsim:develop
 
 
 ## License
