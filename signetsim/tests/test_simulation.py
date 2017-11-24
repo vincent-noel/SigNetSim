@@ -85,6 +85,7 @@ class TestSimulation(TestCase):
 		self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 0)
 		response_save_simulation = c.post('/simulate/timeseries/', {
 			'action': 'save_simulation',
+			'simulation_name': "Test timeseries",
 			'species_selected': [2, 21],
 			'experiment_id': "",
 			'time_min': 0,
@@ -100,6 +101,8 @@ class TestSimulation(TestCase):
 
 		response_load_saved_simulation = c.get('/simulate/stored/%d/' % saved_simulation.id)
 		self.assertEqual(response_load_saved_simulation.status_code, 200)
+		self.assertAlmostEqual(response_load_saved_simulation.context['plots_2d'][0].getName(), "Test timeseries")
+
 		self.assertEqual(
 			response_load_saved_simulation.context['plots_2d'][0].listOfCurves[0].getXData(),
 			[
@@ -221,6 +224,7 @@ class TestSimulation(TestCase):
 		self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 0)
 		response_save_simulation = c.post('/simulate/steady_states/', {
 			'action': 'save_simulation',
+			'simulation_name': "Test steady states",
 			'species_selected': [4,5,6,7],
 			'species_id': [species.getSbmlId() for species in response_get_steady_states.context['species']].index('substrate'),
 			'ss_to_plot': "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10",
@@ -235,6 +239,7 @@ class TestSimulation(TestCase):
 
 		response_load_saved_simulation = c.get('/simulate/stored/%d/' % saved_simulation.id)
 		self.assertEqual(response_load_saved_simulation.status_code, 200)
+		self.assertAlmostEqual(response_load_saved_simulation.context['plots_2d'][0].getName(), "Test steady states")
 
 		input_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 		self.assertAlmostEqual(
@@ -250,6 +255,7 @@ class TestSimulation(TestCase):
 				response_load_saved_simulation.context['plots_2d'][0].listOfCurves[3].getYData()[i],
 				input_values[i]
 			)
+
 
 	def testPhasePlane(self):
 
@@ -304,6 +310,7 @@ class TestSimulation(TestCase):
 		self.assertEqual(len(SEDMLSimulation.objects.filter(project=project)), 0)
 		response_save_simulation = c.post('/simulate/phase_plane/', {
 			'action': 'save_simulation',
+			'simulation_name': "Test phase plane",
 			'species_selected': [2, 21],
 			'experiment_id': "",
 			'species_id': [species.getSbmlId() for species in response_get_phase_plane.context['species']].index(
@@ -321,3 +328,4 @@ class TestSimulation(TestCase):
 
 		response_load_saved_simulation = c.get('/simulate/stored/%d/' % saved_simulation.id)
 		self.assertEqual(response_load_saved_simulation.status_code, 200)
+		self.assertEqual(response_load_saved_simulation.context['plots_2d'][0].getName(), "Test phase plane")

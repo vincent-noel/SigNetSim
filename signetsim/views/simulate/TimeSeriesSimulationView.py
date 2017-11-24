@@ -31,6 +31,7 @@ from signetsim.views.simulate.SedmlWriter import SedmlWriter
 from signetsim.views.simulate.TimeSeriesSimulationForm import TimeSeriesSimulationForm
 from signetsim.models import Experiment, Condition, Treatment, SEDMLSimulation, new_sedml_filename
 from signetsim.managers.data import buildExperiment
+from signetsim.managers.models import copyModelHierarchy
 from signetsim.settings.Settings import Settings
 
 from libsignetsim import TimeseriesSimulation, LibSigNetSimException
@@ -39,7 +40,8 @@ from django.conf import settings
 from django.core.files import File
 from django.shortcuts import redirect
 
-from os.path import join
+from os.path import join, dirname
+from os import remove
 
 
 class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
@@ -207,6 +209,11 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			self.createDocument()
 			timecourse = self.createUniformTimecourse(self.form.timeMin, self.form.timeMax, self.form.timeEch)
 
+			if self.form.saveModelSnapshot:
+				sbml_model = join(dirname(self.model_filename), copyModelHierarchy(self.model_filename))
+			else:
+				sbml_model = self.model_filename
+
 			if self.form.experimentId is not None:
 
 				self.loadExperiments()
@@ -230,7 +237,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 						if var is not None:
 							modifications.append((var, data.value))
 
-					model = self.addModel(self.model_filename, modifications)
+					model = self.addModel(sbml_model, modifications)
 
 					variables = []
 					if self.form.selectedSpeciesIds is not None:
@@ -244,7 +251,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 					self.addTimeseriesCurve(timecourse, model, condition.name, variables)
 			else:
 
-				model = self.addModel(self.model_filename)
+				model = self.addModel(sbml_model)
 
 				variables = []
 				if self.form.selectedSpeciesIds is not None:
@@ -255,14 +262,22 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 					for id_var in self.form.selectedReactionsIds:
 						variables.append(self.listOfVariables[id_var])
 
-				self.addTimeseriesCurve(timecourse, model, "Simulation", variables)
+				self.addTimeseriesCurve(
+					timecourse, model,
+					("Simulation" if self.form.simulationName is None else self.form.simulationName),
+					variables
+				)
 
 			simulation_filename = join(settings.MEDIA_ROOT, new_sedml_filename())
 			open(simulation_filename, "a")
-			new_simulation = SEDMLSimulation(project=self.project, name="Simulation", sedml_file=File(open(simulation_filename, "r")))
+			new_simulation = SEDMLSimulation(
+				project=self.project,
+				name=("Simulation" if self.form.simulationName is None else self.form.simulationName),
+				sedml_file=File(open(simulation_filename, "r")),
+				sbml_file=sbml_model)
 			new_simulation.save()
 			filename = join(settings.MEDIA_ROOT, str(new_simulation.sedml_file))
-
+			remove(simulation_filename)
 			self.saveSedml(filename)
 
 	def loadExperiments(self):

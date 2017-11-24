@@ -90,7 +90,8 @@ class HasErrorMessages(object):
 
 		try:
 			if request.POST.get(field) is None:
-				self.addError("%s does not exist !" % name, reportField, field)
+				if required:
+					self.addError("%s does not exist !" % name, reportField, field)
 
 			elif str(request.POST[field]) == "":
 				if required:

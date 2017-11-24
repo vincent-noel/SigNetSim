@@ -24,9 +24,10 @@
 
 """
 
-from os.path import isfile, join
+from os.path import isfile, join, relpath
 from os import remove
-from signetsim.models import SEDMLSimulation
+from signetsim.models import SEDMLSimulation, SbmlModel
+from signetsim.managers.models import deleteModelHierarchy
 from django.core.files import File
 from django.conf import settings
 
@@ -35,6 +36,13 @@ def deleteSimulation(simulation):
 	filename = join(settings.MEDIA_ROOT, str(simulation.sedml_file))
 	if isfile(filename):
 		remove(filename)
+
+	sbml_filename = join(settings.MEDIA_ROOT, str(simulation.sbml_file))
+
+	# If it exists, but is not references outside of the simulation
+	if isfile(sbml_filename) and not SbmlModel.objects.filter(sbml_file=relpath(sbml_filename, settings.MEDIA_ROOT)).exists():
+		deleteModelHierarchy(sbml_filename)
+
 	simulation.delete()
 
 def copySimulation(simulation, new_project):

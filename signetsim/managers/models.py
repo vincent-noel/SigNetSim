@@ -24,9 +24,10 @@
 
 """
 
-from os.path import isfile, join
+from os.path import isfile, join, dirname
 from os import remove
-from signetsim.models import SbmlModel
+from signetsim.models import SbmlModel, new_model_filename
+from libsignetsim import SbmlDocument
 from django.core.files import File
 from django.conf import settings
 
@@ -41,6 +42,36 @@ def copyModel(model, new_project):
 
 	t_file = File(open(join(settings.MEDIA_ROOT, str(model.sbml_file))))
 
-	new_model = SbmlModel(project=new_project, name=model.name,
-							sbml_file=t_file)
+	new_model = SbmlModel(project=new_project, name=model.name,	sbml_file=t_file)
 	new_model.save()
+
+def copyModelHierarchy(model_filename):
+
+	doc = SbmlDocument()
+	doc.readSbmlFromFile(model_filename)
+	path = dirname(model_filename)
+	master_filename = new_model_filename()
+
+	if doc.useCompPackage:
+		deps = doc.getExternalDocumentDependencies()
+		new_deps = {}
+		for dependency in deps:
+			new_deps.update({dependency: copyModelHierarchy(join(path, dependency))})
+
+		doc.renameExternalDocumentDependencies(new_deps)
+
+	doc.writeSbmlToFile(join(path, master_filename))
+	print "%s -> %s" % (dirname(model_filename), master_filename)
+	return master_filename
+
+def deleteModelHierarchy(model_filename):
+
+	doc = SbmlDocument()
+	doc.readSbmlFromFile(model_filename)
+	path = dirname(model_filename)
+
+	if doc.useCompPackage:
+		for dependency in doc.getExternalDocumentDependencies():
+			deleteModelHierarchy(join(path, dependency))
+
+	remove(model_filename)

@@ -34,6 +34,9 @@ class PhasePlaneSimulationForm(HasErrorMessages):
 		HasErrorMessages.__init__(self)
 		self.parent_view = parent_view
 
+		self.simulationName = None
+		self.simulationModelSnapshot = None
+
 		self.selectedSpeciesIds = None
 		self.selectedReactionsIds = None
 
@@ -72,6 +75,11 @@ class PhasePlaneSimulationForm(HasErrorMessages):
 
 
 	def read_options(self, request):
+
+		self.simulationName = self.readString(request, "simulation_name",
+											  "The name of the simulation", required=False)
+		self.saveModelSnapshot = self.readOnOff(request, "simulation_model_snapshot",
+												"The snapshot setting of the simulation")
 
 		self.timeMin = self.readDuration(request, 'time_min',
 							"the starting point of the simulation")
