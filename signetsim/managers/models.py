@@ -61,7 +61,6 @@ def copyModelHierarchy(model_filename):
 		doc.renameExternalDocumentDependencies(new_deps)
 
 	doc.writeSbmlToFile(join(path, master_filename))
-	print "%s -> %s" % (dirname(model_filename), master_filename)
 	return master_filename
 
 def deleteModelHierarchy(model_filename):
@@ -75,3 +74,16 @@ def deleteModelHierarchy(model_filename):
 			deleteModelHierarchy(join(path, dependency))
 
 	remove(model_filename)
+
+def getModelHierarchy(model_filename):
+
+	doc = SbmlDocument()
+	doc.readSbmlFromFile(model_filename)
+	path = dirname(model_filename)
+	deps = []
+	if doc.useCompPackage:
+		for dependency in doc.getExternalDocumentDependencies():
+			deps.append(dependency)
+			deps += getModelHierarchy(join(path, dependency))
+
+	return deps

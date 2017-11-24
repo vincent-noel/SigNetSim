@@ -18,9 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with libSigNetSim.  If not, see <http://www.gnu.org/licenses/>.
 
-""" ProjectArchive.py
+""" SimulationArchive.py
 
-	This file generates the view for the list of models
+	This file generates the archive of the simulation
 
 """
 
@@ -28,28 +28,27 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, Http404
 from django.core.exceptions import PermissionDenied
 
-from signetsim.models import Project
-from signetsim.managers.projects import exportProject
+from signetsim.models import SEDMLSimulation
+from signetsim.managers.simulations import exportSimulation
 from os.path import basename
 from django.shortcuts import redirect
 
-class ProjectArchive(TemplateView):
+class SimulationArchive(TemplateView):
 
 	template_name = 'models/models.html'
 
 	def __init__(self, **kwargs):
-
 		TemplateView.__init__(self, **kwargs)
 
 	def get(self, request, *args, **kwargs):
 
 		if len(args) > 0:
-			if Project.objects.filter(folder=str(args[0])).exists():
+			if SEDMLSimulation.objects.filter(id=str(args[0])).exists():
 
-				project = Project.objects.get(folder=str(args[0]))
+				simulation = SEDMLSimulation.objects.get(id=str(args[0]))
 
-				if project.access == 'PU' or project.user == request.user:
-					filename = exportProject(project)
+				if simulation.project.access == 'PU' or simulation.project.user == request.user:
+					filename = exportSimulation(simulation)
 					response = HttpResponse(open(filename, 'rb'), content_type='application/zip')
 					response['Content-Disposition'] = 'attachment; filename=' + basename(filename)
 					return response
@@ -57,6 +56,6 @@ class ProjectArchive(TemplateView):
 				else:
 					raise PermissionDenied
 			else:
-				raise Http404("Project doesn't exists")
+				raise Http404("Simulation doesn't exists")
 
-		redirect('home')
+		redirect('list_of_simulations')

@@ -43,7 +43,7 @@ from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsVi
 from views import DataOptimizationView, ModelOptimizationView
 from views import DataView, ExperimentView, ConditionView, DataArchive
 from views import HelpView, SuccessView
-from views import ListOfModelsView, ListOfProjectsView, ProjectArchive
+from views import ListOfModelsView, ListOfProjectsView, ProjectArchive, SimulationArchive
 from views import ListOfOptimizationsView, OptimizationResultView
 from views import ListOfSimulationsView, SedmlSimulationView
 from views import LoginView, ActivateAccountView, ProfileView, AdminView
@@ -98,6 +98,7 @@ urlpatterns = [
 	url(r'^simulate/phase_plane/$', PhasePlaneSimulationView.as_view(), name='simulate_phase_plane'),
 	url(r'^simulate/stored/$', ListOfSimulationsView.as_view(), name='list_of_simulations'),
 	url(r'^simulate/stored/([^/]+)/$', SedmlSimulationView.as_view(), name='sedml_simulation'),
+	url(r'^simulate/archive/([^/]+)/$', SimulationArchive.as_view(), name='simulation_archive'),
 
 	# Optimization
 	url(r'^fit/model/$', ModelOptimizationView.as_view(), name='optimize_model'),

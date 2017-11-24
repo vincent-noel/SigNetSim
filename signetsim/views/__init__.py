@@ -52,6 +52,7 @@ from HelpView import HelpView
 from ListOfModelsView import ListOfModelsView
 from ListOfProjectsView import ListOfProjectsView
 from ProjectArchive import ProjectArchive
+from SimulationArchive import SimulationArchive
 
 from auth import SignUpView, SignUpSuccessView, ValidateEmailView
 from auth import ActivateAccountView, LoginView, ProfileView
