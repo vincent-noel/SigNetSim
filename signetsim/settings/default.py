@@ -51,7 +51,8 @@ SECRET_KEY = str(settings['secret_key'])
 ADMINS = [(str(settings['admin_login']), str(settings['admin_email']))]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = True
+EMAIL_ADDRESS = str(settings['email_address'])
+EMAIL_USE_TLS = str(settings['email_use_tls'] == "true")
 EMAIL_HOST = str(settings['email_host'])
 EMAIL_PORT = int(settings['email_port'])
 EMAIL_HOST_USER = str(settings['email_user'])

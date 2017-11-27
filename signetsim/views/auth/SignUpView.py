@@ -163,7 +163,7 @@ class SignUpView(TemplateView):
 			message='',
 			html_message='Dear admin<br/>The user %s (%s) just registered for an account for SigNetSim. Please follow <a href="%s">this link</a> if you want to activate this account<br><br>If for some reason you cannot click this link, please copy/paste the following url in your web browser :<br/>%s<br/>' % (
 							username, email, activate_url, activate_url),
-			from_email='signetsim@gmail.com',
+			from_email=settings.EMAIL_ADDRESS,
 			recipient_list=admins_email,
 			fail_silently=True,
 		)

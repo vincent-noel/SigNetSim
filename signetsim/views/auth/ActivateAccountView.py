@@ -55,7 +55,10 @@ class ActivateAccountView(TemplateView, HasUserLoggedIn):
 			t_user.is_active = True
 			t_user.save()
 
-			self.sendUserEmail(request, t_user.username, t_user.email)
+			# For test runs
+			if 'HTTP_HOST' in request.META:
+				self.sendUserEmail(request, t_user.username, t_user.email)
+
 			self.activated = True
 
 		return TemplateView.get(self, request, *args, **kwargs)
@@ -79,7 +82,7 @@ class ActivateAccountView(TemplateView, HasUserLoggedIn):
 			message='',
 			html_message='Dear %s, <br/><br/>Your SigNetSim account has just been activated ! <br>You can start using it right now, by going to the page <br/>%s<br/>' % (
 							username, login_url),
-			from_email='signetsim@gmail.com',
+			from_email=settings.EMAIL_ADDRESS,
 			recipient_list=[email],
 			fail_silently=True,
 		)
