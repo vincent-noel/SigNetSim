@@ -147,10 +147,10 @@ class SignUpView(TemplateView):
 		admins_email = [t_user.email for t_user in User.objects.filter(is_staff=True)]
 
 		url = settings.BASE_URL
-		if request.META['HTTP_X_SCRIPT_NAME'] != "":
+		if "HTTP_X_SCRIPT_NAME" in request.META and request.META['HTTP_X_SCRIPT_NAME'] != "":
 			url = str(request.META['HTTP_X_SCRIPT_NAME']) + url
 
-		if request.META['HTTP_X_SCHEME'] != "":
+		if "HTTP_X_SCHEME" in request.META and request.META['HTTP_X_SCHEME'] != "":
 			url = "%s://%s%s" % (str(request.META['HTTP_X_SCHEME']), request.META['HTTP_HOST'], url)
 
 		else:

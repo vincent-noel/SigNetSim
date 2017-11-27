@@ -54,6 +54,32 @@ class ActivateAccountView(TemplateView, HasUserLoggedIn):
 			t_user = User.objects.get(username=request.GET['username'])
 			t_user.is_active = True
 			t_user.save()
+
+			self.sendUserEmail(request, t_user.username, t_user.email)
 			self.activated = True
 
 		return TemplateView.get(self, request, *args, **kwargs)
+
+	def sendUserEmail(self, request, username, email):
+
+		url = settings.BASE_URL
+		if "HTTP_X_SCRIPT_NAME" in request.META and request.META['HTTP_X_SCRIPT_NAME'] != "":
+			url = str(request.META['HTTP_X_SCRIPT_NAME']) + url
+
+		if "HTTP_X_SCHEME" in request.META and request.META['HTTP_X_SCHEME'] != "":
+			url = "%s://%s%s" % (str(request.META['HTTP_X_SCHEME']), request.META['HTTP_HOST'], url)
+
+		else:
+			url = "%s://%s%s" % (request.scheme, request.META['HTTP_HOST'], url)
+
+		login_url = "%saccounts/login/" % url
+
+		send_mail(
+			subject='SigNetSim user account activated',
+			message='',
+			html_message='Dear %s, <br/><br/>Your SigNetSim account has just been activated ! <br>You can start using it right now, by going to the page <br/>%s<br/>' % (
+							username, login_url),
+			from_email='signetsim@gmail.com',
+			recipient_list=[email],
+			fail_silently=True,
+		)
