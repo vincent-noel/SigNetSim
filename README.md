@@ -11,7 +11,7 @@ A django web application for building, fitting, and analyzing mathematical model
 
 	sudo bash scripts/install.sh [folder]
 
-The server will run on localhost/[folder], with a default Admin with admin:admin credentials.
+The server will run on localhost/[folder].
 Should work for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretch].
 
 
@@ -20,7 +20,7 @@ Should work for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretc
 	docker pull signetsim/signetsim:develop
 	docker run --name signetsim -d signetsim/signetsim:develop
 
-The server will run on localhost:80, with a default Admin with admin:admin credentials.
+The server will run on localhost:80.
 
 If you want to locally store persistent data, use :
 
@@ -30,6 +30,16 @@ If you want to run it on a different port :
 
     docker run --name signetsim -p <port>:80 -d signetsim/signetsim:develop
 
+## Running within a docker using docker-compose 
+
+To build the image : 
+    
+    docker-compose build
+    
+To run SigNetSim on port 8080:
+
+    docker-compose up -d signetsim
+    
 
 ## License
 
