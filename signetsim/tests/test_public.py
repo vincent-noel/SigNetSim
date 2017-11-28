@@ -35,7 +35,6 @@ class TestPublicAccess(TestCase):
 
 	def test_public_access(self):
 
-		settings.MEDIA_ROOT = "/tmp/"
 		user = User.objects.filter(username='test_user')
 		self.assertEqual(len(Project.objects.filter(user=user)), 0)
 

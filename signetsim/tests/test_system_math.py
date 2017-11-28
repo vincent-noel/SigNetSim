@@ -39,8 +39,6 @@ class TestSystemMath(TestCase):
 
 	def testOptimization(self):
 
-		settings.MEDIA_ROOT = "/tmp/"
-
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]

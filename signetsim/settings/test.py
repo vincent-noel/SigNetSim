@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with libSigNetSim.  If not, see <http://www.gnu.org/licenses/>.
 
-""" apache.py
+""" default.py
 
 	This file...
 
@@ -30,7 +30,7 @@ import os, json
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 #######################################################################
 # HACK ATTACK: this allows Django template tags to span multiple lines.
@@ -67,21 +67,22 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'signetsim.urls'
 
 TEMPLATES = [
-{
-	'BACKEND': 'django.template.backends.django.DjangoTemplates',
-	'DIRS': [],
-	'APP_DIRS': True,
-	'OPTIONS': {
-		'context_processors': [
-			'django.template.context_processors.debug',
-			'django.template.context_processors.request',
-			'django.contrib.auth.context_processors.auth',
-			'django.contrib.messages.context_processors.messages',
-		],
+	{
+		'BACKEND': 'django.template.backends.django.DjangoTemplates',
+		'DIRS': [],
+		'APP_DIRS': True,
+		'OPTIONS': {
+			'context_processors': [
+				'django.template.context_processors.debug',
+				'django.template.context_processors.request',
+				'django.contrib.auth.context_processors.auth',
+				'django.contrib.messages.context_processors.messages',
+			],
+		},
 	},
-},]
+]
 
-WSGI_APPLICATION = 'settings.wsgi.application'
+WSGI_APPLICATION = 'signetsim.settings.wsgi.application'
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
@@ -94,7 +95,7 @@ DATABASES = {
 		'NAME': os.path.join(BASE_DIR, 'data/db/db.sqlite3'),
 	}
 }
-
+#
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
@@ -113,7 +114,6 @@ AUTH_PASSWORD_VALIDATORS = [
 	},
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
@@ -127,7 +127,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 from random import choice
@@ -139,60 +138,13 @@ from signetsim.models import Settings
 
 AUTH_USER_MODEL = 'signetsim.User'
 
-if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
-	if len(Settings.objects.all()) == 0:
+RUN_INSTALL = False
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
-		RUN_INSTALL = True
-		STATIC_URL = 'static/'
-		STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = "/tmp/"
 
-		MEDIA_URL = 'media/'
-		MEDIA_ROOT = os.path.join(BASE_DIR, "data/media/")
-
-		ALLOWED_HOSTS = ["*"]
-
-	else:
-
-		RUN_INSTALL = False
-
-		signetsim_settings = Settings.objects.all()[0]
-		BASE_URL = signetsim_settings.base_url
-
-		# SECURITY WARNING: keep the secret key used in production secret!
-		SECRET_KEY = signetsim_settings.secret_key
-
-		ADMINS = [(signetsim_settings.admin.username, signetsim_settings.admin.email)]
-
-		EMAIL_ADDRESS = signetsim_settings.email_address
-		EMAIL_USE_TLS = signetsim_settings.email_use_tls
-		EMAIL_HOST = signetsim_settings.email_host
-		EMAIL_PORT = signetsim_settings.email_port
-		EMAIL_HOST_USER = signetsim_settings.email_user
-		EMAIL_HOST_PASSWORD = signetsim_settings.email_password
-
-		ALLOWED_HOSTS = ["*"]
-
-		# Static files (CSS, JavaScript, Images)
-		# https://docs.djangoproject.com/en/1.10/howto/static-files/
-
-		STATIC_URL = BASE_URL + 'static/'
-		STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-
-		MEDIA_URL = BASE_URL + 'media/'
-		MEDIA_ROOT = os.path.join(BASE_DIR, "data/media/")
-
-		STATICFILES_DIRS = (
-			os.path.join(BASE_DIR, "signetsim/static/"),
-		)
-
-else:
-	RUN_INSTALL = False
-	STATIC_URL = '/static/'
-	STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-
-	MEDIA_URL = '/media/'
-	MEDIA_ROOT = os.path.join(BASE_DIR, "data/media/")
-
-	STATICFILES_DIRS = (
-		os.path.join(BASE_DIR, "signetsim/static/"),
-	)
+STATICFILES_DIRS = (
+	os.path.join(BASE_DIR, "signetsim/static/"),
+)

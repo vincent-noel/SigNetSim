@@ -10,8 +10,8 @@ if [ $1 = "docker" ]; then
 
     elif [ $2 = "script" ]; then
         docker run --name signetsim -p 80:80 -d signetsim/signetsim:develop || exit 1;
-        APACHE_RETURN=`wget -q -O - localhost:80 | grep \<title\> | cut -d" " -f2`
-        exit `expr ${APACHE_RETURN} != Projects`
+        APACHE_RETURN=`wget -q -O - localhost:80 | grep \<title\> | cut -d">" -f2 | cut -d" " -f1`
+        exit `expr ${APACHE_RETURN} != Install`
 
     elif [ $2 = "after_script" ]; then
         docker push signetsim/signetsim:develop || exit 1;

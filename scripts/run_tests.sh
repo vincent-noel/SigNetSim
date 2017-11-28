@@ -15,4 +15,4 @@ INSTALL_DIR=`dirname $DIR`
 
 cd ${INSTALL_DIR}
 
-coverage run -a manage.py test -v 2 || exit 1;
+coverage run -a manage.py test --settings=signetsim.settings.test -v 2 || exit 1;

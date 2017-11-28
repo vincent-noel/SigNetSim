@@ -181,3 +181,14 @@ if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
 			os.path.join(BASE_DIR, "signetsim/static/"),
 		)
 
+else:
+	RUN_INSTALL = False
+	STATIC_URL = '/static/'
+	STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+
+	MEDIA_URL = '/media/'
+	MEDIA_ROOT = os.path.join(BASE_DIR, "data/media/")
+
+	STATICFILES_DIRS = (
+		os.path.join(BASE_DIR, "signetsim/static/"),
+	)

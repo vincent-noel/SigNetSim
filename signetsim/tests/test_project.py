@@ -38,7 +38,6 @@ class TestProjects(TestCase):
 
 	def testCreateProject(self):
 
-		settings.MEDIA_ROOT = "/tmp/"
 		user = User.objects.filter(username='test_user')
 		self.assertEqual(len(Project.objects.filter(user=user)), 0)
 

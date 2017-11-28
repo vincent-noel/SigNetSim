@@ -90,7 +90,7 @@ class InstallView(TemplateView):
 			thread = ReloadConf()
 			thread.start()
 			self.install_done = True
-			return TemplateView.get(self, request, *args, **kwargs)
+		return TemplateView.get(self, request, *args, **kwargs)
 
 
 class ReloadConf(Thread):

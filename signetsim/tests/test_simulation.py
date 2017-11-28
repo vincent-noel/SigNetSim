@@ -39,8 +39,6 @@ class TestSimulation(TestCase):
 
 	def testTimeseries(self):
 
-		settings.MEDIA_ROOT = "/tmp/"
-
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
@@ -158,8 +156,6 @@ class TestSimulation(TestCase):
 
 	def testSteadyStates(self):
 
-		settings.MEDIA_ROOT = "/tmp/"
-
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
@@ -258,8 +254,6 @@ class TestSimulation(TestCase):
 
 
 	def testPhasePlane(self):
-
-		settings.MEDIA_ROOT = "/tmp/"
 
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
