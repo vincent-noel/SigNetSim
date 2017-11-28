@@ -54,13 +54,37 @@ class InstallView(TemplateView):
 		password1 = request.POST.get('admin_password1')
 		password2 = request.POST.get('admin_password2')
 
+		email_active = request.POST.get('mail_active') == "on"
+		email_address = request.POST.get('email_address')
+		email_host = request.POST.get('email_host')
+		email_port = request.POST.get('email_port')
+		email_tls = request.POST.get('email_tls') == "on"
+		email_username = request.POST.get('email_username')
+		email_password = request.POST.get('email_password')
+
 		if username is not None and email is not None and password1 is not None and password1 == password2:
 			admin = User.objects.create_superuser(username, email, password1)
 
-			settings = Settings(
-				base_url=request.META['PATH_INFO'],
-				admin=admin
-			)
+			if (email_active
+				and email_address != "" and email_host != "" and email_port != ""
+				and email_username != "" and email_password != ""
+			):
+
+				settings = Settings(
+					base_url=request.META['PATH_INFO'],
+					admin=admin,
+					email_address=email_address,
+					email_use_tls=email_tls,
+					email_host=email_host,
+					email_port=int(email_port),
+					email_user=email_username,
+					email_password=email_password
+				)
+			else:
+				settings = Settings(
+					base_url=request.META['PATH_INFO'],
+					admin=admin,
+				)
 			settings.save()
 
 			thread = ReloadConf()

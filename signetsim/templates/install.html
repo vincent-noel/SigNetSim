@@ -27,6 +27,7 @@
 	<title>Install | SigNetSim</title>
 	<!-- Bootstrap core CSS -->
 	<link href="{{ request.META.PATH_INFO }}{% static "bootstrap/dist/css/bootstrap.min.css" %}" rel="stylesheet">
+	<link href="{{ request.META.PATH_INFO }}{% static "custom.css" %}" rel="stylesheet">
 	<!-- Custom styles for this template -->
 	{% block css %}{% endblock css %}
 	<script src="{{ request.META.PATH_INFO }}{% static "jquery/dist/jquery.min.js" %}"></script>
@@ -120,6 +121,153 @@
 							</tr>
 						</tbody>
 					</table>
+					<br/>
+					<table class="table table-striped">
+						<thead>
+							<tr class="row" onclick="toggle_mail();">
+								<th class="col-xs-10">Configure mail</th>
+								<th class="col-xs-2 text-right">
+									<span class="input-group col-xs-12">
+											<label class="switch">
+												<input type="checkbox" name="mail_active" id="mail_active">
+												<div class="slider round"></div>
+											</label>
+									</span>
+								</th>
+							</tr>
+						</thead>
+						<script>
+							function toggle_mail(){
+							    if ($('#mail_active').prop('checked')){
+
+							        $("#mail_config_form").removeClass("in");
+							        $("#mail_active").prop('checked', false);
+
+									} else {
+
+							        $("#mail_config_form").addClass("in");
+							        $("#mail_active").prop('checked', true);
+
+									}
+
+							}
+						</script>
+					</table>
+					<div class="collapse" id="mail_config_form">
+						<table class="table table-striped">
+							<thead>
+								<tr class="row">
+									<th class="col-xs-12">Email address</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="row">
+									<td class="col-xs-12">
+										<input type="text" class="form-control input-sm"
+													 placeholder="Input the email address of this account"
+													 name="email_address" value=""
+										>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="table table-striped">
+							<thead>
+								<tr class="row">
+									<th class="col-xs-12">SMTP server host</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="row">
+									<td class="col-xs-12">
+										<input type="text" class="form-control input-sm"
+													 placeholder="Input the address of the SMTP server"
+													 name="email_host" value=""
+										>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="table table-striped">
+							<thead>
+								<tr class="row">
+									<th class="col-xs-12">SMTP server port</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="row">
+									<td class="col-xs-12">
+										<input type="text" class="form-control input-sm"
+													 placeholder="Input the port of the SMTP server"
+													 name="email_port" value=""
+										>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="table table-striped">
+						<thead>
+							<tr class="row" onclick="toggle_tls();">
+								<th class="col-xs-10">SMTP server uses TLS</th>
+								<th class="col-xs-2 text-right">
+									<span class="input-group col-xs-12">
+											<label class="switch">
+												<input type="checkbox" name="email_tls" id="mail_tls_active">
+												<div class="slider round"></div>
+											</label>
+									</span>
+								</th>
+							</tr>
+						</thead>
+						<script>
+						function toggle_tls(){
+								if ($('#mail_tls_active').prop('checked')){
+										$("#mail_tls_active").prop('checked', false);
+
+								} else {
+										$("#mail_tls_active").prop('checked', true);
+
+								}
+
+						}
+					</script>
+					</table>
+					<table class="table table-striped">
+						<thead>
+							<tr class="row">
+								<th class="col-xs-12">SMTP server login</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="row">
+								<td class="col-xs-12">
+									<input type="text" class="form-control input-sm"
+												 placeholder="Input the username of the account"
+												 name="email_username" value=""
+									>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="table table-striped">
+						<thead>
+							<tr class="row">
+								<th class="col-xs-12">SMTP server password</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="row">
+								<td class="col-xs-12">
+									<input type="password" class="form-control input-sm"
+												 placeholder="Input the password of the account"
+												 name="email_password" value=""
+									>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<br/>
+					</div>
 					<div class="form-group pull-right">
 						<input type="submit" class="btn btn-primary btn-primary" value="Create">
 					</div>
