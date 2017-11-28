@@ -38,11 +38,12 @@ from signetsim.json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels,
 from signetsim.json import GetUnitDefinition
 from signetsim.json import GetContinuationStatus, GetProject, SearchBiomodels, GetBiomodelsName
 from signetsim.json import GetExperiment, GetCondition, GetTreatment, GetObservation
+from signetsim.json import GetInstallStatus
 
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
 from views import DataOptimizationView, ModelOptimizationView
 from views import DataView, ExperimentView, ConditionView, DataArchive
-from views import HelpView, SuccessView
+from views import HelpView, SuccessView, InstallView
 from views import ListOfModelsView, ListOfProjectsView, ProjectArchive, SimulationArchive
 from views import ListOfOptimizationsView, OptimizationResultView
 from views import ListOfSimulationsView, SedmlSimulationView
@@ -54,13 +55,29 @@ from views import ModelUnitsView, ModelEventsView, ModelMiscView
 from views import SignUpView, SignUpSuccessView, ValidateEmailView
 from views import TimeSeriesSimulationView, SteadyStateSimulationView, PhasePlaneSimulationView
 
-urlpatterns = [
+
+if settings.RUN_INSTALL:
+	urlpatterns = [
+		url(r'^$', InstallView.as_view(), name='home'),
+	]
+	if settings.DEBUG:
+		urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+else:
+	urlpatterns = [
+		url(r'^$', ListOfProjectsView.as_view(), name='home'),
+	]
+	if settings.DEBUG:
+		urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+
+urlpatterns += [
 
 	url(r'^admin_db/', include(admin.site.urls)),
 
 	# Basic
-	url(r'^$', ListOfProjectsView.as_view(), name='home'),
 	url(r'^help/$', HelpView.as_view(), name='help'),
+	url(r'^install/$', InstallView.as_view(), name='install'),
 	url(r'^success/$', SuccessView.as_view(), name='success'),
 	url(r'^profile/(.*)/$', ProfileView.as_view(), name='profile'),
 	url(r'^admin/$', AdminView.as_view(), name='admin'),
@@ -151,7 +168,7 @@ urlpatterns = [
 
 	url(r'^json/search_biomodels/$', SearchBiomodels.as_view(), name='search_biomodels'),
 	url(r'^json/get_biomodels_name/$', GetBiomodelsName.as_view(), name='get_biomodels_name'),
-]
 
-if settings.DEBUG:
-	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+	url(r'^json/get_install_status/$', GetInstallStatus.as_view(), name='get_install_status'),
+
+]

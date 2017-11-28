@@ -71,15 +71,3 @@ else
     echo "Please insert the content of apache_conf in the proper configuration"
 
 fi
-
-# We make the settings folders in case if doesn't already exists
-mkdir -p ${INSTALL_DIR}/data/settings
-
-# We copy the default settings files if it doesn't already exists
-if [ ! -f ${INSTALL_DIR}/data/settings/settings.json ]
-then
-    cp ${INSTALL_DIR}/signetsim/settings/settings.json ${INSTALL_DIR}/data/settings/settings.json
-fi
-
-# And finally we write the proper apache folder in signetsim settings
-sed -i "s|  \"base_url\": \"/\"|  \"base_url\": \"$ROOT_DIR/\"|" $INSTALL_DIR/data/settings/settings.json

@@ -1,0 +1,304 @@
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+{% load static from staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<title>Install | SigNetSim</title>
+	<!-- Bootstrap core CSS -->
+	<link href="{{ request.META.PATH_INFO }}{% static "bootstrap/dist/css/bootstrap.min.css" %}" rel="stylesheet">
+	<link href="{{ request.META.PATH_INFO }}{% static "custom.css" %}" rel="stylesheet">
+	<!-- Custom styles for this template -->
+	{% block css %}{% endblock css %}
+	<script src="{{ request.META.PATH_INFO }}{% static "jquery/dist/jquery.min.js" %}"></script>
+	<script>
+				{% include 'commons/commons.js' %}
+	</script>
+	{% block header %}{% endblock header %}
+  </head>
+
+  <body style="padding-top: 60px">
+		<nav class="navbar navbar-inverse navbar-fixed-top" id="navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header align-center">
+					<a class="navbar-brand align-center">SigNetSim</a>
+				</div>
+			</div>
+		</nav>
+		{% if install_done == False %}
+		<div class="container-fluid">
+			<h4>Installation</h4>
+			<hr><br>
+			<div class="container-fluid">
+     		<form method="post">
+				 {% csrf_token %}
+
+					<table class="table table-striped">
+						<thead>
+							<tr class="row">
+								<th class="col-xs-12">Admin username</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="row">
+								<td class="col-xs-12">
+									<input type="text" class="form-control input-sm"
+												 placeholder="Input the admin username"
+												 name="admin_username" value=""
+									>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="table table-striped">
+						<thead>
+							<tr class="row">
+								<th class="col-xs-12">Admin email</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="row">
+								<td class="col-xs-12">
+									<input type="text" class="form-control input-sm"
+												 placeholder="Input the email of the admin"
+												 name="admin_email" value=""
+									>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="table table-striped">
+						<thead>
+							<tr class="row">
+								<th class="col-xs-12">Admin password</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="row">
+								<td class="col-xs-12">
+									<input type="password" class="form-control input-sm"
+												 placeholder="Input the admin password"
+												 name="admin_password1" value=""
+									>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="table table-striped">
+						<thead>
+							<tr class="row">
+								<th class="col-xs-12">Password confirmation</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="row">
+								<td class="col-xs-12">
+									<input type="password" class="form-control input-sm"
+												 placeholder="Confirm the admin password"
+												 name="admin_password2" value=""
+									>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<br/>
+					<table class="table table-striped">
+						<thead>
+							<tr class="row" onclick="toggle_mail();">
+								<th class="col-xs-10">Configure mail</th>
+								<th class="col-xs-2 text-right">
+									<span class="input-group col-xs-12">
+											<label class="switch">
+												<input type="checkbox" name="mail_active" id="mail_active">
+												<div class="slider round"></div>
+											</label>
+									</span>
+								</th>
+							</tr>
+						</thead>
+						<script>
+							function toggle_mail(){
+							    if ($('#mail_active').prop('checked')){
+
+							        $("#mail_config_form").removeClass("in");
+							        $("#mail_active").prop('checked', false);
+
+									} else {
+
+							        $("#mail_config_form").addClass("in");
+							        $("#mail_active").prop('checked', true);
+
+									}
+
+							}
+						</script>
+					</table>
+					<div class="collapse" id="mail_config_form">
+						<table class="table table-striped">
+							<thead>
+								<tr class="row">
+									<th class="col-xs-12">Email address</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="row">
+									<td class="col-xs-12">
+										<input type="text" class="form-control input-sm"
+													 placeholder="Input the email address of this account"
+													 name="email_address" value=""
+										>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="table table-striped">
+							<thead>
+								<tr class="row">
+									<th class="col-xs-12">SMTP server host</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="row">
+									<td class="col-xs-12">
+										<input type="text" class="form-control input-sm"
+													 placeholder="Input the address of the SMTP server"
+													 name="email_host" value=""
+										>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="table table-striped">
+							<thead>
+								<tr class="row">
+									<th class="col-xs-12">SMTP server port</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="row">
+									<td class="col-xs-12">
+										<input type="text" class="form-control input-sm"
+													 placeholder="Input the port of the SMTP server"
+													 name="email_port" value=""
+										>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="table table-striped">
+						<thead>
+							<tr class="row" onclick="toggle_tls();">
+								<th class="col-xs-10">SMTP server uses TLS</th>
+								<th class="col-xs-2 text-right">
+									<span class="input-group col-xs-12">
+											<label class="switch">
+												<input type="checkbox" name="email_tls" id="mail_tls_active">
+												<div class="slider round"></div>
+											</label>
+									</span>
+								</th>
+							</tr>
+						</thead>
+						<script>
+						function toggle_tls(){
+								if ($('#mail_tls_active').prop('checked')){
+										$("#mail_tls_active").prop('checked', false);
+
+								} else {
+										$("#mail_tls_active").prop('checked', true);
+
+								}
+
+						}
+					</script>
+					</table>
+					<table class="table table-striped">
+						<thead>
+							<tr class="row">
+								<th class="col-xs-12">SMTP server login</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="row">
+								<td class="col-xs-12">
+									<input type="text" class="form-control input-sm"
+												 placeholder="Input the username of the account"
+												 name="email_username" value=""
+									>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="table table-striped">
+						<thead>
+							<tr class="row">
+								<th class="col-xs-12">SMTP server password</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="row">
+								<td class="col-xs-12">
+									<input type="password" class="form-control input-sm"
+												 placeholder="Input the password of the account"
+												 name="email_password" value=""
+									>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<br/>
+					</div>
+					<div class="form-group pull-right">
+						<input type="submit" class="btn btn-primary btn-primary" value="Create">
+					</div>
+				</form>
+			</div>
+		</div>
+		{% else %}
+		<div class="container-fluid">
+			<h4>Please wait while the installation finishes...</h4>
+		<script>
+
+			setInterval(()=>{
+				ajax_call(
+					"POST", "{% url 'get_install_status' %}", {},
+					(data) => {
+						$.each(data, (index, element) => {
+								if (index === "status" && element === false){ window.location = window.location; }
+						});
+					},
+					() => {}
+				)},
+				200
+			);
+
+		</script>
+		</div>
+		{% endif %}
+		<!-- Bootstrap core JavaScript -->
+		<!-- Placed at the start of the document so the pages load faster -->
+		<script src="{{ request.META.PATH_INFO }}{% static "bootstrap/dist/js/bootstrap.min.js" %}"></script>
+
+
+  </body>
+</html>

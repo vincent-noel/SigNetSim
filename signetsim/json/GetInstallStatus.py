@@ -18,32 +18,23 @@
 # You should have received a copy of the GNU General Public License
 # along with libSigNetSim.  If not, see <http://www.gnu.org/licenses/>.
 
-""" admin.py
+""" GetProject.py
 
-	This file ...
+	This file...
 
 """
 
-from django.contrib import admin
+from signetsim.json import JsonRequest
+from django.conf import settings
 
-# Register your models here.
-from .models import User, Project, SbmlModel, SEDMLSimulation, CombineArchiveModel
-from .models import Optimization, ContinuationComputation
-from .models import Experiment, Condition, Observation, Treatment
-from .models import Settings
+class GetInstallStatus(JsonRequest):
 
-admin.site.register(User)
-admin.site.register(Project)
-admin.site.register(SbmlModel)
-admin.site.register(SEDMLSimulation)
-admin.site.register(CombineArchiveModel)
-admin.site.register(Optimization)
-admin.site.register(ContinuationComputation)
+	def post(self, request, *args, **kwargs):
+
+		self.data.update({
+			'status': settings.RUN_INSTALL
+		})
+
+		return JsonRequest.post(self, request, *args, **kwargs)
 
 
-admin.site.register(Experiment)
-admin.site.register(Condition)
-admin.site.register(Observation)
-admin.site.register(Treatment)
-
-admin.site.register(Settings)
