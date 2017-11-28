@@ -49,6 +49,7 @@ from analyse import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcations
 
 from SuccessView import SuccessView
 from HelpView import HelpView
+from InstallView import InstallView
 from ListOfModelsView import ListOfModelsView
 from ListOfProjectsView import ListOfProjectsView
 from ProjectArchive import ProjectArchive
