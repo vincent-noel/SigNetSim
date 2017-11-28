@@ -40,25 +40,6 @@ from django.template import base
 
 base.tag_re = re.compile(base.tag_re.pattern, re.DOTALL)
 
-# Loading signetsim settings
-settings = json.loads(open(os.path.join(BASE_DIR, 'data/settings/settings.json')).read())
-
-BASE_URL = str(settings['base_url'])
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = str(settings['secret_key'])
-
-ADMINS = [(str(settings['admin_login']), str(settings['admin_email']))]
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = str(settings['email_use_tls'] == "true")
-EMAIL_ADDRESS = str(settings['email_address'])
-EMAIL_HOST = str(settings['email_host'])
-EMAIL_PORT = int(settings['email_port'])
-EMAIL_HOST_USER = str(settings['email_user'])
-EMAIL_HOST_PASSWORD = str(settings['email_password'])
-
-ALLOWED_HOSTS = settings['allowed_hosts']
 
 # Application definition
 INSTALLED_APPS = (
@@ -147,13 +128,72 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.10/howto/static-files/
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-STATIC_URL = BASE_URL + 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+from random import choice
+from string import ascii_uppercase, ascii_lowercase, digits
 
-MEDIA_URL = BASE_URL + 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "data/media/")
+SECRET_KEY = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
+
+from signetsim.models import Settings
 
 AUTH_USER_MODEL = 'signetsim.User'
+
+if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
+	if len(Settings.objects.all()) == 0:
+
+		RUN_INSTALL = True
+		STATIC_URL = 'static/'
+		STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+
+		MEDIA_URL = 'media/'
+		MEDIA_ROOT = os.path.join(BASE_DIR, "data/media/")
+
+		ALLOWED_HOSTS = ["*"]
+
+	else:
+
+		RUN_INSTALL = False
+
+		signetsim_settings = Settings.objects.all()[0]
+		BASE_URL = signetsim_settings.base_url
+
+		# SECURITY WARNING: keep the secret key used in production secret!
+		SECRET_KEY = signetsim_settings.secret_key
+
+		ADMINS = [(signetsim_settings.admin.username, signetsim_settings.admin.email)]
+
+		EMAIL_ADDRESS = signetsim_settings.email_address
+		EMAIL_USE_TLS = signetsim_settings.email_use_tls
+		EMAIL_HOST = signetsim_settings.email_host
+		EMAIL_PORT = signetsim_settings.email_port
+		EMAIL_HOST_USER = signetsim_settings.email_user
+		EMAIL_HOST_PASSWORD = signetsim_settings.email_password
+
+		ALLOWED_HOSTS = ["*"]
+
+		# Static files (CSS, JavaScript, Images)
+		# https://docs.djangoproject.com/en/1.10/howto/static-files/
+
+		STATIC_URL = BASE_URL + 'static/'
+		STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+
+		MEDIA_URL = BASE_URL + 'media/'
+		MEDIA_ROOT = os.path.join(BASE_DIR, "data/media/")
+
+		STATICFILES_DIRS = (
+			os.path.join(BASE_DIR, "signetsim/static/"),
+		)
+
+#
+#
+# # Static files (CSS, JavaScript, Images)
+# # https://docs.djangoproject.com/en/1.10/howto/static-files/
+#
+# STATIC_URL = BASE_URL + 'static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+#
+# MEDIA_URL = BASE_URL + 'media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, "data/media/")
+#
+# AUTH_USER_MODEL = 'signetsim.User'

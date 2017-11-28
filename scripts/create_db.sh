@@ -27,23 +27,19 @@ then
     mkdir -p ${INSTALL_DIR}/data/db
     mkdir -p ${INSTALL_DIR}/data/media
 
-    python manage.py makemigrations --noinput
-    python manage.py migrate --noinput
-    python manage.py collectstatic --noinput > /dev/null
-
-    echo "from signetsim.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'admin')" | python manage.py shell
-
-else
-
-    python manage.py makemigrations --noinput
-    python manage.py migrate --noinput
-    python manage.py collectstatic --noinput > /dev/null
-
 fi
 
+python manage.py makemigrations --noinput
+python manage.py migrate --noinput
+python manage.py collectstatic --noinput > /dev/null
 
 chgrp -R www-data ${INSTALL_DIR}/data
 chmod -R 664 ${INSTALL_DIR}/data
 find ${INSTALL_DIR}/data -type d  -exec chmod 775 {} \;
+
+chgrp -R www-data ${INSTALL_DIR}/signetsim/settings
+chmod -R 664 ${INSTALL_DIR}/signetsim/settings
+find ${INSTALL_DIR}/signetsim/settings -type d  -exec chmod 775 {} \;
+
 
 cd $EXEC_DIR

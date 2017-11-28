@@ -79,4 +79,5 @@ class ReloadConf(Thread):
     def run(self):
 		utime(join(django_settings.BASE_DIR, "signetsim/settings/default.py"), None)
 		utime(join(django_settings.BASE_DIR, "signetsim/settings/apache.py"), None)
+		utime(join(django_settings.BASE_DIR, "signetsim/settings/wsgi.py"), None)
 
