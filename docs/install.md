@@ -14,6 +14,6 @@ The server will run on localhost:8080, with a default Admin with admin:admin cre
 
 To locally store persistent data, run
 
-	docker run --name signetsim -p 127.0.0.1:8080:80 \
-		-v <data_folder>:/SigNetSim/data \
-		-d signetsim/signetsim
+	docker run --name signetsim -p 127.0.0.1:8080:80 \\
+			-v <data_folder>:/SigNetSim/data \\
+			-d signetsim/signetsim
