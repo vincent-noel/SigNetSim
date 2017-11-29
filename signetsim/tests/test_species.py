@@ -29,7 +29,7 @@ from django.test import TestCase, Client
 
 from signetsim.models import User, Project, SbmlModel
 
-from libsignetsim.model.SbmlDocument import SbmlDocument
+from libsignetsim import SbmlDocument
 
 from os.path import dirname, join
 from json import loads
@@ -40,8 +40,6 @@ class TestSpecies(TestCase):
 	fixtures = ["user_with_project.json"]
 
 	def testSpecies(self):
-
-		settings.MEDIA_ROOT = "/tmp/"
 
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)

@@ -1,0 +1,15 @@
+<table class="table table-striped" id="{{ id }}_group"{% if nomargin %} style="margin: 0px"{% endif %}>
+	<thead>
+		<tr class="row">
+			<th class="col-xs-12" id="{{ id }}_label">{{ name }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="row">
+			<td class="col-xs-12">
+				<input type="text" class="form-control input-sm" placeholder="{{ placeholder }}"
+							 name="{{ id }}" id="{{ id }}" value="{{ default }}">
+			</td>
+		</tr>
+	</tbody>
+</table>

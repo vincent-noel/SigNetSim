@@ -22,7 +22,7 @@
 <div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New reaction" id="modal_reaction">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form class="form" method="POST" action="" label="Save reaction" id="save_reaction_form">
+      <form class="form" method="POST" label="Save reaction" onsubmit="return form_reaction.save()">
         {% csrf_token %}
         <input type="hidden" id="reaction_id" name="reaction_id" value="">
         <input type="hidden" name="action" value="save">
@@ -41,11 +41,9 @@
               <li><a data-toggle="tab" href="#kinetic_law">Kinetic law</a></li>
               <li><a data-toggle="tab" href="#local_parameters">Local parameters</a></li>
               <li><a data-toggle="tab" href="#annotation">Annotation</a></li>
-
             </ul>
             <div class="tab-content">
               <div id="summary" class="tab-pane fade in active">
-                <br/>
                 <table class="table table-striped">
                   <thead>
                     <tr>
@@ -58,49 +56,18 @@
                     </tr>
                   </tbody>
                 </table>
-                <table class="table table-striped">
-                  <thead>
-                    <tr class="row">
-                      <th class="col-xs-12">Reaction name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr class="row">
-                      <td class="col-xs-12">
-                        <input type="text" class="form-control input-sm" placeholder="<Input reaction name>" id="reaction_name" name="reaction_name" value="">
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <table class="table table-striped">
-                  <thead>
-                    <tr class="row">
-                      <th class="col-xs-11">Reaction identifier</th>
-                      <th class="col-xs-1"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr class="row">
-                      <td class="col-xs-11 text-center">
-                        <input type="text" class="form-control input-sm" placeholder="<Input reaction identifier>" id="reaction_sbml_id" name="reaction_sbml_id" value="">
-                      </td>
-                      <td class="col-xs-1" style="vertical-align:middle">
-                        <div id="sbmlid_validating" class="pull-right collapse">
-                          <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
-                        </div>
-                        <div id="sbmlid_valid" class="pull-right collapse">
-                          <span class="glyphicon glyphicon-ok" style="color:#5cb85c;font-size: 1.5em"></span>
-                        </div>
-                        <div id="sbmlid_invalid" class="pull-right collapse">
-                        <span class="glyphicon glyphicon-remove" style="color:#d9534f; vertical-align:bottom; font-size: 1.5em"></span>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-
-
+								{% include 'commons/html/name_input.html' with
+									name="Reaction name"
+									id="reaction_name"
+									placeholder="Input reaction name"
+									default=""
+								%}
+								{% include 'commons/html/validated_input.html' with
+									name="Reaction identifier"
+									id="reaction_sbml_id"
+									placeholder="Input reaction identifier"
+									default=""
+								%}
               </div>
               <div id="species" class="tab-pane fade in">
                 <br/>
@@ -109,131 +76,67 @@
                     <tr class="row">
                       <th class="col-xs-3 text-center">Stoichiometry</th>
                       <th class="col-xs-7 text-center">Reactants</th>
-                      <th class="col-xs-2 text-right"><button type="button" onclick="add_reactant();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
+                      <th class="col-xs-2 text-right"><button type="button" onclick="form_reaction.form_list_reactants.add();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
                     </tr>
                   </thead>
-                  <tbody id="body_reactants">
-
+                  <tbody id="body_reaction_reactants">
                   </tbody>
                 </table>
-
                 <table class="table table-striped">
                   <thead>
                     <tr class="row">
                       <th class="col-xs-3 text-center">Stoichiometry</th>
                       <th class="col-xs-7 text-center">Modifiers</th>
-                      <th class="col-xs-2 text-right"><button type="button" onclick="add_modifier();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
+                      <th class="col-xs-2 text-right"><button type="button" onclick="form_reaction.form_list_modifiers.add();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
                     </tr>
                   </thead>
-                  <tbody id="body_modifiers">
-
+                  <tbody id="body_reaction_modifiers">
                   </tbody>
                 </table>
-
                 <table class="table table-striped">
                   <thead>
                     <tr class="row">
                       <th class="col-xs-3 text-center">Stoichiometry</th>
                       <th class="col-xs-7 text-center">Products</th>
-                      <th class="col-xs-2 text-right"><button type="button" onclick="add_product();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
+                      <th class="col-xs-2 text-right"><button type="button" onclick="form_reaction.form_list_products.add();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
                     </tr>
                   </thead>
-                  <tbody id="body_products">
-
+                  <tbody id="body_reaction_products">
                   </tbody>
                 </table>
               </div>
               <div id="kinetic_law" class="tab-pane fade in">
                 <br/>
-
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>Kinetic law</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="col-xs-12">
-                        <input type="hidden" id="new_reaction_type" name="reaction_type" value="">
-                        <div class="input-group col-xs-12">
-                          <div class="dropdown">
-                            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                              <span id="new_reaction_type_label"></span>
-                              <span class="caret"></span>
-                            </button>
-                            <ul id="new_reaction_type_dropdown" class="dropdown-menu">
-                                {% for reaction_type in reaction_types.values %}
-                                <li><a>{{ reaction_type }}</a></li>
-                                {% endfor %}
-                            </ul>
-                          </div>
-                        </div>
-                        <script>
-                          $('#new_reaction_type_dropdown li').on('click', function(){
-                            $("#new_reaction_type_label").html($(this).text());
-                            $('#new_reaction_type').val($(this).index());
-                            select_reaction_type($(this).index());
-                          });
-                        </script>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <table class="table table-striped">
-                  <thead>
-                    <tr onclick="toggle_reversible();" >
-                      <th class="col-xs-8">Reversible</th>
-                      <th class="col-xs-4 text-right">
-                        <span class="col-xs-12 input-group">
-                          <label class="switch">
-                            <input type="checkbox" name="reaction_reversible" id="reaction_reversible">
-                            <div class="slider round"></div>
-                          </label>
-                        </span>
-                    </th>
-                    </tr>
-                  </thead>
-                </table>
+								{% include 'commons/html/dropdown.html' with
+									name="Kinetic law"
+									id="reaction_type"
+									default_label=""
+									default=""
+									list=reaction_types.values
+								%}
+								{% include 'commons/html/toggle_switch.html' with
+									name="Reversible"
+									id="reaction_reversible"
+									default=""
+									onclick="form_reaction.form_reversible.toggle();"
+								%}
                 <div id="input_kinetic_law" class="collapse">
-                  <table class="table table-striped">
-                    <thead>
-                      <tr class="row">
-                        <th class="col-xs-11">Kinetic law</th>
-                        <th class="col-xs-1"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="row">
-                        <td class="col-xs-11 text-center">
-                            <input type="text" class="form-control input-sm" placeholder="<Input kinetic law>" id="kineticlaw_input" name="reaction_kinetic_law" value="">
-                        </td>
-                        <td class="col-xs-1" style="vertical-align:middle">
-                          <div id="kineticlaw_validating" class="pull-right collapse">
-                            <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
-                          </div>
-                          <div id="kineticlaw_valid" class="pull-right collapse">
-                            <span class="glyphicon glyphicon-ok" style="color:#5cb85c;font-size: 1.5em"></span>
-                          </div>
-                          <div id="kineticlaw_invalid" class="pull-right collapse">
-                          <span class="glyphicon glyphicon-remove" style="color:#d9534f; vertical-align:bottom; font-size: 1.5em"></span>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+									{% include 'commons/html/validated_input.html' with
+										name="Kinetic law"
+										id="reaction_kinetic_law"
+										placeholder="Input kinetic law"
+										default=""
+									%}
                 </div>
-
-                <div id="input_parameters" class="collapse">
+								<div id="input_parameters" class="collapse">
                   <table class="table table-striped">
                     <thead>
-                      <tr>
-                        <th>Parameters</th>
-                        <th></th>
+                      <tr class="row">
+                        <th class="col-xs-6">Parameters</th>
+                        <th class="col-xs-6"></th>
                       </tr>
                     </thead>
-                    <tbody id="body_parameters">
+                    <tbody id="body_reaction_parameters">
                      </tbody>
                   </table>
                 </div>
@@ -246,75 +149,38 @@
                       <th class="col-xs-6">Name</th>
                       <th class="col-xs-4">Value</th>
                       <th class="col-xs-2 text-right">
-                        <button type="button" onclick="add_local_parameter('', '');"
+                        <button type="button" onclick="form_reaction.form_local_parameters.add();"
                                 class="btn btn-primary btn-xs"
                         >{% bootstrap_icon "plus" %}</button>
                       </th>
                     </tr>
                   </thead>
-                  <tbody id="table_local_parameters">
+                  <tbody id="body_local_parameters">
                   </tbody>
                 </table>
               </div>
               <div id="annotation" class="tab-pane fade in">
-                <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-10">SBO term</th>
-                    <th class="col-xs-2"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-10 text-center">
-                      <div class="collapse in" id="edit_SBO_term_off">
-                        <a id="sboterm_link" target="_blank">
-                          <span id="sboterm_name"></span>
-                        </a>
-                      </div>
-                      <div class="collapse out" id="edit_SBO_term_on">
-                        <input type="text" class="form-control input-sm" placeholder="<Input SBO term>" id="sboterm" name="reaction_sboterm" value="">
-                      </div>
-                    </td>
-                    <td class="col-xs-2">
-                      {% if user.is_authenticated %}
-                      <div class="pull-right collapse in" id="edit_SBO_term_on_actions">
-                          <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_SBO_term">{% bootstrap_icon "pencil" %}</button>
-                      </div>
-                      <div class="pull-right collapse" id="edit_SBO_term_off_actions">
-                        <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_SBO_term_cancel">{% bootstrap_icon "remove" %}</button>
-                        <button type="button" onclick="resolve_sbo();" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
-                      </div>
-                      {% endif %}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-                <table class="table table-striped">
-                  <thead>
-                    <tr class="row">
-                      <th class="col-xs-12">Notes</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr class="row">
-                      <td class="col-xs-12">
-                        <div class="form-group">
-                          <textarea class="form-control" id="reaction_notes" name="reaction_notes" rows="5"></textarea>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+								{% include 'commons/html/editable_input.html' with
+									name="SBO term"
+									id="reaction_sboterm"
+									default=""
+									default_label=""
+									placeholder="Input the reaction SBO term"
+									validate="form_reaction.form_sboterm.resolve();"
+								%}
+								{% include 'commons/html/notes_input.html' with
+									name="Notes"
+									id="reaction_notes"
+									nb_lines=5
+								%}
               </div>
-            </div>
          		<div class="container-fluid" id="error_modal">
           	</div>
 					</div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" onclick="save_reaction()" class="btn btn-primary">Save changes</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
         </div>
       </form>
     </div>

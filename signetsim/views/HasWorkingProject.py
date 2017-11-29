@@ -29,16 +29,18 @@ from django.core.exceptions import PermissionDenied
 from django.http import Http404
 
 from signetsim.views.HasUserLoggedIn import HasUserLoggedIn
+from signetsim.views.HasVariablesInSession import HasVariablesInSession
 from signetsim.models import SbmlModel, Project
 
 import os
 
 
-class HasWorkingProject(HasUserLoggedIn):
+class HasWorkingProject(HasUserLoggedIn, HasVariablesInSession):
 
 	def __init__(self):
 
 		HasUserLoggedIn.__init__(self)
+		HasVariablesInSession.__init__(self)
 
 		self.listOfProjects = None
 		self.project = None
@@ -57,6 +59,7 @@ class HasWorkingProject(HasUserLoggedIn):
 
 	def load(self, request, *args, **kwargs):
 
+		HasVariablesInSession.load(self, request, *args, **kwargs)
 		self.__loadProjects(request)
 		self.__loadProject(request, *args)
 
@@ -83,7 +86,8 @@ class HasWorkingProject(HasUserLoggedIn):
 			if t_project.user == request.user or t_project.access == Project.PUBLIC:
 				self.project_id = t_project.id
 
-				request.session['project_id'] = self.project_id
+				# request.session['project_id'] = self.project_id
+				self.saveProjectInSession(self.project_id)
 				self.__loadProject(request)
 
 				# # If a model was selected, we forget it
@@ -105,8 +109,8 @@ class HasWorkingProject(HasUserLoggedIn):
 
 	def __loadProject(self, request, *args):
 
-		if request.session.get('project_id') is not None:
-			self.project_id = int(request.session['project_id'])
+		if self.hasProjectInSession():
+			self.project_id = self.getProjectFromSession()
 
 		if self.project_id is not None and Project.objects.filter(id=self.project_id).exists():
 			self.project = Project.objects.get(id=self.project_id)

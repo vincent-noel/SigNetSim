@@ -24,8 +24,7 @@
 
 """
 
-from libsignetsim.model.ModelException import ModelException
-from libsignetsim.model.sbml.container.ListOf import ListOf
+from libsignetsim import ModelException
 from libsignetsim.model.Variable import Variable
 from signetsim.views.edit.ModelParentForm import ModelParentForm
 import os
@@ -133,7 +132,7 @@ class ModelSubmodelsForm(ModelParentForm):
 
 			self.parent.loadModelSubModels(request, self.source)
 
-			self.submodelRef = self.readInt(request, 'submodel_submodel_ref',
+			self.submodelRef = self.readInt(request, 'submodel_submodel',
 								"The index of the submodel in the submodel",
 								required=True,
 								max_value=len(self.parent.listOfSubmodelsRefs))

@@ -1,214 +1,151 @@
-{% load tags %}
 
-///////////////////////////////////////////////////////////////////////////////
-// Substitutions
-var loaded_submodel_object_id = "";
-var loaded_submodel_object_name = "Select an object in the submodel";
+class FormSubstitution extends FormGroup {
 
-$('#substitution_type_dropdown li').on('click', function(){
-  $("#substitution_type_label").html($(this).text());
-  $('#substitution_type').val($(this).index());
-});
+    constructor(field) {
+        super();
+        this.field = field;
 
-$('#substitution_submodel_dropdown li').on('click', function(){
-  $("#substitution_submodel_label").html($(this).text());
-  $('#substitution_submodel').val($(this).index());
-  get_substitution_list_of_objects($(this).index());
-});
+        this.substitution_type = new Dropdown(
+          "substitution_type", "The type of substitution",
+          null,
+          "0", "Replace a variable from a submodel with a variable from the main model (Replacement)",
+          true
+        );
+        this.addForm(this.substitution_type);
 
+        this.substitution_model_object = new Dropdown(
+            "substitution_model_object", "The object from the model",
+            null,
+            "", "Select an object from the model",
+            true
+        )
+        this.addForm(this.substitution_model_object, true);
 
-function setSubstitutionListOfObjectsLoading()
-{
-  $("#substitution_list_of_objects_loaded").removeClass("in");
-  $("#substitution_list_of_objects_loading_failed").removeClass("in");
-  $("#substitution_list_of_objects_loading").addClass("in");
+        this.substitution_submodel = new Dropdown(
+            "substitution_submodel", "The submodel",
+            () => { this.loadSubmodelObjects(); },
+            "", "Select a submodel",
+            true
+        )
+        this.addForm(this.substitution_submodel, true);
 
-}
+        this.substitution_submodel_object = new Dropdown(
+            "substitution_submodel_object", "The object of the submodel",
+            null,
+            "", "Select an object from the submodel",
+            true
+        )
+        this.addForm(this.substitution_submodel_object, true);
 
-function setSubstitutionListOfObjectsLoaded()
-{
-  $("#substitution_list_of_objects_loading").removeClass("in");
-  $("#substitution_list_of_objects_loading_failed").removeClass("in");
-  $("#substitution_list_of_objects_loaded").addClass("in");
-}
+        this.substitution_id = new Form("substitution_id", "The id of the substitution", "");
+        this.addForm(this.substitution_id);
+    }
 
-function setSubstitutionListOfObjectsLoadingFailed()
-{
-  $("#substitution_list_of_objects_loading").removeClass("in");
-  $("#substitution_list_of_objects_loaded").removeClass("in");
-  $("#substitution_list_of_objects_loading_failed").addClass("in");
+    loadSubmodelObjects()
+    {
+        this.substitution_submodel_object.showLoading();
+        ajax_call(
+            "POST",
+            '{% url 'get_list_of_objects_from_submodels' %}',
+            { 'model_id': this.substitution_submodel.getValue() },
+            (data) =>
+            {
+                $.each(data, (index, element) =>
+                {
+                    if (index == 'list'){
+                        this.substitution_submodel_object.showLoaded();
+                        if (element.length > 0)
+                        {
+                            this.substitution_submodel_object.setList(element);
+                        }
+                    }
+                });
+            },
+            () => { this.substitution_submodel_object.showLoadingFailed(); }
+        );
+    }
 
-}
+    show(){
+        $('#' + this.field).modal('show');
+    }
 
-function get_substitution_list_of_objects(index)
-{
-  $("#substitution_list_of_objects_loaded").children().each(function() {
-    $(this).remove();
-  });
+    new()
+    {
+        $("#modal_substitution-title").html("New modification");
 
-  setSubstitutionListOfObjectsLoading();
+        this.resetErrors();
+        this.clearForms();
+        this.substitution_submodel_object.hide();
+        this.show();
+    }
 
-  $.ajaxSetup({
-      beforeSend: function(xhr, settings) {
-          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-              xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
-          }
-      }
-  });
-  $.ajax(
-  {
-      type: "POST",
-      url: '{% url 'get_list_of_objects_from_submodels' %}',
-      data: {
-          'model_id': index,
-      },
+    load(substitution_id)
+    {
+        $("#modal_substitution-title").html("Edit substitution");
 
-  })
-  .done(function(data)
-  {
-     $.each(data, function(index, element) {
-       if (index == 'list'){
-          setSubstitutionListOfObjectsLoaded();
-          if (element.length > 0)
-           {
-              loadSubstitutionSubmodelObjects(element);
+        ajax_call(
+            "POST",
+            "{% url 'get_substitution' %}", {'id': substitution_id},
+            (data) =>
+            {
+               $.each(data, (index, element) =>
+               {
+                   if (index === "id") {
+                       this.substitution_id.setValue(element.toString());
 
-           }
-       }
-     });
-  })
-  .fail(function()
-  {
-    setSubstitutionListOfObjectsLoadingFailed();
-  })
+                   } else if (index === "type") {
+                       this.substitution_type.setValue(element);
+                       if (element == 0){
+                           this.substitution_type.setLabel(
+                               "Replace a variable from a submodel with a variable from the main model (Replacement)"
+                           );
+                       } else {
+                           this.substitution_type.setLabel(
+                               "Replace a variable from the main model with a variable from a sbmodel (Replaced by)"
+                           );
+                       }
 
-}
+                   } else if (index === "object_id") {
+                       this.substitution_model_object.setValue(element);
 
-function loadSubstitutionSubmodelObjects(submodels_objects)
-{
-    var list_objects = "";
-    list_of_objects_names = submodels_objects;
-    var i;
-    for (i=0; i < submodels_objects.length; i++)
-        list_objects += "<li><a>" + submodels_objects[i].toString() + "</a></li>";
+                   } else if (index === "object_name") {
+                       this.substitution_model_object.setLabel(element.toString());
 
-    $("#substitution_list_of_objects_loaded").append("\
-    <input type=\"hidden\" name=\"substitution_submodel_object\" id=\"substitution_submodel_object\" value=\"" + loaded_submodel_object_id + "\">\
-    <div class=\"dropdown\">\
-      <button type=\"button\" class=\"btn btn-primary btn-sm dropdown-toggle\" data-toggle=\"dropdown\">\
-        <span id=\"substitution_submodel_object_label\">" + loaded_submodel_object_name + "</span>\
-        <span class=\"caret\"></span>\
-      </button>\
-      <ul id=\"substitution_submodel_object_dropdown\" class=\"dropdown-menu\">" + list_objects.toString() + "</ul>\
-    </div>\
-    ");
+                   } else if (index === "submodel_id") {
+                       this.substitution_submodel.setValue(element.toString());
+                       this.loadSubmodelObjects();
 
-    $("<script>").attr("type", "text/javascript").text("\
-      $(\"#substitution_submodel_object_dropdown li\").on(\"click\", function(){\
-        $(\"#substitution_submodel_object_label\").html($(this).text());\
-        $(\"#substitution_submodel_object\").val($(this).index());\
-      });")
-    .appendTo('#substitution_list_of_objects_loaded');
-}
+                   } else if (index === "submodel_name") {
+                       this.substitution_submodel.setLabel(element.toString());
 
-$('#substitution_model_object_dropdown li').on('click', function(){
-  $("#substitution_model_object_label").html($(this).text());
-  $('#substitution_model_object').val($(this).index());
-});
+                   } else if (index === "submodel_object_id") {
+                      this.substitution_submodel_object.setValue(element.toString());
 
-$('#new_substitution_button').on('click', function(){
+                   } else if (index === "submodel_object_name") {
+                       this.substitution_submodel_object.setLabel(element.toString());
 
-    $("#modal_substitution-title").html("New modification");
-
-    $("#modal_substitution_id").val("");
-    $("#substitution_type").val(0);
-    $("#substitution_type_label").html("Replace a variable from a submodel with a variable from the main model (Replacement)");
-    $("#substitution_model_object").val("");
-    $("#substitution_model_object_label").html("Select an object in the main model");
-    $("#substitution_submodel").val("");
-    $("#substitution_submodel_label").html("Select a submodel");
-    $("#substitution_submodel_object").val("");
-    $("#substitution_submodel_object_label").html("Select an object in the submodel");
-    reset_errors();
-
-    $('#modal_substitution').modal('show');
-});
-
-
-
-function view_substitution(submodel_id)
-{
-
- $("#modal_substitution-title").html("Edit substitution");
-
-    ajax_call(
-        "POST", "{{csrf_token}}",
-        "{% url 'get_substitution' %}", {'id': submodel_id},
-        function(data)
-        {
-           $.each(data, function(index, element)
-           {
-               if (index === "id") { $("#modal_substitution_id").val(element.toString()); }
-               else if (index === "type") {
-                   $("#substitution_type").val(element);
-                   if (element == 0){
-                       $("#substitution_type_label").html("Replace a variable from a submodel with a variable from the main model (Replacement)")
-                   } else {
-                       $("#substitution_type_label").html("Replace a variable from the main model with a variable from a sbmodel (Replaced by)")
                    }
-               }
-               else if (index === "object_id") { $("#substitution_model_object").val(element.toString()); }
-               else if (index === "object_name") { $("#substitution_model_object_label").html(element.toString()); }
-               else if (index === "submodel_id") {
-                   $("#substitution_submodel").val(element.toString());
-                   get_substitution_list_of_objects(element);
-               }
-               else if (index === "submodel_name") { $("#substitution_submodel_label").html(element.toString()); }
-               else if (index === "submodel_object_id") {
-                  loaded_submodel_object_id = element.toString();
-                  $("#substitution_submodel_object").val(element.toString());
-               }
-               else if (index === "submodel_object_name") {
-                   loaded_submodel_object_name = element.toString();
-                   $("#substitution_submodel_object_label").html(element.toString());
-               }
 
-           });
+               });
 
-        },
-        function() { console.log("failed"); }
-    );
+            },
+            () => { console.log("failed"); }
+        );
 
-    $("#modal_substitution").modal('show');
-
-}
-
-function reset_errors()
-{
-   $("#error_modal").empty();
-}
-
-function save_substitution()
-{
-    var nb_errors = 0;
-    reset_errors();
-
-    if ($("#substitution_model_object").val() == "") {
-        add_error_modal("invalid_object", "Please select an object from the main model");
-        nb_errors++;
+        this.show();
     }
 
-    if ($("#substitution_submodel").val() == "") {
-        add_error_modal("invalid_submodel", "Please select a submodel");
-        nb_errors++;
-    }
+    save()
+    {
+        this.resetErrors();
+        this.checkErrors();
 
-    if ($("#substitution_submodel_object").val() == "") {
-        add_error_modal("invalid_submodel_object", "Please select an object from the submodel");
-        nb_errors++;
-    }
+        if (this.nb_errors === 0){
+            $("#modal_substitution").hide();
+        }
 
-    if (nb_errors == 0) {
-        $("#substitution_form").submit()
+        return (this.nb_errors === 0);
     }
 }
+
+let form_substitution = new FormSubstitution("modal_substitution");

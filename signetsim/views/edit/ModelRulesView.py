@@ -27,8 +27,9 @@
 from django.views.generic import TemplateView
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from libsignetsim.model.ModelException import ModelException
+from libsignetsim import ModelException
 from ModelRulesForm import ModelRulesForm
+
 class ModelRulesView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 	template_name = 'edit/rules.html'

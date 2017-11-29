@@ -24,7 +24,6 @@ then
 else
     docker run -dt --name signetsim_container -p 8080:80 \
                 -v ${DATA_DIR}/data:/SigNetSim/data \
-                -v ${DATA_DIR}/settings:/SigNetSim/settings \
                 signetsim:xenial bash
 fi
 

@@ -22,12 +22,9 @@
 {% load static from staticfiles %}
 
 {% block title %} Parameters | {{ block.super }}{% endblock title %}
-
 {% block edit_item %}active{% endblock edit_item %}
-
 {% block view_name %}Model parameters{% endblock view_name %}
 {% block view_sidebar %}{% include 'edit/menu.html' with page="parameters" %}{% endblock view_sidebar %}
-
 {% block view_content %}
 
 
@@ -59,7 +56,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="parameter_id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="view_parameter('{{parameter.getSbmlId}}', '{% if parameter.reaction != None %}{{list_of_reactions|my_index:parameter.reaction}}{% endif %}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" onclick="form_parameter.load('{{parameter.getSbmlId}}', '{% if parameter.reaction != None %}{{list_of_reactions|my_index:parameter.reaction.getName}}{% endif %}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
               </form>
               </div>
@@ -73,7 +70,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-      <button type="button" class="btn btn-primary btn-sm" id="new_parameter_button">{% bootstrap_icon "file" %} Create new parameter</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="form_parameter.new();">{% bootstrap_icon "file" %} Create new parameter</button>
   </div>
   {% endif %}
   {% endif %}
@@ -84,6 +81,10 @@
 {% include 'edit/parameters_modal.html' %}
 {% endblock view_modal %}
 
+{% block footer_js %}
+{{ block.super }}
+	<script src="{% static 'js/forms.js' %}"></script>
+{% endblock footer_js %}
 
 {% block js %}
 {{ block.super }}

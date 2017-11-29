@@ -16,17 +16,19 @@
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
 {% extends '_layouts/menupage.html' %}
-{% block title %} Rules | {{ block.super }}{% endblock title %}
 
+{% load static from staticfiles %}
+{% load bootstrap3 %}
+{% load tags %}
+
+{% block title %} Rules | {{ block.super }}{% endblock title %}
 {% block edit_item %}active{% endblock edit_item %}
 {% block view_name %}Model rules{% endblock view_name %}
 {% block view_sidebar %}{% include 'edit/menu.html' with page="rules" %}{% endblock view_sidebar %}
 
 {% block view_content %}
 
-{% load static from staticfiles %}
-{% load bootstrap3 %}
-{% load tags %}
+
 <div class="container-fluid" id="view">
   <h4>Rules</h4>
   <hr/><br/>
@@ -54,7 +56,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="rule_id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="view_rule({{forloop.counter0}});" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" onclick="form_rule.load({{forloop.counter0}});" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
               </form>
             </div>
@@ -68,7 +70,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-    <button type="submit" class="btn btn-primary btn-sm" id="new_rule_button">{% bootstrap_icon "file" %} Create new rule</button>
+    <button type="submit" class="btn btn-primary btn-sm" onclick="form_rule.new();">{% bootstrap_icon "file" %} Create new rule</button>
   </div>
   {% endif %}
   {% endif %}
@@ -83,106 +85,54 @@
 <div class="modal fade in" id="modal_rule" tabindex="1" role="dialog" aria-labelledby="New rule">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form method="post" enctype="multipart/form-data" id="rule_form">
+      <form method="post" enctype="multipart/form-data" onsubmit="return form_rule.save();">
         <input type="hidden" name="action" value="save">
+				<input type="hidden" id="rule_id" name="rule_id" value="">
         {% csrf_token %}
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title" id="modal_rule-title">New rule</h4>
         </div>
         <div class="modal-body text-center">
-          <div class="input-group col-xs-12">
-            <div class="dropdown">
-              <input type="hidden" id="rule_id" name="rule_id" value="">
-              <input type="hidden" id="rule_type" name="rule_type" value="">
-              <button type="button" id="rule_type_dropdown_button" class="btn btn-primary dropdown-toggle col-xs-12" data-toggle="dropdown">
-                <span id="rule_type_name">Choose a type</span>
-                <span class="caret"></span>
-              </button>
-              <ul id="rule_type_dropdown" class="dropdown-menu col-xs-12">
-                  {% for rule_type in rules_types %}
-                  <li><a>{{ rule_type }}</a></li>
-                  {% endfor %}
-              </ul>
-            </div>
-          </div>
-          <br/>
+					{% include 'commons/html/dropdown.html' with
+						name="Rule type"
+						id="rule_type"
+						default=""
+						default_label="Choose a type"
+						list=rules_types
+					%}
           <div class="collapse" id="rule_species">
-            <div class="input-group">
-              <span class="input-group-addon">Variable</span>
-              <div class="dropdown">
-                <button type="button" class="btn btn-primary dropdown-toggle col-xs-12" data-toggle="dropdown">
-                  <span id="dropdown_variable_name"></span>
-                  <span class="caret"></span>
-                </button>
-                <ul id="dropdown_variables_list" class="dropdown-menu col-xs-12">
-                    {% for variable in list_of_variables %}
-                    <li><a>{{ variable }}</a></li>
-                    {% endfor %}
-                </ul>
-                <input type="hidden" id="dropdown_variable_id" name="variable_id" value="">
-              </div>
-            </div>
-            <br/>
+						{% include 'commons/html/dropdown.html' with
+							name="Variable"
+							id="variable_id"
+							default=""
+							default_label="Choose a variable"
+							list=list_of_variables
+						%}
           </div>
           <div class="collapse" id="rule_exp_others">
-             <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <td class="col-xs-11" style="padding: 0px;">
-                      <div class="input-group">
-                        <span class="input-group-addon">Expression</span>
-                        <input type="text" class="form-control input-sm" placeholder="Input expression" name="rule_expression" id="rule_expression" value="">
-                      </div>
-                    </td>
-                    <td class="col-xs-1" style="padding: 0px;vertical-align:middle">
-                      <div id="exp_validating" class="pull-right collapse">
-                        <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
-                      </div>
-                      <div id="exp_valid" class="pull-right collapse">
-                        <span class="glyphicon glyphicon-ok" style="color:#5cb85c; font-size: 1.5em"></span>
-                      </div>
-                      <div id="exp_invalid" class="pull-right collapse">
-                      <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
-                      </div>
-                    </td>
-                  </tr>
-                </thead>
-              </table>
-            <br/>
+						{% include 'commons/html/validated_input.html' with
+							name="Expression"
+							id="rule_expression"
+							placeholder="Input expression"
+							default=""
+						%}
           </div>
           <div class="collapse" id="rule_exp_alg">
-            <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <td class="col-xs-11" style="padding: 0px;">
-                      <div class="input-group">
-                        <span class="input-group-addon">Expression</span>
-                        <input type="text" class="form-control input-sm" placeholder="Input expression" name="rule_expression_alg" id="rule_expression_alg" value="">
-                        <span class="input-group-addon"> = 0</span>
-                      </div>
-                    </td>
-                    <td class="col-xs-1" style="padding: 0px;vertical-align:middle">
-                      <div id="expalg_validating" class="pull-right collapse">
-                        <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
-                      </div>
-                      <div id="expalg_valid" class="pull-right collapse">
-                        <span class="glyphicon glyphicon-ok" style="color:#5cb85c; font-size: 1.5em"></span>
-                      </div>
-                      <div id="expalg_invalid" class="pull-right collapse">
-                      <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
-                      </div>
-                    </td>
-                  </tr>
-                </thead>
-              </table>
-            </div>
+						{% include 'commons/html/validated_input.html' with
+							name="Expression"
+							id="rule_expression_alg"
+							placeholder="Input expression"
+							default=""
+							post="=0"
+						%}
+					</div>
           <div class="container-fluid" id="error_modal">
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" onclick="save_rule()" class="btn btn-primary">Save</button>
+          <button type="submit" class="btn btn-primary">Save</button>
         </div>
       </form>
     </div>
@@ -191,6 +141,11 @@
 
 
 {% endblock view_modal %}
+
+{% block header_js %}
+{{ block.super }}
+	<script src="{% static 'js/forms.js' %}"></script>
+{% endblock header_js %}
 
 {% block js %}
 {{ block.super }}

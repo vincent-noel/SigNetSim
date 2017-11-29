@@ -20,8 +20,8 @@
 {% load bootstrap3 %}
 {% load tags %}
 {% load static from staticfiles %}
-{% block edit_item %}active{% endblock edit_item %}
 
+{% block edit_item %}active{% endblock edit_item %}
 {% block title %} Reactions | {{ block.super }}{% endblock title %}
 {% block view_name %}Model reactions{% endblock view_name %}
 {% block view_sidebar %}{% include 'edit/menu.html' with page="reactions" %}{% endblock view_sidebar %}
@@ -53,7 +53,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="reaction_id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="view_reaction('{{reaction.getSbmlId}}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" onclick="form_reaction.load('{{reaction.getSbmlId}}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
               </form>
             </div>
@@ -67,7 +67,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-    <button type="button" class="btn btn-primary btn-sm" onclick="newReaction();">{% bootstrap_icon "file" %} Create new reaction</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="form_reaction.new();">{% bootstrap_icon "file" %} Create new reaction</button>
   </div>
   {% endif %}
   {% endif %}
@@ -80,6 +80,11 @@
 {{ block.super }}
 {% include 'edit/reactions_modal.html' %}
 {% endblock view_modal %}
+
+{% block header_js %}
+{{ block.super }}
+<script src="{% static 'js/forms.js' %}"></script>
+{% endblock header_js %}
 
 {% block js %}
 {{ block.super }}

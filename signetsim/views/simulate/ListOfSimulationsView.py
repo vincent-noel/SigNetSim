@@ -29,9 +29,9 @@ from django.conf import settings
 from django.core.files import File
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from signetsim.models import SEDMLSimulation, SbmlModel
+from signetsim.managers.simulations import deleteSimulation
 from signetsim.forms import DocumentForm
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.sedml.SedmlDocument import SedmlDocument
+from libsignetsim import SbmlDocument, SedmlDocument
 from os.path import join, basename, splitext
 from os import remove
 
@@ -95,8 +95,7 @@ class ListOfSimulationsView(TemplateView, HasWorkingProject):
 
 		if 'id' in request.POST and request.POST['id'] != "":
 			t_simulation = SEDMLSimulation.objects.get(project=self.project, id=int(request.POST['id']))
-			remove(join(settings.MEDIA_ROOT, str(t_simulation.sedml_file)))
-			t_simulation.delete()
+			deleteSimulation(t_simulation)
 			self.loadListOfSimulations()
 
 

@@ -26,7 +26,7 @@
 
 from django.test import TestCase, Client
 from signetsim.models import User, Project, SbmlModel
-from libsignetsim.model.SbmlDocument import SbmlDocument
+from libsignetsim import SbmlDocument
 from django.conf import settings
 from os.path import dirname, join
 
@@ -36,8 +36,6 @@ class TestSelectSubmodel(TestCase):
 	fixtures = ["user_with_project.json"]
 
 	def testCreateModel(self):
-
-		settings.MEDIA_ROOT = "/tmp/"
 
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)

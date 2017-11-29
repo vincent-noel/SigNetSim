@@ -16,9 +16,11 @@
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
 {% extends '_layouts/menupage.html' %}
+
 {% load bootstrap3 %}
 {% load tags %}
 {% load static from staticfiles %}
+
 {% block edit_item %}active{% endblock edit_item %}
 {% block title %} Compartments | {{ block.super }}{% endblock title %}
 {% block view_name %}Model compartments{% endblock view_name %}
@@ -49,7 +51,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                {% csrf_token %}
                <input type="hidden" name="compartment_id" value="{{ forloop.counter0 }}">
-               <button type="button" onclick="view_compartment('{{compartment.getSbmlId}}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+               <button type="button" onclick="form_compartment.load('{{compartment.getSbmlId}}');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
               </form>
               {% endif %}
@@ -63,7 +65,9 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-    <button type="button" class="btn btn-primary btn-sm" id="new_compartment_button">{% bootstrap_icon "file" %} Create new compartment</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="form_compartment.new();">
+			{% bootstrap_icon "file" %} Create new compartment
+		</button>
   </div>
   {% endif %}
   {% endif %}
@@ -73,6 +77,11 @@
 {% block view_modal %}
 {% include 'edit/compartments_modal.html' %}
 {% endblock view_modal %}
+
+{% block footer_js %}
+{{ block.super }}
+<script src="{% static 'js/forms.js' %}"></script>
+{% endblock footer_js %}
 
 {% block js %}
 {{ block.super }}

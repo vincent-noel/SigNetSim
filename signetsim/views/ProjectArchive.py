@@ -59,4 +59,4 @@ class ProjectArchive(TemplateView):
 			else:
 				raise Http404("Project doesn't exists")
 
-		redirect('projects')
+		redirect('home')

@@ -44,7 +44,7 @@ function view_project(project_id)
     $("#modal_project_title").html("Edit project");
 
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_project' %}", {'id': project_id},
         function(data)
         {

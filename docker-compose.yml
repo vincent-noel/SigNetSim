@@ -1,0 +1,17 @@
+#docker-compose.yml
+version: '3.3'
+services:
+  signetsim:
+    build:
+      context: ./
+      dockerfile: ./scripts/docker/Dockerfile
+    image: signetsim/signetsim:develop
+    container_name: signetsim
+    volumes:
+      - signetsim_data:/SigNetSim/data
+    ports:
+      - "8080:80"
+    restart: always
+
+volumes:
+  signetsim_data:

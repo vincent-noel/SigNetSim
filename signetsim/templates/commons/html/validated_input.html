@@ -1,0 +1,35 @@
+{% load static from staticfiles %}
+
+<table class="table table-striped" id="{{ id }}_group">
+	<thead>
+		<tr class="row">
+			<th class="col-xs-11" id="{{ id }}_label">{{ name }}</th>
+			<th class="col-xs-1"></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="row">
+			<td class="col-xs-11">
+				{% if pre or post %}<div class="input-group">{% endif %}
+
+					{% if pre %}<span class="input-group-addon">{{ pre }}</span>{% endif %}
+					<input type="text" class="form-control input-sm" placeholder="{{ placeholder }}"
+								 name="{{ id }}" id="{{ id }}" value="{{ default }}"
+					>
+					{% if post %}<span class="input-group-addon">{{ post }}</span>{% endif %}
+				{% if pre or post %}</div>{% endif %}
+			</td>
+			<td class="col-xs-1" style="vertical-align:middle">
+				<div id="{{ id }}_validating" class="pull-right collapse">
+					<img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+				</div>
+				<div id="{{ id }}_valid" class="pull-right collapse">
+					<span class="glyphicon glyphicon-ok" style="color:#5cb85c; font-size: 1.5em"></span>
+				</div>
+				<div id="{{ id }}_invalid" class="pull-right collapse">
+				<span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>

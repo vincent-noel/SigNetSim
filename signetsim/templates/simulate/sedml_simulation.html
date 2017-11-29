@@ -20,11 +20,9 @@
 {% load static from staticfiles %}
 
 {% block view_name %}Sedml simulation{% endblock view_name %}
-{% block view_sidebar %}{% include 'simulate/menu.html' %}{% endblock view_sidebar %}
+{% block view_sidebar %}{% include 'simulate/menu.html' with page="stored_simulations" %}{% endblock view_sidebar %}
+{% block sim_item %}active{% endblock sim_item %}
 {% block view_content %}
-{% block header_js %}
-<script src="{% static "chart.js/dist/Chart.js" %}"></script>
-{% endblock header_js %}
 
 <div class="container-fluid" id="view">
   <h4>SED-ML simulation</h4>
@@ -40,10 +38,16 @@
       <br/><br/>
       {% endfor %}
     </div>
-  <script>
-  {% include 'simulate/plot2D_graph.js' %}
-  </script>
-
   <hr/>
 </div>
 {% endblock view_content %}
+
+{% block footer_js %}
+{{ block.super }}
+<script src="{% static "chart.js/dist/Chart.js" %}"></script>
+{% endblock footer_js %}
+
+{% block js %}
+{{ block.super }}
+  {% include 'simulate/plot2D_graph.js' %}
+{% endblock js %}

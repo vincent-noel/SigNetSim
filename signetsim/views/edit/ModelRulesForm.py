@@ -24,9 +24,7 @@
 
 """
 
-from django.views.generic import TemplateView
-from signetsim.views.HasWorkingModel import HasWorkingModel
-from libsignetsim.model.ModelException import ModelException
+from libsignetsim import ModelException
 from ModelParentForm import ModelParentForm
 
 class ModelRulesForm(ModelParentForm):

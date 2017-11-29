@@ -26,19 +26,21 @@
 
 from django.views.generic import TemplateView
 
-from libsignetsim.LibSigNetSimException import LibSigNetSimException
-from libsignetsim.simulation.SteadyStatesSimulation import SteadyStatesSimulation
+from libsignetsim import LibSigNetSimException, SteadyStatesSimulation
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.simulate.SedmlWriter import SedmlWriter
 from signetsim.views.simulate.SteadyStatesSimulationForm import SteadyStateSimulationForm
 from signetsim.models import Experiment, SEDMLSimulation, new_sedml_filename
+from signetsim.managers.models import copyModelHierarchy
 from signetsim.settings.Settings import Settings
 
 from django.conf import settings
 from django.core.files import File
 
-from os.path import join
+from os.path import join, dirname
+from os import remove
+
 
 class SteadyStateSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 
@@ -149,7 +151,13 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		self.form.read(request)
 		if not self.form.hasErrors():
 			self.createDocument()
+
 			steady_states = self.createSteadyStates()
+
+			if self.form.saveModelSnapshot:
+				sbml_model = join(dirname(self.model_filename), copyModelHierarchy(self.model_filename))
+			else:
+				sbml_model = self.model_filename
 
 			variables = []
 			if self.form.selectedSpeciesIds is not None:
@@ -160,15 +168,26 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 				for id_var in self.form.selectedReactionsIds:
 					variables.append(self.listOfVariables[id_var])
 
-			model = self.addModel(self.model_filename, var_input=self.listOfVariables[self.form.speciesId])
-			self.addSteadyStatesCurve(steady_states, model, "Simulation", variables, self.form.steady_states, self.listOfVariables[self.form.speciesId])
+			model = self.addModel(sbml_model, var_input=self.listOfVariables[self.form.speciesId])
+			self.addSteadyStatesCurve(
+				steady_states, model,
+				("Simulation" if self.form.simulationName is None else self.form.simulationName),
+				variables,
+				self.form.steady_states,
+				self.listOfVariables[self.form.speciesId]
+			)
 
 			simulation_filename = join(settings.MEDIA_ROOT, new_sedml_filename())
 			open(simulation_filename, "a")
-			new_simulation = SEDMLSimulation(project=self.project, name="Simulation", sedml_file=File(open(simulation_filename, "r")))
+			new_simulation = SEDMLSimulation(
+				project=self.project,
+				name=("Simulation" if self.form.simulationName is None else self.form.simulationName),
+				sedml_file=File(open(simulation_filename, "r")),
+				sbml_file=sbml_model
+			)
 			new_simulation.save()
 			filename = join(settings.MEDIA_ROOT, str(new_simulation.sedml_file))
-
+			remove(simulation_filename)
 			self.saveSedml(filename)
 
 	def loadExperiments(self):

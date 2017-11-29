@@ -29,8 +29,7 @@ from django.test import TestCase, Client
 
 from signetsim.models import User, Project, SbmlModel
 
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.math.MathFormula import MathFormula
+from libsignetsim import SbmlDocument, MathFormula
 
 from os.path import dirname, join
 from json import loads
@@ -42,8 +41,6 @@ class TestEvent(TestCase):
 	fixtures = ["user_with_project.json"]
 
 	def testEvents(self):
-
-		settings.MEDIA_ROOT = "/tmp/"
 
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
@@ -96,6 +93,7 @@ class TestEvent(TestCase):
 		response_save_event = c.post('/edit/events/', {
 			'action': 'save',
 			'event_id': '',
+			'event_sbmlid': 'test_event',
 			'event_name': "Test event",
 			'event_trigger': "time==0",
 			'event_priority': "",
@@ -151,6 +149,7 @@ class TestEvent(TestCase):
 		response_save_event = c.post('/edit/events/', {
 			'action': 'save',
 			'event_id': '0',
+			'event_sbmlid': 'test_event',
 			'event_name': "Test event",
 			'event_trigger': "time==100",
 			'event_priority': "",

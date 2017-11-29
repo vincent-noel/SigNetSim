@@ -6,7 +6,7 @@
 <div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New species" id="modal_species">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form class="form" method="POST" enctype="multipart/form-data" id="species_form" onsubmit="return save_species();">
+      <form class="form" method="POST" enctype="multipart/form-data" id="species_form" onsubmit="return form_species.save();">
         {% csrf_token %}
         <input type="hidden" name="species_id" id="species_id" value="">
         <input type="hidden" name="action" value="save">
@@ -22,215 +22,87 @@
           </ul>
           <div class="tab-content">
             <div id="general" class="tab-pane fade in active">
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-12">Name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-12">
-                      <input type="text" class="form-control input-sm" placeholder="<Input name>" id="species_name" name="species_name" value="">
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <table id="species_sbml_id_group" class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th id="species_sbml_id_label" class="col-xs-11">Identifier</th>
-                    <th class="col-xs-1"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-11">
-                      <input type="text" class="form-control input-sm" placeholder="<Input name>" id="species_sbml_id" name="species_sbml_id" value="">
-                    </td>
-                    <td class="col-xs-1" style="vertical-align:middle">
-                      <div id="sbmlid_validating" class="pull-right collapse">
-                        <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
-                      </div>
-                      <div id="sbmlid_valid" class="pull-right collapse">
-                        <span class="glyphicon glyphicon-ok" style="color:#5cb85c; font-size: 1.5em"></span>
-                      </div>
-                      <div id="sbmlid_invalid" class="pull-right collapse">
-                      <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-12">Compartment</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-12">
-                      <input type="hidden" name="species_compartment" id="species_compartment" value="">
-                      <div class="input-group col-xs-12">
-                          <div class="dropdown">
-                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                            <span id="species_compartment_label">Choose a compartment</span>
-                            <span class="caret"></span>
-                          </button>
-                          <ul id="species_compartment_dropdown" class="dropdown-menu">
-                            {% for compartment in list_of_compartments %}
-                            <li><a>{{compartment}}</a></li>
-                            {% endfor %}
-                          </ul>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+							{% include 'commons/html/name_input.html' with
+								name="Name"
+								id="species_name"
+								default=""
+								placeholder="Input the name of the species"
+							%}
+							{% include 'commons/html/validated_input.html' with
+								name="Identifier"
+								id="species_sbml_id"
+								placeholder="Input the identifier of the species"
+								default=""
+							%}
+							{% include 'commons/html/dropdown.html' with
+								name="Compartment"
+								id="species_compartment"
+								default_label="Choose a compartment"
+								default=""
+								list=list_of_compartments
+							%}
             </div>
             <div id="math" class="tab-pane fade in">
-              <table id="species_value_group" class="table table-striped">
+							<table class="table table-striped">
                 <thead>
                   <tr class="row">
-                    <th id="species_value_label" class="col-xs-8">Value</th>
-                    <th class="col-xs-4">Type</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-8">
-                      <input type="text" class="form-control input-sm" placeholder="<Input value>" id="species_value" name="species_value" value="">
+                    <td class="col-xs-8" style="padding: 0px">
+											{% include 'commons/html/float_input.html' with
+												name="Value"
+												id="species_value"
+												default=1
+												placeholder="Input species initial value"
+												nomargin=True
+											%}
                     </td>
-                    <td class="col-xs-4">
-                      <div class="input-group col-xs-12">
-                        <input type="hidden" name="species_value_type" id="species_value_type" value="1">
-                        <div class="dropdown">
-                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                            <span id="species_value_type_label">Concentration</span>
-                            <span class="caret"></span>
-                          </button>
-                          <ul id="species_value_type_dropdown" class="dropdown-menu">
-                            <li><a>Amount</a></li>
-                            <li><a>Concentration</a></li>
-                          </ul>
-                        </div>
-                      </div>
+                    <td class="col-xs-4" style="padding: 0px">
+											{% include 'commons/html/dropdown.html' with
+												name="Type"
+												id="species_value_type"
+												default=1
+												default_label="Concentration"
+												list=list_of_species_type
+												nomargin=True
+											%}
                     </td>
                   </tr>
-                </tbody>
-              </table>
-
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row"  onclick="toggle_slide('species_constant');">
-                    <th class="col-xs-10">Constant</th>
-                    <th class="col-xs-2 text-right">
-                      <span class="input-group col-xs-12">
-                          <label class="switch">
-                            <input type="checkbox" name="species_constant" id="species_constant">
-                            <div class="slider round"></div>
-                          </label>
-                      </span>
-                    </th>
-                  </tr>
                 </thead>
               </table>
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row"  onclick="toggle_slide('species_boundary');">
-                    <th class="col-xs-10">Boundary condition</th>
-                    <th class="col-xs-2 text-right">
-                      <span class="input-group col-xs-12">
-                          <label class="switch">
-                            <input type="checkbox" name="species_boundary" id="species_boundary">
-                            <div class="slider round"></div>
-                          </label>
-                      </span>
-                    </th>
-                  </tr>
-                </thead>
-              </table>
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-12">Unit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-12">
-                      <div class="input-group col-xs-12">
-                        <input type="hidden" name="species_unit" id="species_unit" value="">
-                        <div class="dropdown">
-                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                            <span id="species_unit_label">Choose an unit</span>
-                            <span class="caret"></span>
-                          </button>
-                          <ul id="unit_list" class="dropdown-menu">
-                            {% for unit in list_of_units %}
-                            <li><a>{{unit}}</a></li>
-                            {% endfor %}
-                          </ul>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
+							{% include 'commons/html/toggle_switch.html' with
+								name="Constant"
+								id="species_constant"
+								default=""
+								onclick="form_species.form_constant.toggle();"
+							%}
+							{% include 'commons/html/toggle_switch.html' with
+								name="Boundary condition"
+								id="species_boundary"
+								default=""
+							  onclick="form_species.form_boundary.toggle();"
+							%}
+							{% include 'commons/html/dropdown.html' with
+								name="Unit"
+								id="species_unit"
+								default_label="Choose a unit"
+								default=""
+								list=list_of_units
+							%}
             </div>
             <div id="annotation" class="tab-pane fade in">
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-10">SBO term</th>
-                    <th class="col-xs-2"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-10 text-center">
-                      <div class="collapse in" id="edit_SBO_term_off">
-                        <a id="sboterm_link" target="_blank">
-                          <span id="sboterm_name"></span>
-                        </a>
-                      </div>
-                      <div class="collapse out" id="edit_SBO_term_on">
-                        <input type="text" class="form-control input-sm" placeholder="<Input SBO term>" id="sboterm" name="species_sboterm" value="">
-                      </div>
-                    </td>
-                    <td class="col-xs-2">
-                      {% if user.is_authenticated %}
-                      <div class="pull-right collapse in" id="edit_SBO_term_on_actions">
-                          <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_SBO_term">{% bootstrap_icon "pencil" %}</button>
-                      </div>
-                      <div class="pull-right collapse" id="edit_SBO_term_off_actions">
-                        <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_SBO_term_cancel">{% bootstrap_icon "remove" %}</button>
-                        <button type="button" onclick="resolve_sbo();" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
-                      </div>
-                      {% endif %}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-sm-12">Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-sm-12">
-                      <div class="form-group">
-                       <textarea class="form-control" name="species_notes" rows="5"></textarea>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+							{% include 'commons/html/editable_input.html' with
+								name="SBO term"
+								id="species_sboterm"
+								default=""
+								default_label=""
+								placeholder="Input the species SBO term"
+								validate="form_species.form_sboterm.resolve();"
+							%}
+							{% include 'commons/html/notes_input.html' with
+								name="Notes"
+								id="species_notes"
+								nb_lines=6
+							%}
+
             </div>
           </div>
           <div class="container-fluid" id="error_modal">

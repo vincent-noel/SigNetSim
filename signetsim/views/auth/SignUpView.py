@@ -147,10 +147,10 @@ class SignUpView(TemplateView):
 		admins_email = [t_user.email for t_user in User.objects.filter(is_staff=True)]
 
 		url = settings.BASE_URL
-		if request.META['HTTP_X_SCRIPT_NAME'] != "":
+		if "HTTP_X_SCRIPT_NAME" in request.META and request.META['HTTP_X_SCRIPT_NAME'] != "":
 			url = str(request.META['HTTP_X_SCRIPT_NAME']) + url
 
-		if request.META['HTTP_X_SCHEME'] != "":
+		if "HTTP_X_SCHEME" in request.META and request.META['HTTP_X_SCHEME'] != "":
 			url = "%s://%s%s" % (str(request.META['HTTP_X_SCHEME']), request.META['HTTP_HOST'], url)
 
 		else:
@@ -163,7 +163,7 @@ class SignUpView(TemplateView):
 			message='',
 			html_message='Dear admin<br/>The user %s (%s) just registered for an account for SigNetSim. Please follow <a href="%s">this link</a> if you want to activate this account<br><br>If for some reason you cannot click this link, please copy/paste the following url in your web browser :<br/>%s<br/>' % (
 							username, email, activate_url, activate_url),
-			from_email='signetsim@gmail.com',
+			from_email=settings.EMAIL_ADDRESS,
 			recipient_list=admins_email,
 			fail_silently=True,
 		)

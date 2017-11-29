@@ -1,275 +1,187 @@
-function clear_form()
-{
-  $("#dropdown_variable_name").html("Choose a variable");
-  $('#dropdown_variable_id').val("");
+{% comment %}
 
-  $("#rule_expression").val("");
-  $("#rule_expression_alg").val("");
+ Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
 
-  reset_errors();
-}
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published
+ by the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
 
-$('#rule_type_dropdown li').on('click', function(){
-  $("#rule_type_name").html($(this).text());
-  $('#rule_type').val($(this).index());
-  clear_form();
+ You should have received a copy of the GNU Affero General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-  if ($(this).index() == 0){
+{% endcomment %}
 
-    $("#rule_species").removeClass("in");
-    $("#rule_exp_others").removeClass("in");
-    $("#rule_exp_alg").addClass("in");
+class RuleForm extends FormGroup{
+    constructor(field){
+        super();
+        this.field = field;
 
-  } else {
+        this.form_id = new Form("rule_id", "The id of the rule", "");
+        this.addForm(this.form_id);
 
-    $("#rule_species").addClass("in");
-    $("#rule_exp_others").addClass("in");
-    $("#rule_exp_alg").removeClass("in");
-  }
+        this.form_expression = new MathForm("rule_expression", "The expression of the rule", "");
+        this.addForm(this.form_expression, true);
 
-});
+        this.form_expression_alg = new MathForm("rule_expression_alg", "The expression of the algebraic rule", "");
+        this.addForm(this.form_expression_alg, true);
 
+        this.form_variable = new Dropdown("variable_id", "The variable affected by the rule", null, "", "Choose a variable", true);
+        this.addForm(this.form_variable);
 
-$('#dropdown_variables_list li').on('click', function(){
-  $("#dropdown_variable_name").html($(this).text());
-  $('#dropdown_variable_id').val($(this).index());
-});
+        this.form_type = new Dropdown(
+            "rule_type",
+            "The type of rule",
+            (() =>
+            {
+                this.form_variable.clear();
+                this.form_expression.clear();
+                this.form_expression_alg.clear()
+                if (this.form_type.getValue() === 0) { this.show_alg(); }
+                else { this.show_others(); }
+            }),
+            "", "Choose a rule type", true
+        );
+        this.addForm(this.form_type);
 
+    }
 
-$('#new_rule_button').on('click', function()
-{
-  $("#modal_rule-title").html("New rule");
+    checkErrors(){
+        this.resetErrors();
 
-  $("#rule_id").val("");
-  $("#rule_type_name").html("Choose a type");
-  $("#rule_type").val("");
-  clear_form();
+        if (this.form_type.hasError()){
 
+            this.addError(this.form_type);
+            this.form_type.highlight();
+            this.nb_errors++;
 
-  setExpressionEmpty();
-  setExpressionAlgEmpty();
-  reset_errors();
-  $("#rule_species").removeClass("in");
-  $("#rule_exp_others").removeClass("in");
-  $("#rule_exp_alg").removeClass("in");
-  $('#modal_rule').modal('show');
-});
-var form_exp_error = "";
-var form_expalg_error = "";
+        } else if (this.form_type.getValue() === 0){
 
-function setExpressionEmpty()
-{
-$("#exp_invalid").removeClass("in");
-  $("#exp_valid").removeClass("in");
-  $("#exp_validating").removeClass("in");
-
-}
-function setExpressionValidating()
-{
-$("#exp_invalid").removeClass("in");
-  $("#exp_valid").removeClass("in");
-  $("#exp_validating").addClass("in");
-
-}
-function setExpressionValid()
-{
-    $("#exp_invalid").removeClass("in");
-    $("#exp_validating").removeClass("in");
-    $("#exp_valid").addClass("in");
-}
-function setExpressionInvalid()
-{
-    $("#exp_validating").removeClass("in");
-    $("#exp_valid").removeClass("in");
-    $("#exp_invalid").addClass("in");
-}
-$("#rule_expression").on('change paste keyup', function()
-{
-  setExpressionValidating();
-  ajax_call(
-      "POST", "{{csrf_token}}",
-      "{% url 'math_validator' %}",
-      {
-          'math': $("#rule_expression").val(),
-      },
-      function(data)
-      {
-        $.each(data, function(index, element) {
-            if (index === 'valid' && element === 'true') {
-                setExpressionValid();
-                form_exp_error = "";
-
-            } else {
-                setExpressionInvalid();
-                form_exp_error = "is invalid";
-
-            }
-        });
-      },
-      function()
-      {
-        setExpressionInvalid();
-      });
-
-});
-
-
-function setExpressionAlgEmpty()
-{
-$("#expalg_invalid").removeClass("in");
-  $("#expalg_valid").removeClass("in");
-  $("#expalg_validating").removeClass("in");
-
-}
-function setExpressionAlgValidating()
-{
-$("#expalg_invalid").removeClass("in");
-  $("#expalg_valid").removeClass("in");
-  $("#expalg_validating").addClass("in");
-
-}
-function setExpressionAlgValid()
-{
-    $("#expalg_invalid").removeClass("in");
-    $("#expalg_validating").removeClass("in");
-    $("#expalg_valid").addClass("in");
-}
-function setExpressionAlgInvalid()
-{
-    $("#expalg_validating").removeClass("in");
-    $("#expalg_valid").removeClass("in");
-    $("#expalg_invalid").addClass("in");
-}
-
-$("#rule_expression_alg").on('change paste keyup', function()
-{
-  setExpressionAlgValidating();
-  ajax_call(
-      "POST", "{{csrf_token}}",
-      "{% url 'math_validator' %}",
-      {
-          'math': $("#rule_expression_alg").val(),
-      },
-      function(data)
-      {
-        $.each(data, function(index, element) {
-            if (index === 'valid' && element === 'true') {
-               form_expalg_error = "";
-               setExpressionAlgValid();
-            } else {
-                form_expalg_error = "is invalid";
-                setExpressionAlgInvalid();
-            }
-        });
-      },
-      function()
-      {
-        setExpressionAlgInvalid();
-      });
-
-});
-
-
-function view_rule(rule_ind)
-{
-    $("#modal_rule-title").html("Edit rule");
-    setExpressionAlgEmpty();
-    setExpressionEmpty();
-    ajax_call(
-        "POST", "{{csrf_token}}",
-        "{% url 'get_rule' %}", {'rule_ind': rule_ind},
-        function(data)
-        {
-            $.each(data, function(index, element) {
-                if (index == "rule_id") { $("#rule_id").val(element); }
-                else if (index === "rule_type") {
-
-                  $("#rule_type").val(element.toString());
-                  rule_type = element;
-
-                  if (element == 0) {
-                    $("#rule_species").removeClass("in");
-                    $("#rule_exp_alg").addClass("in");
-                    $("#rule_exp_others").removeClass("in");
-                  } else {
-                    $("#rule_species").addClass("in");
-                    $("#rule_exp_others").addClass("in");
-                    $("#rule_exp_alg").removeClass("in");
-                  }
-                }
-                else if (index === "rule_type_label") { $("#rule_type_name").html(element.toString()); }
-                else if (index === "variable_label") { $("#dropdown_variable_name").html(element.toString()); }
-                else if (index === "variable") { $("#dropdown_variable_id").val(element.toString()); }
-                else if (index === "expression"){
-
-                  if (rule_type == 0) {
-                    $("#rule_expression_alg").val(element);
-                  } else {
-                    $("#rule_expression").val(element);
-                  }
-                }
-            });
-
-        },
-        function() { console.log("failed"); }
-    );
-
-    $('#modal_rule').modal('show');
-
-}
-function reset_errors()
-{
-   $("#error_modal").empty();
-   // form_exp_error = "";
-   // form_expalg_error = "";
-}
-
-function save_rule()
-{
-    var nb_errors = 0;
-    reset_errors();
-
-    if ($("#rule_type").val() == ""){
-        add_error_modal("no_type", "Please select a rule type");
-        nb_errors++;
-
-    } else {
-
-        if ($("#rule_type").val() != 0){
-
-            if ($("#dropdown_variable_id").val() == "") {
-                add_error_modal("no_var", "Please select a variable");
-                nb_errors++;
-            }
-
-            if ($("#rule_expression").val() == "") {
-                add_error_modal("empty_exp", "Expression is empty");
-                nb_errors++;
+            if (this.form_expression_alg.hasError()){
+                this.addError(this.form_expression_alg);
+                this.form_expression_alg.highlight();
+                this.nb_errors++;
             }
 
         } else {
-            if ($("#rule_expression_alg").val() == "") {
-                add_error_modal("empty_exp_alg", "Expression is empty");
-                nb_errors++;
+
+            if (this.form_variable.hasError()){
+                this.addError(this.form_variable);
+                this.form_variable.highlight();
+                this.nb_errors++;
+            }
+
+            if (this.form_expression.hasError()){
+                this.addError(this.form_expression);
+                this.form_expression.highlight();
+                this.nb_errors++;
             }
         }
-
-
-
     }
 
-    if (form_exp_error != ""){
-        add_error_modal("invalid_exp", "Expression " + form_exp_error);
-        nb_errors++;
-    }
-    if (form_expalg_error != ""){
-        add_error_modal("invalid_expalg", "Expression " + form_expalg_error);
-        nb_errors++;
-    }
-
-    if (nb_errors == 0)
+    show_alg()
     {
-        $("#rule_form").submit();
+        $("#rule_species").removeClass("in");
+        $("#rule_exp_others").removeClass("in");
+        $("#rule_exp_alg").addClass("in");
+    }
+
+    show_others()
+    {
+        $("#rule_species").addClass("in");
+        $("#rule_exp_others").addClass("in");
+        $("#rule_exp_alg").removeClass("in");
+    }
+
+    show_none()
+    {
+        $("#rule_species").removeClass("in");
+        $("#rule_exp_others").removeClass("in");
+        $("#rule_exp_alg").removeClass("in");
+    }
+
+    show(){
+        $('#' + this.field).modal('show');
+    }
+
+    new(){
+        $("#modal_rule-title").html("New rule");
+
+        form_rule.clearForms();
+        form_rule.show_none();
+        form_rule.show();
+    }
+
+    load(rule_ind)
+    {
+        $("#modal_rule-title").html("Edit rule");
+        this.clearForms();
+
+        ajax_call(
+            "POST",
+            "{% url 'get_rule' %}", {'rule_ind': rule_ind},
+            (data) =>
+            {
+                $.each(data, (index, element) => {
+
+                    if (index == "rule_id") {
+                        this.form_id.setValue(element);
+
+                    } else if (index === "rule_type") {
+
+                      this.form_type.setValue(element);
+
+                      if (element == 0) {
+                        this.show_alg();
+                      } else {
+                        this.show_others();
+                      }
+
+                    } else if (index === "rule_type_label") {
+                        this.form_type.setLabel(element.toString());
+
+                    } else if (index === "variable_label") {
+                        this.form_variable.setLabel(element.toString());
+
+                    } else if (index === "variable") {
+                        this.form_variable.setValue(element);
+
+                    } else if (index === "expression"){
+
+                      if (this.form_type.getValue() == 0) {
+                        this.form_expression_alg.setValue(element);
+                        this.form_expression_alg.check();
+                      } else {
+                        this.form_expression.setValue(element);
+                        this.form_expression.check();
+                      }
+                    }
+                });
+
+            },
+            () => { console.log("failed"); }
+        );
+
+        this.show();
+    }
+
+    save()
+    {
+
+        form_rule.checkErrors();
+
+        if (form_rule.nb_errors === 0){
+            $("#" + this.field).hide();
+        }
+
+        return (form_rule.nb_errors === 0);
     }
 }
+
+let form_rule = new RuleForm("modal_rule");
+

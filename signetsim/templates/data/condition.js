@@ -17,7 +17,7 @@ function view_treatment(treatment_id)
     $("#modal_treatment-title").html("Edit treatment");
 
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_treatment' %}", {'id': treatment_id},
         function(data)
         {
@@ -65,7 +65,7 @@ function view_observation(observation_id)
     $("#modal_observation-title").html("Edit observation");
 
     ajax_call(
-        "POST", "{{csrf_token}}",
+        "POST",
         "{% url 'get_observation' %}", {'id': observation_id},
         function(data)
         {

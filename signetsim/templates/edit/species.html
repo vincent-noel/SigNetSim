@@ -1,14 +1,15 @@
 {% extends '_layouts/menupage.html' %}
+
+{% load static from staticfiles %}
+{% load bootstrap3 %}
+{% load tags %}
+
 {% block title %} Species | {{ block.super }}{% endblock title %}
 
 {% block edit_item %}active{% endblock edit_item %}
 {% block view_name %}Model species{% endblock view_name %}
 {% block view_sidebar %}{% include 'edit/menu.html' with page="species" %}{% endblock view_sidebar %}
 {% block view_content %}
-{% load static from staticfiles %}
-{% load bootstrap3 %}
-{% load tags %}
-
 <div class="container-fluid" id="view">
   <h4>Species</h4>
   <hr/>
@@ -37,7 +38,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="species_id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="view_species('{{species.getSbmlId}}')" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" onclick="form_species.load('{{species.getSbmlId}}')" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
              </form>
           </div>
@@ -51,7 +52,9 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-      <button type="button" id="new_species_button" class="btn btn-primary btn-sm">{% bootstrap_icon "file" %} Create new species</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="form_species.new();">
+				{% bootstrap_icon "file" %} Create new species
+			</button>
   </div>
   {% endif %}
   {% endif %}
@@ -65,6 +68,10 @@
 {% include 'edit/species_modal.html' %}
 {% endblock view_modal %}
 
+{% block footer_js %}
+{{ block.super }}
+<script src="{% static 'js/forms.js' %}"></script>
+{% endblock footer_js %}
 
 {% block js %}
 

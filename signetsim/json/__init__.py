@@ -38,3 +38,4 @@ from GetContinuationStatus import GetContinuationStatus
 from GetProject import GetProject
 from SearchBiomodels import SearchBiomodels
 from GetBiomodelsName import GetBiomodelsName
+from GetInstallStatus import GetInstallStatus

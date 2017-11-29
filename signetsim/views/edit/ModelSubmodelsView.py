@@ -29,7 +29,7 @@ from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from ModelSubmodelsForm import ModelSubmodelsForm
 from ModelSubmodelSubstitutionForm import ModelSubmodelSubstitutionForm
-from libsignetsim.model.ModelException import ModelException
+from libsignetsim import ModelException
 from libsignetsim.model.Variable import Variable
 from libsignetsim.model.sbml.ReplacedElement import ReplacedElement
 from libsignetsim.model.sbml.ReplacedBy import ReplacedBy
@@ -64,12 +64,13 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		kwargs = HasErrorMessages.get_context_data(self, **kwargs)
 
 		kwargs['list_of_submodels'] = self.listOfSubmodels
+		kwargs['list_of_submodels_names'] = [submodel.getNameOrSbmlId() for submodel in self.listOfSubmodels]
 		kwargs['list_of_substitutions'] = self.listOfSubstitutions
 
 		kwargs['list_of_project_models'] = [str(pm.name) for pm in self.listOfProjectModels]
 		kwargs['list_of_submodels_refs'] = self.listOfSubmodelsRefs
 		kwargs['list_of_submodel_types'] = self.listOfSubmodelTypes
-
+		kwargs['submodel_types'] = ["Internal model definition", "External model definition"]
 		kwargs['list_of_objects'] = self.listOfObjects
 		kwargs['list_of_conversion_factors'] = [conv_factor.getNameOrSbmlId() for conv_factor in self.listOfConversionFactors]
 

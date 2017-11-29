@@ -46,7 +46,8 @@ class GetEvent(JsonRequest, HasWorkingModel):
 
 			self.data.update({
 				'event_ind': event_ind,
-				'event_name': event.getNameOrSbmlId(),
+				'event_name': event.getName(),
+				'event_sbmlid': event.getSbmlId(),
 				'event_trigger': event.trigger.getPrettyPrintMathFormula(),
 				'event_persistent': 1 if event.trigger.isPersistent else 0,
 				'event_initialvalue': 1 if event.trigger.initialValue else 0,

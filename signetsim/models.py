@@ -27,9 +27,11 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.files import File
+from libsignetsim import SbmlDocument
 import os
 from random import choice
-from string import ascii_uppercase, ascii_lowercase, digits
+from string import ascii_uppercase, ascii_lowercase, digits, punctuation
 from os.path import dirname, basename, join
 
 def new_model_filename():
@@ -49,6 +51,10 @@ def new_project_folder():
 	while os.path.isdir(os.path.join(settings.MEDIA_ROOT, rand_string)):
 		rand_string = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(6))
 	return rand_string
+
+def new_secret_key():
+	return ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
+
 
 
 def archive_filename(instance, filename):
@@ -99,6 +105,32 @@ class User(AbstractUser):
 	used_cpu_time = models.IntegerField(null=False, default=0)
 	max_cpu_time = models.IntegerField(null=False, default=1000)
 
+	# this is not needed if small_image is created at set_image
+	def save(self, *args, **kwargs):
+
+		if User.objects.filter(id=self.id).exists():
+			created = False
+		else:
+			created = True
+
+		super(User, self).save(*args, **kwargs)
+
+		if created:
+			new_project = Project(user=self, name="My first project")
+			new_project.save()
+
+			sbml_model_filename = join(settings.MEDIA_ROOT, "init_model.sbml")
+			sbml_model = open(sbml_model_filename, 'a')
+			sbml_model.close()
+
+			new_model = SbmlModel(project=new_project, name="My first model", sbml_file=File(open(sbml_model_filename, "r")))
+			new_model.save()
+			os.remove(sbml_model_filename)
+
+			doc = SbmlDocument()
+			doc.model.newModel("My first model")
+			doc.writeSbmlToFile(os.path.join(settings.MEDIA_ROOT, str(new_model.sbml_file)))
+
 class Project(models.Model):
 	user = models.ForeignKey(User)
 	name = models.CharField(max_length=255, null=True)
@@ -129,6 +161,7 @@ class SEDMLSimulation(models.Model):
 	project = models.ForeignKey(Project)
 	name = models.CharField(max_length=255, null=True)
 	sedml_file = models.FileField(upload_to=sedml_filename)
+	sbml_file = models.FileField(upload_to=model_filename, null=True)
 
 
 class Optimization(models.Model):
@@ -203,3 +236,18 @@ class Treatment(models.Model):
 	def create(cls, species, time, value):
 		data_point = cls(species=species, time=time, value=value)
 		return data_point
+
+class Settings(models.Model):
+
+	base_url = models.CharField(max_length=255, default="/")
+	secret_key = models.CharField(max_length=255, default=new_secret_key)
+
+	admin = models.ForeignKey(User)
+
+	email_address = models.CharField(max_length=255, default="")
+	email_use_tls = models.BooleanField(default=True)
+	email_host = models.CharField(max_length=255, default="")
+	email_port = models.IntegerField(default=587)
+	email_user = models.CharField(max_length=255, default="")
+	email_password = models.CharField(max_length=255, default="")
+

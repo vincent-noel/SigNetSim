@@ -39,8 +39,6 @@ class TestSubmodel(TestCase):
 
 	def testCreateModel(self):
 
-		settings.MEDIA_ROOT = "/tmp/"
-
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
@@ -261,14 +259,12 @@ class TestSubmodel(TestCase):
 			'submodel_sbml_id': "sos_mod",
 			'submodel_type': 1,
 			'submodel_source': 0,
-			'submodel_submodel_ref': 0,
+			'submodel_submodel': 0,
 			'extent_conversion_factor': "",
 			'time_conversion_factor': "",
 		})
 
 		self.assertEqual(response_add_submodel.status_code, 200)
-
-
 		self.assertEqual(len(response_add_submodel.context['list_of_submodel_types']), 3)
 
 		self.assertEqual(

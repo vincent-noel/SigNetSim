@@ -77,3 +77,10 @@ def my_data_color(array, i):
 def multiply(value, multiplier):
 	# you would need to do any localization of the result here
 	return value * multiplier
+
+@register.filter
+def if_none(value, return_if_none):
+	if value is None:
+		return return_if_none
+	else:
+		return value

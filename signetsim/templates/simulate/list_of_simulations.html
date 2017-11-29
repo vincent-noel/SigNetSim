@@ -17,7 +17,7 @@
 
 {% extends '_layouts/menupage.html' %}
 {% block view_name %}Stored simulations{% endblock view_name %}
-{% block view_sidebar %}{% include 'simulate/menu.html' %}{% endblock view_sidebar %}
+{% block view_sidebar %}{% include 'simulate/menu.html' with page="stored_simulations" %}{% endblock view_sidebar %}
 {% block view_content %}
 {% load bootstrap3 %}
 
@@ -43,9 +43,9 @@
                <form class="form-inline" method="post" enctype="multipart/form-data">
                  {% csrf_token %}
                  <input type="hidden" name="id" value="{{ simulation_id }}">
-                 <a href="../../media/{{ path }}" style="display: inline-block" target="_blank">
-                   <button type="button" class="btn btn-xs btn-default" title="Download">{% bootstrap_icon "download-alt" %}</button>
-                 </a>
+								 <a href="{% url 'simulation_archive' simulation_id %}" style="display: inline-block" target="_blank">
+                  <button type="button" class="btn btn-xs btn-default" title="Download simulation archive">{% bootstrap_icon "download-alt" %}</button>
+                </a>
                  {% if user.is_authenticated %}
                    <button type="submit" name="action" value="delete_simulation" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
                  {% endif %}

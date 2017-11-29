@@ -57,7 +57,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="submodel_id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="view_submodel({{forloop.counter0}})" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" onclick="form_submodel.load({{forloop.counter0}})" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
               </form>
               </div>
@@ -71,7 +71,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-      <button type="button" class="btn btn-primary btn-sm" id="new_submodels_button">{% bootstrap_icon "file" %} Create new submodel</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="form_submodel.new();">{% bootstrap_icon "file" %} Create new submodel</button>
   </div>
   {% endif %}
   <br/><br/><br/>
@@ -98,7 +98,7 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="substitution_id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="view_substitution({{forloop.counter0}})" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" onclick="form_substitution.load({{forloop.counter0}})" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete_substitution" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
               </form>
               </div>
@@ -112,7 +112,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-      <button type="button" class="btn btn-primary btn-sm" id="new_substitution_button">{% bootstrap_icon "file" %} Create new substitution</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="form_substitution.new();">{% bootstrap_icon "file" %} Create new substitution</button>
   </div>
   {% endif %}
   {% endif %}
@@ -121,13 +121,16 @@
 {% endblock view_content %}
 {% block view_modal %}
 
-
 <!-- Modal -->
 
 {% include 'edit/submodels_submodel_modal.html' %}
 {% include 'edit/submodels_substitution_modal.html' %}
 {% endblock view_modal %}
 
+{% block footer_js %}
+{{ block.super }}
+<script src="{% static 'js/forms.js' %}"></script>
+{% endblock footer_js %}
 
 {% block js %}
 {{ block.super }}

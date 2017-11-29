@@ -4,6 +4,8 @@
   "admin_login": "admin",
   "admin_email": "",
 
+  "email_address": "",
+  "email_use_tls": "true",
   "email_host": "",
   "email_port": 587,
   "email_user": "",

@@ -6,126 +6,50 @@
 <div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New modification" id="modal_substitution">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form class="form" method="POST" id="substitution_form">
+      <form class="form" method="POST" onsubmit="return form_substitution.save();">
         {% csrf_token %}
-        <input type="hidden" id="modal_substitution_id" name="substitution_id" value="">
+        <input type="hidden" id="substitution_id" name="substitution_id" value="">
         <input type="hidden" name="action" value="save_substitution">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title" id="modal_substitution-title"></h4>
         </div>
         <div class="modal-body">
-          <table class="table table-striped">
-            <thead>
-              <tr class="row">
-                <th class="col-xs-12">Type</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="row">
-                <td class="col-xs-12">
-                  <input type="hidden" name="substitution_type" id="substitution_type" value="0">
-                  <div class="dropdown">
-                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                      <span id="substitution_type_label">Replace a variable from a submodel with a variable from the main model (Replacement)</span>
-                      <span class="caret"></span>
-                    </button>
-                    <ul id="substitution_type_dropdown" class="dropdown-menu">
-                      {% for type in form_subs.types %}
-                      <li><a>{{ type }}</a></li>
-                      {% endfor %}
-                    </ul>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <table class="table table-striped">
-            <thead>
-              <tr class="row">
-                <th class="col-xs-12">Model object</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="row">
-                <td class="col-xs-12">
-                  <input type="hidden" name="substitution_model_object" id="substitution_model_object" value="">
-                  <div class="dropdown">
-                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                      <span id="substitution_model_object_label">Select an object in the main model</span>
-                      <span class="caret"></span>
-                    </button>
-                    <ul id="substitution_model_object_dropdown" class="dropdown-menu">
-                      {% for object in list_of_objects %}
-                      <li><a>{{object}}</a></li>
-                      {% endfor %}
-                    </ul>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <table class="table table-striped">
-            <thead>
-              <tr class="row">
-                <th class="col-xs-12">Submodel's object</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="row">
-                <td class="col-xs-12">
-                  <input type="hidden" name="substitution_submodel" id="substitution_submodel" value="">
-                  <div class="dropdown">
-                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                      <span id="substitution_submodel_label">Select a submodel</span>
-                      <span class="caret"></span>
-                    </button>
-                    <ul id="substitution_submodel_dropdown" class="dropdown-menu">
-                      {% for submodel in list_of_submodels %}
-                      <li><a>{{submodel.getSbmlId}}</a></li>
-                      {% endfor %}
-                    </ul>
-                  </div>
-                </td>
-              </tr>
-              <tr class="row">
-                <td class="col-xs-12 text-center">
-                  <div class="collapse col-xs-12" id="substitution_list_of_objects_loading">
-                      <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
-                  </div>
-                  <div class="collapse col-xs-12" id="substitution_list_of_objects_loading_failed">
-                    <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
-                  </div>
-                  <div class="collapse" id="substitution_list_of_objects_loaded">
-                    <input type="hidden" name="substitution_submodel_object" id="substitution_submodel_object" value="">
-                    <div class="dropdown">
-                      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                        <span id="substitution_submodel_object_label">Select an object in the submodel</span>
-                        <span class="caret"></span>
-                      </button>
-                      <ul id="substitution_submodel_object_dropdown" class="dropdown-menu">
-                        {% for object in form_subs.listOfObjects %}
-                        <li><a>{{ object }}</a></li>
-                        {% endfor %}
-                      </ul>
-                    </div>
-                    <script type="text/javascript">
-                      $("#substitution_submodel_object_dropdown li").on("click", function(){
-                        $("#substitution_submodel_object_label").html($(this).text());
-                        $("#substitution_submodel_object").val($(this).index());
-                      });
-                    </script>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+					{% include 'commons/html/dropdown.html' with
+						name="Type"
+						id="substitution_type"
+						default="0"
+						default_label="Replace a variable from a submodel with a variable from the main model (Replacement)"
+						list=form_subs.types
+					%}
+					{% include 'commons/html/dropdown.html' with
+						name="Model object"
+						id="substitution_model_object"
+						default=""
+						default_label="Select an object in the main model"
+						list=list_of_objects
+					%}
+					{% include 'commons/html/dropdown.html' with
+						name="Submodel"
+						id="substitution_submodel"
+						default=""
+						default_label="Select a submodel"
+						list=list_of_submodels_names
+					%}
+					{% include 'commons/html/dropdown.html' with
+						id="substitution_submodel_object"
+						name="Submodel's object"
+						default=""
+						default_label="Select an object in the submodel"
+						list=form_subs.listOfObjects
+						wait="True"
+					%}
           <div class="container-fluid" id="error_modal">
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" onclick="save_substitution()" class="btn btn-primary">Save changes</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
         </div>
       </form>
     </div>

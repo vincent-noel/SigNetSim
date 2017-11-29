@@ -24,12 +24,7 @@
 
 """
 
-from django.conf import settings
-from libsignetsim.model.Model import Model
-from libsignetsim.model.ModelException import ModelException
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.sbml.KineticLaw import KineticLaw
-from os.path import join
+from libsignetsim import KineticLaw
 
 from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
@@ -48,10 +43,13 @@ class GetReaction(JsonRequest, HasWorkingModel):
 		reaction = self.getModel().listOfReactions.getBySbmlId(str(request.POST['sbml_id']))
 
 		list_of_parameters = []
-		for parameter in self.getModel().listOfParameters.values():
-			list_of_parameters.append(parameter)
+
 
 		for parameter in reaction.listOfLocalParameters.values():
+			list_of_parameters.append(parameter)
+
+		list_of_parameters.append(None)
+		for parameter in self.getModel().listOfParameters.values():
 			list_of_parameters.append(parameter)
 
 		t_reaction_type = reaction.getReactionType()
@@ -60,7 +58,7 @@ class GetReaction(JsonRequest, HasWorkingModel):
 		t_reaction_parameters_index = []
 		if t_reaction_parameters is not None and None not in t_reaction_parameters:
 			for t_param in t_reaction_parameters:
-				t_reaction_parameters_index.append(list_of_parameters.index(t_param))
+				t_reaction_parameters_index.append((list_of_parameters.index(t_param), t_param.getNameOrSbmlId()))
 		else:
 			t_reaction_type = KineticLaw.UNDEFINED
 

@@ -1,241 +1,169 @@
-$('#parameter_scope_dropdown li').on('click', function(){
-  $("#parameter_scope_label").html($(this).text());
-  $('#parameter_scope').val($(this).index());
-  check_sbml_id_validity();
-});
+{% comment %}
 
-$('#unit_list li').on('click', function(){
-  $("#parameter_unit_label").html($(this).text());
-  $('#parameter_unit').val($(this).index());
-});
+ Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
 
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published
+ by the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
 
-function toggle_slide(slide_id) {
-  if ($('#' + slide_id).prop('checked') == true) {
-    $('#' + slide_id).prop("checked", false);
-  } else {
-    $('#' + slide_id).prop("checked", true);
-  }
-}
+ You should have received a copy of the GNU Affero General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+{% endcomment %}
 
-// Value validator
+class ParameterForm extends FormGroup{
 
-var form_value_error = "";
+    constructor(field){
+        super();
+        this.field = field;
 
-$("#parameter_value").on('paste keyup', function()
-{
-    if ($("#parameter_value").val() != "")
+        this.form_value = new FloatForm("parameter_value", "The value of the parameter", false, "1");
+        this.addForm(this.form_value, true);
+
+        this.form_sbmlid = new SbmlIdForm("parameter_sbml_id", "The identifier of the parameter", "", true, "parameter_scope_value");
+        this.addForm(this.form_sbmlid, true);
+
+        this.dropdown_unit = new Dropdown("parameter_unit", "The unit of the parameter", null, "", "Choose an unit");
+        this.addForm(this.dropdown_unit);
+
+        this.dropdown_scope = new Dropdown("parameter_scope", "The scope of the parameter", () => {this.form_sbmlid.check();}, "0", "Global");
+        this.addForm(this.dropdown_scope);
+
+        this.form_sboterm = new SBOTermInput("parameter_sboterm");
+        this.addForm(this.form_sboterm);
+
+        this.form_constant = new SliderForm("parameter_constant", "The constant setting of the parameter", true);
+        this.addForm(this.form_constant);
+
+        this.form_name = new Form("parameter_name", "The name of the parameter", "");
+        this.addForm(this.form_name);
+
+        this.form_id = new Form("parameter_id", "The id of the parameter", "");
+        this.addForm(this.form_id);
+
+        this.form_reaction_id = new Form("parameter_reaction_id", "The scope id of the parameter", "");
+        this.addForm(this.form_reaction_id);
+
+        this.form_notes = new Form("parameter_notes", "The notes of the parameter", "");
+        this.addForm(this.form_notes);
+
+    }
+
+    show(){
+        $("#general").tab('show');
+        $("#modal_parameter").on('shown.bs.modal', () => { $("#parameter_name").focus(); });
+        $('#modal_parameter').modal('show');
+    }
+
+    new(){
+        $("#modal_title").html("New parameter");
+        this.clearForms();
+        this.show();
+    }
+
+    load(sbml_id, reaction)
     {
+        $("#modal_title").html("Edit parameter");
+
         ajax_call(
-            "POST", "{{csrf_token}}",
-            "{% url 'float_validator' %}", {'value' : $("#parameter_value").val()},
-            function(data) {
-               $.each(data, function(index, element) {
-                 if (index == "error") {form_value_error=element.toString();}
-               });
-            },
-            function(){}
-        );
-    }
+            "POST",
+            "{% url 'get_parameter' %}", {'sbml_id': sbml_id, 'reaction': reaction},
+            (data) =>
+            {
+               $.each(data, (index, element) =>
+               {
+                    if (index == "id") {
+                        this.form_id.setValue(element.toString());
 
-});
+                    } else if (index == "reaction_id") {
 
+                        this.form_reaction_id.setValue(element.toString());
 
+                        if (element.toString() === ""){
+                            this.dropdown_scope.setValue(0);
+                            this.dropdown_scope.setLabel("Global");
+                            this.form_sbmlid.setInitialScope(0);
 
-// SbmlId Validation
+                        } else {
+                            this.dropdown_scope.setValue(parseInt(element)+1);
+                            this.form_sbmlid.setInitialScope(parseInt(element)+1);
 
-var form_sbml_id_error= "";
-var old_sbml_id = "";
+                            switch(parseInt(element)+1) {
+                                {% for reaction in list_of_reactions %}
+                                case {{forloop.counter0}}:
+                                    this.dropdown_scope.setLabel("{{reaction}}");
+                                    break;
+                                {% endfor %}
+                            }
+                        }
 
-function setSbmlIdEmpty()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-}
+                    } else if (index == "sbml_id") {
+                       this.form_sbmlid.setValue(element.toString());
+                       this.form_sbmlid.setInitialValue(element.toString());
 
-function setSbmlIdValid()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").addClass("in");
-}
+                    } else if (index == "name") {
+                       this.form_name.setValue(element.toString());
 
-function setSbmlIdInvalid()
-{
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_invalid").addClass("in");
-}
-
-function setSbmlIdValidating()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_validating").addClass("in");
-}
-
-$("#parameter_sbml_id").on('paste keyup', function()
-{
-    check_sbml_id_validity();
-});
-
-
-function check_sbml_id_validity()
-{
-    new_sbml_id = $.trim($("#parameter_sbml_id").val());
-
-    reaction_id = "";
-    if (parseInt($("#parameter_scope").val()) > 0) {
-        reaction_id = parseInt($("#parameter_scope").val()) - 1;
-    }
-
-    if (old_sbml_id === "" || new_sbml_id !== old_sbml_id) {
-        setSbmlIdValidating();
-        ajax_call(
-            "POST", "{{csrf_token}}",
-            "{% url 'sbml_id_validator' %}", {'sbml_id': new_sbml_id, 'reaction_id': reaction_id},
-            function (data) {
-                $.each(data, function (index, element) {
-                    if (index == 'error' && element == '') {
-                        setSbmlIdValid()
-                        form_sbml_id_error = "";
-                    } else {
-                        setSbmlIdInvalid();
-                        form_sbml_id_error = element.toString();
-                    }
-                });
-            },
-            function () {
-                setSbmlIdInvalid();
-            }
-        );
-    }
-    else if (new_sbml_id === old_sbml_id) {
-        setSbmlIdValid();
-    }
-}
-
-
-$('#new_parameter_button').on('click', function()
-{
-    new_parameter();
-    $('#modal_parameter').modal('show');
-});
-
-function new_parameter()
-{
-    $("#modal_title").html("New parameter");
-    $("#parameter_name").val("");
-    $("#parameter_sbml_id").val("");
-    $("#parameter_value").val("");
-    $("#parameter_unit_label").html("Choose a unit");
-    $("#parameter_unit").val("");
-    $("#parameter_constant").prop('checked', true);
-    $("#parameter_id").val("");
-    $("#parameter_reaction_id").val("");
-    $("#parameter_scope").val(0);
-    $("#parameter_scope_label").html("Global");
-    old_sbml_id = "";
-    setSbmlIdEmpty();
-    reset_errors();
-    $("#general").tab('show');
-}
-
-
-function view_parameter(sbml_id, reaction)
-{
-
-    $("#modal_title").html("Edit parameter");
-
-    ajax_call(
-        "POST", "{{csrf_token}}",
-        "{% url 'get_parameter' %}", {'sbml_id': sbml_id, 'reaction': reaction},
-        function(data)
-        {
-           $.each(data, function(index, element)
-           {
-               if (index == "id") { $("#parameter_id").val(element.toString()); }
-               else if (index == "reaction_id") {
-                   if (element.toString() == ""){
-                       $("#parameter_scope").val(0);
-                       $("#parameter_scope_label").html("Global");
-                   } else {
-                       $("#parameter_scope").val(parseInt(element)+1);
-
-                       switch(element) {
-                           {% for reaction in list_of_reactions %}
-                           case {{forloop.counter0}}:
-                                $("#parameter_scope_label").html("{{reaction.getName}}");
-                                break;
-                           {% endfor %}
+                    } else if (index == "value") {
+                       if (element == null) {
+                           this.form_value.setValue("");
+                       } else {
+                           this.form_value.setValue(element.toString());
                        }
 
-                   }
-               }
-               else if (index == "sbml_id") { $("#parameter_sbml_id").val(element.toString()); old_sbml_id=element; }
-               else if (index == "name") { $("#parameter_name").val(element.toString()); }
+                    } else if (index == "unit_name") {
+                       this.dropdown_unit.setLabel(element.toString());
 
-               else if (index == "value") {
-                   if (element == null) { $("#parameter_value").val(""); }
-                   else { $("#parameter_value").val(element.toString()); }
-               }
+                    } else if (index == "unit_id") {
+                       this.dropdown_unit.setValue(element.toString());
 
-               else if (index == "unit_name") { $("#parameter_unit_label").html(element.toString()); }
-               else if (index == "unit_id") { $("#parameter_unit").val(element.toString()); }
+                    } else if (index == "constant") {
 
-               else if (index == "constant") {
-                   if (element == "1") { $("#parameter_constant").prop('checked', true); }
-                   else { $("#parameter_constant").prop('checked', false); }
-               }
-               else if (index == "notes") {
-                   $("#parameter_notes").val(element.toString());
+                       if (element == "1") {
+                           this.form_constant.switch_on();
+                       } else {
+                           this.form_constant.switch_off();
+                       }
 
-               }
-                else if (index == "sboterm") {
-                   $("#sboterm").val(element.toString());
-                   $("#sboterm_link").attr("href", "http://www.ebi.ac.uk/sbo/main/display?nodeId=" + element.toString());
-                }
-                else if (index == "sboterm_name") { $("#sboterm_name").html(element.toString()); }
-           });
+                    } else if (index == "notes") {
+                       this.form_notes.setValue(element.toString());
 
-           setSbmlIdEmpty();
-           reset_errors();
-        },
-        function() { console.log("failed"); }
-    )
-    $("#general").tab('show');
-    $('#modal_parameter').modal('show');
+                    } else if (index == "sboterm") {
+                       this.form_sboterm.setValue(element.toString());
+                       this.form_sboterm.setLink(element.toString());
 
-}
-function reset_errors()
-{
-   form_remove_error_highlight("parameter_sbml_id");
-   form_remove_error_highlight("parameter_value");
-   $("#error_modal").empty();
+                    } else if (index == "sboterm_name") {
+                       this.form_sboterm.setLabel(element.toString());
 
-}
+                    }
+               });
 
-function save_parameter()
-{
-    var nb_errors = 0;
-    reset_errors();
+               this.resetErrors();
+               this.form_sbmlid.check();
+            },
+            () => { console.log("failed"); }
+        );
 
-    if ($("#sbmlid_invalid").hasClass("in")){
-        add_error_modal("invalid_sbml_id", "Parameter " + form_sbml_id_error);
-        form_add_error_highlight("species_sbml_id");
-        nb_errors++;
+        this.show();
     }
 
-    if (form_value_error != ""){
-        add_error_modal("invalid_value", "Parameter value " + form_value_error);
-        form_add_error_highlight("parameter_value");
-        nb_errors++;
-    }
-    if (nb_errors == 0)
+    save()
     {
-        $("#parameter_form").submit();
+        this.checkErrors();
+
+        if (this.nb_errors == 0)
+        {
+            $("#modal_parameter").modal("hide");
+        }
+        return (this.nb_errors == 0);
     }
+
 }
+
+let form_parameter = new ParameterForm("modal_parameter");

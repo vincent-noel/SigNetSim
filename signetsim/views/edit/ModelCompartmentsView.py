@@ -29,7 +29,7 @@ from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from ModelCompartmentsForm import ModelCompartmentsForm
 
-from libsignetsim.model.ModelException import ModelException
+from libsignetsim import ModelException
 
 
 class ModelCompartmentsView(TemplateView, HasWorkingModel, HasErrorMessages):

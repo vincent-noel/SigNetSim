@@ -38,7 +38,6 @@ class TestOptimization(TestCase):
 	fixtures = ["user_with_project.json"]
 
 	def testOptimization(self):
-		settings.MEDIA_ROOT = "/tmp/"
 
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)

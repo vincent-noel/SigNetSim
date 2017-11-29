@@ -2,6 +2,7 @@
 EXEC_DIR=$PWD
 CMD=$0
 
+apt-get -qq update
 apt-get install -y realpath
 
 if [ "${CMD:0:1}" == "/" ]
@@ -35,10 +36,10 @@ pip install -r ${DIR}/pip_requirements
 # JS Dependencies
 curl -sL https://deb.nodesource.com/setup_6.x | bash -
 apt-get install -y nodejs
-npm install -g bower
+npm install -g yarn
 
 cd $INSTALL_DIR
 
-bower --allow-root install
+yarn install
 
 cd $EXEC_DIR

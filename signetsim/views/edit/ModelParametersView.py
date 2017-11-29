@@ -30,7 +30,7 @@ from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from signetsim.views.edit.ModelParametersForm import ModelParametersForm
 
-from libsignetsim.model.ModelException import ModelException
+from libsignetsim import ModelException
 
 
 class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
@@ -55,7 +55,7 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 		kwargs = HasErrorMessages.get_context_data(self, **kwargs)
 
 		kwargs['list_of_parameters'] = self.listOfParameters
-		kwargs['list_of_reactions'] = self.listOfReactions
+		kwargs['list_of_reactions'] = ["Global"] + [reaction.getNameOrSbmlId() for reaction in self.listOfReactions]
 		kwargs['list_of_units'] = [unit.getNameOrSbmlId() for unit in self.listOfUnits]
 		kwargs['form'] = self.form
 
@@ -105,9 +105,10 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 		try:
 			t_parameter = self.listOfParameters[parameter_id]
 
-			if parameter_id >= len(self.getModel().listOfParameters):
+			if t_parameter.reaction != None:
 				t_reaction = t_parameter.reaction
 				t_reaction.listOfLocalParameters.remove(t_parameter)
+
 			else:
 				self.getModel().listOfParameters.remove(t_parameter)
 
@@ -120,6 +121,7 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 	def saveParameter(self, request):
 
 		self.form.read(request)
+
 		if not self.form.hasErrors():
 
 			if self.form.isNew():
@@ -131,21 +133,28 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 			else:
 				if (self.form.scope == 0):
-					parameter = self.getModel().listOfParameters[self.form.id]
+					parameter = self.listOfParameters[self.form.id]
+					if parameter.reaction is not None:
+						# This was a local parameter, being promoted !
+						parameter.toGlobal()
+
 				else:
-					parameter = self.getModel().listOfReactions[self.form.scope-1].listOfLocalParameters[self.form.id]
+					parameter = self.listOfParameters[self.form.id]
+					if parameter.reaction is None:
+						# This was a global parameter, becoming local !
+						parameter.toLocal(self.listOfReactions[self.form.scope-1])
 
 				self.form.save(parameter)
-
 			self.saveModel(request)
 			self.loadParameters()
 			self.form.clear()
 
+
 	def loadParameters(self):
 
-		self.listOfParameters = self.getModel().listOfParameters.values()
+		self.listOfParameters = [param for param in self.getModel().listOfParameters.values()]
 		for reaction in self.getModel().listOfReactions.values():
-			self.listOfParameters += reaction.listOfLocalParameters.values()
+			self.listOfParameters += [param for param in reaction.listOfLocalParameters.values()]
 
 	def loadReactions(self):
 		self.listOfReactions = self.getModel().listOfReactions.values()

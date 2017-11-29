@@ -1,242 +1,164 @@
+{% comment %}
+
+ Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published
+ by the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+{% endcomment %}
+
 {% load bootstrap3 %}
 {% load tags %}
 
-$('#species_value_type_dropdown li').on('click', function()
-{
-  $("#species_value_type_label").html($(this).text());
-  $('#species_value_type').val($(this).index());
-});
+class SpeciesForm extends FormGroup{
 
-$('#unit_list li').on('click', function()
-{
-  $("#species_unit_label").html($(this).text());
-  $('#species_unit').val($(this).index());
-});
+    constructor(field){
+        super();
+        this.field = field;
 
-$('#species_compartment_dropdown li').on('click', function()
-{
-  $("#species_compartment_label").html($(this).text());
-  $('#species_compartment').val($(this).index());
-});
+        this.form_value_type = new Dropdown("species_value_type", "The type of the value of the species", null, "1", "Concentration");
+        this.addForm(this.form_value_type);
 
-$('#new_species_button').on('click', function()
-{
-    new_species();
-    $('#modal_species').modal('show');
+        this.form_units = new Dropdown("species_unit", "The unit of the species", null, "", "Choose an unit");
+        this.addForm(this.form_units);
 
-});
+        this.form_compartment = new Dropdown("species_compartment", "The compartment of the species", null, "0", "{{ list_of_compartments|my_lookup:0 }}");
+        this.addForm(this.form_compartment);
 
-// SbmlId Validation
+        this.form_sbmlid = new SbmlIdForm("species_sbml_id", "The identifier of the species", "");
+        this.addForm(this.form_sbmlid, true);
 
-var old_sbml_id = "";
+        this.form_value = new FloatForm("species_value", "The initial value of the species", false, "0");
+        this.addForm(this.form_value, true);
 
-function setSbmlIdEmpty()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-}
+        this.form_sboterm = new SBOTermInput("species_sboterm");
+        this.addForm(this.form_sboterm);
 
-function setSbmlIdValid()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").addClass("in");
-}
+        this.form_constant = new SliderForm("species_constant", "The constant setting of the species", false);
+        this.addForm(this.form_constant);
 
-function setSbmlIdInvalid()
-{
-  $("#sbmlid_validating").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_invalid").addClass("in");
-}
+        this.form_boundary = new SliderForm("species_boundary", "The boundary value setting of the species", false);
+        this.addForm(this.form_boundary);
 
-function setSbmlIdValidating()
-{
-  $("#sbmlid_invalid").removeClass("in");
-  $("#sbmlid_valid").removeClass("in");
-  $("#sbmlid_validating").addClass("in");
-}
+        this.form_notes = new Form("species_notes", "The notes of the species", "");
+        this.addForm(this.form_notes);
 
-var form_sbml_id_error = "";
+        this.form_id = new Form("species_id", "The id of the species", "");
+        this.addForm(this.form_id);
 
-$("#species_sbml_id").on('paste keyup', function()
-{
-  new_sbml_id = $.trim($("#species_sbml_id").val());
-  if (old_sbml_id === "" || new_sbml_id !== old_sbml_id)
-  {
-    setSbmlIdValidating();
-
-    ajax_call(
-        "POST", "{{csrf_token}}",
-        "{% url 'sbml_id_validator' %}", {'sbml_id' : new_sbml_id},
-        function(data) {
-           $.each(data, function(index, element) {
-             if (index == 'error' && element == '') {setSbmlIdValid(); form_sbml_id_error = element.toString();}
-             else {setSbmlIdInvalid(); form_sbml_id_error = element.toString();}
-           });
-        },
-        function()
-        {
-          setSbmlIdInvalid();
-        }
-    )
-  }
-  else if (new_sbml_id === old_sbml_id)
-  {
-    setSbmlIdValid();
-  }
-});
-
-// Value validator
-
-var form_value_error = "";
-
-$("#species_value").on('paste keyup', function()
-{
-    ajax_call(
-        "POST", "{{csrf_token}}",
-        "{% url 'float_validator' %}",
-        {'value' : $("#species_value").val(), 'required' : 'false'},
-        function(data) {
-           $.each(data, function(index, element) {
-             if (index == "error") {form_value_error=element.toString();}
-             else {form_value_error = "";}
-           });
-        },
-        function(){}
-    );
-});
-
-
-
-
-
-
-function new_species()
-{
-    $("#modal_title").html("New species");
-    $("#species_id").attr("value", "");
-    $("#species_name").attr("value", "");
-    $("#species_sbml_id").attr("value", "");
-    $("#species_value").attr("value", "");
-    {% if list_of_compartments|my_len == 1 %}
-    $("#species_compartment_label").html("{{list_of_compartments|my_lookup:0}}");
-    $("#species_compartment").attr("value", "0");
-    {% else %}
-    $("#species_compartment_label").html("Choose a compartment");
-    $("#species_compartment").attr("value", "");
-    {% endif %}
-    $("#species_unit_label").html("Choose a unit");
-    $("#species_unit").attr("value", "");
-    $("#species_constant").attr("value", 0);
-    $("#species_boundary").attr("value", 0);
-    setSbmlIdEmpty();
-    reset_errors();
-    old_sbml_id = "";
-    $("#general").tab('show');
-    $("#modal_species").on('shown.bs.modal', function() { $("#species_name").focus(); });
-
-}
-
-function view_species(sbml_id)
-{
-
-    $("#modal_title").html("Edit species");
-
-    ajax_call(
-        "POST", "{{csrf_token}}",
-        "{% url 'get_species' %}", {'sbml_id': sbml_id},
-        function(data)
-        {
-           $.each(data, function(index, element)
-           {
-               if (index == "id") { $("#species_id").val(element.toString()); }
-               else if (index == "sbml_id") { $("#species_sbml_id").val(element.toString()); old_sbml_id=element; }
-               else if (index == "name") { $("#species_name").val(element.toString()); }
-
-               else if (index == "value") {
-                   if (element == null) { $("#species_value").val(""); }
-                   else { $("#species_value").val(element.toString()); }
-               }
-
-               else if (index == "compartment_name") { $("#species_compartment_label").html(element.toString()); }
-               else if (index == "compartment_id") { $("#species_compartment").val(element.toString()); }
-
-               else if (index == "unit_name") { $("#species_unit_label").html(element.toString()); }
-               else if (index == "unit_id") { $("#species_unit").val(element.toString()); }
-
-               else if (index == "constant") {
-                   if (element == "1") { $("#species_constant").prop('checked', true); }
-                   else { $("#species_constant").prop('checked', false); }
-               }
-               else if (index == "boundaryCondition") {
-                   if (element == "1") { $("#species_boundary").prop('checked', true); }
-                   else { $("#species_boundary").prop('checked', false); }
-               }
-
-               else if (index == "isConcentration") {
-                   $("#species_value_type").val(element.toString());
-                   if (element == "1") {
-                       $("#species_value_type_label").html("Concentration");
-                   }
-                   else {
-                       $("#species_value_type_label").html("Amount");
-                   }
-               }
-               else if (index == "notes") { $("#specie_notes").val(element.toString()); }
-
-               else if (index == "sboterm") {
-                   $("#sboterm").val(element.toString());
-                   $("#sboterm_link").attr(
-                       "href", "http://www.ebi.ac.uk/sbo/main/display?nodeId=" + element.toString()
-                   );
-               }
-               else if (index == "sboterm_name") { $("#sboterm_name").html(element.toString()); }
-           });
-
-           setSbmlIdEmpty();
-           reset_errors();
-        },
-        function() { console.log("failed"); }
-    )
-
-    $("#general").tab('show');
-    $('#modal_species').modal('show');
-
-    $("#modal_species").on('shown.bs.modal', function() { $("#species_name").focus(); });
-
-
-}
-
-function save_species()
-{
-    var nb_errors = 0;
-    reset_errors();
-
-    if ($("#sbmlid_invalid").hasClass("in")){
-        add_error_modal("invalid_sbml_id", "Species " + form_sbml_id_error);
-        form_add_error_highlight("species_sbml_id");
-        nb_errors++;
+        this.form_name = new Form("species_name", "The name of the species", "");
+        this.addForm(this.form_name);
     }
 
-    if (form_value_error != ""){
-        add_error_modal("invalid_value", "Species initial value " + form_value_error);
-        form_add_error_highlight("species_value");
-        nb_errors++;
+    show(){
+        $("#general").tab('show');
+        $("#" + this.field).on('shown.bs.modal', () => { $("#species_name").focus(); });
+        $('#' + this.field).modal('show');
     }
-    if (nb_errors == 0)
+
+    new(){
+        $("#modal_title").html("New species");
+        this.clearForms();
+        this.show();
+    }
+
+    load(sbml_id){
+        $("#modal_title").html("Edit species");
+
+        ajax_call(
+            "POST",
+            "{% url 'get_species' %}", {'sbml_id': sbml_id},
+            (data) =>
+            {
+               $.each(data, (index, element) =>
+               {
+                   if (index == "id") {
+                       this.form_id.setValue(element.toString());
+
+                   } else if (index == "sbml_id") {
+                       this.form_sbmlid.setValue(element.toString());
+                       this.form_sbmlid.setInitialValue(element.toString());
+
+                   } else if (index == "name") {
+                       this.form_name.setValue(element.toString());
+
+                   } else if (index == "value") {
+                       if (element == null) { this.form_value.setValue(""); }
+                       else { this.form_value.setValue(element.toString()); }
+
+                   } else if (index == "compartment_name") {
+                       this.form_compartment.setLabel(element.toString());
+
+                   } else if (index == "compartment_id") {
+                       this.form_compartment.setValue(element.toString());
+
+                   } else if (index == "unit_name") {
+                       this.form_units.setLabel(element.toString());
+
+                   } else if (index == "unit_id") {
+                       this.form_units.setValue(element.toString());
+
+                   } else if (index == "constant") {
+                       if (element == "1") {
+                           this.form_constant.switch_on();
+                       } else {
+                           this.form_constant.switch_off();
+                       }
+
+                   } else if (index == "boundaryCondition") {
+                       if (element == "1") { this.form_boundary.switch_on(); }
+                       else { this.form_boundary.switch_off(); }
+
+                   } else if (index == "isConcentration") {
+
+                       this.form_value_type.setValue(element.toString());
+                       if (element == "1") {
+                           this.form_value_type.setLabel("Concentration");
+                       }
+                       else {
+                           this.form_value_type.setLabel("Amount");
+                       }
+
+                   }  else if (index == "notes") {
+                       this.form_notes.setValue(element.toString());
+
+                   } else if (index == "sboterm") {
+                       this.form_sboterm.setValue(element.toString());
+                       this.form_sboterm.setLink(element.toString());
+
+                   } else if (index == "sboterm_name") {
+                       this.form_sboterm.setLabel(element.toString());
+                   }
+               });
+
+               this.checkErrors();
+            },
+            () => { console.log("failed"); }
+        )
+
+        this.show();
+    }
+
+    save()
     {
-        $("#modal_species").modal("hide");
+        this.checkErrors();
+        if (this.nb_errors == 0)
+        {
+            $("#modal_species").modal("hide");
+        }
+
+        return (this.nb_errors == 0);
     }
-    return (nb_errors == 0);
 }
 
-function reset_errors()
-{
-   form_remove_error_highlight("species_sbml_id");
-   form_remove_error_highlight("species_value");
-   $("#error_modal").empty();
-
-}
-
+let form_species = new SpeciesForm("modal_species");

@@ -29,8 +29,7 @@ from django.test import TestCase, Client
 
 from signetsim.models import User, Project, SbmlModel
 
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.sbml.KineticLaw import KineticLaw
+from libsignetsim import SbmlDocument, KineticLaw
 from os.path import dirname, join
 from json import loads
 
@@ -40,8 +39,6 @@ class TestReactions(TestCase):
 	fixtures = ["user_with_project.json"]
 
 	def testReactions(self):
-
-		settings.MEDIA_ROOT = "/tmp/"
 
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)

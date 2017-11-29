@@ -1,0 +1,121 @@
+{% load bootstrap3 %}
+
+<div class="modal fade in" id="new_unit" tabindex="1" role="dialog" aria-labelledby="New unit">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form onsubmit="return form_unit.save()" method="post" class="form" enctype="multipart/form-data">
+        {% csrf_token %}
+				<input type="hidden" name="action" value="save">
+				<input type="hidden" id="unit_definition_id" name="unit_definition_id" value="">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="modal_title">Add new unit</h4>
+        </div>
+        <div class="modal-body text-center">
+				  <ul class="nav nav-tabs text-center">
+						<li class="active"><a data-toggle="tab" href="#general">General</a></li>
+						<li><a data-toggle="tab" href="#subunits">List of subunits</a></li>
+						<li><a data-toggle="tab" href="#annotation">Annotation</a></li>
+					</ul>
+					<div class="tab-content">
+						<div id="general" class="tab-pane fade in active">
+							{% include 'commons/html/name_input.html' with
+								name="Unit name"
+								id="unit_definition_name"
+								placeholder="Input unit name"
+								default=""
+							%}
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>Description</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="col-xs-12 text-center"><span id="unit_definition_description">N/A</span></td>
+									</tr>
+								</tbody>
+							</table>
+							{% include 'commons/html/validated_input.html' with
+								name="Unit identifier"
+								id="unit_definition_identifier"
+								placeholder="Input unit identifier"
+								default=""
+							%}
+						</div>
+						<div id="subunits" class="tab-pane fade in">
+							<table class="table table-striped">
+								<thead>
+									<tr class="row">
+										<th class="col-xs-10">Unit</th>
+										<th class="col-xs-2 text-right">
+											<button type="button" class="btn btn-primary btn-xs" onclick="form_unit.subunits.new();">{% bootstrap_icon "plus" %}</button>
+										</th>
+									</tr>
+								</thead>
+								<tbody id="body_subunits">
+								</tbody>
+							</table>
+							<div class="collapse" id="edit_unit">
+								<hr/>
+								<input type="hidden" id="unit_edit_id" name="unit_edit_id" value="">
+								<div class="dropdown">
+									<input type="hidden" id="unit_id" name="unit_id" value="">
+									<button type="button" class="btn btn-primary dropdown-toggle col-xs-12" data-toggle="dropdown">
+										<span id="unit_kind_name">Choose a type</span>
+										<span class="caret"></span>
+									</button>
+									<ul id="unit_kind_list" class="dropdown-menu col-xs-12">
+											{% for unit in unit_list %}
+											<li><a>{{ unit }}</a></li>
+											{% endfor %}
+									</ul>
+								</div>
+								<br/><br/><br/>
+								<div class="input-group">
+									<span class="input-group-addon">Exponent</span>
+									<input type="text" class="form-control input-sm" id="unit_exponent" placeholder="Input exponent" name="unit_exponent" value="">
+								</div>
+								<br/>
+								<div class="input-group">
+									<span class="input-group-addon">Scale</span>
+									<input type="text" class="form-control input-sm" id="unit_scale" placeholder="Input scale" name="unit_scale" value="">
+								</div>
+								<br/>
+								<div class="input-group">
+									<span class="input-group-addon">Multiplier</span>
+									<input type="text" class="form-control input-sm" id="unit_multiplier" placeholder="Input multiplier" name="unit_multiplier" value="">
+								</div>
+								<br/>
+								<div class="input-group">
+									<button type="button" onclick="form_unit.subunits.save()" class="btn btn-primary" id="unit_button">Save</button>
+								</div>
+							</div>
+					 </div>
+					 <div id="annotation" class="tab-pane fade in">
+								{% include 'commons/html/editable_input.html' with
+									name="SBO term"
+									id="unit_sboterm"
+									default=""
+									default_label=""
+									placeholder="Input the unit SBO term"
+									validate="form_unit.form_sboterm.resolve();"
+								%}
+								{% include 'commons/html/notes_input.html' with
+									name="Notes"
+									id="unit_notes"
+									nb_lines=5
+								%}
+              </div>
+         		<div class="container-fluid" id="error_modal">
+          	</div>
+				</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -25,7 +25,7 @@
 """
 
 from signetsim.models import Experiment, Condition, Observation, Treatment
-from libsignetsim.data.Experiment import Experiment as SigNetSimExperiment
+from libsignetsim import Experiment as SigNetSimExperiment
 from django.conf import settings
 from os.path import join
 

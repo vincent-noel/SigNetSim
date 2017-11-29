@@ -5,12 +5,14 @@
 <div class="modal fade in" id="modal_compartment" tabindex="1" role="dialog" aria-labelledby="New compartment">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form action="" method="post" class="form" enctype="multipart/form-data" id="compartment_form">
+      <form method="post" enctype="multipart/form-data" onsubmit="return form_compartment.save();">
         {% csrf_token %}
         <input type="hidden" id="compartment_id" name="compartment_id" value="" >
         <input type="hidden" name="action" value="save" >
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
           <h4 class="modal-title" id="modal_title">New compartment</h4>
         </div>
         <div class="modal-body text-center">
@@ -21,166 +23,62 @@
           </ul>
           <div class="tab-content">
             <div id="general" class="tab-pane fade in active">
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-12">Name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-12">
-                      <input type="text" class="form-control input-sm" placeholder="Input name of compartment"
-                             name="compartment_name" id="compartment_name" value=""
-                      >
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <table class="table table-striped" id="compartment_sbml_id_group">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-11" id="compartment_sbml_id_label">Identifier</th>
-                    <th class="col-xs-1"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-11">
-                      <input type="text" class="form-control input-sm" placeholder="Input identifier of compartment"
-                             name="compartment_sbml_id" id="compartment_sbml_id" value=""
-                      >
-                    </td>
-                    <td class="col-xs-1" style="vertical-align:middle">
-                      <div id="sbmlid_validating" class="pull-right collapse">
-                        <img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
-                      </div>
-                      <div id="sbmlid_valid" class="pull-right collapse">
-                        <span class="glyphicon glyphicon-ok" style="color:#5cb85c; font-size: 1.5em"></span>
-                      </div>
-                      <div id="sbmlid_invalid" class="pull-right collapse">
-                      <span class="glyphicon glyphicon-remove" style="color:#d9534f; font-size: 1.5em"></span>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+							{% include 'commons/html/name_input.html' with
+								name="Name"
+								id="compartment_name"
+								placeholder="Input the name of the compartment"
+								default=""
+							%}
+							{% include 'commons/html/validated_input.html' with
+								name="Identifier"
+								id="compartment_sbml_id"
+								placeholder="Input identifier of the compartment"
+								default=""
+							%}
             </div>
             <div id="math" class="tab-pane fade in">
-              <table class="table table-striped" id="compartment_size_group">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-12" id="compartment_size_label">Size</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-12">
-                      <input type="text" class="form-control input-sm" placeholder="Input size of compartment"
-                             name="compartment_size" id="compartment_size" value="1">
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row"  onclick="toggle_slide('compartment_constant');">
-                    <th class="col-xs-10">Constant</th>
-                    <th class="col-xs-2 text-right">
-                      <span class="input-group col-xs-12">
-                          <label class="switch">
-                            <input type="checkbox" name="compartment_constant" id="compartment_constant" checked>
-                            <div class="slider round"></div>
-                          </label>
-                      </span>
-                    </th>
-                  </tr>
-                </thead>
-              </table>
-
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-12">Unit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-12">
-                        <input type="hidden" name="compartment_unit" id="compartment_unit" value="">
-                        <div class="dropdown">
-                          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" style="width:100%" data-toggle="dropdown">
-                            <span id="compartment_unit_label">Choose an unit</span>
-                            <span class="caret"></span>
-                          </button>
-                          <ul id="unit_list" class="dropdown-menu">
-                            {% for unit in list_of_units %}
-                            <li><a>{{unit}}</a></li>
-                            {% endfor %}
-                          </ul>
-                        </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+							{% include 'commons/html/float_input.html' with
+								name="Size"
+								id="compartment_size"
+								placeholder="Input the size of the compartment"
+								default="1"
+							%}
+							{% include 'commons/html/toggle_switch.html' with
+								name="Constant"
+								id="compartment_constant"
+								default="checked"
+								onclick="form_compartment.form_constant.toggle();"
+							%}
+							{% include 'commons/html/dropdown.html' with
+								list=list_of_units
+								name="Unit"
+								id="compartment_unit"
+								default_label="Choose a unit"
+								default=""
+							%}
             </div>
             <div id="annotation" class="tab-pane fade in">
-              <table class="table table-striped">
-                <thead>
-                  <tr class="row">
-                    <th class="col-xs-10">SBO term</th>
-                    <th class="col-xs-2"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row">
-                    <td class="col-xs-10 text-center">
-                      <div class="collapse in" id="edit_SBO_term_off">
-                        <a id="sboterm_link" target="_blank">
-                          <span id="sboterm_name"></span>
-                        </a>
-                      </div>
-                      <div class="collapse out" id="edit_SBO_term_on">
-                        <input type="text" class="form-control input-sm" placeholder="<Input SBO term>" id="sboterm" name="compartment_sboterm" value="">
-                      </div>
-                    </td>
-                    <td class="col-xs-2">
-                      {% if user.is_authenticated %}
-                      <div class="pull-right collapse in" id="edit_SBO_term_on_actions">
-                          <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_SBO_term">{% bootstrap_icon "pencil" %}</button>
-                      </div>
-                      <div class="pull-right collapse" id="edit_SBO_term_off_actions">
-                        <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_SBO_term_cancel">{% bootstrap_icon "remove" %}</button>
-                        <button type="button" onclick="resolve_sbo();" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
-                      </div>
-                      {% endif %}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            <table class="table table-striped">
-              <thead>
-                <tr class="row">
-                  <th class="col-sm-12">Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="row">
-                  <td class="col-sm-12">
-                   <textarea class="form-control" name="compartment_notes" id="compartment_notes" rows="6"></textarea>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+							{% include 'commons/html/editable_input.html' with
+								name="SBO term"
+								id="compartment_sboterm"
+								default=""
+								default_label=""
+								placeholder="Input the compartment SBO term"
+								validate="form_compartment.form_sboterm.resolve();"
+							%}
+							{% include 'commons/html/notes_input.html' with
+								name="Notes"
+								id="compartment_notes"
+								nb_lines=6
+							%}
+						</div>
+					</div>
           <div class="container-fluid" id="error_modal">
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" onclick="save_compartment();" class="btn btn-primary">Save</button>
+          <button type="submit" class="btn btn-primary">Save</button>
         </div>
       </form>
     </div>

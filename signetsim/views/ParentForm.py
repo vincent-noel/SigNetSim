@@ -24,8 +24,6 @@
 
 """
 
-from libsignetsim.model.math.MathFormula import MathFormula
-# from libsignetsim.model.ModelException import ModelException
 from signetsim.views.HasErrorMessages import HasErrorMessages
 
 
@@ -46,13 +44,3 @@ class ParentForm(HasErrorMessages):
 	def clear(self):
 		self.clearErrors()
 
-
-	def findMathErrors(self, expression):
-
-		try:
-			t_formula = MathFormula(self.parent.model)
-			t_formula.setPrettyPrintMathFormula(expression)
-			return None
-
-		except Exception as e:
-			return e.message

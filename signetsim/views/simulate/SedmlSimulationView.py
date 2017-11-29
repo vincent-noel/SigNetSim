@@ -35,8 +35,7 @@ from signetsim.views.HasErrorMessages import HasErrorMessages
 from signetsim.models import SEDMLSimulation
 from signetsim.settings.Settings import Settings
 
-from libsignetsim.sedml.SedmlDocument import SedmlDocument
-from libsignetsim.sedml.SedmlException import SedmlException
+from libsignetsim import SedmlDocument, SedmlException
 from os.path import join
 
 

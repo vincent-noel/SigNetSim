@@ -24,10 +24,10 @@
 
 """
 
-from libsignetsim.model.ModelException import ModelException
-from libsignetsim.model.math.MathFormula import MathFormula
-from libsignetsim.model.sbml.KineticLaw import KineticLaw
+from libsignetsim import ModelException, KineticLaw
+from libsignetsim.model.sbml.Parameter import Parameter
 from signetsim.views.edit.ModelParentForm import ModelParentForm
+
 
 class ModelReactionsForm(ModelParentForm):
 
@@ -62,23 +62,31 @@ class ModelReactionsForm(ModelParentForm):
 			self.saveModifiers(reaction)
 			self.saveProducts(reaction)
 
+			if self.listOfLocalParameters != []:
+				for (param_name, param_value) in self.listOfLocalParameters:
+
+					if not (
+						reaction.listOfLocalParameters.containsSbmlId(param_name)
+						or reaction.listOfLocalParameters.containsName(param_name)
+					):
+						reaction.listOfLocalParameters.new(param_name, param_value)
+
+			parameters = [param for param in reaction.listOfLocalParameters]
+
+			# Separator
+			parameters.append(None)
+			parameters += [param for param in self.parent.listOfParameters]
+
+
+
 			if self.reactionType == KineticLaw.UNDEFINED:
 				reaction.setKineticLaw(self.reactionType, self.reversible, math=self.kineticLaw)
 			else:
-				t_parameters = [self.parent.listOfParameters[param] for param in self.listOfParameters]
+				t_parameters = [parameters[param] for param in self.listOfParameters]
 				reaction.setKineticLaw(self.reactionType, self.reversible, parameters=t_parameters)
 
-			self.isEditing = False
-			if self.listOfLocalParameters != []:
 
-				reaction.listOfLocalParameters.clear()
-				for (param_name, param_value) in self.listOfLocalParameters:
-					t_parameter = Parameter(self.parent.getModel())
-					t_parameter.new(param_name, param_value)
-					reaction.listOfLocalParameters.add(t_parameter)
-
-			if self.SBOTerm is not None:
-				reaction.getAnnotation().setSBOTerm(self.SBOTerm)
+			reaction.getAnnotation().setSBOTerm(self.SBOTerm)
 		except ModelException as e:
 			self.addError(e.message)
 
@@ -118,7 +126,6 @@ class ModelReactionsForm(ModelParentForm):
 		self.SBOTerm = self.readInt(request, 'reaction_sboterm',
 									"The SBO term of the reaction",
 									required=False)
-
 
 	def readReactants(self, request):
 
@@ -185,7 +192,7 @@ class ModelReactionsForm(ModelParentForm):
 			t_parameter = self.readInt(request,
 					'reaction_parameter_%d' % parameter_id,
 					"the identifier of the parameter #%d" % parameter_id,
-					max_value=len(self.parent.listOfParameters))
+					max_value=(len(self.parent.listOfParameters) + len(self.listOfLocalParameters) + 1))
 
 			self.listOfParameters.append(t_parameter)
 			parameter_id += 1

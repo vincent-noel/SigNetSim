@@ -36,8 +36,7 @@ from django.shortcuts import redirect
 from signetsim.models import SbmlModel, new_model_filename
 from signetsim.forms import DocumentForm
 
-from libsignetsim.model.SbmlDocument import SbmlDocument
-from libsignetsim.model.ModelException import ModelException, MissingSubmodelException
+from libsignetsim import SbmlDocument, ModelException, MissingSubmodelException
 
 import os
 
@@ -71,6 +70,7 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 	def get(self, request, *args, **kwargs):
 
 		if len(args) > 0:
+			HasWorkingProject.load(self, request, *args, **kwargs)
 			self.setProject(request, args[0])
 			return redirect('models')
 

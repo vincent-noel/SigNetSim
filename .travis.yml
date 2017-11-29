@@ -7,24 +7,26 @@ language: python
 python: 2.7
 
 env:
-  - DISTRIB=xenial
-  - DISTRIB=precise
-  - DISTRIB=stretch
-  - DISTRIB=wheezy
-  - DISTRIB=jessie
+  global:
+   - secure: "l/LL3x3wrbjF03CxqexVVqZqTCfLgJBOa68BS1Aoc5tfClxPtrEorNGfSn2IiD+xCTz9DOiWClNaUdacUePXDuoWE1oi7QWrRyPfYOaYGWAmSfab5uQK0NV7ZglaiYpeO3JjDnqeBr0pHCpEgUd2SpbWbWL64CMXQQrPkUiOUzkl/QSFB1bAMWYL/vpSAfZO68s8dceKwRNXQ48cocVbt9zbio0RD6W4uHrZLYysGFXtBO4pW3uhRgNz1v9Mw6n2/8noez5dO80YG4fjF7/OHNS7IGvhriqbPmYJthsTLwJ97TsEz2R85p/2lO8z8Af4vIvo3UOHyOfk+bUjZoq8tj6JeSNEbk/8P1DKduvF5rrQ5JZniF+4/RApSntRIaAkYcKWLyHdWh9bev9oH+9CPTYYhmJkQMSZDX+bSpBkFmREzzZ/x3rYwkqS3fxBlfEEu5sUrzcpN9i8xLNBxG+x2gAqhVZ2N/Ik9/wq0UNKJ4o0UocH3+RKjvHUofpqo9BKI2fvKjP+09FgctQMqSRPw9+vX4HRzGnKDZfSINddw1GkdbCko/huMtVUMTeafd6FzKj1vvDvPMlsdufTqkUagreVl6qlncXvPgYdjoHnrxhncMKrAmsE4ME9B4bGlhv+HdnOgEH20hbLx02qIbpgY6vxO4jLZ84db/BpbJzBQNU="
+  matrix:
+   - DISTRIB=xenial
+   - DISTRIB=trusty
+   - DISTRIB=precise
+   - DISTRIB=stretch
+   - DISTRIB=wheezy
+   - DISTRIB=jessie
+   - DISTRIB=docker
 
 before_install:
 - pip install coveralls
-- docker pull signetsim/signetsim:$DISTRIB
+- /bin/bash travis_run.sh $DISTRIB before_install $PASSWORD
 
 install:
-- docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/signetsim:$DISTRIB bash
-- docker exec test_env chown -R www-data:www-data /home/travis/build/vincent-noel/SigNetSim
-- docker exec test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/install.sh
+- /bin/bash travis_run.sh $DISTRIB install
 
 script:
-- docker exec -u www-data test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/test_apache.sh
-- docker exec -u www-data test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/run_tests.sh
+- /bin/bash travis_run.sh $DISTRIB script
 
 after_script:
-- coveralls
+- /bin/bash travis_run.sh $DISTRIB after_script
