@@ -39,7 +39,7 @@ If you downloaded the repository and want to build the image locally:
     
 ## Running within a docker
 
-	docker pull signetsim/signetsim:develop
+	docker pull signetsim/signetsim
 	docker run --name signetsim -d signetsim/signetsim
 
 The server will run on localhost:80.
