@@ -7,14 +7,35 @@
 A django web application for building, fitting, and analyzing mathematical models of molecular signaling networks.
 
 
-## Installation
+## Running within a docker using docker-compose 
+    
+First, you need to create the following docker-compose.yml file: 
+    
+    version: '3.3'
 
-	sudo bash scripts/install.sh [folder]
+    services:
+      signetsim:
+        image: signetsim/signetsim:develop
+        container_name: signetsim
+        volumes:
+          - signetsim_data:/SigNetSim/data
+        ports:
+          - "8080:80"
+        restart: always
+    
+    volumes:
+      signetsim_data:
+      
 
-The server will run on localhost/[folder].
-Should work for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretch].
+This will pull the latest signetsim image from Docker Hub, and run SigNetSim on port 8080:
 
+    docker-compose up -d signetsim
+    
 
+If you downloaded the repository and want to build the image locally:
+
+    docker-compose up -d signetsim    
+    
 ## Running within a docker
 
 	docker pull signetsim/signetsim:develop
@@ -30,16 +51,14 @@ If you want to run it on a different port :
 
     docker run --name signetsim -p <port>:80 -d signetsim/signetsim:develop
 
-## Running within a docker using docker-compose 
 
-To build the image : 
-    
-    docker-compose build
-    
-To run SigNetSim on port 8080:
+## Installation script
 
-    docker-compose up -d signetsim
-    
+	sudo bash scripts/install.sh [folder]
+
+The server will run on localhost/[folder].
+Should work for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretch].
+
 
 ## License
 
