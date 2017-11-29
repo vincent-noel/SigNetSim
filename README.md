@@ -4,23 +4,53 @@
 [![DOI](https://zenodo.org/badge/20701382.svg)](https://zenodo.org/badge/latestdoi/20701382)
 
 
-A django web application for building, fitting, and analyzing mathematical models of molecular signaling networks.
+
+A django web application for building, fitting, and analyzing mathematical models of molecular signaling networks. A test version is available at [https://live.signetsim.org](https://live.signetsim.org).
 
 
-## Installation
+## Running within a docker using docker-compose 
+    
+First, you need to create the following docker-compose.yml file: 
+    
+    version: '3.3'
 
-	sudo bash scripts/install.sh [folder]
+    services:
+      signetsim:
+        image: signetsim/signetsim
+        container_name: signetsim
+        volumes:
+          - signetsim_data:/SigNetSim/data
+        ports:
+          - "8080:80"
+        restart: always
+    
+    volumes:
+      signetsim_data:
+      
 
-The server will run on localhost/[folder], with a default Admin with admin:admin credentials.
-Should work for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretch].
+This will pull the latest signetsim image from Docker Hub, and run SigNetSim on port 8080:
 
+    docker-compose up -d signetsim
+    
 
+If you downloaded the repository and want to build the image locally:
+
+    docker-compose build
+    
 ## Running within a docker
 
-	bash scripts/run_docker.sh [local data folder]
+	docker pull signetsim/signetsim:develop
+	docker run --name signetsim -d signetsim/signetsim
 
-The server will run on localhost:8080, with a default Admin with admin:admin credentials.
-If you inform a local data folder, it will be use to locally store persistent data.
+The server will run on localhost:80.
+
+If you want to locally store persistent data, use :
+
+    docker run --name signetsim -v <data folder>:/SigNetSim/data -d signetsim/signetsim
+
+If you want to run it on a different port :
+
+    docker run --name signetsim -p <port>:80 -d signetsim/signetsim
 
 
 ## License

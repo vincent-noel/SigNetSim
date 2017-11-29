@@ -5,7 +5,7 @@ services:
     build:
       context: ./
       dockerfile: ./scripts/docker/Dockerfile
-    image: signetsim/signetsim:develop
+    image: signetsim/signetsim
     container_name: signetsim
     volumes:
       - signetsim_data:/SigNetSim/data

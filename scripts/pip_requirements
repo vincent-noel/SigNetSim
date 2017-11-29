@@ -6,3 +6,4 @@ dill
 cloudpickle
 matplotlib
 coveralls
+seaborn
