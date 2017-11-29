@@ -4,7 +4,7 @@
 [![DOI](https://zenodo.org/badge/20701382.svg)](https://zenodo.org/badge/latestdoi/20701382)
 
 
-A django web application for building, fitting, and analyzing mathematical models of molecular signaling networks.
+A django web application for building, fitting, and analyzing mathematical models of molecular signaling networks. A test version is available at [https://live.signetsim.org](https://live.signetsim.org).
 
 
 ## Running within a docker using docker-compose 
@@ -34,7 +34,7 @@ This will pull the latest signetsim image from Docker Hub, and run SigNetSim on 
 
 If you downloaded the repository and want to build the image locally:
 
-    docker-compose up -d signetsim    
+    docker-compose build
     
 ## Running within a docker
 
