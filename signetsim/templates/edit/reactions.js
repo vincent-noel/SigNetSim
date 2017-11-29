@@ -64,7 +64,7 @@ class ListOfSpeciesReference extends ListForm{
                 )
             ],
 
-        "var " + this.field + "_" + this.index + "_dropdown = new Dropdown('" + this.field + "_" + this.index + "', " + this.post_treatment + ", default_value='');"
+        "var " + this.field + "_" + this.index + "_dropdown = new Dropdown('" + this.field + "_" + this.index + "', 'The species #" + this.index + " of the " + this.description + "', " + this.post_treatment + ", default_value='');"
         );
         this.update();
     }
