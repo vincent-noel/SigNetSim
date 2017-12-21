@@ -1,3 +1,6 @@
 README.md merge=nomerge
 scripts/pip_requirements merge=nomerge
 scripts/docker/Dockerfile merge=nomerge
+docker-compose.yml merge=nomerge
+travis_run.sh merge=nomerge
+.travis.yml merge=nomerge
