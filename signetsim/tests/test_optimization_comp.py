@@ -114,11 +114,12 @@ class TestOptimization(TestCase):
 			[experiment.name for experiment in response_import_data.context['experimental_data']],
 			[u'Ras-GTP quantifications']
 		)
+		experiment_id = response_import_data.context['experimental_data'][0].id
 
 		response_get_fit_data = c.get('/fit/data/')
 		self.assertEqual(response_get_fit_data.status_code, 200)
 		self.assertEqual(
-			[dataset.name for dataset in response_get_fit_data.context['experimental_data_sets']],
+			[dataset for dataset in response_get_fit_data.context['experimental_data_sets']],
 			[u'Ras-GTP quantifications']
 		)
 
@@ -126,20 +127,20 @@ class TestOptimization(TestCase):
 		self.assertEqual(response_list_optimizations.status_code, 200)
 		self.assertEqual(len(response_list_optimizations.context['optimizations']), 0)
 
-		response_add_dataset = c.post('/fit/data/', {
-			'action': 'add_dataset',
-			'dataset_id': 0
-		})
-
-		self.assertEqual(response_add_dataset.status_code, 200)
-		self.assertEqual(
-			response_add_dataset.context['selected_datasets_ids'],
-			[response_get_fit_data.context['experimental_data_sets'][0].id]
-		)
+		# response_add_dataset = c.post('/fit/data/', {
+		# 	'action': 'add_dataset',
+		# 	'dataset_id': 0
+		# })
+		#
+		# self.assertEqual(response_add_dataset.status_code, 200)
+		# self.assertEqual(
+		# 	response_add_dataset.context['selected_datasets_ids'],
+		# 	[response_get_fit_data.context['experimental_data_sets'][0].id]
+		# )
 
 		response_create_optimization = c.post('/fit/data/', {
 			'action': 'create',
-			'dataset_0': response_get_fit_data.context['experimental_data_sets'][0].id,
+			'dataset_0': experiment_id, #response_get_fit_data.context['experimental_data_sets'][0].id,
 
 			'parameter_0_id': 1,
 			'parameter_0_name': "SOS activation by FGF2",
@@ -164,6 +165,7 @@ class TestOptimization(TestCase):
 
 		self.assertEqual(response_create_optimization.status_code, 200)
 		self.assertEqual(response_create_optimization.context['form'].getErrors(), [])
+		sleep(10)
 
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
