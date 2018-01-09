@@ -38,7 +38,7 @@ from signetsim.json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels,
 from signetsim.json import GetUnitDefinition
 from signetsim.json import GetContinuationStatus, GetProject, SearchBiomodels, GetBiomodelsName
 from signetsim.json import GetExperiment, GetCondition, GetTreatment, GetObservation
-from signetsim.json import GetInstallStatus
+from signetsim.json import GetInstallStatus, AddDataset
 
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
 from views import DataOptimizationView, ModelOptimizationView
@@ -170,5 +170,6 @@ urlpatterns += [
 	url(r'^json/get_biomodels_name/$', GetBiomodelsName.as_view(), name='get_biomodels_name'),
 
 	url(r'^json/get_install_status/$', GetInstallStatus.as_view(), name='get_install_status'),
+	url(r'^json/add_dataset/$', AddDataset.as_view(), name='add_dataset'),
 
 ]

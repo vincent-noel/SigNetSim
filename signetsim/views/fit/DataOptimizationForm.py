@@ -170,27 +170,27 @@ class DataOptimizationForm(HasErrorMessages):
 			# Default parameters
 			i_parameter = 0
 			for parameter in self.view.getModelInstance().listOfParameters.values():
-
-				self.selectedParameters.append(
-					(
-						i_parameter, False,
-						parameter.getNameOrSbmlId(),
-						parameter.getValue(),
-						parameter.getValue()*1e-4,
-						parameter.getValue()*1e4))
-
-				i_parameter += 1
-
-			for reaction in self.view.getModelInstance().listOfReactions.values():
-				for parameter in reaction.listOfLocalParameters.values():
-
+				if parameter.getValue() is not None:
 					self.selectedParameters.append(
 						(
 							i_parameter, False,
-							parameter.getNameOfSbmlId(),
+							parameter.getNameOrSbmlId(),
 							parameter.getValue(),
 							parameter.getValue()*1e-4,
 							parameter.getValue()*1e4))
+
+					i_parameter += 1
+
+			for reaction in self.view.getModelInstance().listOfReactions.values():
+				for parameter in reaction.listOfLocalParameters.values():
+					if parameter.getValue() is not None:
+						self.selectedParameters.append(
+							(
+								i_parameter, False,
+								parameter.getNameOfSbmlId(),
+								parameter.getValue(),
+								parameter.getValue()*1e-4,
+								parameter.getValue()*1e4))
 
 
 		else:

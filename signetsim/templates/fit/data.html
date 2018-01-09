@@ -5,9 +5,12 @@
 {% block view_content %}
 {% load bootstrap3 %}
 {% load tags %}
+{% load static from staticfiles %}
+
 <div class="container-fluid" id="view">
   <h4>Model vs Data Fitting</h4>
   <hr/><br/>
+  {% include 'commons/error_modal.html' %}
 
   <ul class="nav nav-tabs">
 	<li class="active"><a data-toggle="tab" href="#data">Data</a></li>
@@ -95,46 +98,12 @@
 </div>
 
 {% endblock view_content %}
-{% block js %}
-
-$('#dataset_id_dropdown li').on('click', function(){
-  $("#dataset_id_label").html($(this).text());
-  $('#dataset_id').val($(this).index());
-});
-
-{% for parameter in selected_parameters %}
-
-  $("#select_parameter_{{forloop.counter0}}").on('click', function(){
-
-		if ($(this).prop('checked')){
-			$("#parameter_{{forloop.counter0}}_min_input").prop('disabled', false);
-			$("#parameter_{{forloop.counter0}}_value_input").prop('disabled', false);
-			$("#parameter_{{forloop.counter0}}_max_input").prop('disabled', false);
-			$("#parameter_{{forloop.counter0}}_active").val(1);
-
-		} else {
-			$("#parameter_{{forloop.counter0}}_min_input").prop('disabled', true);
-			$("#parameter_{{forloop.counter0}}_value_input").prop('disabled', true);
-			$("#parameter_{{forloop.counter0}}_max_input").prop('disabled', true);
-			$("#parameter_{{forloop.counter0}}_active").val(0);
-		}
-
-  });
-
-
-  $("#parameter_{{forloop.counter0}}_value_input").change(function() {
-		$("#parameter_{{forloop.counter0}}_value").val($(this).val());
-  });
-
-  $("#parameter_{{forloop.counter0}}_min_input").change(function() {
-		$("#parameter_{{forloop.counter0}}_min").val($(this).val());
-  });
-
-  $("#parameter_{{forloop.counter0}}_max_input").change(function() {
-		$("#parameter_{{forloop.counter0}}_max").val($(this).val());
-  });
-
-{% endfor %}
+{% block footer_js %}
 {{ block.super }}
+	<script src="{% static 'js/forms.js' %}"></script>
+{% endblock footer_js %}
 
+{% block js %}
+{{ block.super }}
+{% include 'fit/data.js' %}
 {% endblock js %}

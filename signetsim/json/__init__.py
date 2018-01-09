@@ -32,7 +32,7 @@ from edit import GetListOfObjects, GetListOfObjectsFromSubmodels
 from edit import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw, GetRule, \
 	GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetSBOName, GetUnitDefinition
 from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
-
+from fit import AddDataset
 from GetContinuationFigure import GetContinuationFigure
 from GetContinuationStatus import GetContinuationStatus
 from GetProject import GetProject
