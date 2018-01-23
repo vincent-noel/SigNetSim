@@ -24,22 +24,22 @@
 
 """
 
-from django.conf import settings
-
 from signetsim.models import Experiment
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from signetsim.managers.data import buildExperiment
+
 from libsignetsim import Settings
+
 
 class DataOptimizationForm(HasErrorMessages):
 
-	def __init__(self, view, **kwargs):
+	def __init__(self, view):
 
 		HasErrorMessages.__init__(self)
 		self.view = view
 
-		self.selectedDataSets = None
 		self.selectedDataSetsIds = None
+		self.selectedExperiments = None
 
 		self.speciesMapping = None
 		self.selectedParameters = None
@@ -52,6 +52,13 @@ class DataOptimizationForm(HasErrorMessages):
 		self.plsaFreezeCount = Settings.defaultPlsaFreezeCount
 		self.scoreNegativePenalty = Settings.defaultScoreNegativePenalty
 
+		self.mappings = []
+
+	def read(self, request):
+		self.readSelectedDataset(request)
+		self.loadMapping(request)
+		self.readSettings(request)
+
 	def readSettings(self, request):
 		self.nbCores = self.readInt(request, 'nb_cores', "the number of cores")
 		self.plsaLambda = self.readFloat(request, 'lambda', "the lambda setting")
@@ -61,105 +68,39 @@ class DataOptimizationForm(HasErrorMessages):
 		self.plsaFreezeCount = self.readFloat(request, 'freeze_count', "the freeze count setting")
 		self.scoreNegativePenalty = self.readFloat(request, 'negative_penalty', "the negative penalty setting")
 
-	def removeDataset(self, request):
-
-		self.readSelectedDataset(request)
-		self.selectedDataSetsIds.remove(int(request.POST['dataset_id']))
-		self.loadMapping(request)
-
-
-	def addDataset(self, request):
-
-		self.readSelectedDataset(request)
-
-		datasets = Experiment.objects.filter(project=self.view.project)
-		dataset_id = datasets[int(request.POST['dataset_id'])].id
-
-		self.selectedDataSetsIds.append(dataset_id)
-		self.selectedDataSetsIds = list(set(self.selectedDataSetsIds))
-
-		self.loadMapping(request)
-
 	def readSelectedDataset(self, request):
 
 		self.selectedDataSetsIds = []
+		self.selectedExperiments = []
+
 		i_dataset_selected = 0
 
 		while ("dataset_%d" % i_dataset_selected) in request.POST:
-			self.selectedDataSetsIds.append(
-				int(request.POST["dataset_%d" % i_dataset_selected]))
-
+			t_id = int(request.POST["dataset_%d" % i_dataset_selected])
+			self.selectedDataSetsIds.append(t_id)
+			self.selectedExperiments.append(buildExperiment(Experiment.objects.get(id=t_id)))
 			i_dataset_selected += 1
-
 
 	def loadMapping(self, request):
 
-		self.selectedDataSets = []
-		for i, t_id in enumerate(self.selectedDataSetsIds):
-			self.selectedDataSets.append((
-				Experiment.objects.get(id=t_id),
-				None,
-				None
-				# self.makeTreatmentsMapping(request, t_id),
-				# self.makeObservationsMapping(request, t_id)
-			))
+		ind_dataset = 0
+		ind_species = 0
 
-	#
-	# def makeTreatmentsMapping(self, request, dataset_id):
-	#
-	# 	# Finding unique names
-	# 	t_experiment = Experiment.objects.get(id=dataset_id)
-	# 	t_conditions = Condition.objects.filter(experiment=t_experiment)
-	#
-	# 	speciesTreatments = []
-	# 	for t_condition in t_conditions:
-	# 		t_data = Treatment.objects.filter(condition=t_condition)
-	# 		speciesTreatments += [str(t_datapoint.species) for t_datapoint in t_data]
-	#
-	# 	speciesTreatments = list(set(speciesTreatments))
-	#
-	# 	speciesMapping = []
-	# 	for t_species in speciesTreatments:
-	# 		if self.view.model.listOfSpecies.containsName(t_species):
-	# 			speciesMapping.append((t_species,
-	# 					self.view.model.listOfSpecies.getByName(t_species).getSbmlId(),
-	# 					self.view.model.listOfSpecies.names().index(t_species),
-	# 					self.view.model.listOfSpecies.getByName(t_species).getName(),
-	# 					False))
-	#
-	# 		else:
-	# 			speciesMapping.append((t_species, None, -1, None, False))
-	#
-	# 	return speciesMapping
-	#
-	#
-	#
-	# def makeObservationsMapping(self, request, dataset_id):
-	#
-	# 	# Finding unique names
-	# 	t_experiment = Experiment.objects.get(id=dataset_id)
-	# 	t_conditions = Condition.objects.filter(experiment=t_experiment)
-	#
-	# 	speciesObservations = []
-	# 	for t_condition in t_conditions:
-	# 		t_data = Observation.objects.filter(condition=t_condition)
-	# 		speciesObservations += [str(t_datapoint.species) for t_datapoint in t_data]
-	#
-	# 	speciesObservations = list(set(speciesObservations))
-	#
-	# 	speciesMapping = []
-	# 	for t_species in speciesObservations:
-	# 		if self.view.model.listOfSpecies.containsName(t_species):
-	# 			speciesMapping.append((t_species,
-	# 					self.view.model.listOfSpecies.getByName(t_species).getSbmlId(),
-	# 					self.view.model.listOfSpecies.names().index(t_species),
-	# 					self.view.model.listOfSpecies.getByName(t_species).getName()))
-	#
-	# 		else:
-	# 			speciesMapping.append((t_species, None, -1, None))
-	#
-	# 	return speciesMapping
-	#
+		self.mappings = []
+		while "list_dataset_%d_species_%d_value" % (ind_dataset, ind_species) in request.POST:
+
+			mapping = {}
+			while "list_dataset_%d_species_%d_value" % (ind_dataset, ind_species) in request.POST:
+
+				data_species = request.POST['list_dataset_%d_data_species_%d_value' % (ind_dataset, ind_species)]
+				species = request.POST['list_dataset_%d_species_%d_value' % (ind_dataset, ind_species)]
+
+				if len(str(species)) > 0:
+					mapping.update({data_species: self.view.getModelInstance().listOfSpecies.values()[int(species)].getXPath()})
+				ind_species += 1
+
+			self.mappings.append(mapping)
+			ind_dataset += 1
 
 	def loadParameters(self, request):
 
@@ -226,19 +167,3 @@ class DataOptimizationForm(HasErrorMessages):
 				)
 
 				i_parameter += 1
-
-
-	def get_user_optimizations_path(self):
-		return '{0}/optimizations/{1}/{2}'.format(settings.MEDIA_ROOT, self.project.id, instance.optimization_id)
-
-
-	def buildExperiments(self, request, interpolate=False):
-
-		list_of_experiments = []
-
-		for i, (experiment, _, _) in enumerate(self.selectedDataSets):
-			t_experiment = buildExperiment(experiment)
-			list_of_experiments.append(t_experiment)
-
-
-		return list_of_experiments

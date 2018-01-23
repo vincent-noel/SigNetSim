@@ -30,10 +30,9 @@ from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.models import Optimization, SbmlModel, Experiment
 from signetsim.views.fit.DataOptimizationForm import DataOptimizationForm
 
-from libsignetsim import ModelVsTimeseriesOptimization
+from libsignetsim import ModelVsTimeseriesOptimization, LibSigNetSimException
 
-import threading
-
+from threading import Thread
 from os.path import isdir, join
 from os import mkdir
 
@@ -54,10 +53,8 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 		kwargs = HasWorkingModel.get_context_data(self, **kwargs)
 
 		kwargs['experimental_data_sets'] = [experiment.name for experiment in Experiment.objects.filter(project=self.project)]
-		kwargs['list_of_species'] = self.model.listOfSpecies.values()
-		kwargs['list_of_parameters'] = self.model.listOfParameters.values()
-		kwargs['ids_of_species'] = self.model.listOfSpecies.sbmlIds()
-		kwargs['selected_datasets'] = self.form.selectedDataSets
+		kwargs['list_of_species'] = self.getModelInstance().listOfSpecies.values()
+		kwargs['list_of_parameters'] = self.getModelInstance().listOfParameters.values()
 		kwargs['selected_datasets_ids'] = self.form.selectedDataSetsIds
 		kwargs['selected_parameters'] = self.form.selectedParameters
 
@@ -79,12 +76,6 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 			if self.isChooseModel(request):
 				self.load(request, *args, **kwargs)
 
-			elif request.POST['action'] == "add_dataset":
-				self.form.addDataset(request)
-
-			elif request.POST['action'] == "remove_dataset":
-				self.form.removeDataset(request)
-
 			elif request.POST['action'] == "create":
 				self.runOptimization(request)
 
@@ -101,16 +92,13 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 	def runOptimization(self, request):
 
 		try:
-			self.form.readSelectedDataset(request)
-			self.form.loadMapping(request)
-			self.form.readSettings(request)
+			self.form.read(request)
 
 			t_parameters = []
 
 			for (ind, active, name, value, vmin, vmax) in self.form.selectedParameters:
 
 				if active:
-					t_parameter = None
 					if ind < self.getModelInstance().listOfParameters:
 						t_parameter = self.getModelInstance().listOfParameters.getByPos(ind)
 					else:
@@ -126,40 +114,51 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 
 					t_parameters.append((t_parameter, value, vmin, vmax))
 
-			experiments = self.form.buildExperiments(request)
-			t_optimization = ModelVsTimeseriesOptimization(
-								workingModel=self.model,
-								list_of_experiments=experiments,
-								parameters_to_fit=t_parameters,
-								nb_procs=self.form.nbCores,
-								p_lambda=self.form.plsaLambda,
-								p_criterion=self.form.plsaCriterion,
-								p_initial_temperature=self.form.plsaInitialTemperature,
-								p_initial_moves=self.form.plsaInitialMoves,
-								p_freeze_count=self.form.plsaFreezeCount,
-								s_neg_penalty=self.form.scoreNegativePenalty
-			)
+			if len(t_parameters) == 0:
+				self.form.addError("Please select at least one parameter to optimize.")
 
-			if not isdir(join(self.getProjectFolder(), "optimizations")):
-				mkdir(join(self.getProjectFolder(), "optimizations"))
+			if len(self.form.selectedExperiments) == 0:
+				self.form.addError("Please select at least one experiment to use as reference for the fit.")
 
-			t_optimization.setTempDirectory(join(self.getProjectFolder(), "optimizations"))
-			nb_procs = 2
 
-			t = threading.Thread(group=None,
-									target=t_optimization.runOptimization,
-									args=(nb_procs, None, None, ))
+			if len(t_parameters) > 0 and len(self.form.selectedExperiments) > 0:
 
-			t.setDaemon(True)
-			t.start()
+				# experiments = self.form.buildExperiments(request)
+				t_optimization = ModelVsTimeseriesOptimization(
+									workingModel=self.model,
+									list_of_experiments=self.form.selectedExperiments,
+									parameters_to_fit=t_parameters,
+									mapping=self.form.mappings,
+									nb_procs=self.form.nbCores,
+									p_lambda=self.form.plsaLambda,
+									p_criterion=self.form.plsaCriterion,
+									p_initial_temperature=self.form.plsaInitialTemperature,
+									p_initial_moves=self.form.plsaInitialMoves,
+									p_freeze_count=self.form.plsaFreezeCount,
+									s_neg_penalty=self.form.scoreNegativePenalty
+				)
 
-			t_model = SbmlModel.objects.get(id=self.model_id)
+				if not isdir(join(self.getProjectFolder(), "optimizations")):
+					mkdir(join(self.getProjectFolder(), "optimizations"))
 
-			new_optimization = Optimization(project=self.project,
-									model=t_model,
-									optimization_id=t_optimization.optimizationId)
-			new_optimization.save()
+				t_optimization.setTempDirectory(join(self.getProjectFolder(), "optimizations"))
+				nb_procs = 2
 
-		except Exception as e:
+				t = Thread(group=None,
+										target=t_optimization.runOptimization,
+										args=(nb_procs, None, None, ))
+
+				t.setDaemon(True)
+				t.start()
+
+				t_model = SbmlModel.objects.get(id=self.model_id)
+
+				new_optimization = Optimization(project=self.project,
+										model=t_model,
+										optimization_id=t_optimization.optimizationId)
+				new_optimization.save()
+
+
+		except LibSigNetSimException as e:
 			self.form.addError(e.message)
 

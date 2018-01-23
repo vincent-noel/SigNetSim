@@ -11,7 +11,8 @@
   <h4>Model vs Data Fitting</h4>
   <hr/><br/>
   {% include 'commons/error_modal.html' %}
-
+  <div class="container-fluid" id="error_modal">
+	</div>
   <ul class="nav nav-tabs">
 	<li class="active"><a data-toggle="tab" href="#data">Data</a></li>
 	<li><a data-toggle="tab" href="#params">Parameters</a></li>
@@ -19,7 +20,7 @@
   </ul>
   <br/><br/>
 
-  <form action="" method="POST">
+  <form action="" method="POST" onsubmit="return form_fit.submit();">
 	{% csrf_token %}
   <div class="tab-content">
 		<div id="data" class="tab-pane fade in active">

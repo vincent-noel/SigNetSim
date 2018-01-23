@@ -17,6 +17,7 @@
 
 {% load bootstrap3 %}
 
+<div id="table_selected_datasets" class="container-fluid collapse" style="padding: 0px">
 <table class="table">
 	<thead>
 		<tr class="row">
@@ -27,7 +28,7 @@
 	<tbody id="body_list_datasets">
 	 </tbody>
 </table>
-
+</div>
 {% include 'commons/html/dropdown.html' with
 	name="Available datasets"
 	id="available_datasets"
