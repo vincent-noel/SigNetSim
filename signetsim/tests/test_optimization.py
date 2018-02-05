@@ -30,7 +30,7 @@ from django.conf import settings
 from signetsim.models import User, Project, SbmlModel
 
 from os.path import dirname, join
-from shutil import rmtree
+from shutil import rmtree, copytree
 from time import sleep
 
 class TestOptimization(TestCase):
@@ -214,7 +214,8 @@ class TestOptimization(TestCase):
 		response_create_optimization = c.post('/fit/data/', {
 			'action': 'create',
 			'dataset_0': experiment_id,# response_get_fit_data.context['experimental_data_sets'][0].id,
-
+			'list_dataset_0_data_species_0_value': "Product",
+			'list_dataset_0_species_0_value': 3,
 			'parameter_0_active': "on",
 			'parameter_0_id': 0,
 			'parameter_0_name': "Binding rate",
@@ -247,7 +248,7 @@ class TestOptimization(TestCase):
 		self.assertEqual(response_create_optimization.status_code, 200)
 		self.assertEqual(response_create_optimization.context['form'].getErrors(), [])
 
-		sleep(10)
+		sleep(5)
 
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
@@ -259,7 +260,10 @@ class TestOptimization(TestCase):
 		response_get_optimization = c.get('/fit/%s/' % response_list_optimizations.context['optimizations'][0][0].optimization_id)
 		self.assertEqual(response_get_optimization.status_code, 200)
 
-		sleep(180)
+		sleep(360)
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
 		self.assertEqual(response_list_optimizations.context['optimizations'][0][1], "Finished")
+
+		print "Copying tree"
+		copytree(join(settings.MEDIA_ROOT, str(project.folder)), "/tmp/optim_failed/")
