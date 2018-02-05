@@ -31,7 +31,7 @@ from data import GetExperiment, GetCondition, GetTreatment, GetObservation
 from edit import GetListOfObjects, GetListOfObjectsFromSubmodels
 from edit import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw, GetRule, \
 	GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetSBOName, GetUnitDefinition
-from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
+from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, ModelNameValidator
 from fit import AddDataset
 from GetContinuationFigure import GetContinuationFigure
 from GetContinuationStatus import GetContinuationStatus

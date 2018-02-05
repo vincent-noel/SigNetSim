@@ -12,6 +12,10 @@ function getSbmlIdValidatorURL(){
     return "{% url 'sbml_id_validator' %}";
 }
 
+function getModelNameValidatorURL(){
+    return "{% url 'modelname_validator' %}";
+}
+
 function getFloatValidatorURL(){
     return "{% url 'float_validator' %}";
 }

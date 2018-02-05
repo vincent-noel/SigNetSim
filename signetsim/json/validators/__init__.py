@@ -28,3 +28,4 @@ from MathValidator import MathValidator
 from FloatValidator import FloatValidator
 from SbmlIdValidator import SbmlIdValidator
 from UnitIdValidator import UnitIdValidator
+from ModelNameValidator import ModelNameValidator
