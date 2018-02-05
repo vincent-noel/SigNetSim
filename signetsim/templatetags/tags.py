@@ -90,6 +90,10 @@ def append_string(string, postfix):
 	return string+postfix
 
 @register.filter
+def append_int(int, postfix):
+	return int+str(postfix)
+
+@register.filter
 def scientific_format(value, significant_digits):
 	format = "%." + ("%d" % int(significant_digits)) + "g"
 	return format % float(value)

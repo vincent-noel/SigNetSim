@@ -51,8 +51,14 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 			HasWorkingProject.__init__(self)
 
 			self.optimizationId = None
+
 			self.parameters = None
+			self.inputParameters = None
+			self.outputParameters = None
+
 			self.modelName = None
+			self.submodelNames = None
+			self.modifiedSubmodelNames = None
 			self.optimizationStatus = None
 			self.showGraph = None
 			self.optimPath = None
@@ -76,6 +82,8 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 			kwargs['optimization_id'] = self.optimizationId
 			kwargs['parameters'] = self.parameters
 			kwargs['model_name'] = self.modelName
+			kwargs['submodel_names'] = self.submodelNames
+			kwargs['modified_submodel_names'] = self.modifiedSubmodelNames
 			kwargs['show_graph'] = self.showGraph
 			kwargs['optimization_status'] = self.optimizationStatus
 
@@ -123,20 +131,11 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 				self.loadOptimization(request, *args)
 
 
-		# def saveModel(self, request):
-
-			# t_file = File(open(os.path.join(self.optimPath, "fitted_model.sbml")))
-			#
-			# t_model = SbmlModel.objects.get(name=self.modelName)
-			# t_model.sbml_file = t_file
-			# t_model.save()
-			# for parameter in self.parameters:
-
-
 		def stopOptimization(self):
 
 			stopOptimization(self.optimPath)
 			self.optimizationStatus = getOptimizationStatus(self.optimPath)
+
 
 		def restartOptimization(self):
 
@@ -152,55 +151,89 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 
 			self.optimizationStatus = getOptimizationStatus(self.optimPath)
 
-
-		def saveAsNewModel(self, request):
-
-			if not SbmlModel.objects.filter(name=("%s (fitted)" % self.modelName)):
-
-				t_model = SbmlModel.objects.get(optimization_id=self.optimizationId)
-				t_file = File(open(os.path.join(settings.MEDIA_ROOT, str(t_model.sbml_file))))
-				new_sbml_model = SbmlModel(project=self.project,
-											name=("%s (fitted)" % self.modelName),
-											sbml_file=t_file)
-
-				new_sbml_model.save()
-
 		def saveFittedModel(self, request):
 
 			t_document = SbmlDocument()
-			t_document.readSbml(str(self.optimPath + "/model.sbml"))
+			t_document.readSbmlFromFile(str(self.optimPath + "/model.sbml"))
 			model = t_document.model
 
-			if model.getName is not None:
+			if request.POST.get('model_name') is not None:
+				self.modelName = str(request.POST['model_name'])
+			elif model.getName() is not None:
 				self.modelName = model.getName()
 			else:
 				self.modelName = self.model_name
 
-			# Because we want the list of constants
-			model.listOfVariables.classifyVariables()
+			if not SbmlModel.objects.filter(name=self.modelName):
 
-			input_parameters = self.readParameters(model, self.optimPath + "/fit_input")
-			output_parameters = self.readParameters(model, self.optimPath + "/fit_output")
+				document = SbmlDocument()
+				document.readSbmlFromFile(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, "model.sbml")))
 
-			for i_param, param in enumerate(input_parameters):
-				(t_id_input, t_name_input, t_val_input) = param
-				(_, _, t_val_output) = output_parameters[i_param]
+				if not document.useCompPackage:
 
-				self.parameters.append((t_id_input, t_val_input, t_val_output, t_name_input))
-				model.variablesConstant[t_id_input].setValue(t_val_output)
+					file = File(open(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, "model.sbml"))))
+					new_sbml_model = SbmlModel(project=self.project, name=self.modelName, sbml_file=file)
+					new_sbml_model.save()
 
-			# if not FittedSbmlModel.objects.filter(optimization_id=self.optimizationId).exists():
-			# 	model.parentDoc.writeSbml(str(self.optimPath + "/fitted_model.sbml"))
-			# 	t_file = File(open(str(self.optimPath + "/fitted_model.sbml")))
-			# 	new_fitted_model = FittedSbmlModel(project=self.project, optimization_id=self.optimizationId, name=model.getName(), sbml_file=t_file)
-			# 	new_fitted_model.save()
-			# else:
-			# 	t_fitted_model = FittedSbmlModel.objects.get(optimization_id=self.optimizationId)
-			# 	model.parentDoc.writeSbml(os.path.join(settings.MEDIA_ROOT, str(t_fitted_model.sbml_file)))
+					new_document = SbmlDocument()
+					new_document.readSbmlFromFile(os.path.join(settings.MEDIA_ROOT, str(new_sbml_model.sbml_file)))
+					new_document.model.setName(self.modelName)
 
+					for i_param, (xpath, value) in enumerate(self.outputParameters):
+
+						param = new_document.getByXPath(xpath)
+						param.setValue(value)
+
+					new_document.writeSbmlToFile(os.path.join(settings.MEDIA_ROOT, str(new_sbml_model.sbml_file)))
+
+				else:
+					modifieds = []
+					for i_param, (xpath, value) in enumerate(self.outputParameters):
+						param = document.getModelInstance().getDefinitionVariableByXPath(xpath)
+						modifieds.append(param[0].getModel().parentDoc)
+
+					modifieds = list(set(modifieds))
+
+					submodel_names = []
+					i_submodel = 0
+					while request.POST.get("submodel_%d_name" % i_submodel) is not None:
+						submodel_names.append(request.POST["submodel_%d_name" % i_submodel])
+						i_submodel += 1
+
+					modified_files = {}
+					for i_modified, modified in enumerate(modifieds):
+						file = File(open(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, modified.documentFilename))))
+						new_sbml_model = SbmlModel(project=self.project, name=submodel_names[i_modified], sbml_file=file)
+						new_sbml_model.save()
+
+						new_document = SbmlDocument()
+						new_document.readSbmlFromFile(os.path.join(settings.MEDIA_ROOT, str(new_sbml_model.sbml_file)))
+						new_document.model.setName(str(submodel_names[i_modified]))
+						new_document.writeSbmlToFile(os.path.join(settings.MEDIA_ROOT, str(new_sbml_model.sbml_file)))
+						modified_files.update({modified.documentFilename: os.path.basename(str(new_sbml_model.sbml_file))})
+
+					print modified_files
+					print [subdoc.documentFilename for subdoc in document.documentDependencies]
+					renaming = {}
+					for subdoc in document.documentDependencies:
+						if subdoc.documentFilename in modified_files:
+							renaming.update({subdoc.documentFilename: modified_files[subdoc.documentFilename]})
+						else:
+							renaming.update({subdoc.documentFilename: subdoc.documentFilename})
+
+					print renaming
+
+					file = File(open(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, "model.sbml"))))
+					new_sbml_model = SbmlModel(project=self.project, name=self.modelName, sbml_file=file)
+					new_sbml_model.save()
+
+					new_document = SbmlDocument()
+					new_document.readSbmlFromFile(os.path.join(settings.MEDIA_ROOT, str(new_sbml_model.sbml_file)))
+					new_document.renameExternalDocumentDependencies(renaming)
+					new_document.model.setName(self.modelName)
+					new_document.writeSbmlToFile(os.path.join(settings.MEDIA_ROOT, str(new_sbml_model.sbml_file)))
 
 		def loadOptimization(self, request, *args):
-
 
 			self.optimizationId = str(args[0])
 			self.optimPath = os.path.join(self.getProjectFolder(),
@@ -212,7 +245,9 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 			self.parameters = []
 			self.loadOptimizationResults(request)
 			self.loadOptimizationScore(request)
+			self.readModel(request)
 			self.loadParameters(request)
+			self.loadSubmodels(request)
 			request.session['optim_dir'] = self.optimPath
 			request.session['logdir'] = os.path.join(self.optimPath, "logs")
 
@@ -267,7 +302,6 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 			f_optim = open(
 				os.path.join(self.optimPath, "logs/exp_%d_cond_%d_var_%d" %
 							 (experiment, condition, var)), "r")
-
 
 			res = []
 			for line in f_optim:
@@ -327,14 +361,11 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 					self.scoreMinEv.append(max(0.0, float(data[5])-float(data[6])))
 					self.scoreMaxEv.append(float(data[5])+float(data[6]))
 
-
 		def loadParameters(self, request):
 
 
-			self.readModel(request)
-
-			inputParameters = []
-			outputParameters = []
+			self.inputParameters = []
+			self.outputParameters = []
 
 			if os.path.isfile(os.path.join(self.optimPath, "logs/params/input")):
 				f_input = open(os.path.join(self.optimPath, "logs/params/input"))
@@ -343,8 +374,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 					res = re.split(" ", line.strip())
 					xpath = res[0]
 					value = res[2]
-					param = self.optimizationModel.getByXPath(xpath, instance=self.optimizationModel.useCompPackage)
-					inputParameters.append((param.getNameOrSbmlId(), value))
+					self.inputParameters.append((xpath, value))
 
 			if os.path.isfile(os.path.join(self.optimPath, "logs/params/output")):
 				f_input = open(os.path.join(self.optimPath, "logs/params/output"))
@@ -353,8 +383,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 					res = re.split(" ", line.strip())
 					xpath = res[0]
 					value = res[2]
-					param = self.optimizationModel.getByXPath(xpath, instance=self.optimizationModel.useCompPackage)
-					outputParameters.append((param, value))
+					self.outputParameters.append((xpath, value))
 
 			elif os.path.isfile(os.path.join(self.optimPath, "logs/best_res/parameters_0")):
 				f_input = open(os.path.join(self.optimPath, "logs/best_res/parameters_0"))
@@ -363,14 +392,36 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 					res = re.split(" ", line.strip())
 					xpath = res[0]
 					value = res[2]
-					param = self.optimizationModel.getByXPath(xpath, instance=self.optimizationModel.useCompPackage)
-					outputParameters.append((param, value))
+					self.outputParameters.append((xpath, value))
 
-			if len(inputParameters) > 0 and len(outputParameters) == len(inputParameters):
+			if len(self.inputParameters) > 0 and len(self.outputParameters) == len(self.inputParameters):
 				self.parameters = []
-				for i, (parameter, value) in enumerate(inputParameters):
-					self.parameters.append((parameter, value, outputParameters[i][1]))
+				for i, (xpath, value) in enumerate(self.inputParameters):
+					parameter = self.optimizationModel.getByXPath(xpath, instance=self.optimizationModel.useCompPackage)
+					self.parameters.append((parameter.getNameOrSbmlId(), value, self.outputParameters[i][1]))
 
+		def loadSubmodels(self, request):
+
+
+			if self.optimizationModel.useCompPackage:
+				self.optimizationModel.loadExternalDocumentDependencies()
+
+				self.modifiedSubmodelNames = {}
+				for subdoc in self.optimizationModel.documentDependencies:
+					self.modifiedSubmodelNames[subdoc.model.getNameOrSbmlId()] = False
+
+				for i_param, (xpath, value) in enumerate(self.outputParameters):
+					param = self.optimizationModel.getModelInstance().getDefinitionVariableByXPath(xpath)
+
+					self.modifiedSubmodelNames[param[0].getModel().getName()] = True
+
+				self.submodelNames = []
+				for subdoc in self.optimizationModel.documentDependencies:
+					if self.modifiedSubmodelNames[subdoc.model.getNameOrSbmlId()]:
+						if subdoc.model.getNameOrSbmlId() is None:
+							self.submodelNames.append("")
+						else:
+							self.submodelNames.append(subdoc.model.getNameOrSbmlId())
 
 
 		def readModel(self, request):
@@ -380,38 +431,4 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 			if self.optimizationModel.getModelInstance().getNameOrSbmlId() is not None:
 				self.modelName = self.optimizationModel.getModelInstance().getNameOrSbmlId()
 			else:
-				self.modelName = ""
-
-		def readParameters(self, model, filename):
-
-			result_params = []
-
-			f_optimized_parameters = open(filename, 'r')
-			now_reading = 0
-
-			for line in f_optimized_parameters:
-				# Comments
-				if line.startswith("#"):
-					pass
-
-				# Empty line
-				elif not line.strip():
-					pass
-
-				# Parameter_label
-				elif line.strip() == "[constants]":
-					now_reading = 1
-				elif line.strip() == "[initial_values]":
-					now_reading = 2
-				else:
-					# print line
-					data = line.strip().split()
-					if now_reading == 1:
-						t_ind = int(data[0])
-						t_value = float(data[1])
-
-						if model.variablesConstant[t_ind].isParameter():
-							result_params.append((t_ind, model.variablesConstant[t_ind].getNameOrSbmlId(), t_value))
-
-			f_optimized_parameters.close()
-			return result_params
+				self.modelName = self.optimizationModel.model.getNameOrSbmlId()

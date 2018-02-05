@@ -47,6 +47,7 @@ class DataOptimizationForm(HasErrorMessages):
 		self.nbCores = 2
 		self.plsaLambda = Settings.defaultPlsaLambda
 		self.plsaCriterion = Settings.defaultPlsaCriterion
+		self.plsaPrecision = Settings.defaultPlsaPrecision
 		self.plsaInitialTemperature = Settings.defaultPlsaInitialTemperature
 		self.plsaInitialMoves = Settings.defaultPlsaInitialMoves
 		self.plsaFreezeCount = Settings.defaultPlsaFreezeCount
@@ -62,7 +63,8 @@ class DataOptimizationForm(HasErrorMessages):
 	def readSettings(self, request):
 		self.nbCores = self.readInt(request, 'nb_cores', "the number of cores")
 		self.plsaLambda = self.readFloat(request, 'lambda', "the lambda setting")
-		self.plsaCriterion = self.readFloat(request, 'precision', "the precision setting")
+		self.plsaCriterion = self.readFloat(request, 'score_precision', "the score function precision setting")
+		self.plsaPrecision = self.readInt(request, 'param_precision', "the parameter precision setting")
 		self.plsaInitialTemperature = self.readFloat(request, 'initial_temperature', "the initial temperature setting")
 		self.plsaInitialMoves = self.readFloat(request, 'initial_moves', "the initial moves setting")
 		self.plsaFreezeCount = self.readFloat(request, 'freeze_count', "the freeze count setting")
@@ -148,22 +150,27 @@ class DataOptimizationForm(HasErrorMessages):
 					"the name of the parameter #%d" % i_parameter
 				)
 
-				t_value = self.readFloat(
-					request, "parameter_%d_value" % i_parameter,
-					"the value of the parameter #%d" % i_parameter
-				)
+				if t_active:
 
-				t_min = self.readFloat(
-					request, "parameter_%d_min" % i_parameter,
-					"the minimum value of the parameter #%d" % i_parameter
-				)
+					t_value = self.readFloat(
+						request, "parameter_%d_value" % i_parameter,
+						"the value of the parameter #%d" % i_parameter
+					)
 
-				t_max = self.readFloat(
-					request, "parameter_%d_max" % i_parameter,
-					"the maximum value of the parameter #%d" % i_parameter
-				)
-				self.selectedParameters.append(
-					(i_parameter, t_active, t_name, t_value, t_min, t_max)
-				)
+					t_min = self.readFloat(
+						request, "parameter_%d_min" % i_parameter,
+						"the minimum value of the parameter #%d" % i_parameter
+					)
+
+					t_max = self.readFloat(
+						request, "parameter_%d_max" % i_parameter,
+						"the maximum value of the parameter #%d" % i_parameter
+					)
+
+
+
+					self.selectedParameters.append(
+						(i_parameter, t_active, t_name, t_value, t_min, t_max)
+					)
 
 				i_parameter += 1

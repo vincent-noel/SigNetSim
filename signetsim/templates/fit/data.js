@@ -131,10 +131,8 @@ class ListOfDatasets {
         this.index++;
         if (this.getNbExperiments() > 0){
             $("#table_selected_datasets").addClass("in");
-            console.log("show");
         } else {
             $("#table_selected_datasets").removeClass("in");
-            console.log("hide");
         }
     }
 

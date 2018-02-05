@@ -132,6 +132,7 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 									nb_procs=self.form.nbCores,
 									p_lambda=self.form.plsaLambda,
 									p_criterion=self.form.plsaCriterion,
+									p_precision=self.form.plsaPrecision,
 									p_initial_temperature=self.form.plsaInitialTemperature,
 									p_initial_moves=self.form.plsaInitialMoves,
 									p_freeze_count=self.form.plsaFreezeCount,

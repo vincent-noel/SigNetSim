@@ -126,12 +126,6 @@
         </thead>
         <tbody>
             <tr class="row">
-{#              <td class="col-xs-4 text-center">#}
-{#                <form action="" method="POST">#}
-{#                  {% csrf_token %}#}
-{#                  <button type="button"  class="btn btn-primary btn-sm">{% bootstrap_icon "floppy-disk" %} Save</button>#}
-{#                </form>#}
-{#              </td>#}
               <td class="col-xs-6 text-center">
                 <form action="" method="POST">
                   {% csrf_token %}
@@ -177,7 +171,7 @@
 <div class="modal fade in" id="modal_save_fitted_model" tabindex="1" role="dialog" aria-labelledby="Save fitted model">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form method="post" enctype="multipart/form-data">
+      <form method="post" enctype="multipart/form-data" onsubmit="return form_save_model.save();">
         {% csrf_token %}
 				<input type="hidden" name="action" value="save_simulation">
 				<div class="modal-header">
@@ -186,13 +180,27 @@
         </div>
         <div class="modal-body">
 
-					{% include 'commons/html/name_input.html' with
+					{% include 'commons/html/validated_input.html' with
 						name="Model name"
 						id="model_name"
 						placeholder="Input model name"
 						default=model_name|append_string:" (Fitted)"
 					%}
 
+				{% for name in submodel_names %}
+					{% if modified_submodel_names|my_lookup:name %}
+					{% with "Submodel #"|append_int:forloop.counter|append_string:" name" as submodel_name %}
+					{% with "submodel_"|append_int:forloop.counter0|append_string:"_name" as submodel_id %}
+					{% include 'commons/html/validated_input.html' with
+						name=submodel_name
+						id=submodel_id
+						placeholder="Input submodel name"
+						default=name|append_string:" (Fitted)"
+					%}
+					{% endwith %}
+					{% endwith %}
+					{% endif %}
+				{% endfor %}
 				</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -206,8 +214,13 @@
 
 {% endblock view_modal %}
 
+{% block footer_js %}
+<script src="{% static 'js/forms.js' %}"></script>
+{% endblock footer_js %}
+
 {% block js %}
 {% include "fit/result_graph.js" %}
+{% include "fit/result.js" %}
 
 {{ block.super }}
 

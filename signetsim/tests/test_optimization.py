@@ -236,7 +236,7 @@ class TestOptimization(TestCase):
 
 			'nb_cores': 2,
 			'lambda': 0.001,
-			'precision': 0.001,
+			'score_precision': 0.001,
 			'initial_temperature': 1,
 			'initial_moves': 2000,
 			'freeze_count': 100,
