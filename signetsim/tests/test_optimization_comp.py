@@ -169,7 +169,7 @@ class TestOptimization(TestCase):
 			'parameter_1_max': 1e+6,
 
 			'nb_cores': 2,
-			'lambda': 0.1,
+			'lambda': 0.05,
 			'score_precision': 0.001,
 			'param_precision': 7,
 			'initial_temperature': 1,
