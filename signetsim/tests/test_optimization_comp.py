@@ -27,11 +27,14 @@
 from django.test import TestCase, Client
 from django.conf import settings
 
+from libsignetsim import SbmlDocument
+
 from signetsim.models import User, Project, SbmlModel
 
 from os.path import dirname, join
-from shutil import rmtree
+from json import loads
 from time import sleep
+
 
 class TestOptimization(TestCase):
 
@@ -127,20 +130,31 @@ class TestOptimization(TestCase):
 		self.assertEqual(response_list_optimizations.status_code, 200)
 		self.assertEqual(len(response_list_optimizations.context['optimizations']), 0)
 
-		# response_add_dataset = c.post('/fit/data/', {
-		# 	'action': 'add_dataset',
-		# 	'dataset_id': 0
-		# })
-		#
-		# self.assertEqual(response_add_dataset.status_code, 200)
-		# self.assertEqual(
-		# 	response_add_dataset.context['selected_datasets_ids'],
-		# 	[response_get_fit_data.context['experimental_data_sets'][0].id]
-		# )
+		response_add_dataset = c.post('/json/add_dataset/', {
+			'dataset_ind': 0
+		})
+
+		self.assertEqual(response_add_dataset.status_code, 200)
+		mapping = loads(response_add_dataset.content)['model_xpaths']
+
+		sbml_filename = str(SbmlModel.objects.filter(project=project)[3].sbml_file)
+
+		doc = SbmlDocument()
+		doc.readSbmlFromFile(join(settings.MEDIA_ROOT, sbml_filename))
+
+		self.assertEqual(mapping.keys(), ['FGF2', 'Total Ras-GTP'])
+
+		self.assertEqual(doc.getModelInstance().listOfSpecies.index(doc.getByXPath(mapping['FGF2'], instance=True)), 4)
+		self.assertEqual(doc.getModelInstance().listOfSpecies.index(doc.getByXPath(mapping['Total Ras-GTP'], instance=True)), 13)
 
 		response_create_optimization = c.post('/fit/data/', {
 			'action': 'create',
 			'dataset_0': experiment_id, #response_get_fit_data.context['experimental_data_sets'][0].id,
+
+			'list_dataset_0_data_species_0_value': "FGF2",
+			'list_dataset_0_species_0_value': 4,
+			'list_dataset_0_data_species_1_value': "Total Ras-GTP",
+			'list_dataset_0_species_1_value': 13,
 
 			'parameter_0_id': 1,
 			'parameter_0_name': "SOS activation by FGF2",
@@ -155,11 +169,11 @@ class TestOptimization(TestCase):
 			'parameter_1_max': 1e+6,
 
 			'nb_cores': 2,
-			'lambda': 1,
+			'lambda': 0.1,
 			'score_precision': 0.001,
 			'param_precision': 7,
 			'initial_temperature': 1,
-			'initial_moves': 2000,
+			'initial_moves': 200,
 			'freeze_count': 1,
 			'negative_penalty': 0
 		})
@@ -179,7 +193,13 @@ class TestOptimization(TestCase):
 		response_get_optimization = c.get('/fit/%s/' % optimization_id)
 		self.assertEqual(response_get_optimization.status_code, 200)
 
-		sleep(180)
+		sleep(240)
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
 		self.assertEqual(response_list_optimizations.context['optimizations'][0][1], "Finished")
+
+		response_get_optimization = c.get('/fit/%s/' % optimization_id)
+		self.assertEqual(response_get_optimization.status_code, 200)
+
+		scores = response_get_optimization.context['score_values']
+		self.assertTrue(scores[len(scores)-1] < 1.01)
