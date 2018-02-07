@@ -15,7 +15,7 @@ class ModelNameForm extends HasIndicator(Form)
     }
 
 
-    check()
+    check(async=true)
     {
         let name = this.getValue();
 
@@ -51,7 +51,8 @@ class ModelNameForm extends HasIndicator(Form)
                     () => {
                         this.setError("couldn't be verified : connection failed.");
                         this.setIndicatorInvalid();
-                    }
+                    },
+                    async
                 );
             }
             // Otherwise no need to check, it's valid

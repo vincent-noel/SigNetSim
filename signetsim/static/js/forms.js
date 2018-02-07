@@ -748,11 +748,11 @@ class FormGroup {
         for (var [index, form] of this.list.entries())
         {
             if (this.listErrorChecking[index]){
-                form.check();
+//                form.check();
                 if (form.hasError()){
                     this.addError(form);
                     form.highlight();
-//                    this.nb_errors++;
+                    this.nb_errors++;
                 }
             }
         }

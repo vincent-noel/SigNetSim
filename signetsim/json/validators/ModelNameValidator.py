@@ -42,7 +42,7 @@ class ModelNameValidator(JsonRequest, HasWorkingProject):
 
 		if SbmlModel.objects.filter(name=name).exists():
 
-			self.data.update({'error': 'name already exists'})
+			self.data.update({'error': 'already exists'})
 		else:
 			self.data.update({'error': ''})
 

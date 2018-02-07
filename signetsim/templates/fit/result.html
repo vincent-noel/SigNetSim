@@ -84,7 +84,7 @@
               <td class="col-xs-4 text-center">
                 <form action="" method="POST">
                   {% csrf_token %}
-                  <button type="submit" name="action" value="stop_optim" class="btn btn-primary btn-sm" {% if optimization_status != "Ongoing" %}disabled{% endif %}>{% bootstrap_icon "stop" %} Stop optimization</button>
+                  <button type="submit" name="action" value="stop_optim" class="btn btn-primary btn-sm" {% if optimization_status != "Ongoing" %}disabled{% endif %}>{% bootstrap_icon "pause" %} Pause optimization</button>
                   <button type="submit" name="action" value="restart_optim" class="btn btn-primary btn-sm" {% if optimization_status != "Interrupted" %}disabled{% endif %}>{% bootstrap_icon "play" %} Restart optimization</button>
                 </form>
               </td>
@@ -201,6 +201,8 @@
 					{% endwith %}
 					{% endif %}
 				{% endfor %}
+						<div class="container-fluid" id="error_modal">
+          	</div>
 				</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
