@@ -161,12 +161,15 @@ class TestOptimization(TestCase):
 			'parameter_0_value': 1.0,
 			'parameter_0_min': 1e-4,
 			'parameter_0_max': 1e+4,
+			'parameter_0_precision': 7,
+
 			'parameter_1_active': "on",
 			'parameter_1_id': 1,
 			'parameter_1_name': "SOS inactivation by Mapk catalytic constant",
 			'parameter_1_value': 1.0,
 			'parameter_1_min': 1e-6,
 			'parameter_1_max': 1e+6,
+			'parameter_1_precision': 7,
 
 			'nb_cores': 2,
 			'lambda': 0.05,

@@ -96,7 +96,7 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 
 			t_parameters = []
 
-			for (ind, active, name, value, vmin, vmax) in self.form.selectedParameters:
+			for (ind, active, name, value, vmin, vmax, precision) in self.form.selectedParameters:
 
 				if active:
 					if ind < self.getModelInstance().listOfParameters:
@@ -112,7 +112,7 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 					if self.getModelInstance().parentDoc.isCompEnabled():
 						t_parameter = self.getModelInstance().getDefinitionVariable(t_parameter)[0]
 
-					t_parameters.append((t_parameter, value, vmin, vmax))
+					t_parameters.append((t_parameter, value, vmin, vmax, precision))
 
 			if len(t_parameters) == 0:
 				self.form.addError("Please select at least one parameter to optimize.")

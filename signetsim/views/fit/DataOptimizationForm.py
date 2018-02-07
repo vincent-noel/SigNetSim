@@ -116,11 +116,12 @@ class DataOptimizationForm(HasErrorMessages):
 				if parameter.getValue() is not None:
 					self.selectedParameters.append(
 						(
-							i_parameter, False,
+							i_parameter, True,
 							parameter.getNameOrSbmlId(),
 							parameter.getValue(),
 							parameter.getValue()*1e-4,
-							parameter.getValue()*1e4))
+							parameter.getValue()*1e4,
+							Settings.defaultPlsaPrecision))
 
 					i_parameter += 1
 
@@ -129,11 +130,12 @@ class DataOptimizationForm(HasErrorMessages):
 					if parameter.getValue() is not None:
 						self.selectedParameters.append(
 							(
-								i_parameter, False,
+								i_parameter, True,
 								parameter.getNameOfSbmlId(),
 								parameter.getValue(),
 								parameter.getValue()*1e-4,
-								parameter.getValue()*1e4))
+								parameter.getValue()*1e4,
+								Settings.defaultPlsaPrecision))
 
 
 		else:
@@ -167,10 +169,13 @@ class DataOptimizationForm(HasErrorMessages):
 						"the maximum value of the parameter #%d" % i_parameter
 					)
 
-
+					t_precision = self.readInt(
+						request, "parameter_%d_precision" % i_parameter,
+								 "the number of significant figures of the parameter #%d" % i_parameter
+					)
 
 					self.selectedParameters.append(
-						(i_parameter, t_active, t_name, t_value, t_min, t_max)
+						(i_parameter, t_active, t_name, t_value, t_min, t_max, t_precision)
 					)
 
 				i_parameter += 1
