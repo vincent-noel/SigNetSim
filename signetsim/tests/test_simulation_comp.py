@@ -28,7 +28,6 @@ from django.test import TestCase, Client
 from django.conf import settings
 
 from signetsim.models import User, Project, SbmlModel, SEDMLSimulation
-from libsignetsim import Settings
 
 from os.path import dirname, join
 from shutil import rmtree
@@ -39,8 +38,6 @@ class TestSimulation(TestCase):
 	fixtures = ["user_with_project.json"]
 
 	def testTimeseriesCompModel(self):
-
-		Settings.verbose = 2
 
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)

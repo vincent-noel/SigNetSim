@@ -52,8 +52,24 @@ def getOptimizationStatus(optim_path):
 		optimization_status = "Finished"
 
 	elif isfile(optim_path + "/err_optim") and getsize(optim_path + "/err_optim") > 0:
-		optimization_status = "Failed"
 
+		non_docker_err = False
+		f_err_sim = open(join(optim_path, "err_sim"), 'r')
+		for line in f_err_sim:
+			if not line.startswith("Unexpected end of /proc/mounts"):
+				non_docker_err = True
+
+		if non_docker_err:
+			optimization_status = "Failed"
+		else:
+			try:
+				with open(join(optim_path, "pid")) as f:
+					pid = f.read()
+					check_output(['pwdx', pid])  # , stdout=None, stderr=None)
+					optimization_status = "Ongoing"
+
+			except:
+				optimization_status = "Interrupted"
 	else:
 		try:
 			with open(join(optim_path, "pid")) as f:
