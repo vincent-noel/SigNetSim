@@ -20,13 +20,14 @@
 <table class="table table-striped">
   <thead>
 	<tr class="row">
-	  <th class="col-sm-4" colspan="2">Selected parameters</th>
-	  <th class="col-sm-2">Min value</th>
-	  <th class="col-sm-2">Value</th>
-	  <th class="col-sm-2">Max value</th>
+	  <th class="col-sm-7" colspan="2">Selected parameters</th>
+	  <th class="col-sm-2">Initial value</th>
+	  <th class="col-sm-1">Min value</th>
+	  <th class="col-sm-1">Max value</th>
+	  <th class="col-sm-1">Precision</th>
 	</tr>
   </thead>
-  <tbody>
+  <tbody id="table_list_parameters">
 	{% for parameter in selected_parameters %}
 	<tr class="row">
 		<input type="hidden" name="parameter_{{ forloop.counter0 }}_id" value="{{ forloop.counter0 }}"/>
@@ -38,25 +39,35 @@
 									{% if parameter.1 %}checked{% endif %}
 		></label>
 	  </td>
-	  <td class="col-xs-5 vert-align">
+	  <td class="col-xs-6 vert-align">
 		{{parameter.2}}
 	  </td>
-	  <td class="col-xs-2 vert-align">
-		<input type="text" class="form-control invisible_inputs"
-					 id="parameter_{{forloop.counter0}}_min_input"
-					 name="parameter_{{ forloop.counter0 }}_min" value="{{parameter.4}}"
-		>
-	  </td>
-	  <td class="col-xs-2 vert-align">
+		<td class="col-xs-2 vert-align">
 		<input type="text" class="form-control invisible_inputs"
 					 id="parameter_{{forloop.counter0}}_value_input"
 					 name="parameter_{{ forloop.counter0 }}_value" value="{{parameter.3}}"
+					 {% if parameter.1 == 0 %}disabled{% endif %}
 		>
 	  </td>
-	  <td class="col-xs-2 vert-align">
+	 <td class="col-xs-1 vert-align">
+		<input type="text" class="form-control invisible_inputs"
+					 id="parameter_{{forloop.counter0}}_min_input"
+					 name="parameter_{{ forloop.counter0 }}_min" value="{{parameter.4}}"
+					 {% if parameter.1 == 0 %}disabled{% endif %}
+		>
+	  </td>
+	  <td class="col-xs-1 vert-align">
 		<input type="text" class="form-control invisible_inputs"
 					 id="parameter_{{forloop.counter0}}_max_input"
 					 name="parameter_{{ forloop.counter0 }}_max" value="{{parameter.5}}"
+					 {% if parameter.1 == 0 %}disabled{% endif %}
+		>
+	  </td>
+	  <td class="col-xs-1 vert-align">
+		<input type="text" class="form-control invisible_inputs"
+					 id="parameter_{{forloop.counter0}}_precision"
+					 name="parameter_{{ forloop.counter0 }}_precision" value="{{parameter.6}}"
+					 {% if parameter.1 == 0 %}disabled{% endif %}
 		>
 	  </td>
 	</tr>

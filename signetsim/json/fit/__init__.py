@@ -20,12 +20,8 @@
 
 """ __init__.py
 
-	Initialization of the module signetsim.views.json.validators
+	Initialization of the module signetsim.json.fit
 
 """
 
-from MathValidator import MathValidator
-from FloatValidator import FloatValidator
-from SbmlIdValidator import SbmlIdValidator
-from UnitIdValidator import UnitIdValidator
-from ModelNameValidator import ModelNameValidator
+from AddDataset import AddDataset

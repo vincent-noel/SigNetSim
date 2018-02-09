@@ -30,7 +30,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import logout
 
-from signetsim.json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator
+from signetsim.json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, ModelNameValidator
 from signetsim.json import GetContinuationFigure, GetListOfObjectsFromSubmodels
 from signetsim.json import GetSBOName, SetAccountActive, SetAccountStaff
 from signetsim.json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction, GetRule
@@ -38,7 +38,7 @@ from signetsim.json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels,
 from signetsim.json import GetUnitDefinition
 from signetsim.json import GetContinuationStatus, GetProject, SearchBiomodels, GetBiomodelsName
 from signetsim.json import GetExperiment, GetCondition, GetTreatment, GetObservation
-from signetsim.json import GetInstallStatus
+from signetsim.json import GetInstallStatus, AddDataset
 
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
 from views import DataOptimizationView, ModelOptimizationView
@@ -139,6 +139,7 @@ urlpatterns += [
 	url(r'^json/math_validator/$', MathValidator.as_view(), name='math_validator'),
 	url(r'^json/sbml_id_validator/$', SbmlIdValidator.as_view(), name='sbml_id_validator'),
 	url(r'^json/unit_id_validator/$', UnitIdValidator.as_view(), name='unit_id_validator'),
+	url(r'^json/modelname_validator/$', ModelNameValidator.as_view(), name='modelname_validator'),
 	url(r'^json/get_submodels/$', GetSubmodels.as_view(), name='get_submodels'),
 	url(r'^json/get_list_of_objects/$', GetListOfObjects.as_view(), name='get_list_of_objects'),
 	url(r'^json/get_list_of_objects_from_submodels/$', GetListOfObjectsFromSubmodels.as_view(), name='get_list_of_objects_from_submodels'),
@@ -170,5 +171,6 @@ urlpatterns += [
 	url(r'^json/get_biomodels_name/$', GetBiomodelsName.as_view(), name='get_biomodels_name'),
 
 	url(r'^json/get_install_status/$', GetInstallStatus.as_view(), name='get_install_status'),
+	url(r'^json/add_dataset/$', AddDataset.as_view(), name='add_dataset'),
 
 ]

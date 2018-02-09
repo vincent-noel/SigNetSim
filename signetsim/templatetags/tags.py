@@ -84,3 +84,27 @@ def if_none(value, return_if_none):
 		return return_if_none
 	else:
 		return value
+
+@register.filter
+def append_string(string, postfix):
+	return string+postfix
+
+@register.filter
+def append_int(int, postfix):
+	return int+str(postfix)
+
+@register.filter
+def scientific_format(value, significant_digits):
+	format = "%." + ("%d" % int(significant_digits)) + "g"
+	return format % float(value)
+
+@register.filter
+def hms_string(seconds):
+	if seconds < 60:
+		return "a few seconds"
+	elif seconds < 3600:
+		return "%d minutes" % int(seconds/60)
+	elif seconds < 86400:
+		return "%d hours" % int(seconds/3600)
+	else:
+		return "%d days" % int(seconds/86400)

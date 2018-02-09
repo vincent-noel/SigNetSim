@@ -18,14 +18,35 @@
 # You should have received a copy of the GNU General Public License
 # along with libSigNetSim.  If not, see <http://www.gnu.org/licenses/>.
 
-""" __init__.py
+""" SbmlIdValidator.py
 
-	Initialization of the module signetsim.views.json.validators
+	This file...
 
 """
 
-from MathValidator import MathValidator
-from FloatValidator import FloatValidator
-from SbmlIdValidator import SbmlIdValidator
-from UnitIdValidator import UnitIdValidator
-from ModelNameValidator import ModelNameValidator
+
+from signetsim.json import JsonRequest
+from signetsim.views.HasWorkingProject import HasWorkingProject
+from signetsim.models import SbmlModel
+
+
+class ModelNameValidator(JsonRequest, HasWorkingProject):
+
+	def __init__(self):
+		JsonRequest.__init__(self)
+		HasWorkingProject.__init__(self)
+
+	def post(self, request, *args, **kwargs):
+		self.load(request, *args, **kwargs)
+		name = str(request.POST['name']).strip()
+
+		if SbmlModel.objects.filter(name=name).exists():
+
+			self.data.update({'error': 'already exists'})
+		else:
+			self.data.update({'error': ''})
+
+		return JsonRequest.post(self, request, *args, **kwargs)
+
+	def load(self, request, *args, **kwargs):
+		HasWorkingProject.load(self, request, *args, **kwargs)

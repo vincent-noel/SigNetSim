@@ -24,9 +24,13 @@
 
 """
 
-from os.path import isdir, join
+from os.path import isdir, join, exists, getsize, isfile
+from os import kill, getcwd, setpgrp
 from shutil import rmtree
 from django.conf import settings
+from subprocess import check_call, check_output
+from glob import glob
+
 
 def deleteOptimization(optimization):
 
@@ -35,3 +39,70 @@ def deleteOptimization(optimization):
 	if isdir(directory):
 		rmtree(directory)
 	optimization.delete()
+
+
+def getOptimizationStatus(optim_path):
+
+	optimization_status = None
+
+	if not exists(optim_path):
+		optimization_status = "Not found"
+
+	elif isfile(optim_path + "/logs/score/score"):
+		optimization_status = "Finished"
+
+	elif isfile(optim_path + "/err_optim") and getsize(optim_path + "/err_optim") > 0:
+
+		non_docker_err = False
+		f_err_sim = open(join(optim_path, "err_optim"), 'r')
+		for line in f_err_sim:
+			if not line.startswith("Unexpected end of /proc/mounts"):
+				non_docker_err = True
+
+		if non_docker_err:
+			optimization_status = "Failed"
+		else:
+			try:
+				with open(join(optim_path, "pid")) as f:
+					pid = f.read()
+					check_output(['pwdx', pid])  # , stdout=None, stderr=None)
+					optimization_status = "Ongoing"
+
+			except:
+				optimization_status = "Interrupted"
+	else:
+		try:
+			with open(join(optim_path, "pid")) as f:
+				pid = f.read()
+				check_output(['pwdx', pid])#, stdout=None, stderr=None)
+				optimization_status = "Ongoing"
+
+		except:
+			optimization_status = "Interrupted"
+
+	return optimization_status
+
+
+def stopOptimization(optim_path):
+
+	if isfile(join(optim_path, "pid")):
+		t_pidfile = open(join(optim_path, "pid"), "r")
+		t_pid = int(t_pidfile.readline().strip())
+		kill(t_pid, 9)
+
+def restartOptimization(optim_path):
+
+	nb_procs = len(glob(join(optim_path, 'plsa_*.state')))
+	present_dir = getcwd()
+
+	if nb_procs > 1 and isfile(join(optim_path, "lsa.mpi")):
+		target = "cd %s; mpirun -np %d ./lsa.mpi; cd %s" % (optim_path, nb_procs, present_dir)
+
+	else:
+		target = "cd %s; ./lsa; cd %s" % (optim_path, present_dir)
+
+	check_call(target,
+		stdout=open(join(optim_path, "out_optim"), "w"),
+		stderr=open(join(optim_path, "err_optim"), "w"),
+		shell=True, preexec_fn=setpgrp, close_fds=True
+	)

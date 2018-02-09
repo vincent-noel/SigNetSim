@@ -29,6 +29,19 @@ var config_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}} =
       datasets: [
       {% for var in condition %}
       {
+          label: "Data",
+          data: [
+          {% for sim in var.1 %}
+              {x: {{sim.0}}, y: {{sim.1}}},
+          {% endfor %}
+          ],
+          fill: false,
+          backgroundColor: "{{colors|my_data_color:forloop.counter0}}",
+          borderColor: "{{colors|my_data_color:forloop.counter0}}",
+          showLine: false,
+          pointStyle: "rectRounded",
+          radius: 5,
+      }, {
 
           label: "Model",
           data: [
@@ -42,19 +55,7 @@ var config_result_{{forloop.parentloop.counter0}}_{{forloop.counter0}} =
           cubicInterpolationMode: "monotone",
 
       },
-      {
-          label: "Data",
-          data: [
-          {% for sim in var.1 %}
-              {x: {{sim.0}}, y: {{sim.1}}},
-          {% endfor %}
-          ],
-          fill: false,
-          backgroundColor: "{{colors|my_data_color:forloop.counter0}}",
-          borderColor: "{{colors|my_data_color:forloop.counter0}}",
-          cubicInterpolationMode: "monotone",
 
-      },
       {% endfor %}
       ],
   },

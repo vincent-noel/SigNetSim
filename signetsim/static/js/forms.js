@@ -595,7 +595,6 @@ class ListForm {
     {
         if (this.removable || this.editable)
         {
-//            let buttons = $("<td>").attr({'class': 'col-xs-2 text-right'});
             let buttons = $("<div>").attr({'class': 'form-inline pull-right'});
 
             if (this.editable){
@@ -696,6 +695,11 @@ class FormGroup {
 
     addError(form)
     {
+          this.addGlobalError(form.field, form.description + " " + form.error_message);
+    }
+
+    addGlobalError(field, message)
+    {
         if ($("#error_modal").children().length === 0)
         {
             $("#error_modal").append(
@@ -705,15 +709,18 @@ class FormGroup {
             );
         }
 
-        if ($("#error_modal_list").find("#error_message_" + form.field).length === 0)
+        if ($("#error_modal_list").find("#error_message_" + field).length === 0)
         {
             $("#error_modal_list").append(
-                "<span id=\"error_message_" + form.field + "\">\
-                    <strong>Error : </strong>" + form.description + " " + form.error_message + "\
+                "<span id=\"error_message_" + field + "\">\
+                    <strong>Error : </strong>" + message + "\
                 </span><br/>"
             );
         }
+        this.nb_errors++;
+
     }
+
     removeForm(form){
         let t_index = this.list.indexOf(form);
         if (t_index > -1){
@@ -741,7 +748,7 @@ class FormGroup {
         for (var [index, form] of this.list.entries())
         {
             if (this.listErrorChecking[index]){
-                form.check();
+//                form.check();
                 if (form.hasError()){
                     this.addError(form);
                     form.highlight();

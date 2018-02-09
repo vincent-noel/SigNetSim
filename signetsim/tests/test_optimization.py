@@ -27,11 +27,14 @@
 from django.test import TestCase, Client
 from django.conf import settings
 
+from libsignetsim import SbmlDocument
+
 from signetsim.models import User, Project, SbmlModel
 
 from os.path import dirname, join
 from shutil import rmtree
 from time import sleep
+from json import loads
 
 class TestOptimization(TestCase):
 
@@ -192,7 +195,7 @@ class TestOptimization(TestCase):
 		response_get_fit_data = c.get('/fit/data/')
 		self.assertEqual(response_get_fit_data.status_code, 200)
 		self.assertEqual(
-			[dataset.name for dataset in response_get_fit_data.context['experimental_data_sets']],
+			[dataset for dataset in response_get_fit_data.context['experimental_data_sets']],
 			[u'Enzymatic reaction']
 		)
 
@@ -200,43 +203,56 @@ class TestOptimization(TestCase):
 		self.assertEqual(response_list_optimizations.status_code, 200)
 		self.assertEqual(len(response_list_optimizations.context['optimizations']), 0)
 
-		response_add_dataset = c.post('/fit/data/', {
-			'action': 'add_dataset',
-			'dataset_id': 0
+		response_add_dataset = c.post('/json/add_dataset/', {
+			'dataset_ind': 0
 		})
 
 		self.assertEqual(response_add_dataset.status_code, 200)
-		self.assertEqual(
-			response_add_dataset.context['selected_datasets_ids'],
-			[response_get_fit_data.context['experimental_data_sets'][0].id]
-		)
+		mapping = loads(response_add_dataset.content)['model_xpaths']
+
+		sbml_filename = str(SbmlModel.objects.filter(project=project)[0].sbml_file)
+
+		doc = SbmlDocument()
+		doc.readSbmlFromFile(join(settings.MEDIA_ROOT, sbml_filename))
+
+		self.assertEqual(mapping.keys(), ['Product', 'Substrate'])
+
+		self.assertEqual(doc.model.listOfSpecies.index(doc.getByXPath(mapping['Substrate'])), 0)
+		self.assertEqual(doc.model.listOfSpecies.index(doc.getByXPath(mapping['Product'])), 3)
 
 		response_create_optimization = c.post('/fit/data/', {
 			'action': 'create',
-			'dataset_0': response_get_fit_data.context['experimental_data_sets'][0].id,
-
+			'dataset_0': experiment_id,
+			'list_dataset_0_data_species_0_value': "Product",
+			'list_dataset_0_species_0_value': 3,
+			'list_dataset_0_data_species_1_value': "Substrate",
+			'list_dataset_0_species_1_value': 0,
 			'parameter_0_active': "on",
 			'parameter_0_id': 0,
 			'parameter_0_name': "Binding rate",
 			'parameter_0_value': 1.0,
 			'parameter_0_min': 1e-4,
 			'parameter_0_max': 1e+4,
+			'parameter_0_precision': 7,
 			'parameter_1_active': "on",
 			'parameter_1_id': 0,
 			'parameter_1_name': "Unbinding rate",
 			'parameter_1_value': 1.0,
 			'parameter_1_min': 1e-4,
 			'parameter_1_max': 1e+4,
+			'parameter_1_precision': 7,
 			'parameter_2_active': "on",
 			'parameter_2_id': 0,
 			'parameter_2_name': "Catalytic rate",
 			'parameter_2_value': 1.0,
 			'parameter_2_min': 1e-4,
 			'parameter_2_max': 1e+4,
+			'parameter_2_precision': 7,
 
 			'nb_cores': 2,
 			'lambda': 0.001,
-			'precision': 0.001,
+			'score_precision': 0.001,
+			'param_precision': 7,
 			'initial_temperature': 1,
 			'initial_moves': 2000,
 			'freeze_count': 100,
@@ -245,6 +261,8 @@ class TestOptimization(TestCase):
 
 		self.assertEqual(response_create_optimization.status_code, 200)
 		self.assertEqual(response_create_optimization.context['form'].getErrors(), [])
+
+		sleep(5)
 
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
@@ -256,7 +274,15 @@ class TestOptimization(TestCase):
 		response_get_optimization = c.get('/fit/%s/' % response_list_optimizations.context['optimizations'][0][0].optimization_id)
 		self.assertEqual(response_get_optimization.status_code, 200)
 
-		sleep(180)
+		sleep(240)
+
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
 		self.assertEqual(response_list_optimizations.context['optimizations'][0][1], "Finished")
+
+		response_get_optimization = c.get(
+			'/fit/%s/' % response_list_optimizations.context['optimizations'][0][0].optimization_id)
+		self.assertEqual(response_get_optimization.status_code, 200)
+
+		scores = response_get_optimization.context['score_values']
+		self.assertTrue(scores[len(scores)-1] < 0.24)
