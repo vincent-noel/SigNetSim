@@ -54,7 +54,7 @@ def getOptimizationStatus(optim_path):
 	elif isfile(optim_path + "/err_optim") and getsize(optim_path + "/err_optim") > 0:
 
 		non_docker_err = False
-		f_err_sim = open(join(optim_path, "err_sim"), 'r')
+		f_err_sim = open(join(optim_path, "err_optim"), 'r')
 		for line in f_err_sim:
 			if not line.startswith("Unexpected end of /proc/mounts"):
 				non_docker_err = True
