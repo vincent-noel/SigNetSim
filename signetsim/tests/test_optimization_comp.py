@@ -172,7 +172,7 @@ class TestOptimization(TestCase):
 			'parameter_1_precision': 7,
 
 			'nb_cores': 2,
-			'lambda': 0.05,
+			'lambda': 0.02,
 			'score_precision': 0.001,
 			'param_precision': 7,
 			'initial_temperature': 1,
@@ -196,7 +196,7 @@ class TestOptimization(TestCase):
 		response_get_optimization = c.get('/fit/%s/' % optimization_id)
 		self.assertEqual(response_get_optimization.status_code, 200)
 
-		sleep(240)
+		sleep(360)
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
 		self.assertEqual(response_list_optimizations.context['optimizations'][0][1], "Finished")
