@@ -137,7 +137,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			y_filtered = {}
 			if self.form.selectedSpeciesIds is not None:
 				for var in self.form.selectedSpeciesIds:
-					t_sbml_id = self.listOfVariables[var].getSbmlId()
+					t_sbml_id = str(self.listOfVariables[var].symbol.getSymbol())
 					t_name = self.listOfVariables[var].getNameOrSbmlId()
 					if self.form.showObservations == True:
 						t_name += " (model)"
@@ -145,7 +145,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 
 			if self.form.selectedReactionsIds is not None:
 				for var in self.form.selectedReactionsIds:
-					t_sbml_id = self.listOfReactions[var].getSbmlId()
+					t_sbml_id = str(self.listOfReactions[var].symbol.getSymbol())
 					t_name = self.listOfReactions[var].getNameOrSbmlId()
 					y_filtered.update({t_name: t_y[t_sbml_id]})
 
