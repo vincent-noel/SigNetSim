@@ -30,8 +30,8 @@ from signetsim.views.HasErrorMessages import HasErrorMessages
 from signetsim.models import ContinuationComputation, SbmlModel
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.analyse.AnalyseBifurcationForm import AnalyseBifurcationsForm
-import dill, mpld3
-from matplotlib import pyplot as plt
+from signetsim.settings.Settings import Settings
+import dill
 
 class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
@@ -60,6 +60,8 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		kwargs['list_of_variables'] = [var.getNameOrSbmlId() for var in self.listOfVariables]
 		kwargs['list_of_computations'] = self.listOfComputations
 		kwargs['list_of_figures'] = self.listOfFigures
+		kwargs['colors'] = Settings.default_colors
+
 		return kwargs
 
 
@@ -115,7 +117,7 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 	def loadConstants(self):
 		self.getModelInstance().listOfVariables.classifyVariables()
-		self.listOfConstants = [variable for variable in self.getModel().listOfVariables.values() if variable.isConstant() or variable.isDerivative()]
+		self.listOfConstants = [variable for variable in self.getModel().listOfVariables.values() if variable.isConstant()]
 		self.listOfVariables = [variable for variable in self.getModel().listOfVariables.values() if variable.isDerivative()]
 
 
@@ -134,34 +136,32 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 				try:
 
 					t_object = dill.loads(continuation.figure.encode('Latin-1'))
-					t_object.continuation.plot.setLabels('')
-					t_object.continuation.plot.toggleLabels(visible="on")
-					t_object.continuation.display((t_object.parameter, t_object.variable), stability=True,linewidth=3,
-											color='#009ece',)
+					curves = []
+					print t_object.continuation.curves
+					# print t_object.curves
+					for curve_id in t_object.continuation.curves.keys():
 
-					t_figure_id = plt.get_fignums()[0]
-					t_figure = plt.figure(t_figure_id)
+						len_curve = len(t_object.continuation[curve_id].curve[:, 1]) - 1
+						x = t_object.continuation[curve_id].curve[0:len_curve - 1, 3]
+						y = t_object.continuation[curve_id].curve[0:len_curve - 1, 0]
+						# x = [x_i for x_i in x if x_i <= 400]
+						xy = [(x_i, y_i) for i, (x_i, y_i) in enumerate(zip(x, y)) if x_i < 500]
 
-					t_figure.get_axes()[0].set_title("")
-					t_figure.get_axes()[0].set_xlim([t_object.fromValue, t_object.toValue])
+						curves += xy
+						print curves
 
-					t_figure.set_dpi(100)
-					t_figure.set_size_inches((8, 5))
+					points = []
 
-					t_figure_html = mpld3.fig_to_html(t_figure, template_type='simple')
-					t_figure_html = t_figure_html.replace(
-						"<script type=\"text/javascript\" src=\"https://mpld3.github.io/js/d3.v3.min.js\"></script>", "")
-					t_figure_html = t_figure_html.replace(
-						"<script type=\"text/javascript\" src=\"https://mpld3.github.io/js/mpld3.v0.3.js\"></script>", "")
-					t_figure_html = t_figure_html.replace("<style>", "")
-					t_figure_html = t_figure_html.replace("</style>", "")
-					self.listOfFigures.append(t_figure_html)
+					self.listOfFigures.append((curves, points))
+
 				except:
 					self.listOfFigures.append("")
 
 			else:
+
 				self.listOfFigures.append("")
 
+		print self.listOfFigures
 	def computeCurve(self, request):
 
 		self.form.read(request)
@@ -170,18 +170,21 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 			t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
 
-			self.computation = ContinuationComputation(project=self.project,
-													   model=t_model,
-													   parameter=self.listOfConstants[self.form.parameter].getSbmlId(),
-													   variable=self.listOfVariables[self.form.variable].getSbmlId())#,
-													   # ds=ds, max_steps=max_steps)
+			self.computation = ContinuationComputation(
+				project=self.project,
+				model=t_model,
+				parameter=self.listOfConstants[self.form.parameter].getSbmlId(),
+				variable=self.listOfVariables[self.form.variable].getSbmlId()#,
+				# ds=ds, max_steps=max_steps
+			)
+
 			self.computation.save()
 
 			if self.form.parameter is not None and self.form.variable is not None:
 
 				t_ep_curve = EquilibriumPointCurve(self.getModel())
 				t_ep_curve.setParameter(self.listOfConstants[self.form.parameter])
-				t_ep_curve.setVariable(self.listOfVariables[self.form.variable].getSbmlId())
+				t_ep_curve.setVariable(self.listOfVariables[self.form.variable])
 				t_ep_curve.setRange(self.form.fromValue, self.form.toValue)
 				t_ep_curve.setDs(self.form.ds)
 				t_ep_curve.setMaxSteps(self.form.maxSteps)
