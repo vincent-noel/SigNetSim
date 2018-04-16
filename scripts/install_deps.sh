@@ -24,8 +24,17 @@ apt-get install -y $( cat ${DIR}/apt_requirements )
 
 # Python Dependencies
 pip install pip --upgrade
-if [ ! -f /usr/bin/pip ]
+
+PIP_VERSION=`pip --version`
+LOCAL_PIP_VERSION=`/usr/local/bin/pip --version`
+
+if [ -z "$PIP_VERSION" ] && [ ! -z "$LOCAL_PIP_VERSION" ];
 then
+    if [ -f /usr/bin/pip ];
+    then
+        rm /usr/bin/pip
+    fi
+
     ln -s /usr/local/bin/pip /usr/bin/pip
 fi
 
