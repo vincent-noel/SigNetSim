@@ -48,7 +48,10 @@ class GetReaction(JsonRequest, HasWorkingModel):
 		for parameter in reaction.listOfLocalParameters.values():
 			list_of_parameters.append(parameter)
 
-		list_of_parameters.append(None)
+		# If there is local parameters
+		if len(list_of_parameters) > 0:
+			list_of_parameters.append(None)
+
 		for parameter in self.getModel().listOfParameters.values():
 			list_of_parameters.append(parameter)
 

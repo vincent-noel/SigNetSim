@@ -53,7 +53,6 @@ class ModelReactionsForm(ModelParentForm):
 
 	def save(self, reaction):
 
-
 		try:
 			reaction.setName(self.name)
 			reaction.setSbmlId(self.sbmlId)
@@ -74,10 +73,11 @@ class ModelReactionsForm(ModelParentForm):
 			parameters = [param for param in reaction.listOfLocalParameters]
 
 			# Separator
-			parameters.append(None)
+			# If there is no local parameters, there is no need
+			if len(parameters) > 0:
+				parameters.append(None)
+
 			parameters += [param for param in self.parent.listOfParameters]
-
-
 
 			if self.reactionType == KineticLaw.UNDEFINED:
 				reaction.setKineticLaw(self.reactionType, self.reversible, math=self.kineticLaw)
@@ -85,11 +85,10 @@ class ModelReactionsForm(ModelParentForm):
 				t_parameters = [parameters[param] for param in self.listOfParameters]
 				reaction.setKineticLaw(self.reactionType, self.reversible, parameters=t_parameters)
 
-
 			reaction.getAnnotation().setSBOTerm(self.SBOTerm)
+
 		except ModelException as e:
 			self.addError(e.message)
-
 
 	def read(self, request):
 
@@ -116,7 +115,6 @@ class ModelReactionsForm(ModelParentForm):
 		if self.reactionType != KineticLaw.UNDEFINED:
 			self.readParameters(request)
 		else:
-
 			self.kineticLaw = self.readString(request, 'reaction_kinetic_law',
 								"the formula of the reaction's kinetic law")
 
@@ -144,7 +142,6 @@ class ModelReactionsForm(ModelParentForm):
 			self.listOfReactants.append((t_species, t_stoichiometry))
 			reactant_id += 1
 
-
 	def readProducts(self, request):
 
 		product_id = 0
@@ -161,7 +158,6 @@ class ModelReactionsForm(ModelParentForm):
 
 			self.listOfProducts.append((t_species, t_stoichiometry))
 			product_id += 1
-
 
 	def readModifiers(self, request):
 
@@ -181,9 +177,9 @@ class ModelReactionsForm(ModelParentForm):
 			self.listOfModifiers.append((t_species, t_stoichiometry))
 			modifier_id += 1
 
-
 	def readParameters(self, request):
 
+		# print request.POST
 		parameter_id = 0
 		self.listOfParameters = []
 
@@ -218,7 +214,6 @@ class ModelReactionsForm(ModelParentForm):
 			self.listOfLocalParameters.append((t_parameter_name, t_parameter_value))
 			parameter_id += 1
 
-
 	def saveReactants(self, reaction):
 
 		reaction.listOfReactants.clear()
@@ -234,7 +229,6 @@ class ModelReactionsForm(ModelParentForm):
 			t_modifier = reaction.listOfModifiers.new()
 			t_modifier.setSpecies(self.parent.listOfSpecies[species_id])
 			t_modifier.setStoichiometry(stoichiometry)
-
 
 	def saveProducts(self, reaction):
 
