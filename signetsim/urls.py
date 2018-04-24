@@ -31,7 +31,7 @@ from django.contrib import admin
 from django.contrib.auth.views import logout
 
 from signetsim.json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, ModelNameValidator
-from signetsim.json import GetContinuationFigure, GetListOfObjectsFromSubmodels
+from signetsim.json import GetListOfObjectsFromSubmodels
 from signetsim.json import GetSBOName, SetAccountActive, SetAccountStaff
 from signetsim.json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction, GetRule
 from signetsim.json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetListOfObjects
@@ -39,6 +39,7 @@ from signetsim.json import GetUnitDefinition
 from signetsim.json import GetContinuationStatus, GetProject, SearchBiomodels, GetBiomodelsName
 from signetsim.json import GetExperiment, GetCondition, GetTreatment, GetObservation
 from signetsim.json import GetInstallStatus, AddDataset
+from signetsim.json import GetEquilibriumCurve
 
 from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
 from views import DataOptimizationView, ModelOptimizationView
@@ -144,8 +145,6 @@ urlpatterns += [
 	url(r'^json/get_list_of_objects/$', GetListOfObjects.as_view(), name='get_list_of_objects'),
 	url(r'^json/get_list_of_objects_from_submodels/$', GetListOfObjectsFromSubmodels.as_view(), name='get_list_of_objects_from_submodels'),
 
-	url(r'^json/get_continuation_status/$', GetContinuationStatus.as_view(), name='get_continuation_status'),
-	url(r'^json/get_continuation_figure/$', GetContinuationFigure.as_view(), name='get_continuation_figure'),
 	url(r'^json/get_species/$', GetSpecies.as_view(), name='get_species'),
 	url(r'^json/get_parameter/$', GetParameter.as_view(), name='get_parameter'),
 	url(r'^json/get_compartment/$', GetCompartment.as_view(), name='get_compartment'),
@@ -169,6 +168,9 @@ urlpatterns += [
 
 	url(r'^json/search_biomodels/$', SearchBiomodels.as_view(), name='search_biomodels'),
 	url(r'^json/get_biomodels_name/$', GetBiomodelsName.as_view(), name='get_biomodels_name'),
+
+	url(r'^json/get_continuation_status/$', GetContinuationStatus.as_view(), name='get_continuation_status'),
+	url(r'^json/get_equilibrium_curve/$', GetEquilibriumCurve.as_view(), name='get_equilibrium_curve'),
 
 	url(r'^json/get_install_status/$', GetInstallStatus.as_view(), name='get_install_status'),
 	url(r'^json/add_dataset/$', AddDataset.as_view(), name='add_dataset'),

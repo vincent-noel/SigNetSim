@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model metaid="_meta_id_0_" id="model_0" name="Tyson minimal oscillator" substanceUnits="nanomoles" timeUnits="seconds" extentUnits="nanomoles">
+    <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+        <rdf:Description rdf:about="#_meta_id_0_">
+          <dcterms:creator>
+            <rdf:Bag>
+              <rdf:li rdf:parseType="Resource">
+                <vCard:N rdf:parseType="Resource">
+                  <vCard:Family>Noël</vCard:Family>
+                  <vCard:Given>Vincent</vCard:Given>
+                </vCard:N>
+                <vCard:EMAIL>vincent.noel@butantan.gov.br</vCard:EMAIL>
+                <vCard:ORG rdf:parseType="Resource">
+                  <vCard:Orgname>Instituto Butantan</vCard:Orgname>
+                </vCard:ORG>
+              </rdf:li>
+            </rdf:Bag>
+          </dcterms:creator>
+          <dcterms:created rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-10-25T20:58:47Z</dcterms:W3CDTF>
+          </dcterms:created>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2017-10-25T20:58:47Z</dcterms:W3CDTF>
+          </dcterms:modified>
+        </rdf:Description>
+      </rdf:RDF>
+    </annotation>
+    <listOfUnitDefinitions metaid="_meta_id_6_">
+      <unitDefinition metaid="_meta_id_2_" id="nanomoles" name="nanomoles">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="_meta_id_3_" id="seconds" name="seconds">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="_meta_id_4_" id="nanomolars" name="nanomolars">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="_meta_id_5_" id="litres" name="litres">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments metaid="_meta_id_8_">
+      <compartment metaid="_meta_id_7_" id="cell" name="cell" size="1" constant="true">
+        <notes>
+          <body xmlns="http://www.w3.org/1999/xhtml">cell</body>
+        </notes>
+      </compartment>
+    </listOfCompartments>
+    <listOfSpecies metaid="_meta_id_10_">
+      <species metaid="_meta_id_16_" id="cyclin_cdk" name="Cyclin-CDK" compartment="cell" initialConcentration="0.25" substanceUnits="nanomoles" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="_meta_id_17_" id="cyclin_cdk_p" name="Cyclin-CDK activated" compartment="cell" initialConcentration="0" substanceUnits="nanomoles" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters metaid="_meta_id_9_">
+      <parameter metaid="_meta_id_22_" id="k1_aa" name="Synthesis rate" value="0.015" constant="true"/>
+      <parameter metaid="_meta_id_23_" id="k4" name="Cyclin-CDK activation rate" value="0.018" constant="true"/>
+      <parameter metaid="_meta_id_24_" id="k4prime" name="Cyclin-CDK induced activation rate" value="180" constant="true"/>
+      <parameter metaid="_meta_id_25_" id="k6" name="Degradation rate" value="1" constant="true"/>
+    </listOfParameters>
+    <listOfReactions metaid="_meta_id_11_">
+      <reaction metaid="_meta_id_18_" id="cyclin_cdk_synthesis" name="Cyclin-CDK synthesis" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_40_" species="cyclin_cdk" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <ci> k1_aa </ci>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_19_" id="cyclin_cdk_activation" name="Cyclin-CDK activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_47_" species="cyclin_cdk" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_48_" species="cyclin_cdk_p" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cyclin_cdk </ci>
+              <ci> cell </ci>
+              <ci> k4 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_20_" id="cyclin_cdk_induced_activation" name="Cyclin-CDK induced activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_54_" species="cyclin_cdk" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference metaid="_meta_id_55_" species="cyclin_cdk_p" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference metaid="_meta_id_56_" species="cyclin_cdk_p"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cyclin_cdk </ci>
+              <ci> cell </ci>
+              <ci> k4prime </ci>
+              <apply>
+                <power/>
+                <ci> cyclin_cdk_p </ci>
+                <cn type="integer"> 2 </cn>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="_meta_id_21_" id="cyclin_cdk_degradation" name="Cyclin-CDK degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference metaid="_meta_id_62_" species="cyclin_cdk_p" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cyclin_cdk_p </ci>
+              <ci> cell </ci>
+              <ci> k6 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

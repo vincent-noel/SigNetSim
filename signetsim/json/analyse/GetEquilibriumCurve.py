@@ -18,41 +18,73 @@
 # You should have received a copy of the GNU General Public License
 # along with libSigNetSim.  If not, see <http://www.gnu.org/licenses/>.
 
-""" GetContinuationFigure.py
+""" GetEquilibriumCurve.py
 
 	This file...
 
 """
 
 from signetsim.json import JsonRequest
-from signetsim.models import SbmlModel, ContinuationComputation
 from signetsim.views.HasWorkingModel import HasWorkingModel
+from signetsim.models import ContinuationComputation, SbmlModel
 
+from dill import loads
 
-class GetContinuationFigure(JsonRequest, HasWorkingModel):
+class GetEquilibriumCurve(JsonRequest, HasWorkingModel):
 
 	def __init__(self):
 		JsonRequest.__init__(self)
 		HasWorkingModel.__init__(self)
 		self.listOfComputations = None
 
-
 	def post(self, request, *args, **kwargs):
 
 		self.load(request, *args, **kwargs)
+		continuation_id = int(request.POST['id'])
+		continuation = self.listOfComputations[continuation_id]
 
-		t_str = request.POST['continuation_id']
+		if continuation.figure is not None and continuation.figure != '':
+			variable = self.getModel().listOfVariables.getBySymbolStr(str(continuation.variable))
+			parameter = self.getModel().listOfVariables.getBySymbolStr(str(continuation.parameter))
+			if variable.getUnits() is not None:
+				variable_unit = str(variable.getUnits())
+			else:
+				variable_unit = ""
 
-		if t_str != "":
-			t_id = int(t_str)
-			t_computation = self.listOfComputations[t_id]
-			self.data.update({'status': str(t_computation.figure)})
+			if parameter.getUnits() is not None:
+				parameter_unit = str(parameter.getUnits())
+			else:
+				parameter_unit = ""
+
+			t_object = loads(continuation.figure.encode('Latin-1'))
+			x, ys, stab = t_object.getStabilitySlicedCurves()
+			points = t_object.getPoints()
+
+			self.data.update({
+				'curve_x': x,
+				'curve_ys': ys,
+				'stability': stab,
+				'points': points,
+				'variable': str(continuation.variable),
+				'variable_unit': variable_unit,
+				'parameter': str(continuation.parameter),
+				'parameter_unit': parameter_unit
+			})
+
+			if t_object.hasHopfBifurcations():
+				t_object.findLimitCycleCurves()
+				x, ys = t_object.getLimitCycleCurves()
+				self.data.update({
+					'curve_lc_x': x,
+					'curve_lc_ys': ys
+				})
+
 
 		return JsonRequest.post(self, request, *args, **kwargs)
-
 
 	def load(self, request, *args, **kwargs):
 
 		HasWorkingModel.load(self, request, *args, **kwargs)
 		t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
 		self.listOfComputations = ContinuationComputation.objects.filter(project=self.project, model=t_model)
+

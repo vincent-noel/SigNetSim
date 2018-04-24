@@ -33,8 +33,7 @@ from edit import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReact
 	GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetSBOName, GetUnitDefinition
 from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, ModelNameValidator
 from fit import AddDataset
-from GetContinuationFigure import GetContinuationFigure
-from GetContinuationStatus import GetContinuationStatus
+from analyse import GetEquilibriumCurve, GetContinuationStatus
 from GetProject import GetProject
 from SearchBiomodels import SearchBiomodels
 from GetBiomodelsName import GetBiomodelsName

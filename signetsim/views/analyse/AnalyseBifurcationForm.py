@@ -42,13 +42,13 @@ class AnalyseBifurcationsForm(HasErrorMessages):
 
 	def read(self, request):
 
-		self.parameter = self.readInt(request, 'parameter_id', "the identifier of the parameter", required=True,
+		self.parameter = self.readInt(request, 'parameter', "the identifier of the parameter", required=True,
 									  max_value=len(self.parent.listOfConstants))
 
 		self.fromValue = self.readFloat(request, 'from_value', "the minimal value to look for equilibrium")
 		self.toValue = self.readFloat(request, 'to_value', "the minimal value to look for equilibrium")
 
-		self.variable = self.readInt(request, 'variable_id', "the identifier of the variable", required=True,
+		self.variable = self.readInt(request, 'variable', "the identifier of the variable", required=True,
 									 max_value=len(self.parent.listOfVariables))
 
 

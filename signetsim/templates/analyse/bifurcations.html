@@ -54,11 +54,12 @@
 			<div id="result_{{forloop.counter0}}_waiting" class="collapse{% if computation.status == "BU" %} in{% endif %}">
 			  <div class="pull-right">
 				<img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
+				<button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
 			  </div>
 			</div>
 			<div id="result_{{forloop.counter0}}_finished" class="collapse{% if computation.status == "EN" %} in{% endif %}">
 			  <div class="pull-right">
-				<button type="button" onclick="$('#modal_result_{{forloop.counter0}}').modal('show');" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
+				<button type="button" onclick="view_curve({{ forloop.counter0 }});" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "eye-open" %}</button>
 				<button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
 			  </div>
 			</div>
@@ -76,7 +77,7 @@
   </table>
   </div>
   <div class="container-fluid">
-	  <button type="button" class="btn btn-primary btn-sm" id="new_curve_button">{% bootstrap_icon "file" %} Compute a new Curve</button>
+	  <button type="button" class="btn btn-primary btn-sm" onclick="form_equilibrium.new()">{% bootstrap_icon "file" %} Compute a new Curve</button>
   </div>
   {% endif %}
 </div>
@@ -88,11 +89,13 @@
 <div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New curve" id="modal_new_curve">
   <div class="modal-dialog" role="document">
 		<div class="modal-content">
-			<form method="POST" enctype="multipart/form-data">
+			<form method="POST" enctype="multipart/form-data" onsubmit="return form_equilibrium.submit()">
 				{% csrf_token %}
+				<input type="hidden" name="action" value="compute_curve" >
+
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="modal_modification_title">New Curve</h4>
+					<h4 class="modal-title" id="modal_new_curve-title">New Curve</h4>
 				</div>
 				<div class="modal-body">
 				<ul class="nav nav-tabs text-center">
@@ -101,81 +104,32 @@
 				</ul>
 				<div class="tab-content">
 					<div id="parameters" class="tab-pane fade in active">
-						<table class="table table-striped">
-						<thead>
-							<tr class="row">
-							<th class="col-xs-12" colspan="2">Parameter</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr class="row">
-								<td class="col-xs-12" colspan="2">
-									<input type="hidden" name="parameter_id" id="parameter_id" value="">
-									<div class="dropdown">
-									<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-										<span id="parameter_label">Choose a parameter</span>
-										<span class="caret"></span>
-									</button>
-									<ul id="parameter_dropdown" class="dropdown-menu">
-										{% for constant in list_of_constants %}
-										<li><a>{{constant}}</a></li>
-										{% endfor %}
-									</ul>
-									<script>
-										$('#parameter_dropdown li').on('click', function(){
-										$("#parameter_label").html($(this).text());
-										$('#parameter_id').val($(this).index());
-										});
-									</script>
-									</div>
-								</td>
-							</tr>
-						<tr class="row">
-									<td class="col-xs-10">From value</td>
-									<td class="col-xs-2">
-										<input type="text" class="form-control" id="from_value" name="from_value" value="">
-									</td>
-								</tr>
-						<tr class="row">
-									<td class="col-xs-10">To value</td>
-									<td class="col-xs-2">
-										<input type="text" class="form-control" id="to_value" name="to_value" value="">
-									</td>
-								</tr>
-
-						</tbody>
-						</table>
-						<table class="table table-striped">
-						<thead>
-							<tr class="row">
-							<th class="col-xs-12">Variable</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr class="row">
-								<td class="col-xs-12">
-									<input type="hidden" name="variable_id" id="variable_id" value="">
-									<div class="dropdown">
-									<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-										<span id="variable_label">Choose a variable</span>
-										<span class="caret"></span>
-									</button>
-									<ul id="variable_dropdown" class="dropdown-menu">
-										{% for variable in list_of_variables %}
-										<li><a>{{variable}}</a></li>
-										{% endfor %}
-									</ul>
-									<script>
-										$('#variable_dropdown li').on('click', function(){
-										$("#variable_label").html($(this).text());
-										$('#variable_id').val($(this).index());
-										});
-									</script>
-									</div>
-								</td>
-							</tr>
-						</tbody>
-						</table>
+						{% include 'commons/html/dropdown.html' with
+							list=list_of_constants
+							name="Parameter"
+							id="parameter"
+							default_label="Choose a parameter"
+							default=""
+						%}
+						{% include 'commons/html/float_input.html' with
+							name="From value"
+							id="from_value"
+							placeholder="Input the initial value of the parameter"
+							default="0"
+						%}
+						{% include 'commons/html/float_input.html' with
+							name="To value"
+							id="to_value"
+							placeholder="Input the final value of the parameter"
+							default="100"
+						%}
+						{% include 'commons/html/dropdown.html' with
+							list=list_of_variables
+							name="Variable"
+							id="variable"
+							default_label="Choose a variable"
+							default=""
+						%}
 					</div>
 					<div id="settings" class="tab-pane fade">
 						<table class="table table-striped">
@@ -201,36 +155,31 @@
 						</table>
 						</div>
 					</div>
-					{% include 'commons/error_modal.html' %}
+					<div class="container-fluid" id="error_modal"></div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-					<button type="submit" name="action" value="compute_curve" class="btn btn-primary">Launch</button>
+					<button type="submit" class="btn btn-primary">Launch</button>
 				</div>
 			</form>
 		</div>
   </div>
 </div>
 
-{% for computation in list_of_computations %}
-<div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New curve" id="modal_result_{{forloop.counter0}}">
+<div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New curve" id="modal_result">
   <div class="modal-dialog modal-lg" role="document">
 	<div class="modal-content">
 	  <div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<h4 class="modal-title" id="modal_modification_title">Variable : {{computation.variable}}, Parameter : {{computation.parameter}}</h4>
+		<h4 class="modal-title" id="modal_modification_title">Variable : , Parameter : </h4>
 	  </div>
-	  <div class="modal-body" id="modal_result_{{ forloop.counter0 }}_body">
+	  <div class="modal-body" id="modal_result_body">
 		<div class="container">
 			<div class="container-fluid" id="plots_container">
-
-			{% for _ in list_of_figures %}
 				<br/><br/>
-				<div id="div_canvas_{{ forloop.counter0 }}">
-						<canvas id="canvas_{{forloop.counter0}}" ></canvas>
+				<div id="div_canvas_graph">
+						<canvas id="canvas_graph" ></canvas>
 				</div>
-			{% endfor %}
-
 		  <br/><br/>
 			</div>
 		</div>
@@ -241,12 +190,12 @@
 	</div>
   </div>
 </div>
-{% endfor %}
 
 {% endblock view_modal %}
 
 {% block footer_js %}
 {{ block.super }}
+	<script src="{% static 'js/forms.js' %}"></script>
 	<script src="{% static 'chart.js/dist/Chart.js' %}"></script>
 {% endblock footer_js %}
 
