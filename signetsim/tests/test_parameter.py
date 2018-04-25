@@ -244,7 +244,7 @@ class TestParameter(TestCase):
 		reaction = sbml_model.listOfReactions.getBySbmlId('reaction_2')
 		self.assertEqual(
 			str(reaction.kineticLaw.getDefinition().getInternalMathFormula()),
-			"_local_0_sos_ras_gdp_comp*(ras_gdp*sos) + (-sos_ras_gdp)*sos_ras_gdp_decomp"
+			"_local_0_sos_ras_gdp_comp*ras_gdp*sos - sos_ras_gdp*sos_ras_gdp_decomp"
 		)
 
 		self.assertEqual(sbml_model.listOfParameters.getBySbmlId("sos_ras_gdp_comp"), None)
@@ -297,7 +297,7 @@ class TestParameter(TestCase):
 		reaction = sbml_model.listOfReactions.getBySbmlId('reaction_2')
 		self.assertEqual(
 			str(reaction.kineticLaw.getDefinition().getInternalMathFormula()),
-			"sos*(ras_gdp*sos_ras_gdp_comp) + (-sos_ras_gdp)*sos_ras_gdp_decomp"
+			"ras_gdp*sos*sos_ras_gdp_comp - sos_ras_gdp*sos_ras_gdp_decomp"
 		)
 
 		self.assertEqual(sbml_model.listOfParameters.getBySbmlId("sos_ras_gdp_comp").getSbmlId(), "sos_ras_gdp_comp")
