@@ -37,7 +37,7 @@ class FormSubstitution extends FormGroup {
         )
         this.addForm(this.substitution_submodel_object, true);
 
-        this.substitution_id = new Form("substitution_id", "The id of the substitution", "");
+        this.substitution_id = new ValueForm("substitution_id", "The id of the substitution", "");
         this.addForm(this.substitution_id);
     }
 

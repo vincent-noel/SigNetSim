@@ -71,7 +71,7 @@ class SubmodelForm extends FormGroup {
         );
         this.addForm(this.submodel_type);
 
-        this.submodel_name = new Form("submodel_name", "The name of the submodel", "");
+        this.submodel_name = new ValueForm("submodel_name", "The name of the submodel", "");
         this.addForm(this.submodel_name);
 
         this.submodel_sbmlid = new SbmlIdForm("submodel_sbml_id", "The identifier of the submodel", "");

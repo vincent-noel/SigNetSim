@@ -156,7 +156,8 @@ class HasWorkingModel(HasWorkingProject, HasVariablesInSession):
 		return self.model_submodel is not None and self.model_submodel > 0
 
 	def saveModelName(self, request, name):
-		if self.model_submodel == 0 and self.isProjectOwner(request):
+
+		if (self.model_submodel == 0 or self.model_submodel is None) and self.isProjectOwner(request):
 			db_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
 			db_model.name = name
 			db_model.save()

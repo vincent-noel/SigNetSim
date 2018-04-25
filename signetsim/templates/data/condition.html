@@ -211,21 +211,12 @@
             <input type="text" class="form-control input-sm" id="observation_stddev" placeholder="Input value" name="stddev" value="">
           </div>
           <br/>
-          <table class="table table-striped">
-            <thead>
-              <tr onclick="toggle_reversible();" >
-                <th class="col-xs-8">Steady state</th>
-                <th class="col-xs-4 text-right">
-                  <span class="col-xs-12 input-group">
-                    <label class="switch">
-                      <input type="checkbox" name="steady_state" id="observation_steady_state">
-                      <div class="slider round"></div>
-                    </label>
-                  </span>
-              </th>
-              </tr>
-            </thead>
-          </table>
+					{% include 'commons/html/toggle_switch.html' with
+							name="Steady state"
+							id="observation_steady_state"
+							default=""
+							onclick="form_steadystates.toggle();"
+					%}
           <div class="collapse" id="steady_state_on">
             <div class="input-group">
               <span class="input-group-addon">Minimal time to steady state</span>
@@ -249,6 +240,10 @@
 
 {% endblock view_modal %}
 
+{% block footer_js %}
+{{ block.super }}
+	<script src="{% static 'js/forms.js' %}"></script>
+{% endblock footer_js %}
 
 {% block js %}
 	{{ block.super }}

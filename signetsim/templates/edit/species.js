@@ -50,13 +50,13 @@ class SpeciesForm extends FormGroup{
         this.form_boundary = new SliderForm("species_boundary", "The boundary value setting of the species", false);
         this.addForm(this.form_boundary);
 
-        this.form_notes = new Form("species_notes", "The notes of the species", "");
+        this.form_notes = new ValueForm("species_notes", "The notes of the species", "");
         this.addForm(this.form_notes);
 
-        this.form_id = new Form("species_id", "The id of the species", "");
+        this.form_id = new ValueForm("species_id", "The id of the species", "");
         this.addForm(this.form_id);
 
-        this.form_name = new Form("species_name", "The name of the species", "");
+        this.form_name = new ValueForm("species_name", "The name of the species", "");
         this.addForm(this.form_name);
     }
 
@@ -86,8 +86,8 @@ class SpeciesForm extends FormGroup{
                        this.form_id.setValue(element.toString());
 
                    } else if (index == "sbml_id") {
-                       this.form_sbmlid.setValue(element.toString());
                        this.form_sbmlid.setInitialValue(element.toString());
+                       this.form_sbmlid.setValue(element.toString());
 
                    } else if (index == "name") {
                        this.form_name.setValue(element.toString());
@@ -141,7 +141,7 @@ class SpeciesForm extends FormGroup{
                    }
                });
 
-               this.checkErrors();
+               // this.checkErrors();
             },
             () => { console.log("failed"); }
         )

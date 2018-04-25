@@ -92,10 +92,6 @@
 			<canvas id="canvas"></canvas>
 	</div>
 	{% endif %}
-	<script>
-	{% include 'simulate/steadystates_graph.js' %}
-	</script>
-
 
 </div>
 {% endblock view_content %}
@@ -160,33 +156,9 @@
 	<script src="{% static 'js/forms.js' %}"></script>
 {% endblock footer_js %}
 {% block js %}
+	{% include 'simulate/steadystates_graph.js' %}
+	{% include 'simulate/steadystates.js' %}
 
 
-
-{% if model_id != None %}
-
-
-$('#species_list li').on('click', function(){
-  $("#species_name").html($(this).text());
-  $('#species_id').val($(this).index());
-});
-
-{% endif %}
-{{ block.super }}
-
-
-$('#toggle_options').on('click', function(){
-
-  if($("#options").hasClass("in")) {
-    $("#options").removeClass("in");
-    $("#toggle_options").html("<span class=\"glyphicon glyphicon-chevron-down\"> More");
-
-  } else {
-    $("#options").addClass("in");
-    $("#toggle_options").html("<span class=\"glyphicon glyphicon-chevron-up\"> Less");
-  }
-});
-
-let form_snapshot = new SliderForm("simulation_model_snapshot", "Model snapshot switch", 1, null);
 
 {% endblock js %}

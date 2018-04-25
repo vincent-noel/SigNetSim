@@ -24,7 +24,9 @@ class ListOfSpeciesReference extends ListForm{
         super(field, description, parent_form_name, form_name, post_treatment, true);
     }
 
-    add(species_stoichiometry="1", species_id="", species_name="Choose a species"){
+    add(species_stoichiometry="1", species_id="", species_name="Choose a species")
+	{
+
         super.add(
             [
                 $("<td>").attr('class', 'col-xs-3').append(
@@ -64,8 +66,19 @@ class ListOfSpeciesReference extends ListForm{
                 )
             ],
 
-        "var " + this.field + "_" + this.index + "_dropdown = new Dropdown('" + this.field + "_" + this.index + "', 'The species #" + this.index + " of the " + this.description + "', " + this.post_treatment + ", default_value='');"
-        );
+        ""
+
+		);
+		this.objects.push(
+        	new Dropdown(
+        		this.field + '_' + (this.index-1),
+				'The ' + nth(this.index) + ' species of the ' + this.description,
+				() => {this.post_treatment();},
+				'',
+				'Choose a species',
+				true
+			)
+		);
         this.update();
     }
 
@@ -75,7 +88,7 @@ class ListOfSpeciesReference extends ListForm{
     }
 
     update(){
-        let m_id = 0;
+        // let m_id = 0;
 
         $("#body_" + this.field + "s").children("tr").each((tr_id, tr)=>
         {
@@ -84,17 +97,17 @@ class ListOfSpeciesReference extends ListForm{
                 let id = new RegExp('^' + this.field + '_[0-9]+$');
                 if (id.test($(input).attr('name')))
                 {
-                    $(input).attr('name', this.field + '_' + m_id.toString());
+                    $(input).attr('name', this.field + '_' + tr_id.toString());
                 }
 
                 let exp = new RegExp('^' + this.field + '_[0-9]+_stoichiometry');
                 if (exp.test($(input).attr('name')))
                 {
-                    $(input).attr('name', this.field + '_' + m_id.toString() + '_stoichiometry');
+                    $(input).attr('name', this.field + '_' + tr_id.toString() + '_stoichiometry');
                 }
             });
-            m_id = m_id + 1;
-        })
+            // m_id = m_id + 1;
+        });
         super.update();
     }
 
@@ -118,12 +131,12 @@ class ListOfParameters extends ListForm {
     constructor(field, description, parent_form_name, form_name, post_treatment=null) {
         super(field, description, parent_form_name, form_name, post_treatment, false);
         this.form_local_parameters = null;
+        // this.list_dropdowns = [];
     }
 
     setLocalParameters(form_local_parameters){
         this.form_local_parameters = form_local_parameters;
     }
-
 
     add(name, default_value="", default_label="Choose a parameter")
     {
@@ -164,6 +177,8 @@ class ListOfParameters extends ListForm {
 
     update()
     {
+        this.objects = [];
+
         $("#body_" + this.field + "s").children("tr").each((index, element) =>
         {
             let list_dropdown = $("#" + this.field + "_" + index.toString() + "_list");
@@ -183,14 +198,13 @@ class ListOfParameters extends ListForm {
                 list_dropdown.append("<li><a>{{ t_parameter }}</a></li>")
             {% endfor %}
 
-            list_dropdown.append(
-                $("<script>").attr({
-                "type": "application/javascript",
-                })
-                .text(
-                    "var " + this.field + "_" + index.toString() + "_dropdown = new Dropdown('" + this.field + "_" + index.toString() + "', 'The " + index.toString() + "th parameter', null, default_value='', default_label='Choose a parameter');"
-                )
-            );
+            this.objects.push(
+            	new Dropdown(
+            		this.field + "_" + index.toString(),
+					'The ' + nth(index+1) + ' parameter of the kinetic law',
+					null, '', 'Choose a parameter', true
+				)
+			);
         });
     }
 }
@@ -213,7 +227,7 @@ class ListOfLocalParameters extends ListForm{
     changed_local_parameter_value(parameter_id)
     {
         this.local_parameters[parameter_id][1] = $("#local_parameter_" + parameter_id.toString() + "_value").val();
-        if (this.list_of_parameters !== null){ this.form_parameters.update(); }
+        if (this.list_of_parameters !== null){ this.list_of_parameters.update(); }
     }
 
     add(name="", value=""){
@@ -239,18 +253,24 @@ class ListOfLocalParameters extends ListForm{
                     })
                 )
             ],
-
-            "var local_parameter_" + this.index + "_name = new Form(\
-                'local_parameter_" + this.index + "_name', \
-                'The name of the #" + this.index + " local parameter', '', \
-                ()=>{" + this.form_name + ".changed_local_parameter_name(" + this.index + ");}\
-            );\
-            var local_parameter_" + this.index + "_value = new Form(\
-                'local_parameter_" + this.index + "_value', \
-                'The value of the #" + this.index + " local parameter', '', \
-                ()=>{" + this.form_name + "(" + this.index + ");}\
-            );"
+			""
         );
+		this.objects.push(
+			new ValueForm(
+				'local_parameter_' + (this.index-1) + '_name',
+				'The name of the #' + (this.index-1) + ' local parameter',
+				'', () => { this.changed_local_parameter_name(this.index-1); }
+			)
+		);
+
+		this.objects.push(
+			new ValueForm(
+				'local_parameter_' + (this.index-1) + '_value',
+				'The value of the #' + (this.index-1) + ' local parameter',
+				'', () => { this.changed_local_parameter_value(this.index-1); }
+			)
+		);
+
         this.local_parameters.push([name, value]);
         this.update();
         if (this.list_of_parameters !== null){
@@ -305,10 +325,10 @@ class FormReaction extends FormGroup{
         this.field = field;
         this.selected_parameters = []
 
-        this.form_id = new Form("reaction_id", "The id of the reaction", "");
+        this.form_id = new ValueForm("reaction_id", "The id of the reaction", "");
         this.addForm(this.form_id);
 
-        this.form_name = new Form("reaction_name", "The name of the reaction", "");
+        this.form_name = new ValueForm("reaction_name", "The name of the reaction", "");
         this.addForm(this.form_name);
 
         this.form_sbmlid = new SbmlIdForm("reaction_sbml_id", "The identifier of the reaction", "");
@@ -319,38 +339,38 @@ class FormReaction extends FormGroup{
 
         this.form_list_reactants = new ListOfSpeciesReference(
             "reaction_reactant",
-            "The list of reactants",
+            "the list of reactants",
             "form_reaction", "form_list_reactants",
             ()=>{this.buildReactionDescription();}
         );
-        this.addForm(this.form_list_reactants);
+        this.addForm(this.form_list_reactants, true);
 
         this.form_list_modifiers = new ListOfSpeciesReference(
             "reaction_modifier",
-            "The list of modifiers",
+            "the list of modifiers",
             "form_reaction", "form_list_modifiers", ()=>{this.buildReactionDescription();}
         );
-        this.addForm(this.form_list_modifiers);
+        this.addForm(this.form_list_modifiers, true);
 
         this.form_list_products = new ListOfSpeciesReference(
             "reaction_product",
-            "The list of products",
+            "the list of products",
             "form_reaction", "form_list_products",
             ()=>{this.buildReactionDescription();}
         );
-        this.addForm(this.form_list_products);
+        this.addForm(this.form_list_products, true);
 
         this.form_parameters = new ListOfParameters(
             "reaction_parameter",
-            "The list of reaction parameters",
+            "the list of reaction parameters",
             "form_reaction", "form_parameters",
             null,
         );
-        this.addForm(this.form_parameters);
+        this.addForm(this.form_parameters, true);
 
         this.form_local_parameters = new ListOfLocalParameters(
             "local_parameter",
-            "The list of local parameters",
+            "the list of local parameters",
             "form_reaction", "form_local_parameters",
             null,
             this.form_parameters
@@ -380,7 +400,7 @@ class FormReaction extends FormGroup{
         this.form_sboterm = new SBOTermInput("reaction_sboterm");
         this.addForm(this.form_sboterm);
 
-        this.form_notes = new Form("reaction_notes", "The notes of the reaction", "");
+        this.form_notes = new ValueForm("reaction_notes", "The notes of the reaction", "");
         this.addForm(this.form_notes);
 
 
@@ -515,6 +535,7 @@ class FormReaction extends FormGroup{
         $("#loading_done").removeClass("in");
 
         this.clearForms();
+
         ajax_call(
             "POST",
             "{% url 'get_reaction' %}", {'sbml_id': sbml_id},
@@ -527,8 +548,8 @@ class FormReaction extends FormGroup{
                         this.form_kinetic_law.setScope(parseInt(element));
 
                     } else if (index === "sbml_id") {
-                        this.form_sbmlid.setValue(element.toString());
                         this.form_sbmlid.setInitialValue(element.toString());
+						this.form_sbmlid.setValue(element.toString());
 
                     } else if (index === "name") {
                         this.form_name.setValue(element.toString());
@@ -602,11 +623,10 @@ class FormReaction extends FormGroup{
                        });
                        this.form_parameters.update();
 
-
                    }
                });
                this.buildReactionDescription();
-               this.checkErrors();
+               // this.checkErrors();
                $("#loading_wait").removeClass("in");
                $("#loading_done").addClass("in");
                $("#summary").tab('show');
@@ -620,6 +640,10 @@ class FormReaction extends FormGroup{
 
     save(){
         this.checkErrors();
+
+        if ((this.form_list_reactants.objects.length + this.form_list_products.objects.length) === 0) {
+        	this.addGlobalError('speciesreferences', 'There must be at least one reactant, or one product !');
+		}
 
         if (this.nb_errors == 0)
         {

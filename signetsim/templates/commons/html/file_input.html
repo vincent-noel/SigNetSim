@@ -1,0 +1,14 @@
+<div class="form-group" style="width: 100%">
+	<div class="input-group input-file" style="width: 100%">
+		<input type='file' style='visibility:hidden; height:0' id="{{ id }}" name="{{ id }}">
+		<input type="text" class="form-control" placeholder='{{ placeholder }}' id="{{ id }}_label" disabled>
+		<span class="input-group-btn">
+			<button class="btn btn-primary" type="button" id="{{ id }}_button" style="width: 100%">Choose</button>
+		</span>
+	</div>
+</div>
+
+<script>
+	$("#{{ id }}_button").on('click', () => { $("#{{ id }}").click();	});
+	$("#{{ id }}").on('change', () => { $("#{{ id }}_label").val($("#{{ id }}").val().split('\\').pop()); });
+</script>

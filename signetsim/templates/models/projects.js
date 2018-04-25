@@ -1,79 +1,86 @@
-{% if create_folder_show != None %}
 
-  $(window).on('load',function(){
-    $('#new_folder').modal('show');
+class SendProjectForm extends FormGroup {
 
-  });
+	constructor(field, description) {
 
-{% endif %}
+		super("error_" + field);
 
-{% if send_folder_show != None %}
+		this.field = field;
+		this.description = description;
 
-  $(window).on('load',function(){
-    $('#send_folder').modal('show');
+		this.id = new ValueForm("modal_send_project_id", "The identifier of the project", "", null);
+		this.addForm(this.id);
 
-  });
+		this.name = new UsernameForm("modal_send_project_username", "The user to send the project to", true, "");
+		this.addForm(this.name, true);
 
-{% endif %}
+	}
 
-{% for project in projects %}
+	show(project_id) {
+		this.id.setValue(project_id)
+		$("#" + this.field).modal('show');
+	}
 
-$('#send_{{project.id}}').on('click', function(){
-    $('#send_id').val("{{project.id}}");
-    $('#send_folder').modal('show');
 
+	send() {
+		this.checkErrors();
 
-});
-
-{% endfor %}
-
-function new_project()
-{
-    $("#modal_project_title").html("New project");
-    $("#modal_project_id").val("");
-    $("#modal_project_name").val("");
-    $("#modal_project_access").prop('checked', false);
-
-    $('#modal_project').modal('show');
-
-}
-
-function view_project(project_id)
-{
-
-    $("#modal_project_title").html("Edit project");
-
-    ajax_call(
-        "POST",
-        "{% url 'get_project' %}", {'id': project_id},
-        function(data)
+        if (this.nb_errors === 0)
         {
-           $.each(data, function(index, element)
-           {
-               if (index == "name") { $("#modal_project_name").val(element.toString()); }
-               else if (index == "public")
-               {
-                   if (element == "1") {
-                       $("#modal_project_access").prop('checked', true);
-                   }
-                   else {
-                       $("#modal_project_access").prop('checked', false);
-                   }
-               }
-           });
+            $("#" + this.field).modal("hide");
+        }
+        return (this.nb_errors === 0);
+	}
 
-           $("#modal_project_id").val(project_id);
-
-
-        },
-        function(){}
-    );
-
-    $('#modal_project').modal('show');
 }
 
+class ProjectForm extends ModalForm {
 
-function save_project()
-{
-    $("#form_project").submit();
+	constructor(field, description){
+
+		super(field, description);
+
+		this.id = new ValueForm("modal_project_id", "The identifier of the project", "", null);
+		this.addForm(this.id);
+
+		this.name = new ValueForm("modal_project_name", "The name of the project", "", null, true);
+		this.addForm(this.name, true);
+
+		this.access = new SliderForm("modal_project_access", "The accessibility of the project", 0, null);
+		this.addForm(this.access);
+	}
+
+	load(project_id)
+	{
+		super.load(
+			ajax_call(
+				"POST",
+				"{% url 'get_project' %}", {'id': project_id},
+				(data) =>
+				{
+					$.each(data, (index, element) =>
+					{
+						if (index === "name") {
+							this.name.setValue(element); }
+
+						else if (index === "public")
+						{
+							if (element === "1") {
+								this.access.switch_on();
+							}
+							else {
+								this.access.switch_off();
+							}
+						}
+					});
+
+					this.id.setValue(project_id);
+				},
+				() => {}
+			)
+		);
+	}
 }
+
+let form_project = new ProjectForm('modal_project', 'project');
+let form_send_project = new SendProjectForm('modal_send_project', 'Send project');

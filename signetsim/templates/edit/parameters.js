@@ -41,16 +41,16 @@ class ParameterForm extends FormGroup{
         this.form_constant = new SliderForm("parameter_constant", "The constant setting of the parameter", true);
         this.addForm(this.form_constant);
 
-        this.form_name = new Form("parameter_name", "The name of the parameter", "");
+        this.form_name = new ValueForm("parameter_name", "The name of the parameter", "");
         this.addForm(this.form_name);
 
-        this.form_id = new Form("parameter_id", "The id of the parameter", "");
+        this.form_id = new ValueForm("parameter_id", "The id of the parameter", "");
         this.addForm(this.form_id);
 
-        this.form_reaction_id = new Form("parameter_reaction_id", "The scope id of the parameter", "");
+        this.form_reaction_id = new ValueForm("parameter_reaction_id", "The scope id of the parameter", "");
         this.addForm(this.form_reaction_id);
 
-        this.form_notes = new Form("parameter_notes", "The notes of the parameter", "");
+        this.form_notes = new ValueForm("parameter_notes", "The notes of the parameter", "");
         this.addForm(this.form_notes);
 
     }
@@ -104,8 +104,8 @@ class ParameterForm extends FormGroup{
                         }
 
                     } else if (index == "sbml_id") {
-                       this.form_sbmlid.setValue(element.toString());
                        this.form_sbmlid.setInitialValue(element.toString());
+                       this.form_sbmlid.setValue(element.toString());
 
                     } else if (index == "name") {
                        this.form_name.setValue(element.toString());
@@ -143,9 +143,6 @@ class ParameterForm extends FormGroup{
 
                     }
                });
-
-               this.resetErrors();
-               this.form_sbmlid.check();
             },
             () => { console.log("failed"); }
         );

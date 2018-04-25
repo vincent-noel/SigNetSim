@@ -22,7 +22,7 @@ class RuleForm extends FormGroup{
         super();
         this.field = field;
 
-        this.form_id = new Form("rule_id", "The id of the rule", "");
+        this.form_id = new ValueForm("rule_id", "The id of the rule", "");
         this.addForm(this.form_id);
 
         this.form_expression = new MathForm("rule_expression", "The expression of the rule", "");

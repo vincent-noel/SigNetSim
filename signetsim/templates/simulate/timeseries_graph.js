@@ -143,36 +143,3 @@ function update_charts_size()
     }
 {% endfor %}
 }
-
-$('#toggle_options').on('click', function(){
-
-  if($("#options").hasClass("in")) {
-    $("#options").removeClass("in");
-    $("#options_2").removeClass("in");
-    $("#toggle_options").html("<span class=\"glyphicon glyphicon-chevron-down\"> More");
-
-  } else {
-    $("#options").addClass("in");
-    $("#options_2").addClass("in");
-    $("#toggle_options").html("<span class=\"glyphicon glyphicon-chevron-up\"> Less");
-  }
-});
-
-function toggle_slide(slide_id) {
-  if ($('#' + slide_id).prop('checked') == true) {
-    $('#' + slide_id).prop("checked", false);
-  } else {
-    $('#' + slide_id).prop("checked", true);
-  }
-}
-
-function toggle_observations() {
-  toggle_slide('show_observations');
-}
-
-$('#experiment_list li').on('click', function(){
-  $("#experiment_name").html($(this).text());
-  $('#experiment_id').val($(this).index());
-  $("#experiment_selected").addClass("in");
-
-});

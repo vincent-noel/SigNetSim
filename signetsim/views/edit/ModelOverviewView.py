@@ -39,30 +39,25 @@ class ModelOverviewView(TemplateView, HasWorkingModel):
 
 		self.listOfSpecies = None
 		self.listOfReactions = None
-		# self.interactionMatrix = None
+		self.listOfCompartments = None
 
 	def get_context_data(self, **kwargs):
 
 		kwargs = HasWorkingModel.get_context_data(self, **kwargs)
 		kwargs['list_of_species'] = self.listOfSpecies
 		kwargs['list_of_reactions'] = self.listOfReactions
-		# kwargs['interaction_matrix'] = self.interactionMatrix
-		# kwargs['png_graph'] = self.getSimpleGraph()
+		kwargs['list_of_compartments'] = self.listOfCompartments
 		return kwargs
 
 
 	def get(self, request, *args, **kwargs):
-
 
 		self.load(request, *args, **kwargs)
 		if len(args) > 0:
 			self.setModel(request, int(args[0]))
 			return redirect('edit_overview')
 
-
-		# self.updateSimpleGraph()
 		return TemplateView.get(self, request, *args, **kwargs)
-
 
 	def post(self, request, *args, **kwargs):
 
@@ -74,28 +69,27 @@ class ModelOverviewView(TemplateView, HasWorkingModel):
 
 		return TemplateView.get(self, request, *args, **kwargs)
 
-
 	def load(self, request, *args, **kwargs):
 
 		HasWorkingModel.load(self, request, *args, **kwargs)
+		self.listOfCompartments = self.getModel().listOfCompartments
+		self.listOfReactions = self.getModel().listOfReactions.values()
 
 		if self.isModelLoaded():
 			if self.isCompModelDefinition():
 				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values()]
-				self.listOfReactions = self.getModel().listOfReactions.values()
+				# self.listOfReactions = self.getModel().listOfReactions.values()
 
 			elif self.isCompInternalSubmodel():
 				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values()]
-				self.listOfReactions = self.getModel().listOfReactions.values()
+				# self.listOfReactions = self.getModel().listOfReactions.values()
 
 			elif self.isFlattenModel():
 				# Would be nice to also draw the boundaries of the submodels here
 				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values() if species.isInReactions(including_modifiers=True)]
-				self.listOfReactions = self.getModel().listOfReactions.values()
+				# self.listOfReactions = self.getModel().listOfReactions.values()
 
 			else:
+
 				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values() if species.isInReactions(including_modifiers=True)]
-				self.listOfReactions = self.getModel().listOfReactions.values()
-			# self.model.build()
-			# self.interactionMatrix = self.model.interactionMatrix
-			# print self.model.jacobianMatrix
+				# self.listOfReactions = self.getModel().listOfReactions.values()

@@ -45,8 +45,8 @@ class TestProjects(TestCase):
 		self.assertTrue(c.login(username='test_user', password='password'))
 
 		response_create_project = c.post('/', {
-			'action': 'new_folder',
-			'project_name': 'Project 1'
+			'action': 'save_project',
+			'modal_project_name': 'Project 1'
 		})
 
 		self.assertEqual(response_create_project.status_code, 200)
@@ -85,8 +85,8 @@ class TestProjects(TestCase):
 
 		response_send_project = c.post('/', {
 			'action': 'send_folder',
-			'id': project.id,
-			'username': 'test_user_2'
+			'modal_send_project_id': project.id,
+			'modal_send_project_username': 'test_user_2'
 		})
 
 		self.assertEqual(response_send_project.status_code, 200)
@@ -106,9 +106,9 @@ class TestProjects(TestCase):
 		response_set_project_public = c.post('/', {
 
 			'action': 'save_project',
-			'project_id': project.id,
-			'project_name': "Public project",
-			'project_access': 'on',
+			'modal_project_id': project.id,
+			'modal_project_name': "Public project",
+			'modal_project_access': 'on',
 		})
 
 		self.assertEqual(response_set_project_public.status_code, 200)
@@ -126,8 +126,8 @@ class TestProjects(TestCase):
 		response_set_project_private = c.post('/', {
 
 			'action': 'save_project',
-			'project_id': project.id,
-			'project_name': "Private project",
+			'modal_project_id': project.id,
+			'modal_project_name': "Private project",
 		})
 
 		self.assertEqual(response_set_project_private.status_code, 200)

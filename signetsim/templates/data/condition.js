@@ -78,11 +78,11 @@ function view_observation(observation_id)
                else if (index == "steady_state") {
                    if (element == 1){
 
-                       $("#observation_steady_state").prop("checked", true);
+					   form_steadystates.switch_on();
                        $("#steady_state_on").addClass("in");
 
                    } else {
-                       $("#observation_steady_state").prop("checked", false);
+					   form_steadystates.switch_off();
                        $("#steady_state_on").removeClass("in");
                    }
                }
@@ -105,24 +105,13 @@ function save_observation()
     $("#observation_form").submit()
 }
 
-
-function toggle_slide(slide_id) {
-  if ($('#' + slide_id).prop('checked') == true) {
-    $('#' + slide_id).prop("checked", false);
-  } else {
-    $('#' + slide_id).prop("checked", true);
-  }
-
-
-}
-
-function toggle_reversible () {
-
-  toggle_slide('observation_steady_state');
-
-  if ($("#steady_state_on").hasClass("in")) {
-          $("#steady_state_on").removeClass("in");
-  } else {
-    $("#steady_state_on").addClass("in");
-  }
-}
+let form_steadystates = new SliderForm(
+	"observation_steady_state", "Steady states switch", 0,
+	() => {
+		if ($("#steady_state_on").hasClass("in")) {
+        	$("#steady_state_on").removeClass("in");
+		} else {
+			$("#steady_state_on").addClass("in");
+		}
+	}
+);

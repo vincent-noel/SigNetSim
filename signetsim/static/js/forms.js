@@ -40,58 +40,7 @@
  * - FormGroup :        Form group, base class for the sbml elements forms
  */
 
-class Form
-{
-    constructor(field, description, default_value="", on_input=null){
 
-        this.field = field;
-        this.description = description;
-        this.default_value = default_value;
-        this.error_message = "";
-
-        if (on_input !== null) { $('#' + this.field).on('paste keyup', () => { on_input(); }); }
-    }
-
-    clearValue() {
-        $("#" + this.field).val(this.default_value);
-    }
-
-    getValue() {
-        return $.trim($("#" + this.field).val());
-    }
-
-    setValue(value) {
-        $("#" + this.field).val(value);
-    }
-
-    setError(error_message){
-        this.error_message = error_message;
-    }
-
-    clearError(){
-        this.error_message = "";
-        this.unhighlight();
-    }
-
-    hasError(){
-        return this.error_message !== "";
-    }
-
-    highlight(){
-        $("#" + this.field + "_label").addClass("text-danger");
-        $("#" + this.field + "_group").addClass("has-error");
-    }
-    unhighlight(){
-        $("#" + this.field + "_label").removeClass("text-danger");
-        $("#" + this.field + "_group").removeClass("has-error");
-    }
-
-    clear(){
-        this.clearValue();
-        this.clearError();
-    }
-
-}
 
 let HasIndicator = (superclass) => class extends superclass {
     setIndicatorValid(){
@@ -114,9 +63,101 @@ let HasIndicator = (superclass) => class extends superclass {
         $("#" + this.field + "_invalid").removeClass("in");
         $("#" + this.field + "_valid").removeClass("in");
     }
+};
+
+class Form
+{
+    constructor(field, description){
+
+        this.field = field;
+        this.description = description;
+    }
 }
 
-class FloatForm extends Form
+class ValueForm extends Form
+{
+	constructor(field, description, default_value="", on_input=null, required=false){
+		super(field, description);
+
+        this.default_value = default_value;
+        this.error_message = "";
+        this.required = required;
+
+        $('#' + this.field).on('paste keyup', () => {
+
+			if (on_input !== null){
+				on_input();
+			}
+
+            if (this.required) {
+            	this.check();
+			}
+        });
+
+        if (this.required) {
+        	this.check();
+		}
+    }
+
+    clearValue() {
+        $("#" + this.field).val(this.default_value);
+    }
+
+    getValue() {
+        return $.trim($("#" + this.field).val());
+    }
+
+    setValue(value) {
+        $("#" + this.field).val(value);
+		if (this.required) {
+			this.check();
+		}
+    }
+
+    setError(error_message){
+        this.error_message = error_message;
+    }
+
+    clearError(){
+        this.unhighlight();
+    }
+
+	getError() {
+		return this.error_message;
+	}
+
+	hasError(){
+		return this.error_message !== "";
+	}
+
+	highlight(){
+		$("#" + this.field + "_label").addClass("text-danger");
+		$("#" + this.field + "_group").addClass("has-error");
+	}
+
+	unhighlight(){
+		$("#" + this.field + "_label").removeClass("text-danger");
+		$("#" + this.field + "_group").removeClass("has-error");
+	}
+
+	clear() {
+    	this.clearValue();
+        this.clearError();
+    }
+
+    check() {
+
+		if (this.required && this.getValue() === ""){
+			this.setError("is empty !");
+		}
+		else {
+			this.setError("");
+		}
+	}
+
+}
+
+class FloatForm extends ValueForm
 {
     constructor(field, description, required, default_value=1)
     {
@@ -130,7 +171,7 @@ class FloatForm extends Form
             {'value' : this.getValue(), 'required': this.required},
             (data) => {
                 $.each(data, (index, element) => {
-                    if (index == "error"){ this.setError(element.toString()); }
+                    if (index === "error"){ this.setError(element.toString()); }
                     else { this.setError("couldn't be validated : unknown response"); }
                 });
             },
@@ -138,13 +179,15 @@ class FloatForm extends Form
         );
     }
 
-    clear() {
-        super.clearError();
-    }
+    setValue(value){
+    	super.setValue(value);
+    	this.check();
+	}
+
 }
 
 
-class SbmlIdForm extends HasIndicator(Form)
+class SbmlIdForm extends HasIndicator(ValueForm)
 {
     constructor(field, description, default_value="", has_scope=false, scope_field="")
     {
@@ -153,8 +196,9 @@ class SbmlIdForm extends HasIndicator(Form)
 
         // For local parameters, we need to have an extra information : the scope (global, or local to a reaction)
         this.hasScope = has_scope;
-        this.scope_field = scope_field
+        this.scope_field = scope_field;
         this.initial_scope = 0;
+        this.check();
 
     }
 
@@ -164,15 +208,21 @@ class SbmlIdForm extends HasIndicator(Form)
 
     setInitialScope(scope) {
         this.initial_scope = scope;
+		this.check();
     }
 
     getScope() {
         return parseInt($("#" + this.scope_field).val());
     }
 
+    setValue(value) {
+    	super.setValue(value);
+    	this.check();
+	}
+
     check()
     {
-        let sbml_id = this.getValue();
+    	let sbml_id = this.getValue();
         let scope;
         if (this.hasScope){ scope = this.getScope(); }
 
@@ -202,7 +252,7 @@ class SbmlIdForm extends HasIndicator(Form)
                             if (index === 'error')
                             {
                                 this.setError(element.toString());
-                                if (element == "") {
+                                if (element === "") {
                                     this.setIndicatorValid();
                                 } else {
                                     this.setIndicatorInvalid();
@@ -222,7 +272,7 @@ class SbmlIdForm extends HasIndicator(Form)
                 );
             }
             // Otherwise no need to check, it's valid
-            else { this.setIndicatorValid(); super.clearError(); }
+            else { this.setIndicatorValid(); this.setError("");}//super.clearError(); }
         }
         else
         {
@@ -235,14 +285,15 @@ class SbmlIdForm extends HasIndicator(Form)
     clear()
     {
         super.clear();
+        // super.setIndicatorEmpty();
+        this.check();
         super.unhighlight();
-        super.setIndicatorEmpty();
         this.initial_scope = 0;
-    }
 
+    }
 }
 
-class MathForm extends HasIndicator(Form)
+class MathForm extends HasIndicator(ValueForm)
 {
     constructor(field, description, default_value="", required=false)
     {
@@ -302,12 +353,60 @@ class MathForm extends HasIndicator(Form)
 
     }
 
-    clear() {
+    clear()
+	{
         super.clear();
     }
 }
 
-class SliderForm extends Form
+class UsernameForm extends HasIndicator(ValueForm)
+{
+    constructor(field, description, required, default_value="")
+    {
+        super(field, description, default_value, () => { this.check(); }, required);
+        this.required = required;
+    }
+
+    check() {
+		this.setIndicatorValidating();
+
+        ajax_call(
+            "POST", getUsernameValidatorURL(),
+            {'username' : this.getValue()},
+            (data) => {
+                $.each(data, (index, element) => {
+                    if (index === "error"){
+                    	this.setError(element.toString());
+                    	if (element === "") {
+                    		this.setIndicatorValid();
+
+						} else {
+                    		this.setIndicatorInvalid();
+
+						}
+					}
+                    else {
+                    	this.setError("couldn't be validated : unknown response");
+                    	this.setIndicatorInvalid();
+					}
+                });
+            },
+            () => {
+            	this.setError("couldn't be validated : unable to connect");
+				this.setIndicatorInvalid();
+            }
+        );
+    }
+
+    setValue(value){
+    	super.setValue(value);
+    	this.check();
+	}
+
+}
+
+
+class SliderForm extends ValueForm
 {
     constructor(field, description, default_value=1, post_treatment=null)
     {
@@ -363,6 +462,7 @@ class SliderForm extends Form
 
     toggle()
     {
+    	console.log("toggling");
         if (this.getValue()) {
             this.switch_off();
         } else {
@@ -380,7 +480,7 @@ class SliderForm extends Form
     }
 }
 
-class Dropdown extends Form {
+class Dropdown extends ValueForm {
     constructor(field, description="", post_treatment=null, default_value="", default_label="Choose an item", required=false) {
 
         super(field, description, default_value);
@@ -401,6 +501,11 @@ class Dropdown extends Form {
                 this.check();
             }
         });
+
+       // Initialize error
+		if (this.required){
+			this.check();
+		}
     }
     setLabel(label){
         $("#" + this.field + "_label").html(label);
@@ -425,16 +530,23 @@ class Dropdown extends Form {
 
     check(){
         if (this.required && Number.isNaN(this.getValue())){
-            this.setError("isn't selected");
+            this.setError("isn't selected !");
         }
+        else {
+        	this.setError("");
+		}
     }
 
     setList(list) {
         let ul_element = $("#" + this.field + "_list");
         ul_element.empty();
 
-        for (var value of list) {
-            ul_element.append($("<li>").append($("<a>").attr('href', '#').text(value)));
+        for (const value of list) {
+            ul_element.append(
+                $("<li>").append(
+                    $("<a>").attr('href', '#').text(value)
+                )
+            );
         }
         $("#" + this.field + "_list li").on('click', (element) =>
         {
@@ -501,7 +613,7 @@ class NoneDropdown extends Dropdown {
 }
 
 
-class EditableInput extends Form
+class EditableInput extends ValueForm
 {
     constructor(field) {
         super(field);
@@ -525,9 +637,7 @@ class EditableInput extends Form
         $("#" + this.field + "_edit_off_actions").removeClass("in");
     }
 
-    validate() {
-        ;
-    }
+    validate() { }
 }
 
 class SBOTermInput extends EditableInput
@@ -578,8 +688,11 @@ class SBOTermInput extends EditableInput
 }
 
 
-class ListForm {
+class ListForm extends Form{
     constructor(field, description, parent_form_name, form_name, post_treatment=null, removable=true, editable=false) {
+
+		super(field, description);
+
         this.field = field;
         this.description = description;
         this.parent_form_name = parent_form_name;
@@ -588,7 +701,9 @@ class ListForm {
         this.post_treatment = post_treatment;
         this.removable = removable;
         this.editable = editable;
-        this.error_messages = [];
+        this.objects = [];
+        // this.error_messages = [];
+        // this.error_objects = [];
     }
 
     add(content="", script="")
@@ -676,16 +791,36 @@ class ListForm {
     {
         $("#body_" + this.field + "s").empty();
         this.index = 0;
+        this.error_messages = [];
+
     }
+
+    hasError()
+    {
+    	for (const i_object in this.objects){
+    		if (this.objects[i_object].hasError()){
+    			return true;
+            }
+        }
+        return false;
+    }
+
+    clearError()
+	{
+		for (const i_object in this.objects){
+			this.objects[i_object].clearError();
+		}
+	}
 }
 
 
 class FormGroup {
-    constructor()
+    constructor(error_field="error_modal")
     {
+    	this.error_field = error_field;
         this.list = [];
         this.listErrorChecking = [];
-        this.nbErrors = 0;
+        this.nb_errors = 0;
     }
 
     addForm(form, error_checking=false) {
@@ -695,23 +830,39 @@ class FormGroup {
 
     addError(form)
     {
-          this.addGlobalError(form.field, form.description + " " + form.error_message);
+    	if (form instanceof ListForm){
+			for (const i_error in form.objects){
+
+				if (form.objects[i_error].hasError()){
+					this.nb_errors++;
+					form.objects[i_error].highlight();
+				    this.addGlobalError(
+				    	form.objects[i_error].field,
+                        form.objects[i_error].description + " " + form.objects[i_error].error_message
+                    );
+				}
+			}
+		} else {
+    		this.nb_errors++;
+			form.highlight();
+          	this.addGlobalError(form.field, form.description + " " + form.error_message);
+    	}
     }
 
     addGlobalError(field, message)
     {
-        if ($("#error_modal").children().length === 0)
+        if ($("#" + this.error_field).children().length === 0)
         {
-            $("#error_modal").append(
-                "<div class=\"alert alert-danger fade in\" id=\"error_modal_list\">\
+            $("#" + this.error_field).append(
+                "<div class=\"alert alert-danger fade in\" id=\"" + this.error_field + "_list\">\
                     <a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\
                 </div>"
             );
         }
 
-        if ($("#error_modal_list").find("#error_message_" + field).length === 0)
+        if ($("#" + this.error_field + "_list").find("#error_message_" + field).length === 0)
         {
-            $("#error_modal_list").append(
+            $("#" + this.error_field + "_list").append(
                 "<span id=\"error_message_" + field + "\">\
                     <strong>Error : </strong>" + message + "\
                 </span><br/>"
@@ -729,30 +880,27 @@ class FormGroup {
         }
     }
 
-    resetErrors()
+    clearErrors()
     {
-        for (var [index, form] of this.list.entries()) {
+        for (let [index, form] of this.list.entries()) {
             if (this.listErrorChecking[index]) {
-                form.unhighlight();
+                form.clearError();
             }
         }
 
-        $("#error_modal").empty();
+        $("#" + this.error_field).empty();
         this.nb_errors = 0;
     }
 
     checkErrors() {
 
-        this.resetErrors();
+        this.clearErrors();
 
-        for (var [index, form] of this.list.entries())
+        for (let [index, form] of this.list.entries())
         {
             if (this.listErrorChecking[index]){
-//                form.check();
-                if (form.hasError()){
+			    if (form.hasError()){
                     this.addError(form);
-                    form.highlight();
-                    this.nb_errors++;
                 }
             }
         }
@@ -761,10 +909,49 @@ class FormGroup {
 
     clearForms() {
 
-        this.resetErrors();
+        this.clearErrors();
 
-        for (var form of this.list) {
+        for (let form of this.list) {
             form.clear();
         }
     }
+}
+
+class ModalForm extends FormGroup
+{
+	constructor(field, description) {
+		super();
+		this.field = field;
+		this.description = description;
+	}
+
+	new()
+	{
+		$("#" + this.field + "_title").html("New " + this.description);
+		this.clearForms();
+
+		$('#' + this.field).modal('show');
+
+	}
+
+	load(load_function)
+	{
+		$("#" + this.field + "_title").html("Edit " + this.description);
+
+		load_function;
+
+		$('#' + this.field).modal('show');
+
+	}
+
+	save() {
+		this.checkErrors();
+
+        if (this.nb_errors == 0)
+        {
+            $("#" + this.field).modal("hide");
+        }
+        return (this.nb_errors == 0);
+	}
+
 }

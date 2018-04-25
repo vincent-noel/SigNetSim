@@ -90,8 +90,8 @@ def append_string(string, postfix):
 	return string+postfix
 
 @register.filter
-def append_int(int, postfix):
-	return int+str(postfix)
+def append_int(string, int):
+	return string+str(int)
 
 @register.filter
 def scientific_format(value, significant_digits):

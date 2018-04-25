@@ -1,5 +1,6 @@
 {% load static from staticfiles %}
 
+
 function getStaticURL(){
     return "{% static '' %}";
 }
@@ -22,4 +23,8 @@ function getFloatValidatorURL(){
 
 function getSBOTermURL(){
     return "{% url 'get_sbo_name' %}";
+}
+
+function getUsernameValidatorURL(){
+    return "{% url 'username_validator' %}";
 }

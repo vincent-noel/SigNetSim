@@ -90,6 +90,8 @@ class ModelReactionsForm(ModelParentForm):
 		except ModelException as e:
 			self.addError(e.message)
 
+		self.printErrors()
+
 	def read(self, request):
 
 		self.isEditing = True
@@ -98,7 +100,7 @@ class ModelReactionsForm(ModelParentForm):
 								"the id of the reaction", required=False)
 
 		self.name = self.readString(request, 'reaction_name',
-							"the name of the reaction")
+							"the name of the reaction", required=False)
 
 		self.sbmlId = self.readString(request, 'reaction_sbml_id',
 							"the identifier of the reaction")
@@ -125,6 +127,7 @@ class ModelReactionsForm(ModelParentForm):
 									"The SBO term of the reaction",
 									required=False)
 
+		self.printErrors()
 	def readReactants(self, request):
 
 		reactant_id = 0

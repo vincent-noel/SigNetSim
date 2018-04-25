@@ -76,21 +76,38 @@
 					<br/>
 
 					<div class="collapse {% if form.experimentId != None %}in{% endif %}" id="experiment_selected">
-						<table class="table table-striped">
-							<thead>
-								<tr onclick="toggle_observations();" >
-									<th class="col-xs-8">Show observations</th>
-									<th class="col-xs-4 text-right">
-										<span class="col-xs-12 input-group">
-											<label class="switch">
-												<input type="checkbox" name="show_observations" id="show_observations" {% if form.showObservations == True %}checked{% endif %}>
-												<div class="slider round"></div>
-											</label>
-										</span>
-									</th>
-								</tr>
-							</thead>
-						</table>
+								{% if form.showObservations == True %}
+								{% include 'commons/html/toggle_switch.html' with
+									name="Show observations"
+									id="show_observations"
+									default="checked"
+									onclick="form_observations.toggle();"
+								%}
+							{% else %}
+								{% include 'commons/html/toggle_switch.html' with
+									name="Show observations"
+									id="show_observations"
+									default=""
+									onclick="form_observations.toggle();"
+								%}
+							{% endif %}
+
+{#					#}
+{#						<table class="table table-striped">#}
+{#							<thead>#}
+{#								<tr onclick="toggle_observations();" >#}
+{#									<th class="col-xs-8">Show observations</th>#}
+{#									<th class="col-xs-4 text-right">#}
+{#										<span class="col-xs-12 input-group">#}
+{#											<label class="switch">#}
+{#												<input type="checkbox" name="show_observations" id="show_observations" {% if form.showObservations == True %}checked{% endif %}>#}
+{#												<div class="slider round"></div>#}
+{#											</label>#}
+{#										</span>#}
+{#									</th>#}
+{#								</tr>#}
+{#							</thead>#}
+{#						</table>#}
 					</div>
     		</div>
 
@@ -191,12 +208,6 @@
 
 {% block js %}
 {{ block.super }}
-
-$('#species_list li').on('click', function(){
-  $("#species_name").html($(this).text());
-  $('#species_id').val($(this).index());
-});
-	let form_snapshot = new SliderForm("simulation_model_snapshot", "Model snapshot switch", 1, null);
-
 	{% include 'simulate/phase_plane_graph.js' %}
+	{% include 'simulate/phase_plane.js' %}
 {% endblock js %}

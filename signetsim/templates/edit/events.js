@@ -114,10 +114,10 @@ class FormEvent extends FormGroup {
         super();
         this.field = field;
 
-        this.event_id = new Form("event_id", "The id of the event", "");
+        this.event_id = new ValueForm("event_id", "The id of the event", "");
         this.addForm(this.event_id);
 
-        this.name = new Form("event_name", "The name of the event", "");
+        this.name = new ValueForm("event_name", "The name of the event", "");
         this.addForm(this.name);
 
         this.sbmlId = new SbmlIdForm("event_sbmlid", "The identifier of the event", "");
