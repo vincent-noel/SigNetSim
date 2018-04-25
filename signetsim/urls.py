@@ -31,7 +31,7 @@ from django.contrib import admin
 from django.contrib.auth.views import logout
 
 from signetsim.json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, ModelNameValidator
-from signetsim.json import GetListOfObjectsFromSubmodels
+from signetsim.json import GetListOfObjectsFromSubmodels, UsernameValidator
 from signetsim.json import GetSBOName, SetAccountActive, SetAccountStaff
 from signetsim.json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction, GetRule
 from signetsim.json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetListOfObjects
@@ -141,6 +141,8 @@ urlpatterns += [
 	url(r'^json/sbml_id_validator/$', SbmlIdValidator.as_view(), name='sbml_id_validator'),
 	url(r'^json/unit_id_validator/$', UnitIdValidator.as_view(), name='unit_id_validator'),
 	url(r'^json/modelname_validator/$', ModelNameValidator.as_view(), name='modelname_validator'),
+	url(r'^json/username_validator/$', UsernameValidator.as_view(), name='username_validator'),
+
 	url(r'^json/get_submodels/$', GetSubmodels.as_view(), name='get_submodels'),
 	url(r'^json/get_list_of_objects/$', GetListOfObjects.as_view(), name='get_list_of_objects'),
 	url(r'^json/get_list_of_objects_from_submodels/$', GetListOfObjectsFromSubmodels.as_view(), name='get_list_of_objects_from_submodels'),

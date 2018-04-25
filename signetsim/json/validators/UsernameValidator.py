@@ -18,15 +18,33 @@
 # You should have received a copy of the GNU General Public License
 # along with libSigNetSim.  If not, see <http://www.gnu.org/licenses/>.
 
-""" __init__.py
+""" Username.py
 
-	Initialization of the module signetsim.views.json.validators
+	This file...
 
 """
 
-from MathValidator import MathValidator
-from FloatValidator import FloatValidator
-from SbmlIdValidator import SbmlIdValidator
-from UnitIdValidator import UnitIdValidator
-from ModelNameValidator import ModelNameValidator
-from UsernameValidator import UsernameValidator
+
+from signetsim.json import JsonRequest
+from signetsim.models import User
+
+
+class UsernameValidator(JsonRequest):
+
+	def __init__(self):
+		JsonRequest.__init__(self)
+
+	def post(self, request, *args, **kwargs):
+
+		username = str(request.POST['username']).strip()
+
+		if username == "":
+			self.data.update({'error': 'is empty !'})
+
+		elif User.objects.filter(username=username).exists():
+			self.data.update({'error': ''})
+
+		else:
+			self.data.update({'error': "doesn't exists !"})
+
+		return JsonRequest.post(self, request, *args, **kwargs)

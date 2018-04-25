@@ -31,7 +31,8 @@ from data import GetExperiment, GetCondition, GetTreatment, GetObservation
 from edit import GetListOfObjects, GetListOfObjectsFromSubmodels
 from edit import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw, GetRule, \
 	GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetSBOName, GetUnitDefinition
-from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, ModelNameValidator
+from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, \
+	ModelNameValidator, UsernameValidator
 from fit import AddDataset
 from analyse import GetEquilibriumCurve, GetContinuationStatus
 from GetProject import GetProject
