@@ -92,7 +92,7 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': os.path.join(BASE_DIR, 'data/db/db.sqlite3'),
+		'NAME': 'test_db',
 	}
 }
 #
