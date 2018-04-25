@@ -61,7 +61,7 @@ class TestArchive(TestCase):
 
 		response_import_archive = c.post('/', {
 			'action': 'load_folder',
-			'docfile': open(archive_filename, 'r')
+			'combine_file': open(archive_filename, 'r')
 		})
 
 		self.assertEqual(response_import_archive.status_code, 200)

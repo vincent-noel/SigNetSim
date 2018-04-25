@@ -303,7 +303,7 @@ class TestData(TestCase):
 			'time': 300,
 			'value': 333.0,
 			'stddev': 30,
-			'steady_state': 'off',
+			'observation_steady_state': 'off',
 			'min_steady_state': "0",
 			'max_steady_state': "0"
 		})
@@ -335,7 +335,7 @@ class TestData(TestCase):
 			'time': 3600,
 			'value': 60.0,
 			'stddev': 10,
-			'steady_state': 'on',
+			'observation_steady_state': 'on',
 			'min_steady_state': "2400",
 			'max_steady_state': "4800"
 		})
