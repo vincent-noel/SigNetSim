@@ -150,7 +150,7 @@ from string import ascii_uppercase, ascii_lowercase, digits
 
 SECRET_KEY = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
 
-settings_filename = os.path.join(BASE_DIR, "settings.json")
+settings_filename = os.path.join(BASE_DIR, "settings", "settings.json")
 
 AUTH_USER_MODEL = 'signetsim.User'
 
@@ -171,26 +171,34 @@ if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
 
 		RUN_INSTALL = False
 
-		settings_file = open(settings_filename, 'r')
+		with open(settings_filename, 'r') as settings_file:
 
-		settings = json.loads(settings_file.read())
+			settings = json.loads(settings_file.read())
 
-		# signetsim_settings = Settings.objects.all()[0]
-		BASE_URL = settings['base_url']
+			# signetsim_settings = Settings.objects.all()[0]
+			BASE_URL = settings['base_url']
 
-		# SECURITY WARNING: keep the secret key used in production secret!
-		SECRET_KEY = settings['secret_key']
+			# SECURITY WARNING: keep the secret key used in production secret!
+			SECRET_KEY = settings['secret_key']
 
-		ADMINS = [(settings['admin'], settings['admin_address'])]
+			ADMINS = [(settings['admin'], settings['admin_address'])]
 
-		EMAIL_ADDRESS = settings['email_address']
-		EMAIL_USE_TLS = settings['email_use_tls']
-		EMAIL_HOST = settings['email_host']
-		EMAIL_PORT = settings['email_port']
-		EMAIL_HOST_USER = settings['email_user']
-		EMAIL_HOST_PASSWORD = settings['email_password']
+			if (
+				'email_address' in settings.keys() and
+				'email_use_tls' in settings.keys() and
+				'email_host' in settings.keys() and
+				'email_port' in settings.keys() and
+				'email_user' in settings.keys() and
+				'email_password' in settings.keys()
+			):
+				EMAIL_ADDRESS = settings['email_address']
+				EMAIL_USE_TLS = settings['email_use_tls']
+				EMAIL_HOST = settings['email_host']
+				EMAIL_PORT = settings['email_port']
+				EMAIL_HOST_USER = settings['email_user']
+				EMAIL_HOST_PASSWORD = settings['email_password']
 
-		ALLOWED_HOSTS = settings['allowed_hosts']
+			ALLOWED_HOSTS = settings['allowed_hosts']
 
 		# Static files (CSS, JavaScript, Images)
 		# https://docs.djangoproject.com/en/1.10/howto/static-files/

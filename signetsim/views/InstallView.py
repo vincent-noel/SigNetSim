@@ -31,6 +31,8 @@ from os import utime
 from os.path import join
 from threading import Thread
 from json import dumps
+from string import ascii_uppercase, ascii_lowercase, digits
+from random import choice
 
 
 class InstallView(TemplateView):
@@ -66,6 +68,8 @@ class InstallView(TemplateView):
 		if username is not None and email is not None and password1 is not None and password1 == password2:
 			admin = User.objects.create_superuser(username, email, password1)
 
+			secret_key = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
+
 			if (email_active
 				and email_address != "" and email_host != "" and email_port != ""
 				and email_username != "" and email_password != ""
@@ -73,7 +77,8 @@ class InstallView(TemplateView):
 				json_settings = {
 					'base_url': request.META['PATH_INFO'],
 					'admin': admin.username,
-					'admin_email': admin.email,
+					'admin_address': admin.email,
+					'secret_key': secret_key,
 					'allowed_hosts': ['*'],
 					'email_address': email_address,
 					'email_use_tls': email_tls,
@@ -87,12 +92,13 @@ class InstallView(TemplateView):
 				json_settings = {
 					'base_url': request.META['PATH_INFO'],
 					'admin': admin.username,
-					'admin_email': admin.email,
+					'admin_address': admin.email,
+					'secret_key': secret_key,
 					'allowed_hosts': ['*'],
 
 				}
 
-			with open(join(django_settings.BASE_DIR, "settings.json"), "w") as settings_file:
+			with open(join(django_settings.BASE_DIR, "settings", "settings.json"), "w") as settings_file:
 				settings_file.write(dumps(json_settings))
 
 			thread = ReloadConf()
@@ -109,7 +115,5 @@ class ReloadConf(Thread):
 		Thread.__init__(self)
 
 	def run(self):
-		utime(join(django_settings.BASE_DIR, "signetsim/settings/default.py"), None)
-		utime(join(django_settings.BASE_DIR, "signetsim/settings/apache.py"), None)
 		utime(join(django_settings.BASE_DIR, "signetsim/settings/wsgi.py"), None)
 
