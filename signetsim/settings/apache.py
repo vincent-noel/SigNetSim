@@ -159,6 +159,9 @@ if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
 	if not os.path.isfile(settings_filename):
 
 		RUN_INSTALL = True
+
+		ALLOWED_HOSTS = ["*"]
+
 		STATIC_URL = 'static/'
 		STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
@@ -186,6 +189,7 @@ if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
 		EMAIL_PORT = settings['email_port']
 		EMAIL_HOST_USER = settings['email_user']
 		EMAIL_HOST_PASSWORD = settings['email_password']
+
 		ALLOWED_HOSTS = ["*"]
 
 		# Static files (CSS, JavaScript, Images)
@@ -203,6 +207,9 @@ if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
 
 else:
 	RUN_INSTALL = False
+
+	ALLOWED_HOSTS = ["*"]
+
 	STATIC_URL = '/static/'
 	STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 

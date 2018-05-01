@@ -190,8 +190,6 @@ if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
 		EMAIL_HOST_USER = settings['email_user']
 		EMAIL_HOST_PASSWORD = settings['email_password']
 
-		ALLOWED_HOSTS = ["*"]
-
 		# Static files (CSS, JavaScript, Images)
 		# https://docs.djangoproject.com/en/1.10/howto/static-files/
 
@@ -207,6 +205,7 @@ if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
 
 else:
 	RUN_INSTALL = False
+
 	STATIC_URL = '/static/'
 	STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
