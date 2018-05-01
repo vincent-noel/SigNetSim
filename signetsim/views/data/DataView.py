@@ -103,41 +103,49 @@ class DataView(TemplateView, HasWorkingProject):
 
 	def deleteExperiment(self, request):
 
-		experiment = Experiment.objects.get(project=self.project,
-											id=request.POST['id'])
+		if self.isProjectOwner(request):
 
-		deleteExperimentViaManager(experiment)
+			experiment = Experiment.objects.get(project=self.project,
+												id=request.POST['id'])
+
+			deleteExperimentViaManager(experiment)
 
 	def saveExperiment(self, request):
 
-		if str(request.POST['experiment_id']) == "":
-			t_experiment = Experiment(project=self.project)
-		else:
-			t_experiment = Experiment.objects.get(project=self.project, id=str(request.POST['experiment_id']))
+		if self.isProjectOwner(request):
+			if str(request.POST['experiment_id']) == "":
+				t_experiment = Experiment(project=self.project)
+			else:
+				t_experiment = Experiment.objects.get(project=self.project, id=str(request.POST['experiment_id']))
 
-		t_experiment.name = str(request.POST['experiment_name'])
-		t_experiment.notes = str(request.POST['experiment_notes'])
-		t_experiment.save()
+			t_experiment.name = str(request.POST['experiment_name'])
+			t_experiment.notes = str(request.POST['experiment_notes'])
+			t_experiment.save()
 
 
 	def duplicateExperiment(self, request):
-		t_experiment = Experiment.objects.get(project=self.project,
-											  id=request.POST['id'])
 
-		new_experiment = Experiment(project=self.project)
-		new_experiment.save()
-		copyExperimentViaManager(t_experiment, new_experiment)
+		if self.isProjectOwner(request):
+
+			t_experiment = Experiment.objects.get(project=self.project,
+												  id=request.POST['id'])
+
+			new_experiment = Experiment(project=self.project)
+			new_experiment.save()
+			copyExperimentViaManager(t_experiment, new_experiment)
 
 
 	def importExperiment(self, request):
 
-		self.fileUploadForm = DocumentForm(request.POST, request.FILES)
-		if self.fileUploadForm.is_valid():
+		if self.isProjectOwner(request):
 
-			new_experiment = Experiment(project=self.project)
-			new_experiment.save()
+			self.fileUploadForm = DocumentForm(request.POST, request.FILES)
+			if self.fileUploadForm.is_valid():
 
-			archive = request.FILES['docfile']
-			path = default_storage.save(str(archive), ContentFile(archive.read()))
-			importExperimentViaManager(new_experiment, str(join(settings.MEDIA_ROOT, path)))
-			remove(join(settings.MEDIA_ROOT, path))
+				new_experiment = Experiment(project=self.project)
+				new_experiment.save()
+
+				archive = request.FILES['docfile']
+				path = default_storage.save(str(archive), ContentFile(archive.read()))
+				importExperimentViaManager(new_experiment, str(join(settings.MEDIA_ROOT, path)))
+				remove(join(settings.MEDIA_ROOT, path))

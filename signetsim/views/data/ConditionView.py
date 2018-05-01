@@ -130,28 +130,31 @@ class ConditionView(TemplateView, HasWorkingProject):
 
 	def saveObservation(self, request):
 
-		self.observationForm.read(request)
-		if not self.observationForm.hasErrors():
-			self.observationForm.save()
+		if self.isProjectOwner(request):
+			self.observationForm.read(request)
+			if not self.observationForm.hasErrors():
+				self.observationForm.save()
 
 	def deleteObservation(self, request):
 
-		self.observationForm.read(request)
-		if not self.observationForm.isNew():
-			observation = Observation.objects.get(condition=self.condition,
-												id=self.observationForm.id)
-			observation.delete()
+		if self.isProjectOwner(request):
+			self.observationForm.read(request)
+			if not self.observationForm.isNew():
+				observation = Observation.objects.get(condition=self.condition,	id=self.observationForm.id)
+				observation.delete()
 
 	def saveTreatment(self, request):
 
-		self.treatmentForm.read(request)
-		if not self.treatmentForm.hasErrors():
-			self.treatmentForm.save()
+		if self.isProjectOwner(request):
+			self.treatmentForm.read(request)
+			if not self.treatmentForm.hasErrors():
+				self.treatmentForm.save()
 
 	def deleteTreatment(self, request):
 
-		treatment = Treatment.objects.get(condition=self.condition, id=request.POST['id'])
-		treatment.delete()
+		if self.isProjectOwner(request):
+			treatment = Treatment.objects.get(condition=self.condition, id=request.POST['id'])
+			treatment.delete()
 
 
 	def loadExperiment(self, request, *args):

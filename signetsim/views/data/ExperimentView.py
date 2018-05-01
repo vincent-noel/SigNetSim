@@ -103,37 +103,40 @@ class ExperimentView(TemplateView, HasWorkingProject):
 
 	def saveCondition(self, request):
 
-		if str(request.POST['condition_id']) == "":
-			condition = Condition(experiment=self.experiment)
-		else:
-			condition = Condition.objects.get(experiment=self.experiment, id=request.POST['condition_id'])
+		if self.isProjectOwner(request):
+			if str(request.POST['condition_id']) == "":
+				condition = Condition(experiment=self.experiment)
+			else:
+				condition = Condition.objects.get(experiment=self.experiment, id=request.POST['condition_id'])
 
-		condition.name = str(request.POST['condition_name'])
-		condition.notes = str(request.POST['condition_notes'])
-		condition.save()
+			condition.name = str(request.POST['condition_name'])
+			condition.notes = str(request.POST['condition_notes'])
+			condition.save()
 
 
 	def deleteCondition(self, request):
 
-		condition = Condition.objects.get(experiment=self.experiment, id=request.POST['id'])
+		if self.isProjectOwner(request):
+			condition = Condition.objects.get(experiment=self.experiment, id=request.POST['id'])
 
-		initial_data = Treatment.objects.filter(condition=condition)
-		initial_data.delete()
+			initial_data = Treatment.objects.filter(condition=condition)
+			initial_data.delete()
 
-		observed_data = Observation.objects.filter(condition=condition)
-		observed_data.delete()
+			observed_data = Observation.objects.filter(condition=condition)
+			observed_data.delete()
 
-		condition.delete()
+			condition.delete()
 
 
 	def duplicateCondition(self, request):
 
-		condition = Condition.objects.get(experiment=self.experiment, id=request.POST['id'])
+		if self.isProjectOwner(request):
+			condition = Condition.objects.get(experiment=self.experiment, id=request.POST['id'])
 
-		new_condition = Condition(experiment=self.experiment)
-		new_condition.save()
+			new_condition = Condition(experiment=self.experiment)
+			new_condition.save()
 
-		copyCondition(condition, new_condition)
+			copyCondition(condition, new_condition)
 
 
 	def loadConditions(self, request):
