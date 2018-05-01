@@ -25,11 +25,6 @@
 """
 
 from django.views.generic import TemplateView
-from django.core.urlresolvers import reverse
-
-from libsignetsim import Settings
-
-from signetsim.models import SbmlModel
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 class AnalyseSensitivityView(TemplateView, HasWorkingModel):
