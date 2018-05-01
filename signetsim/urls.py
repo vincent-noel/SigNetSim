@@ -30,31 +30,31 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import logout
 
-from signetsim.json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, ModelNameValidator
-from signetsim.json import GetListOfObjectsFromSubmodels, UsernameValidator
-from signetsim.json import GetSBOName, SetAccountActive, SetAccountStaff
-from signetsim.json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction, GetRule
-from signetsim.json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetListOfObjects
-from signetsim.json import GetUnitDefinition
-from signetsim.json import GetContinuationStatus, GetProject, SearchBiomodels, GetBiomodelsName
-from signetsim.json import GetExperiment, GetCondition, GetTreatment, GetObservation
-from signetsim.json import GetInstallStatus, AddDataset
-from signetsim.json import GetEquilibriumCurve
+from .json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, ModelNameValidator
+from .json import GetListOfObjectsFromSubmodels, UsernameValidator
+from .json import GetSBOName, SetAccountActive, SetAccountStaff
+from .json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction, GetRule
+from .json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetListOfObjects
+from .json import GetUnitDefinition
+from .json import GetContinuationStatus, GetProject, SearchBiomodels, GetBiomodelsName
+from .json import GetExperiment, GetCondition, GetTreatment, GetObservation
+from .json import GetInstallStatus, AddDataset
+from .json import GetEquilibriumCurve
 
-from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
-from views import DataOptimizationView, ModelOptimizationView
-from views import DataView, ExperimentView, ConditionView, DataArchive
-from views import HelpView, SuccessView, InstallView
-from views import ListOfModelsView, ListOfProjectsView, ProjectArchive, SimulationArchive
-from views import ListOfOptimizationsView, OptimizationResultView
-from views import ListOfSimulationsView, SedmlSimulationView
-from views import LoginView, ActivateAccountView, ProfileView, AdminView
-from views import ModelCompartmentsView, ModelOverviewView, ModelAnnotationsView
-from views import ModelReactionsView, ModelRulesView, ModelSubmodelsView
-from views import ModelSpeciesView, ModelParametersView
-from views import ModelUnitsView, ModelEventsView, ModelMiscView
-from views import SignUpView, SignUpSuccessView, ValidateEmailView
-from views import TimeSeriesSimulationView, SteadyStateSimulationView, PhasePlaneSimulationView
+from .views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
+from .views import DataOptimizationView, ModelOptimizationView
+from .views import DataView, ExperimentView, ConditionView, DataArchive
+from .views import HelpView, SuccessView, InstallView
+from .views import ListOfModelsView, ListOfProjectsView, ProjectArchive, SimulationArchive
+from .views import ListOfOptimizationsView, OptimizationResultView
+from .views import ListOfSimulationsView, SedmlSimulationView
+from .views import LoginView, ActivateAccountView, ProfileView, AdminView
+from .views import ModelCompartmentsView, ModelOverviewView, ModelAnnotationsView
+from .views import ModelReactionsView, ModelRulesView, ModelSubmodelsView
+from .views import ModelSpeciesView, ModelParametersView
+from .views import ModelUnitsView, ModelEventsView, ModelMiscView
+from .views import SignUpView, SignUpSuccessView, ValidateEmailView
+from .views import TimeSeriesSimulationView, SteadyStateSimulationView, PhasePlaneSimulationView
 
 
 if settings.RUN_INSTALL:
