@@ -61,11 +61,6 @@ def min_value(array):
 	return min(array)
 
 @register.filter
-def my_tuple_lookup(d, (arg1, arg2)):
-	return d[(arg1, arg2)]
-
-
-@register.filter
 def my_model_color(array, i):
 	return array[i*2]
 
