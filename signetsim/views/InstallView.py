@@ -95,12 +95,12 @@ class InstallView(TemplateView):
 
 class ReloadConf(Thread):
 
-    """Thread just to reload the django conf after returning the page"""
+	"""Thread just to reload the django conf after returning the page"""
 
-    def __init__(self):
-        Thread.__init__(self)
+	def __init__(self):
+		Thread.__init__(self)
 
-    def run(self):
+	def run(self):
 		utime(join(django_settings.BASE_DIR, "signetsim/settings/default.py"), None)
 		utime(join(django_settings.BASE_DIR, "signetsim/settings/apache.py"), None)
 		utime(join(django_settings.BASE_DIR, "signetsim/settings/wsgi.py"), None)
