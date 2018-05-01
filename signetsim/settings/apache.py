@@ -55,16 +55,31 @@ INSTALLED_APPS = (
 )
 
 
-MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+from django import __version__
+if int(__version__.split('.')[0]) < 2:
+	MIDDLEWARE_CLASSES = (
+		'django.contrib.sessions.middleware.SessionMiddleware',
+		'django.middleware.common.CommonMiddleware',
+		'django.middleware.csrf.CsrfViewMiddleware',
+		'django.contrib.auth.middleware.AuthenticationMiddleware',
+		'django.contrib.messages.middleware.MessageMiddleware',
+		'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	)
 
-ROOT_URLCONF = 'signetsim.urls'
+	ROOT_URLCONF = 'signetsim.urls'
+
+else:
+	MIDDLEWARE = (
+		'django.contrib.sessions.middleware.SessionMiddleware',
+		'django.middleware.common.CommonMiddleware',
+		'django.middleware.csrf.CsrfViewMiddleware',
+		'django.contrib.auth.middleware.AuthenticationMiddleware',
+		'django.contrib.messages.middleware.MessageMiddleware',
+		'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	)
+
+	ROOT_URLCONF = 'signetsim.urls-django2'
+
 
 TEMPLATES = [
 {
@@ -136,11 +151,13 @@ from string import ascii_uppercase, ascii_lowercase, digits
 SECRET_KEY = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
 
 from signetsim.models import Settings
+settings_filename = os.path.join(BASE_DIR, "settings.json")
 
 AUTH_USER_MODEL = 'signetsim.User'
 
 if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
-	if len(Settings.objects.all()) == 0:
+
+	if not os.path.isfile(settings_filename):
 
 		RUN_INSTALL = True
 		STATIC_URL = 'static/'
@@ -148,28 +165,28 @@ if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
 
 		MEDIA_URL = 'media/'
 		MEDIA_ROOT = os.path.join(BASE_DIR, "data/media/")
-
-		ALLOWED_HOSTS = ["*"]
-
 	else:
 
 		RUN_INSTALL = False
 
-		signetsim_settings = Settings.objects.all()[0]
-		BASE_URL = signetsim_settings.base_url
+		settings_file = open(settings_filename, 'r')
+
+		settings = json.loads(settings_file.read())
+
+		# signetsim_settings = Settings.objects.all()[0]
+		BASE_URL = settings['base_url']
 
 		# SECURITY WARNING: keep the secret key used in production secret!
-		SECRET_KEY = signetsim_settings.secret_key
+		SECRET_KEY = settings['secret_key']
 
-		ADMINS = [(signetsim_settings.admin.username, signetsim_settings.admin.email)]
+		ADMINS = [(settings['admin'], settings['admin_address'])]
 
-		EMAIL_ADDRESS = signetsim_settings.email_address
-		EMAIL_USE_TLS = signetsim_settings.email_use_tls
-		EMAIL_HOST = signetsim_settings.email_host
-		EMAIL_PORT = signetsim_settings.email_port
-		EMAIL_HOST_USER = signetsim_settings.email_user
-		EMAIL_HOST_PASSWORD = signetsim_settings.email_password
-
+		EMAIL_ADDRESS = settings['email_address']
+		EMAIL_USE_TLS = settings['email_use_tls']
+		EMAIL_HOST = settings['email_host']
+		EMAIL_PORT = settings['email_port']
+		EMAIL_HOST_USER = settings['email_user']
+		EMAIL_HOST_PASSWORD = settings['email_password']
 		ALLOWED_HOSTS = ["*"]
 
 		# Static files (CSS, JavaScript, Images)
