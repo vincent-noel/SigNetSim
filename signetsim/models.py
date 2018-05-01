@@ -132,7 +132,7 @@ class User(AbstractUser):
 			doc.writeSbmlToFile(os.path.join(settings.MEDIA_ROOT, str(new_model.sbml_file)))
 
 class Project(models.Model):
-	user = models.ForeignKey(User)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255, null=True)
 	folder = models.CharField(max_length=255, default=new_project_folder)
 	PUBLIC = 'PU'
@@ -148,31 +148,31 @@ class Project(models.Model):
 									  default=PRIVATE)
 
 class SbmlModel(models.Model):
-	project = models.ForeignKey(Project)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255, null=True)
 	sbml_file = models.FileField(upload_to=model_filename)
 
 
 class CombineArchiveModel(models.Model):
-	project = models.ForeignKey(Project)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	archive_file = models.FileField(upload_to=archive_filename)
 
 class SEDMLSimulation(models.Model):
-	project = models.ForeignKey(Project)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255, null=True)
 	sedml_file = models.FileField(upload_to=sedml_filename)
 	sbml_file = models.FileField(upload_to=model_filename, null=True)
 
 
 class Optimization(models.Model):
-	project = models.ForeignKey(Project)
-	model = models.ForeignKey(SbmlModel)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
+	model = models.ForeignKey(SbmlModel, on_delete=models.CASCADE)
 	optimization_id = models.CharField(max_length=255)
 
 
 class ContinuationComputation(models.Model):
-	project = models.ForeignKey(Project)
-	model = models.ForeignKey(SbmlModel)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
+	model = models.ForeignKey(SbmlModel, on_delete=models.CASCADE)
 
 	variable = models.CharField(max_length=255, default="")
 	parameter = models.CharField(max_length=255, default="")
@@ -198,18 +198,18 @@ class ContinuationComputation(models.Model):
 # Experimental data v2
 #######################################################################################
 class Experiment(models.Model):
-	project = models.ForeignKey(Project)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255)
 	notes = models.CharField(max_length=2048, null=True)
 
 class Condition(models.Model):
-	experiment = models.ForeignKey(Experiment)
+	experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255)
 	notes = models.CharField(max_length=2048, null=True)
 
 
 class Observation(models.Model):
-	condition = models.ForeignKey(Condition)
+	condition = models.ForeignKey(Condition, on_delete=models.CASCADE)
 	species = models.CharField(max_length=255)
 
 	time = models.FloatField()
@@ -227,7 +227,7 @@ class Observation(models.Model):
 		return data_point
 
 class Treatment(models.Model):
-	condition = models.ForeignKey(Condition)
+	condition = models.ForeignKey(Condition, on_delete=models.CASCADE)
 	species = models.CharField(max_length=255)
 
 	time = models.FloatField()
@@ -242,7 +242,7 @@ class Settings(models.Model):
 	base_url = models.CharField(max_length=255, default="/")
 	secret_key = models.CharField(max_length=255, default=new_secret_key)
 
-	admin = models.ForeignKey(User)
+	admin = models.ForeignKey(User, on_delete=models.CASCADE)
 
 	email_address = models.CharField(max_length=255, default="")
 	email_use_tls = models.BooleanField(default=True)
