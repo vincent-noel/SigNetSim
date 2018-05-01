@@ -23,9 +23,12 @@
 	This file ...
 
 """
-
+from django import __version__
 
 class HasUserLoggedIn(object):
 
 	def isUserLoggedIn(self, request):
-		return not request.user.is_anonymous()
+		if int(__version__.split('.')[0]) < 2:
+			return not request.user.is_anonymous()
+		else:
+			return not request.user.is_anonymous
