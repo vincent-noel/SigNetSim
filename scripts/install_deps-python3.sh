@@ -23,22 +23,23 @@ apt-get install -y $( cat ${DIR}/apt_requirements-python3 )
 
 
 # Python Dependencies
-pip install pip --upgrade
+pip3 install pip --upgrade
 
-PIP_VERSION=`pip --version`
-LOCAL_PIP_VERSION=`/usr/local/bin/pip --version`
+PIP_VERSION=`pip3 --version`
+LOCAL_PIP_VERSION=`/usr/local/bin/pip3 --version`
 
 if [ -z "$PIP_VERSION" ] && [ ! -z "$LOCAL_PIP_VERSION" ];
 then
-    if [ -f /usr/bin/pip ];
+    if [ -f /usr/bin/pip3 ];
     then
-        rm /usr/bin/pip
+        rm /usr/bin/pip3
     fi
 
-    ln -s /usr/local/bin/pip /usr/bin/pip
+    ln -s /usr/local/bin/pip3 /usr/bin/pip3
+    ln -s /usr/bin/pip3 /usr/bin/pip
 fi
 
-easy_install -U distribute
+easy_install3 -U distribute
 
 pip install -r ${DIR}/pip_requirements-python3
 

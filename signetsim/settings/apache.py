@@ -150,7 +150,6 @@ from string import ascii_uppercase, ascii_lowercase, digits
 
 SECRET_KEY = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
 
-from signetsim.models import Settings
 settings_filename = os.path.join(BASE_DIR, "settings.json")
 
 AUTH_USER_MODEL = 'signetsim.User'

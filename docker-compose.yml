@@ -13,5 +13,17 @@ services:
       - "8080:80"
     restart: always
 
+  signetsim-python3:
+    build:
+      context: ./
+      dockerfile: ./scripts/docker-python3/Dockerfile
+    image: signetsim/signetsim:develop-python3
+    container_name: signetsim-python3
+    volumes:
+      - signetsim_data:/SigNetSim/data
+    ports:
+      - "8080:80"
+    restart: always
+
 volumes:
   signetsim_data:

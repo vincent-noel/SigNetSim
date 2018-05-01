@@ -20,7 +20,7 @@ INSTALL_DIR=`dirname $DIR`
 
 ${DIR}/install_deps-python3.sh
 ${DIR}/apache-python3/install_apache.sh ${ROOT_DIR}
-${DIR}/create_db.sh
+${DIR}/create_db-python3.sh
 
 mkdir /var/www/.config
 chown www-data:www-data /var/www/.config
