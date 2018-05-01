@@ -63,7 +63,7 @@ class HasErrorMessages(object):
 
 	def printErrors(self):
 		for error in self.errorMessages:
-			print error
+			print(error)
 
 
 	def findMathErrors(self, expression):

@@ -212,8 +212,8 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 						new_document.writeSbmlToFile(os.path.join(settings.MEDIA_ROOT, str(new_sbml_model.sbml_file)))
 						modified_files.update({modified.documentFilename: os.path.basename(str(new_sbml_model.sbml_file))})
 
-					print modified_files
-					print [subdoc.documentFilename for subdoc in document.documentDependencies]
+					print(modified_files)
+					print(subdoc.documentFilename for subdoc in document.documentDependencies)
 					renaming = {}
 					for subdoc in document.documentDependencies:
 						if subdoc.documentFilename in modified_files:
@@ -221,7 +221,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 						else:
 							renaming.update({subdoc.documentFilename: subdoc.documentFilename})
 
-					print renaming
+					print(renaming)
 
 					file = File(open(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, "model.sbml"))))
 					new_sbml_model = SbmlModel(project=self.project, name=self.modelName, sbml_file=file)

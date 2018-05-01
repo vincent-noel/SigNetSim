@@ -72,7 +72,7 @@ class HasWorkingModel(HasWorkingProject, HasVariablesInSession):
 
 	def load(self, request, recompute=True, *args, **kwargs):
 
-		# print "> Model loading"
+		# print("> Model loading")
 		HasWorkingProject.load(self, request, *args, **kwargs)
 		HasVariablesInSession.load(self, request, *args, **kwargs)
 

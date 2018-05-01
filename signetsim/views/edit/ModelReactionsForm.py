@@ -187,7 +187,7 @@ class ModelReactionsForm(ModelParentForm):
 		self.listOfParameters = []
 
 		while self.existField(request, "reaction_parameter_%d" % parameter_id):
-			# print "loop %d" % parameter_id
+			# print("loop %d" % parameter_id)
 			t_parameter = self.readInt(request,
 					'reaction_parameter_%d' % parameter_id,
 					"the identifier of the parameter #%d" % parameter_id,
