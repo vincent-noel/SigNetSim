@@ -1,0 +1,8 @@
+Django
+django-bootstrap3
+git+https://github.com/vincent-noel/libSigNetSim.git@develop
+dill
+cloudpickle
+matplotlib
+coveralls
+seaborn
