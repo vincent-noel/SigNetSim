@@ -236,18 +236,3 @@ class Treatment(models.Model):
 	def create(cls, species, time, value):
 		data_point = cls(species=species, time=time, value=value)
 		return data_point
-
-class Settings(models.Model):
-
-	base_url = models.CharField(max_length=255, default="/")
-	secret_key = models.CharField(max_length=255, default=new_secret_key)
-
-	admin = models.ForeignKey(User, on_delete=models.CASCADE)
-
-	email_address = models.CharField(max_length=255, default="")
-	email_use_tls = models.BooleanField(default=True)
-	email_host = models.CharField(max_length=255, default="")
-	email_port = models.IntegerField(default=587)
-	email_user = models.CharField(max_length=255, default="")
-	email_password = models.CharField(max_length=255, default="")
-

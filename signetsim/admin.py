@@ -30,7 +30,7 @@ from django.contrib import admin
 from .models import User, Project, SbmlModel, SEDMLSimulation, CombineArchiveModel
 from .models import Optimization, ContinuationComputation
 from .models import Experiment, Condition, Observation, Treatment
-from .models import Settings
+
 
 admin.site.register(User)
 admin.site.register(Project)
@@ -45,5 +45,3 @@ admin.site.register(Experiment)
 admin.site.register(Condition)
 admin.site.register(Observation)
 admin.site.register(Treatment)
-
-admin.site.register(Settings)

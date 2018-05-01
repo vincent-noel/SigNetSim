@@ -26,10 +26,11 @@
 
 from django.views.generic import TemplateView
 from django.conf import settings as django_settings
-from signetsim.models import User, Settings
+from signetsim.models import User
 from os import utime
 from os.path import join
 from threading import Thread
+from json import dumps
 
 
 class InstallView(TemplateView):
@@ -69,23 +70,27 @@ class InstallView(TemplateView):
 				and email_address != "" and email_host != "" and email_port != ""
 				and email_username != "" and email_password != ""
 			):
+				json_settings = {
+					'base_url': request.META['PATH_INFO'],
+					'admin': admin.username,
+					'admin_email': admin.email,
+					'email_address': email_address,
+					'email_use_tls': email_tls,
+					'email_host': email_host,
+					'email_port': int(email_port),
+					'email_user': email_username,
+					'email_password': email_password
+				}
 
-				settings = Settings(
-					base_url=request.META['PATH_INFO'],
-					admin=admin,
-					email_address=email_address,
-					email_use_tls=email_tls,
-					email_host=email_host,
-					email_port=int(email_port),
-					email_user=email_username,
-					email_password=email_password
-				)
 			else:
-				settings = Settings(
-					base_url=request.META['PATH_INFO'],
-					admin=admin,
-				)
-			settings.save()
+				json_settings = {
+					'base_url': request.META['PATH_INFO'],
+					'admin': admin.username,
+					'admin_email': admin.email
+				}
+
+			with open(join(django_settings.BASE_DIR, "settings.json"), "w") as settings_file:
+				settings_file.write(dumps(json_settings))
 
 			thread = ReloadConf()
 			thread.start()
