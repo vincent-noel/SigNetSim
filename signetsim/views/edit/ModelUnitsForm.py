@@ -24,7 +24,7 @@
 
 """
 
-from signetsim.views.edit.ModelParentForm import ModelParentForm
+from .ModelParentForm import ModelParentForm
 from libsignetsim.model.sbml.Unit import Unit
 
 

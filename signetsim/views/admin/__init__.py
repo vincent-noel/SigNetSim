@@ -24,4 +24,4 @@
 
 """
 
-from AdminView import AdminView
+from .AdminView import AdminView

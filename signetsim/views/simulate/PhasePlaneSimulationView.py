@@ -26,9 +26,9 @@
 
 from django.views.generic import TemplateView
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.views.simulate.SedmlWriter import SedmlWriter
+from .SedmlWriter import SedmlWriter
 
-from signetsim.views.simulate.PhasePlaneSimulationForm import PhasePlaneSimulationForm
+from .PhasePlaneSimulationForm import PhasePlaneSimulationForm
 from signetsim.models import Experiment, Condition, Treatment, SEDMLSimulation, new_sedml_filename
 from signetsim.managers.data import buildExperiment
 from signetsim.managers.models import copyModelHierarchy

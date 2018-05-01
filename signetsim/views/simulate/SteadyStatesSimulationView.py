@@ -29,8 +29,8 @@ from django.views.generic import TemplateView
 from libsignetsim import LibSigNetSimException, SteadyStatesSimulation
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.views.simulate.SedmlWriter import SedmlWriter
-from signetsim.views.simulate.SteadyStatesSimulationForm import SteadyStateSimulationForm
+from .SedmlWriter import SedmlWriter
+from .SteadyStatesSimulationForm import SteadyStateSimulationForm
 from signetsim.models import Experiment, SEDMLSimulation, new_sedml_filename
 from signetsim.managers.models import copyModelHierarchy
 from signetsim.settings.Settings import Settings

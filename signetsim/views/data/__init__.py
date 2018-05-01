@@ -24,7 +24,7 @@
 
 """
 
-from DataView import DataView
-from ExperimentView import ExperimentView
-from ConditionView import ConditionView
-from DataArchive import DataArchive
+from .DataView import DataView
+from .ExperimentView import ExperimentView
+from .ConditionView import ConditionView
+from .DataArchive import DataArchive

@@ -26,7 +26,7 @@
 
 from libsignetsim import ModelException
 from libsignetsim.model.Variable import Variable
-from signetsim.views.edit.ModelParentForm import ModelParentForm
+from .ModelParentForm import ModelParentForm
 
 class ModelSubmodelSubstitutionForm(ModelParentForm):
 

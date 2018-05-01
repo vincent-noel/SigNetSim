@@ -24,18 +24,18 @@
 
 """
 
-from JsonRequest import JsonRequest
+from .JsonRequest import JsonRequest
 
-from admin import SetAccountStaff, SetAccountActive
-from data import GetExperiment, GetCondition, GetTreatment, GetObservation
-from edit import GetListOfObjects, GetListOfObjectsFromSubmodels
-from edit import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw, GetRule, \
+from .admin import SetAccountStaff, SetAccountActive
+from .data import GetExperiment, GetCondition, GetTreatment, GetObservation
+from .edit import GetListOfObjects, GetListOfObjectsFromSubmodels
+from .edit import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw, GetRule, \
 	GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetSBOName, GetUnitDefinition
-from validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, \
+from .validators import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, \
 	ModelNameValidator, UsernameValidator
-from fit import AddDataset
-from analyse import GetEquilibriumCurve, GetContinuationStatus
-from GetProject import GetProject
-from SearchBiomodels import SearchBiomodels
-from GetBiomodelsName import GetBiomodelsName
-from GetInstallStatus import GetInstallStatus
+from .fit import AddDataset
+from .analyse import GetEquilibriumCurve, GetContinuationStatus
+from .GetProject import GetProject
+from .SearchBiomodels import SearchBiomodels
+from .GetBiomodelsName import GetBiomodelsName
+from .GetInstallStatus import GetInstallStatus

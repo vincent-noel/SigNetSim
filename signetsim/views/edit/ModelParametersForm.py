@@ -25,7 +25,7 @@
 """
 
 from libsignetsim import ModelException
-from signetsim.views.edit.ModelParentForm import ModelParentForm
+from .ModelParentForm import ModelParentForm
 
 
 class ModelParametersForm(ModelParentForm):

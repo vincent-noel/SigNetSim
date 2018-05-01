@@ -24,7 +24,7 @@
 
 """
 
-from ModelParentForm import ModelParentForm
+from .ModelParentForm import ModelParentForm
 
 class ModelAnnotationsForm(ModelParentForm):
 

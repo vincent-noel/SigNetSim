@@ -26,7 +26,7 @@
 
 from libsignetsim import ModelException, KineticLaw
 from libsignetsim.model.sbml.Parameter import Parameter
-from signetsim.views.edit.ModelParentForm import ModelParentForm
+from .ModelParentForm import ModelParentForm
 
 
 class ModelReactionsForm(ModelParentForm):

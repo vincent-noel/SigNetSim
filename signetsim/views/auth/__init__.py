@@ -24,8 +24,8 @@
 
 """
 
-from SignUpView import SignUpView, SignUpSuccessView
-from ValidateEmailView import ValidateEmailView
-from ActivateAccountView import ActivateAccountView
-from LoginView import LoginView
-from ProfileView import ProfileView
+from .SignUpView import SignUpView, SignUpSuccessView
+from .ValidateEmailView import ValidateEmailView
+from .ActivateAccountView import ActivateAccountView
+from .LoginView import LoginView
+from .ProfileView import ProfileView

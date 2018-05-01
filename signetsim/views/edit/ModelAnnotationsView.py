@@ -31,7 +31,7 @@ from libsignetsim.uris.URI import URI
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from signetsim.views.edit.ModelAnnotationsForm import ModelAnnotationsForm
+from .ModelAnnotationsForm import ModelAnnotationsForm
 
 class ModelAnnotationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 

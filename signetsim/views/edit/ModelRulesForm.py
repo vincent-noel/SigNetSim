@@ -25,7 +25,7 @@
 """
 
 from libsignetsim import ModelException
-from ModelParentForm import ModelParentForm
+from .ModelParentForm import ModelParentForm
 
 class ModelRulesForm(ModelParentForm):
 

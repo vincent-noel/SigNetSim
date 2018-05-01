@@ -28,7 +28,7 @@ from django.views.generic import TemplateView
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from libsignetsim import ModelException
-from ModelRulesForm import ModelRulesForm
+from .ModelRulesForm import ModelRulesForm
 
 class ModelRulesView(TemplateView, HasWorkingModel, HasErrorMessages):
 

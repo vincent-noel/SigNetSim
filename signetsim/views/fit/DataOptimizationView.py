@@ -28,7 +28,7 @@ from django.views.generic import TemplateView
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.models import Optimization, SbmlModel, Experiment
-from signetsim.views.fit.DataOptimizationForm import DataOptimizationForm
+from .DataOptimizationForm import DataOptimizationForm
 
 from libsignetsim import ModelVsTimeseriesOptimization, LibSigNetSimException
 

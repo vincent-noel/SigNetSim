@@ -27,7 +27,7 @@
 from django.views.generic import TemplateView
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.views.edit.ModelUnitsForm import ModelUnitsForm
+from .ModelUnitsForm import ModelUnitsForm
 
 from libsignetsim.model.sbml.Unit import Unit
 

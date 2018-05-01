@@ -27,7 +27,7 @@
 from django.views.generic import TemplateView
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from ModelCompartmentsForm import ModelCompartmentsForm
+from .ModelCompartmentsForm import ModelCompartmentsForm
 
 from libsignetsim import ModelException
 

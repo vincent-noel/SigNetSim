@@ -24,5 +24,5 @@
 
 """
 
-from GetEquilibriumCurve import GetEquilibriumCurve
-from GetContinuationStatus import GetContinuationStatus
+from .GetEquilibriumCurve import GetEquilibriumCurve
+from .GetContinuationStatus import GetContinuationStatus
