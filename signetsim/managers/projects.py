@@ -170,7 +170,7 @@ def importProject(new_folder, filename):
 			importExperiment(new_experiment, numl_file)
 
 	except CombineException as e:
-		print e.message
+		print(e.message)
 
 def exportProject(project):
 
