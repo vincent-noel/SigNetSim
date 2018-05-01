@@ -54,17 +54,30 @@ INSTALLED_APPS = (
 	'signetsim',
 )
 
+from django import __version__
+if int(__version__.split('.')[0]) < 2:
+	MIDDLEWARE_CLASSES = (
+		'django.contrib.sessions.middleware.SessionMiddleware',
+		'django.middleware.common.CommonMiddleware',
+		'django.middleware.csrf.CsrfViewMiddleware',
+		'django.contrib.auth.middleware.AuthenticationMiddleware',
+		'django.contrib.messages.middleware.MessageMiddleware',
+		'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	)
 
-MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+	ROOT_URLCONF = 'signetsim.urls'
 
-ROOT_URLCONF = 'signetsim.urls'
+else:
+	MIDDLEWARE = (
+		'django.contrib.sessions.middleware.SessionMiddleware',
+		'django.middleware.common.CommonMiddleware',
+		'django.middleware.csrf.CsrfViewMiddleware',
+		'django.contrib.auth.middleware.AuthenticationMiddleware',
+		'django.contrib.messages.middleware.MessageMiddleware',
+		'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	)
+
+	ROOT_URLCONF = 'signetsim.urls-django2'
 
 TEMPLATES = [
 	{
@@ -140,15 +153,13 @@ from string import ascii_uppercase, ascii_lowercase, digits
 
 SECRET_KEY = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
 
-# from signetsim.models import Settings
 settings_filename = os.path.join(BASE_DIR, "settings.json")
-# print(settings_filename)
 
 AUTH_USER_MODEL = 'signetsim.User'
 
 if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
-	# if len(Settings.objects.all()) == 0:
-	if not os.path.isfile(settings_filename):#len(list(settings.keys())) == 0:
+
+	if not os.path.isfile(settings_filename):
 
 		RUN_INSTALL = True
 		STATIC_URL = 'static/'
