@@ -74,6 +74,7 @@ class InstallView(TemplateView):
 					'base_url': request.META['PATH_INFO'],
 					'admin': admin.username,
 					'admin_email': admin.email,
+					'allowed_hosts': ['*'],
 					'email_address': email_address,
 					'email_use_tls': email_tls,
 					'email_host': email_host,
@@ -86,7 +87,9 @@ class InstallView(TemplateView):
 				json_settings = {
 					'base_url': request.META['PATH_INFO'],
 					'admin': admin.username,
-					'admin_email': admin.email
+					'admin_email': admin.email,
+					'allowed_hosts': ['*'],
+
 				}
 
 			with open(join(django_settings.BASE_DIR, "settings.json"), "w") as settings_file:

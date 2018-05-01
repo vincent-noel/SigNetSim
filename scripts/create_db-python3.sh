@@ -17,6 +17,7 @@ INSTALL_DIR=`dirname $DIR`
 cd ${INSTALL_DIR}
 
 mkdir -p ${INSTALL_DIR}/static
+mkdir -p ${INSTALL_DIR}/settings
 
 if [ ! -d ${INSTALL_DIR}/data/db ]
 then
@@ -34,9 +35,9 @@ chgrp -R www-data ${INSTALL_DIR}/data
 chmod -R 664 ${INSTALL_DIR}/data
 find ${INSTALL_DIR}/data -type d  -exec chmod 775 {} \;
 
-chgrp -R www-data ${INSTALL_DIR}/signetsim/settings
-chmod -R 664 ${INSTALL_DIR}/signetsim/settings
-find ${INSTALL_DIR}/signetsim/settings -type d  -exec chmod 775 {} \;
+chgrp -R www-data ${INSTALL_DIR}/settings
+chmod -R 664 ${INSTALL_DIR}/settings
+find ${INSTALL_DIR}/settings -type d  -exec chmod 775 {} \;
 
 
 cd $EXEC_DIR
