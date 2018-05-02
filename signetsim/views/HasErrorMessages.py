@@ -25,7 +25,7 @@
 """
 
 from libsignetsim import MathFormula
-
+from sys import version_info
 from re import match
 
 class HasErrorMessages(object):
@@ -100,7 +100,7 @@ class HasErrorMessages(object):
 			else:
 				return str(request.POST[field])
 		except UnicodeEncodeError:
-			self.addError("Unauthorized special characters (non-utf8) in %s" % name)
+			self.addError("Unauthorized special characters in %s" % name)
 
 
 	def readUnicodeString(self, request, field, name, required=True, reportField=True):
@@ -108,12 +108,15 @@ class HasErrorMessages(object):
 		if request.POST.get(field) is None:
 			self.addError("%s does not exist !" % name, reportField, field)
 
-		elif unicode(request.POST[field]) == "":
+		elif (version_info[0] >= 3 and request.POST[field] == "") or unicode(request.POST[field]) == "":
 			if required:
 				self.addError("%s is required !" % name, reportField, field)
 
 		else:
-			return unicode(request.POST[field])
+			if version_info[0] >= 3:
+				return request.POST['field']
+			else:
+				return unicode(request.POST[field])
 
 	def readInt(self, request, field, name, max_value=None, required=True, reportField=True):
 
