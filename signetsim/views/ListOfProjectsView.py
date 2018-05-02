@@ -34,7 +34,7 @@ from signetsim.models import Project
 from signetsim.managers.projects import deleteProject, copyProject, importProject
 from signetsim.forms import DocumentForm
 
-from os.path import join, exists
+from os.path import join, exists, isfile
 from os import remove, mkdir
 
 
@@ -81,9 +81,6 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 			if HasWorkingProject.isChooseProject(self, request):
 				self.load(request, *args, **kwargs)
 
-			# elif request.POST['action'] == "new_folder":
-			# 	self.newFolder(request)
-
 			elif request.POST['action'] == "copy_folder":
 				self.copyFolder(request)
 
@@ -107,28 +104,6 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 		HasWorkingProject.load(self, request, *args, **kwargs)
 		if self.isUserLoggedIn(request):
 			self.loadFolders(request)
-
-	# def newFolder(self, request):
-	#
-	# 	name = str(request.POST['modal_project_name'])
-	# 	access = False
-	# 	if 'project_access' in request.POST and request.POST['project_access'] == "on":
-	# 		access = True
-	#
-	# 	if not Project.objects.filter(user=request.user, name=name).exists():
-	# 		new_folder = Project(user=request.user, name=name)
-	# 		if access:
-	# 			new_folder.access = 'PU'
-	# 		else:
-	# 			new_folder.access = 'PR'
-	#
-	# 		new_folder.save()
-	# 		mkdir(join(settings.MEDIA_ROOT, str(new_folder.folder)))
-	#
-	# 		self.loadFolders(request)
-	# 	else:
-	# 		self.createFolderShow = True
-	# 		self.createFolderError = "Project %s already exists !" % name
 
 	def copyFolder(self, request):
 
@@ -224,14 +199,15 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 				if exists(path):
 					remove(path)
 
-				t_content_file = open(path, "w")
+				t_content_file = open(path, "wb")
 				t_content_file.write(archive.read())
 				t_content_file.close()
 
 				importProject(new_folder, path)
 
 			except Exception as e:
-				remove(path)
+				if isfile(path):
+					remove(path)
 
 			new_folder.save()
 

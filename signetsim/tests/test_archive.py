@@ -61,7 +61,7 @@ class TestArchive(TestCase):
 
 		response_import_archive = c.post('/', {
 			'action': 'load_folder',
-			'combine_file': open(archive_filename, 'r')
+			'combine_file': open(archive_filename, 'rb')
 		})
 
 		self.assertEqual(response_import_archive.status_code, 200)
@@ -81,7 +81,7 @@ class TestArchive(TestCase):
 		self.assertEqual(response_export_archive.status_code, 200)
 
 		path = join(settings.MEDIA_ROOT, 'test_archive_2.omex')
-		t_content_file = open(path, "w")
+		t_content_file = open(path, "wb")
 		t_content_file.write(response_export_archive.content)
 		t_content_file.close()
 
