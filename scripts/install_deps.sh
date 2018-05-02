@@ -40,6 +40,8 @@ fi
 
 easy_install -U distribute
 
+pip install -I setuptools --upgrade
+
 pip install -r ${DIR}/pip_requirements
 
 # JS Dependencies
