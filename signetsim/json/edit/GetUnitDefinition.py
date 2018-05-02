@@ -46,7 +46,7 @@ class GetUnitDefinition(JsonRequest, HasWorkingModel):
 			'desc': unit_definition.printUnitDefinition(),
 			'list_of_units': [
 				(
-					str(unit), Unit.unit_id.keys().index(unit.getKind()), unit.getKindName(),
+					str(unit), list(Unit.unit_id.keys()).index(unit.getKind()), unit.getKindName(),
 					unit.getExponent(), unit.getScale(), unit.getMultiplier()
 				)
 				for unit in unit_definition.listOfUnits

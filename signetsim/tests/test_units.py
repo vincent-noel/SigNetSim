@@ -40,7 +40,7 @@ class TestUnits(TestCase):
 
 	fixtures = ["user_with_project.json"]
 
-	def testEvents(self):
+	def testUnits(self):
 
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
@@ -95,11 +95,11 @@ class TestUnits(TestCase):
 			'unit_definition_id': '',
 			'unit_definition_name': "Nanomolars",
 			'unit_definition_identifier': "nanomolars",
-			'subunit_id_0': Unit.unit_id.values().index("mole"),
+			'subunit_id_0': list(Unit.unit_id.values()).index("mole"),
 			'subunit_exponent_0': 1,
 			'subunit_scale_0': -9,
 			'subunit_multiplier_0': 1,
-			'subunit_id_1': Unit.unit_id.values().index("litre"),
+			'subunit_id_1': list(Unit.unit_id.values()).index("litre"),
 			'subunit_exponent_1': -1,
 			'subunit_scale_1': 1,
 			'subunit_multiplier_1': 1,
@@ -118,7 +118,7 @@ class TestUnits(TestCase):
 			'id': response_save_unit.context['unit_definitions'].index('Nanomolars'),
 		})
 		self.assertEqual(response_get_unit_definition.status_code, 200)
-		json_response = loads(response_get_unit_definition.content)
+		json_response = loads(response_get_unit_definition.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'unit_id'], "nanomolars")
 		self.assertEqual(json_response[u'name'], "Nanomolars")

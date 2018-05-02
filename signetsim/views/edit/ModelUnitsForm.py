@@ -94,6 +94,6 @@ class ModelUnitsForm(ModelParentForm):
 				"the multiplier of the unit #%d" % i
 			)
 
-			self.listOfUnits.append((Unit.unit_id.keys()[t_unit], t_exponent, t_scale, t_multiplier))
+			self.listOfUnits.append((list(Unit.unit_id.keys())[t_unit], t_exponent, t_scale, t_multiplier))
 
 			i += 1
