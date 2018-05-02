@@ -16,6 +16,7 @@ env:
    - DISTRIB=wheezy
    - DISTRIB=jessie
    - DISTRIB=docker
+   - DISTRIB=docker-python3
 
 before_install:
 - pip install coveralls
