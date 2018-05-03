@@ -99,7 +99,7 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 			for (ind, active, name, value, vmin, vmax, precision) in self.form.selectedParameters:
 
 				if active:
-					if ind < self.getModelInstance().listOfParameters:
+					if ind < len(self.getModelInstance().listOfParameters):
 						t_parameter = self.getModelInstance().listOfParameters.getByPos(ind)
 					else:
 						i_parameter = len(self.getModelInstance().listOfParameters)
