@@ -25,7 +25,7 @@
 """
 
 from libsignetsim import MathFormula
-from sys import version_info
+from six import PY3, u
 from re import match
 
 class HasErrorMessages(object):
@@ -35,13 +35,11 @@ class HasErrorMessages(object):
 		self.errorMessages = []
 		self.errorFields = []
 
-
 	def get_context_data(self, **kwargs):
 		kwargs['hasErrors'] = self.hasErrors()
 		kwargs['getErrors'] = self.getErrors()
 		kwargs['errorFields'] = self.errorFields
 		return kwargs
-
 
 	def clearErrors(self):
 		self.nbErrors = 0
@@ -108,15 +106,15 @@ class HasErrorMessages(object):
 		if request.POST.get(field) is None:
 			self.addError("%s does not exist !" % name, reportField, field)
 
-		elif (version_info[0] >= 3 and request.POST[field] == "") or unicode(request.POST[field]) == "":
+		elif (PY3 and request.POST[field] == "") or u(request.POST[field]) == "":
 			if required:
 				self.addError("%s is required !" % name, reportField, field)
 
 		else:
-			if version_info[0] >= 3:
+			if PY3:
 				return request.POST['field']
 			else:
-				return unicode(request.POST[field])
+				return u(request.POST[field])
 
 	def readInt(self, request, field, name, max_value=None, required=True, reportField=True):
 
@@ -138,9 +136,6 @@ class HasErrorMessages(object):
 
 			except ValueError:
 				self.addError("%s must be an integer !" % name, reportField, field)
-
-
-
 
 	def readFloat(self, request, field, name, max_value=None, required=True, reportField=True):
 
