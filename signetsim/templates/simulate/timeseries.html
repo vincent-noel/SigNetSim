@@ -101,7 +101,7 @@
   </div>
 	<div class="container-fluid" id="plots_container">
 
-		{% for t, y in sim_results %}
+		{% for t, y, _ in sim_results %}
 		<br/><br/>
 		<div>
 				<canvas id="canvas_{{forloop.counter0}}"></canvas>
