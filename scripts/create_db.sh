@@ -18,6 +18,7 @@ cd ${INSTALL_DIR}
 
 mkdir -p ${INSTALL_DIR}/static
 mkdir -p ${INSTALL_DIR}/settings
+mkdir -p ${INSTALL_DIR}/tmp
 
 if [ ! -d ${INSTALL_DIR}/data/db ]
 then
@@ -38,6 +39,10 @@ find ${INSTALL_DIR}/data -type d  -exec chmod 775 {} \;
 chgrp -R www-data ${INSTALL_DIR}/settings
 chmod -R 664 ${INSTALL_DIR}/settings
 find ${INSTALL_DIR}/settings -type d  -exec chmod 775 {} \;
+
+chgrp -R www-data ${INSTALL_DIR}/tmp
+chmod -R 664 ${INSTALL_DIR}/tmp
+find ${INSTALL_DIR}/tmp -type d  -exec chmod 775 {} \;
 
 chgrp -R www-data ${INSTALL_DIR}/signetsim/settings/wsgi.py
 chmod -R 664 ${INSTALL_DIR}/signetsim/settings/wsgi.py
