@@ -18,6 +18,8 @@ env:
    - DISTRIB=docker PYTHON_VERSION=2
    - DISTRIB=xenial PYTHON_VERSION=3
    - DISTRIB=stretch PYTHON_VERSION=3
+   - DISTRIB=trusty PYTHON_VERSION=3
+   - DISTRIB=jessie PYTHON_VERSION=3
    - DISTRIB=docker PYTHON_VERSION=3
 
 before_install:
