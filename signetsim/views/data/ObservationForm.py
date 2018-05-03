@@ -64,7 +64,7 @@ class ObservationForm(ParentForm):
 		self.id = self.readInt(request, 'id',
 								"The identifier of the observation", required=False)
 
-		self.name = self.readString(request, 'name',
+		self.name = self.readASCIIString(request, 'name',
 									"The name of the observed species")
 
 		self.time = self.readFloat(request, 'time',

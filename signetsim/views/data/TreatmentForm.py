@@ -84,7 +84,7 @@ class TreatmentForm(ParentForm):
 		self.id = self.readInt(request, 'id',
 								"The identifier of the treatment", required=False)
 
-		self.name = self.readString(request, 'name',
+		self.name = self.readASCIIString(request, 'name',
 									"The name of the treated species")
 
 		self.time = self.readFloat(request, 'time',

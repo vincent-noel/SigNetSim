@@ -25,7 +25,6 @@
 """
 
 from libsignetsim import MathFormula
-from six import PY3, u
 from re import match
 
 class HasErrorMessages(object):
@@ -84,37 +83,34 @@ class HasErrorMessages(object):
 
 
 
-	def readString(self, request, field, name, required=True, reportField=True):
+	def readASCIIString(self, request, field, name, required=True, reportField=True):
 
 		try:
 			if request.POST.get(field) is None:
 				if required:
 					self.addError("%s does not exist !" % name, reportField, field)
 
-			elif str(request.POST[field]) == "":
+			elif request.POST[field] == "":
 				if required:
 					self.addError("%s is required !" % name, reportField, field)
 
 			else:
-				return str(request.POST[field])
-		except UnicodeEncodeError:
-			self.addError("Unauthorized special characters in %s" % name)
+				return request.POST[field].encode('utf-8').decode('ascii')
 
+		except UnicodeDecodeError:
+			self.addError("Unauthorized special characters in %s" % name)
 
 	def readUnicodeString(self, request, field, name, required=True, reportField=True):
 
 		if request.POST.get(field) is None:
 			self.addError("%s does not exist !" % name, reportField, field)
 
-		elif (PY3 and request.POST[field] == "") or u(request.POST[field]) == "":
+		elif request.POST[field] == "":
 			if required:
 				self.addError("%s is required !" % name, reportField, field)
 
 		else:
-			if PY3:
-				return request.POST['field']
-			else:
-				return u(request.POST[field])
+			return request.POST[field]
 
 	def readInt(self, request, field, name, max_value=None, required=True, reportField=True):
 
@@ -217,7 +213,7 @@ class HasErrorMessages(object):
 
 	def readDuration(self, request, field, name, reportField=True):
 
-		t_string = self.readString(request, field, name, reportField)
+		t_string = self.readASCIIString(request, field, name, reportField)
 		res_match = match(("^"
 							+ "(\d{1,2}d){0,1}\s*"
 							+ "(\d{1,2}h){0,1}\s*"

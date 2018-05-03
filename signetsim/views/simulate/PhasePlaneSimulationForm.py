@@ -76,7 +76,7 @@ class PhasePlaneSimulationForm(HasErrorMessages):
 
 	def read_options(self, request):
 
-		self.simulationName = self.readString(request, "simulation_name",
+		self.simulationName = self.readASCIIString(request, "simulation_name",
 											  "The name of the simulation", required=False)
 		self.saveModelSnapshot = self.readOnOff(request, "simulation_model_snapshot",
 												"The snapshot setting of the simulation")

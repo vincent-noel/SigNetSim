@@ -67,13 +67,13 @@ class ModelCompartmentsForm(ModelParentForm):
 			required=False
 		)
 
-		self.name = self.readString(
+		self.name = self.readASCIIString(
 			request, 'compartment_name',
 			"The name of the compartment",
 			required=False
 		)
 
-		self.sbmlId = self.readString(
+		self.sbmlId = self.readASCIIString(
 			request, 'compartment_sbml_id',
 			"The identifier of the compartment"
 		)

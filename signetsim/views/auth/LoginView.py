@@ -45,8 +45,8 @@ class LoginForm(HasErrorMessages):
 
 	def read(self, request):
 
-		self.username = self.readString(request, 'username', 'the username')
-		self.password = self.readString(request, 'password', 'the password')
+		self.username = self.readASCIIString(request, 'username', 'the username')
+		self.password = self.readASCIIString(request, 'password', 'the password')
 
 
 class LoginView(TemplateView):

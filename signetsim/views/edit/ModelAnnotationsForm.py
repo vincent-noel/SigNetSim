@@ -47,7 +47,7 @@ class ModelAnnotationsForm(ModelParentForm):
 
 	def readName(self, request):
 
-		self.name = self.readString(request,
+		self.name = self.readASCIIString(request,
 							'model_name', "The name of the model")
 
 	def saveName(self):
@@ -55,7 +55,7 @@ class ModelAnnotationsForm(ModelParentForm):
 
 	def readNotes(self, request):
 
-		self.notes = self.readString(request,
+		self.notes = self.readASCIIString(request,
 							'model_notes', "The notes of the model")
 	def saveNotes(self):
 		self.parent.getModel().setNotes(self.notes)

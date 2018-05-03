@@ -69,9 +69,9 @@ class ModelEventsForm(ModelParentForm):
 		self.id = self.readInt(request, 'event_id',
 								"The indice of the event", required=False)
 
-		self.name = self.readString(request, 'event_name',
+		self.name = self.readASCIIString(request, 'event_name',
 									"The name of the event", required=False)
-		self.sbmlId = self.readString(request, 'event_sbmlid',
+		self.sbmlId = self.readASCIIString(request, 'event_sbmlid',
 									"The identifier of the event")
 
 		self.readTrigger(request)

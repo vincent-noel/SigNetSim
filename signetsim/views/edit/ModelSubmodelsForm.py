@@ -114,10 +114,10 @@ class ModelSubmodelsForm(ModelParentForm):
 								"The indice of the submodel",
 								required=False)
 
-		self.name = self.readString(request, 'submodel_name',
+		self.name = self.readASCIIString(request, 'submodel_name',
 								"The name of the submodel")
 
-		self.sbmlId = self.readString(request, 'submodel_sbml_id',
+		self.sbmlId = self.readASCIIString(request, 'submodel_sbml_id',
 								"The identifier of the submodel")
 
 		self.type = self.readInt(request, 'submodel_type',

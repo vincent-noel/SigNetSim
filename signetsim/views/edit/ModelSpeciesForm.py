@@ -76,10 +76,10 @@ class ModelSpeciesForm(ModelParentForm):
 								"The indice of the species",
 								required=False)
 
-		self.name = self.readString(request, 'species_name',
+		self.name = self.readASCIIString(request, 'species_name',
 								"The name of the species", required=False)
 
-		self.sbmlId = self.readString(request, 'species_sbml_id',
+		self.sbmlId = self.readASCIIString(request, 'species_sbml_id',
 								"The identifier of the species")
 
 		self.value = self.readFloat(request, 'species_value',

@@ -147,7 +147,7 @@ class DataOptimizationForm(HasErrorMessages):
 					"the status of the parameter #%d" % i_parameter
 				)
 
-				t_name = self.readString(
+				t_name = self.readASCIIString(
 					request, 'parameter_%d_name' % i_parameter,
 					"the name of the parameter #%d" % i_parameter
 				)

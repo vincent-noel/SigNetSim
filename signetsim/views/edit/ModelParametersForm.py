@@ -71,12 +71,12 @@ class ModelParametersForm(ModelParentForm):
 			required=False
 		)
 
-		self.name = self.readString(
+		self.name = self.readASCIIString(
 			request, 'parameter_name',
 			"The name of the parameter"
 		)
 
-		self.sbmlId = self.readString(
+		self.sbmlId = self.readASCIIString(
 			request, 'parameter_sbml_id',
 			"The identifier of the parameter"
 		)

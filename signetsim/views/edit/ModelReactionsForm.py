@@ -99,10 +99,10 @@ class ModelReactionsForm(ModelParentForm):
 		self.id = self.readInt(request, 'reaction_id',
 								"the id of the reaction", required=False)
 
-		self.name = self.readString(request, 'reaction_name',
+		self.name = self.readASCIIString(request, 'reaction_name',
 							"the name of the reaction", required=False)
 
-		self.sbmlId = self.readString(request, 'reaction_sbml_id',
+		self.sbmlId = self.readASCIIString(request, 'reaction_sbml_id',
 							"the identifier of the reaction")
 
 		self.readReactants(request)
@@ -117,7 +117,7 @@ class ModelReactionsForm(ModelParentForm):
 		if self.reactionType != KineticLaw.UNDEFINED:
 			self.readParameters(request)
 		else:
-			self.kineticLaw = self.readString(request, 'reaction_kinetic_law',
+			self.kineticLaw = self.readASCIIString(request, 'reaction_kinetic_law',
 								"the formula of the reaction's kinetic law")
 
 		self.reversible = self.readOnOff(request, 'reaction_reversible',
@@ -202,7 +202,7 @@ class ModelReactionsForm(ModelParentForm):
 		self.listOfLocalParameters = []
 
 		while self.existField(request, "local_parameter_%d_name" % parameter_id):
-			t_parameter_name = self.readString(
+			t_parameter_name = self.readASCIIString(
 				request,
 				'local_parameter_%d_name' % parameter_id,
 				"the name of the local parameter #%d" % parameter_id
