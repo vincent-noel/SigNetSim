@@ -112,7 +112,7 @@ def importProject(new_folder, filename):
 		new_combine_archive.readArchive(filename)
 
 		for sbml_file in new_combine_archive.getAllSbmls():
-			t_file = File(open(sbml_file, 'r'))
+			t_file = File(open(sbml_file, 'rb'))
 
 			sbml_model = SbmlModel(project=new_folder, sbml_file=t_file)
 			sbml_model.save()
@@ -132,7 +132,7 @@ def importProject(new_folder, filename):
 
 		for sedml_filename in new_combine_archive.getAllSedmls():
 
-			sedml_archive = SEDMLSimulation(project=new_folder, sedml_file=File(open(sedml_filename, 'r')))
+			sedml_archive = SEDMLSimulation(project=new_folder, sedml_file=File(open(sedml_filename, 'rb')))
 			sedml_archive.name = basename(sedml_filename).split('.')[0]
 			sedml_archive.save()
 
@@ -146,7 +146,7 @@ def importProject(new_folder, filename):
 
 				if len(SbmlModel.objects.filter(project=new_folder, sbml_file=join(join(str(new_folder.folder), "models"), basename(sbml_file)))) == 0:
 
-					t_file = File(open(sbml_file, 'r'))
+					t_file = File(open(sbml_file, 'rb'))
 					sbml_model = SbmlModel(project=new_folder, sbml_file=t_file)
 					sbml_model.save()
 					try:

@@ -202,7 +202,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 
 					modified_files = {}
 					for i_modified, modified in enumerate(modifieds):
-						file = File(open(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, modified.documentFilename))))
+						file = File(open(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, modified.documentFilename)), 'rb'))
 						new_sbml_model = SbmlModel(project=self.project, name=submodel_names[i_modified], sbml_file=file)
 						new_sbml_model.save()
 
@@ -223,7 +223,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 
 					print(renaming)
 
-					file = File(open(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, "model.sbml"))))
+					file = File(open(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, "model.sbml")), 'rb'))
 					new_sbml_model = SbmlModel(project=self.project, name=self.modelName, sbml_file=file)
 					new_sbml_model.save()
 

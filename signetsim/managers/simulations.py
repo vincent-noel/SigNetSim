@@ -49,7 +49,7 @@ def deleteSimulation(simulation):
 
 def copySimulation(simulation, new_project):
 
-	t_file = File(open(join(settings.MEDIA_ROOT, str(simulation.sedml_file))))
+	t_file = File(open(join(settings.MEDIA_ROOT, str(simulation.sedml_file)), 'rb'))
 	new_simulation = SEDMLSimulation(project=new_project, name=simulation.name, sedml_file=t_file)
 	new_simulation.save()
 

@@ -123,7 +123,7 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 		model_filename = os.path.join(settings.MEDIA_ROOT, new_model_filename())
 
 		open(model_filename,"a")
-		new_model = SbmlModel(project=self.project, name=model_name, sbml_file=File(open(model_filename,"r")))
+		new_model = SbmlModel(project=self.project, name=model_name, sbml_file=File(open(model_filename, "rb")))
 		os.remove(model_filename)
 		new_model.save()
 
@@ -135,7 +135,7 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 	def duplicateModel(self, request):
 
 		model = SbmlModel.objects.get(id=request.POST['id'])
-		t_file = File(open(os.path.join(settings.MEDIA_ROOT, str(model.sbml_file)) ))
+		t_file = File(open(os.path.join(settings.MEDIA_ROOT, str(model.sbml_file)), 'rb'))
 
 		new_sbml_model = SbmlModel(project=self.project,
 										name=("%s (copy)" % str(model.name)),
@@ -191,7 +191,7 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 		model_filename = os.path.join(settings.MEDIA_ROOT, new_model_filename())
 
 		open(model_filename, "a")
-		new_model = SbmlModel(project=self.project, sbml_file=File(open(model_filename,"r")))
+		new_model = SbmlModel(project=self.project, sbml_file=File(open(model_filename, "rb")))
 		os.remove(model_filename)
 		new_model.save()
 

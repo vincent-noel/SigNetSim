@@ -123,7 +123,7 @@ class User(AbstractUser):
 			sbml_model = open(sbml_model_filename, 'a')
 			sbml_model.close()
 
-			new_model = SbmlModel(project=new_project, name="My first model", sbml_file=File(open(sbml_model_filename, "r")))
+			new_model = SbmlModel(project=new_project, name="My first model", sbml_file=File(open(sbml_model_filename, "rb")))
 			new_model.save()
 			os.remove(sbml_model_filename)
 

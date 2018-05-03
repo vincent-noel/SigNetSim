@@ -40,7 +40,7 @@ def deleteModel(model):
 
 def copyModel(model, new_project):
 
-	t_file = File(open(join(settings.MEDIA_ROOT, str(model.sbml_file))))
+	t_file = File(open(join(settings.MEDIA_ROOT, str(model.sbml_file)), 'rb'))
 
 	new_model = SbmlModel(project=new_project, name=model.name,	sbml_file=t_file)
 	new_model.save()

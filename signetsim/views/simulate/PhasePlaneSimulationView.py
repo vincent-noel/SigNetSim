@@ -278,7 +278,7 @@ class PhasePlaneSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			new_simulation = SEDMLSimulation(
 				project=self.project,
 				name=("Simulation" if self.form.simulationName is None else self.form.simulationName),
-				sedml_file=File(open(simulation_filename, "r")),
+				sedml_file=File(open(simulation_filename, "rb")),
 				sbml_file=sbml_model
 			)
 			new_simulation.save()
