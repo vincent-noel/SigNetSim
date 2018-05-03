@@ -142,7 +142,7 @@ class TestOptimization(TestCase):
 		doc = SbmlDocument()
 		doc.readSbmlFromFile(join(settings.MEDIA_ROOT, sbml_filename))
 
-		self.assertEqual(mapping.keys(), ['FGF2', 'Total Ras-GTP'])
+		self.assertEqual(sorted(list(mapping.keys())), ['FGF2', 'Total Ras-GTP'])
 
 		self.assertEqual(doc.getModelInstance().listOfSpecies.index(doc.getByXPath(mapping['FGF2'], instance=True)), 4)
 		self.assertEqual(doc.getModelInstance().listOfSpecies.index(doc.getByXPath(mapping['Total Ras-GTP'], instance=True)), 13)

@@ -215,7 +215,7 @@ class TestOptimization(TestCase):
 		doc = SbmlDocument()
 		doc.readSbmlFromFile(join(settings.MEDIA_ROOT, sbml_filename))
 
-		self.assertEqual(mapping.keys(), ['Product', 'Substrate'])
+		self.assertEqual(sorted(list(mapping.keys())), ['Product', 'Substrate'])
 
 		self.assertEqual(doc.model.listOfSpecies.index(doc.getByXPath(mapping['Substrate'])), 0)
 		self.assertEqual(doc.model.listOfSpecies.index(doc.getByXPath(mapping['Product'])), 3)

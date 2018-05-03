@@ -153,12 +153,12 @@ class TestSimulation(TestCase):
 		)
 
 		self.assertEqual(
-			response_simulate_model.context['sim_results'][0][1].keys(),
-			[u'Total MEK activated', u'ERK-PP']
+			sorted(list(response_simulate_model.context['sim_results'][0][1].keys())),
+			[u'ERK-PP', u'Total MEK activated']
 		)
 		self.assertEqual(
-			response_simulate_model.context['sim_results'][1][1].keys(),
-			[u'Total MEK activated', u'ERK-PP']
+			sorted(list(response_simulate_model.context['sim_results'][1][1].keys())),
+			[u'ERK-PP', u'Total MEK activated']
 		)
 
 		self.assertEqual(

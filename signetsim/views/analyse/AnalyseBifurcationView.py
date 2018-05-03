@@ -90,10 +90,16 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		t_computation.delete()
 
 	def callback_success(self, code):
+		# print("Callback success !")
+		# print(ContinuationComputation.objects.all())
+		# print([cont.id for cont in ContinuationComputation.objects.all()])
+		# print(self.computation.id)
 		if ContinuationComputation.objects.filter(id=self.computation.id).exists():
 			self.computation.figure = dill.dumps(code).decode('Latin-1')
 			self.computation.status = ContinuationComputation.ENDED
 			self.computation.save()
+
+			print(self.computation.status)
 
 	def callback_error(self):
 		if ContinuationComputation.objects.filter(id=self.computation.id).exists():
@@ -131,6 +137,8 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			)
 
 			self.computation.save()
+			# print(ContinuationComputation.objects.all())
+			# print([cont.id for cont in ContinuationComputation.objects.all()])
 
 			if self.form.parameter is not None and self.form.variable is not None:
 

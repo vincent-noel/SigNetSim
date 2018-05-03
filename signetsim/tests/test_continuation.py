@@ -94,10 +94,10 @@ class TestContinuation(TestCase):
 		# we cannot really test, because the test database doesn't like threads.
 		# Maybe we could find a trick for that, but for now i will give up
 	
-		# print(json_response)
-		# response_get_curve = c.post('/json/get_equilibrium_curve/', {'id': 0})
-		#
-		# self.assertEqual(response_get_curve.status_code, 200)
-		# json_response = loads(response_get_curve.content.decode('utf-8'))
-		#
-		# print(json_response)
+		print(json_response)
+		response_get_curve = c.post('/json/get_equilibrium_curve/', {'id': 0})
+
+		self.assertEqual(response_get_curve.status_code, 200)
+		json_response = loads(response_get_curve.content.decode('utf-8'))
+
+		print(json_response)
