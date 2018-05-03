@@ -286,7 +286,7 @@ class TestSubmodel(TestCase):
 		})
 
 		self.assertEqual(response_get_submodel.status_code, 200)
-		json_response = loads(response_get_submodel.content)
+		json_response = loads(response_get_submodel.content.decode('utf-8'))
 
 		self.assertEqual(json_response['id'], [
 				submodel.getNameOrSbmlId()
@@ -311,7 +311,7 @@ class TestSubmodel(TestCase):
 		})
 
 		self.assertEqual(response_get_list_objects_from_submodel.status_code, 200)
-		json_response = loads(response_get_list_objects_from_submodel.content)
+		json_response = loads(response_get_list_objects_from_submodel.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'list'], [
 			u'cell (Compartment)',
@@ -441,7 +441,7 @@ class TestSubmodel(TestCase):
 		})
 
 		self.assertEqual(response_get_substitution.status_code, 200)
-		json_response = loads(response_get_substitution.content)
+		json_response = loads(response_get_substitution.content.decode('utf-8'))
 
 		self.assertEqual(json_response['id'], substitution_id)
 		self.assertEqual(json_response['object_name'], "ERK-PP")

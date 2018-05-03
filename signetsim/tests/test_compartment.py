@@ -74,7 +74,7 @@ class TestCompartment(TestCase):
 		})
 
 		self.assertEqual(response_get_compartment.status_code, 200)
-		json_response = loads(response_get_compartment.content)
+		json_response = loads(response_get_compartment.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'id'], sbml_model.listOfCompartments.values().index(compartment))
 		self.assertEqual(json_response[u'sbml_id'], compartment.getSbmlId())

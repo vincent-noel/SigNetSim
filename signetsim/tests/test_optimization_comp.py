@@ -135,7 +135,7 @@ class TestOptimization(TestCase):
 		})
 
 		self.assertEqual(response_add_dataset.status_code, 200)
-		mapping = loads(response_add_dataset.content)['model_xpaths']
+		mapping = loads(response_add_dataset.content.decode('utf-8'))['model_xpaths']
 
 		sbml_filename = str(SbmlModel.objects.filter(project=project)[3].sbml_file)
 

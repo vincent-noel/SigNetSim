@@ -80,7 +80,7 @@ class TestContinuation(TestCase):
 		response_get_status = c.post('/json/get_continuation_status/', {'continuation_id': 0})
 
 		self.assertEqual(response_get_status.status_code, 200)
-		json_response = loads(response_get_status.content)
+		json_response = loads(response_get_status.content.decode('utf-8'))
 
 		self.assertEqual(json_response['status'], 'BU')
 
@@ -89,7 +89,7 @@ class TestContinuation(TestCase):
 		response_get_status = c.post('/json/get_continuation_status/', {'continuation_id': 0})
 
 		self.assertEqual(response_get_status.status_code, 200)
-		json_response = loads(response_get_status.content)
+		json_response = loads(response_get_status.content.decode('utf-8'))
 
 		# we cannot really test, because the test database doesn't like threads.
 		# Maybe we could find a trick for that, but for now i will give up
@@ -98,6 +98,6 @@ class TestContinuation(TestCase):
 		# response_get_curve = c.post('/json/get_equilibrium_curve/', {'id': 0})
 		#
 		# self.assertEqual(response_get_curve.status_code, 200)
-		# json_response = loads(response_get_curve.content)
+		# json_response = loads(response_get_curve.content.decode('utf-8'))
 		#
 		# print(json_response)

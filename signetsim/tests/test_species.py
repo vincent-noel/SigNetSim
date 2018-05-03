@@ -74,7 +74,7 @@ class TestSpecies(TestCase):
 		})
 
 		self.assertEqual(response_get_species.status_code, 200)
-		json_response = loads(response_get_species.content)
+		json_response = loads(response_get_species.content.decode('utf-8'))
 		self.assertEqual(json_response[u'id'], sbml_model.listOfSpecies.values().index(species))
 		self.assertEqual(json_response[u'sbml_id'], species.getSbmlId())
 		self.assertEqual(json_response[u'name'], species.getName())

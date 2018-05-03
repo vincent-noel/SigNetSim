@@ -98,7 +98,7 @@ class TestProjects(TestCase):
 		})
 
 		self.assertEqual(response_get_project.status_code, 200)
-		json_response = loads(response_get_project.content)
+		json_response = loads(response_get_project.content.decode('utf-8'))
 
 		self.assertEqual(json_response['name'], u'Project 1')
 		self.assertEqual(json_response['public'], 0)
@@ -118,7 +118,7 @@ class TestProjects(TestCase):
 		})
 
 		self.assertEqual(response_get_project.status_code, 200)
-		json_response = loads(response_get_project.content)
+		json_response = loads(response_get_project.content.decode('utf-8'))
 
 		self.assertEqual(json_response['name'], u'Public project')
 		self.assertEqual(json_response['public'], 1)
@@ -136,7 +136,7 @@ class TestProjects(TestCase):
 		})
 
 		self.assertEqual(response_get_project.status_code, 200)
-		json_response = loads(response_get_project.content)
+		json_response = loads(response_get_project.content.decode('utf-8'))
 
 		self.assertEqual(json_response['name'], u'Private project')
 		self.assertEqual(json_response['public'], 0)

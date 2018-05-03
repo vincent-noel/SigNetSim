@@ -117,7 +117,7 @@ class TestData(TestCase):
 		})
 
 		self.assertEqual(response_json_get_experiment.status_code, 200)
-		json_response = loads(response_json_get_experiment.content)
+		json_response = loads(response_json_get_experiment.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'name'], u'Ras, Mapk quantifications')
 		self.assertEqual(json_response[u'notes'], u'')
@@ -127,7 +127,7 @@ class TestData(TestCase):
 		)
 
 		self.assertEqual(response_download_experiment.status_code, 200)
-		lines = response_download_experiment.content.split("\n")
+		lines = response_download_experiment.content.decode('utf-8').split("\n")
 		self.assertEqual(lines[0], "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
 		self.assertEqual(lines[1], "<numl xmlns=\"http://www.numl.org/numl/level1/version1\" level=\"1\" version=\"1\">")
 
@@ -198,7 +198,7 @@ class TestData(TestCase):
 		})
 
 		self.assertEqual(response_json_get_condition.status_code, 200)
-		json_response = loads(response_json_get_condition.content)
+		json_response = loads(response_json_get_condition.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'name'], u'Test condition, but different')
 		self.assertEqual(json_response[u'notes'], u'Some modified notes')
@@ -264,7 +264,7 @@ class TestData(TestCase):
 		})
 
 		self.assertEqual(response_get_treatment.status_code, 200)
-		json_response = loads(response_get_treatment.content)
+		json_response = loads(response_get_treatment.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'species'], u'FGF2')
 		self.assertEqual(json_response[u'time'], 0)
@@ -287,7 +287,7 @@ class TestData(TestCase):
 		})
 
 		self.assertEqual(response_get_treatment.status_code, 200)
-		json_response = loads(response_get_treatment.content)
+		json_response = loads(response_get_treatment.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'species'], u'Ras-GTP')
 		self.assertEqual(json_response[u'time'], 20)
@@ -317,7 +317,7 @@ class TestData(TestCase):
 		})
 
 		self.assertEqual(response_get_observation.status_code, 200)
-		json_response = loads(response_get_observation.content)
+		json_response = loads(response_get_observation.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'species'], u'Ras-GTP')
 		self.assertEqual(json_response[u'time'], 300)
@@ -348,7 +348,7 @@ class TestData(TestCase):
 		})
 
 		self.assertEqual(response_get_observation.status_code, 200)
-		json_response = loads(response_get_observation.content)
+		json_response = loads(response_get_observation.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'species'], u'Ras-GDP')
 		self.assertEqual(json_response[u'time'], 3600)

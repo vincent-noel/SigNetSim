@@ -75,7 +75,7 @@ class TestParameter(TestCase):
 		})
 
 		self.assertEqual(response_get_parameter.status_code, 200)
-		json_response = loads(response_get_parameter.content)
+		json_response = loads(response_get_parameter.content.decode('utf-8'))
 		self.assertEqual(json_response[u'id'], sbml_model.listOfParameters.values().index(parameter))
 		self.assertEqual(json_response[u'sbml_id'], parameter.getSbmlId())
 		self.assertEqual(json_response[u'name'], parameter.getName())
@@ -198,7 +198,7 @@ class TestParameter(TestCase):
 		})
 
 		self.assertEqual(response_get_reaction.status_code, 200)
-		json_response = loads(response_get_reaction.content)
+		json_response = loads(response_get_reaction.content.decode('utf-8'))
 		self.assertEqual(json_response[u'kinetic_law'], '-1 * sos_ras_gdp * sos_ras_gdp_decomp + ras_gdp * sos * sos_ras_gdp_comp')
 
 		response_get_parameter = c.post('/json/get_parameter/', {
@@ -207,7 +207,7 @@ class TestParameter(TestCase):
 		})
 
 		self.assertEqual(response_get_parameter.status_code, 200)
-		json_response = loads(response_get_parameter.content)
+		json_response = loads(response_get_parameter.content.decode('utf-8'))
 		self.assertEqual(json_response[u'id'], sbml_model.listOfParameters.values().index(parameter))
 		self.assertEqual(json_response[u'reaction_id'], "")
 
@@ -232,7 +232,7 @@ class TestParameter(TestCase):
 		})
 
 		self.assertEqual(response_get_reaction.status_code, 200)
-		json_response = loads(response_get_reaction.content)
+		json_response = loads(response_get_reaction.content.decode('utf-8'))
 		self.assertEqual(
 			json_response[u'kinetic_law'],
 			'-1 * sos_ras_gdp * sos_ras_gdp_decomp + sos_ras_gdp_comp * ras_gdp * sos'
@@ -255,7 +255,7 @@ class TestParameter(TestCase):
 		})
 
 		self.assertEqual(response_get_parameter.status_code, 200)
-		json_response = loads(response_get_parameter.content)
+		json_response = loads(response_get_parameter.content.decode('utf-8'))
 
 		response_list_parameters = c.get('/edit/parameters/')
 		self.assertEqual(response_list_parameters.status_code, 200)
@@ -284,7 +284,7 @@ class TestParameter(TestCase):
 		})
 
 		self.assertEqual(response_get_reaction.status_code, 200)
-		json_response = loads(response_get_reaction.content)
+		json_response = loads(response_get_reaction.content.decode('utf-8'))
 		# print json_response
 		self.assertEqual(
 			json_response[u'kinetic_law'],

@@ -66,84 +66,84 @@ class TestValidators(TestCase):
 		})
 
 		self.assertEqual(response_validate_float.status_code, 200)
-		self.assertEqual(loads(response_validate_float.content)['error'], "")
+		self.assertEqual(loads(response_validate_float.content.decode('utf-8'))['error'], "")
 
 		response_validate_float = c.post('/json/float_validator/', {
 			'value': 'poil',
 		})
 
 		self.assertEqual(response_validate_float.status_code, 200)
-		self.assertEqual(loads(response_validate_float.content)['error'], "isn't a float !")
+		self.assertEqual(loads(response_validate_float.content.decode('utf-8'))['error'], "isn't a float !")
 
 		response_validate_float = c.post('/json/float_validator/', {
 			'value': '',
 		})
 
 		self.assertEqual(response_validate_float.status_code, 200)
-		self.assertEqual(loads(response_validate_float.content)['error'], "is empty !")
+		self.assertEqual(loads(response_validate_float.content.decode('utf-8'))['error'], "is empty !")
 
 		response_validate_math = c.post('/json/math_validator/', {
 			'math': 'sos+ras_gtp',
 		})
 
 		self.assertEqual(response_validate_math.status_code, 200)
-		self.assertEqual(loads(response_validate_math.content)['valid'], "true")
+		self.assertEqual(loads(response_validate_math.content.decode('utf-8'))['valid'], "true")
 
 		response_validate_math = c.post('/json/math_validator/', {
 			'math': 'poil*sos',
 		})
 
 		self.assertEqual(response_validate_math.status_code, 200)
-		self.assertEqual(loads(response_validate_math.content)['valid'], "false")
+		self.assertEqual(loads(response_validate_math.content.decode('utf-8'))['valid'], "false")
 
 		response_validate_math = c.post('/json/math_validator/', {
 			'math': 'poil sos',
 		})
 
 		self.assertEqual(response_validate_math.status_code, 200)
-		self.assertEqual(loads(response_validate_math.content)['valid'], "false")
+		self.assertEqual(loads(response_validate_math.content.decode('utf-8'))['valid'], "false")
 
 		response_validate_sbml_id = c.post('/json/sbml_id_validator/', {
 			'sbml_id': 'sos',
 		})
 
 		self.assertEqual(response_validate_sbml_id.status_code, 200)
-		self.assertEqual(loads(response_validate_sbml_id.content)['error'], "sbml id already exists")
+		self.assertEqual(loads(response_validate_sbml_id.content.decode('utf-8'))['error'], "sbml id already exists")
 
 		response_validate_sbml_id = c.post('/json/sbml_id_validator/', {
 			'sbml_id': '',
 		})
 
 		self.assertEqual(response_validate_sbml_id.status_code, 200)
-		self.assertEqual(loads(response_validate_sbml_id.content)['error'], "sbml id is not valid")
+		self.assertEqual(loads(response_validate_sbml_id.content.decode('utf-8'))['error'], "sbml id is not valid")
 
 		response_validate_sbml_id = c.post('/json/sbml_id_validator/', {
 			'sbml_id': 'fw+*f',
 		})
 
 		self.assertEqual(response_validate_sbml_id.status_code, 200)
-		self.assertEqual(loads(response_validate_sbml_id.content)['error'], "sbml id is not valid")
+		self.assertEqual(loads(response_validate_sbml_id.content.decode('utf-8'))['error'], "sbml id is not valid")
 
 		response_validate_unit_id = c.post('/json/unit_id_validator/', {
 			'unit_id': 'fw+*f',
 		})
 
 		self.assertEqual(response_validate_unit_id.status_code, 200)
-		self.assertEqual(loads(response_validate_unit_id.content)['valid'], "false")
+		self.assertEqual(loads(response_validate_unit_id.content.decode('utf-8'))['valid'], "false")
 
 		response_validate_unit_id = c.post('/json/unit_id_validator/', {
 			'unit_id': 'L',
 		})
 
 		self.assertEqual(response_validate_unit_id.status_code, 200)
-		self.assertEqual(loads(response_validate_unit_id.content)['valid'], "false")
+		self.assertEqual(loads(response_validate_unit_id.content.decode('utf-8'))['valid'], "false")
 
 		response_validate_unit_id = c.post('/json/unit_id_validator/', {
 			'unit_id': 'LL',
 		})
 
 		self.assertEqual(response_validate_unit_id.status_code, 200)
-		self.assertEqual(loads(response_validate_unit_id.content)['valid'], "true")
+		self.assertEqual(loads(response_validate_unit_id.content.decode('utf-8'))['valid'], "true")
 # model = SbmlModel.objects.filter(project=project)[0]
 		# sbml_doc = SbmlDocument()
 		# sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))

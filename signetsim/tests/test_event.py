@@ -122,7 +122,7 @@ class TestEvent(TestCase):
 		})
 
 		self.assertEqual(response_get_event.status_code, 200)
-		json_response = loads(response_get_event.content)
+		json_response = loads(response_get_event.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'event_ind'], 0)
 		self.assertEqual(json_response[u'event_name'], "Test event")

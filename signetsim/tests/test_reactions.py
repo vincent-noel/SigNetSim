@@ -92,7 +92,7 @@ class TestReactions(TestCase):
 		})
 
 		self.assertEqual(response_get_reaction.status_code, 200)
-		json_response = loads(response_get_reaction.content)
+		json_response = loads(response_get_reaction.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'id'], sbml_model.listOfReactions.values().index(reaction))
 		self.assertEqual(json_response[u'sbml_id'], reaction.getSbmlId())
