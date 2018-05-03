@@ -39,7 +39,7 @@ class TestProjects(TestCase):
 	def testCreateProject(self):
 
 		user = User.objects.filter(username='test_user')
-		self.assertEqual(len(Project.objects.filter(user=user)), 0)
+		self.assertTrue(not Project.objects.filter(user=user).exists())
 
 		c = Client()
 		self.assertTrue(c.login(username='test_user', password='password'))
