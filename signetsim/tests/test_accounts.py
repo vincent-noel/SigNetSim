@@ -56,7 +56,7 @@ class TestAccounts(TestCase):
 		self.assertEqual(new_user.email, 'test_user@mail.com')
 		self.assertEqual(new_user.organization, 'lab')
 		self.assertEqual(new_user.is_active, False)
-		self.assertRedirects(response_signup, 'accounts/register_success/', status_code=302, target_status_code=200)
+		self.assertRedirects(response_signup, '/accounts/register_success/', status_code=302, target_status_code=200)
 
 		response_login = c.post('/accounts/login/', {
 			'action': 'login',
