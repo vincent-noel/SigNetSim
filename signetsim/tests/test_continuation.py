@@ -37,7 +37,7 @@ class TestContinuation(TestCase):
 
 	fixtures = ["user_with_project.json"]
 
-	def testTimeseries(self):
+	def testBistable(self):
 
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
@@ -56,7 +56,7 @@ class TestContinuation(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)

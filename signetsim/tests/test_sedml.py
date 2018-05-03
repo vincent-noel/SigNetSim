@@ -62,7 +62,7 @@ class TestSedml(TestCase):
 
 		response_import_sedml = c.post('/simulate/stored/', {
 			'action': 'load_simulation',
-			'docfile': open(sedml_filename, 'r')
+			'docfile': open(sedml_filename, 'rb')
 		})
 
 		self.assertEqual(response_import_sedml.status_code, 200)

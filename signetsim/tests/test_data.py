@@ -63,7 +63,7 @@ class TestData(TestCase):
 
 		response_import_data = c.post('/data/', {
 			'action': 'import',
-			'docfile': open(experiment_filename, 'r')
+			'docfile': open(experiment_filename, 'rb')
 		})
 
 		self.assertEqual(response_import_data.status_code, 200)

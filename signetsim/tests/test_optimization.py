@@ -65,7 +65,7 @@ class TestOptimization(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)

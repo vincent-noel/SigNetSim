@@ -66,7 +66,7 @@ class TestOptimization(TestCase):
 		model_filename = join(comp_files_folder, "modelcEvRcX.xml")
 		response_load_submodel_1 = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_submodel_1.status_code, 200)
@@ -75,7 +75,7 @@ class TestOptimization(TestCase):
 		model_filename = join(comp_files_folder, "modelEHfev9.xml")
 		response_load_submodel_2 = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_submodel_2.status_code, 200)
@@ -84,7 +84,7 @@ class TestOptimization(TestCase):
 		model_filename = join(comp_files_folder, "modelI1vrys.xml")
 		response_load_submodel_3 = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_submodel_3.status_code, 200)
@@ -94,7 +94,7 @@ class TestOptimization(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)
@@ -109,7 +109,7 @@ class TestOptimization(TestCase):
 
 		response_import_data = c.post('/data/', {
 			'action': 'import',
-			'docfile': open(experiment_filename, 'r')
+			'docfile': open(experiment_filename, 'rb')
 		})
 
 		self.assertEqual(response_import_data.status_code, 200)
