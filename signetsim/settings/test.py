@@ -107,14 +107,22 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': 'test_db',
+		'NAME': ':memory:',
+
 		'TEST': {
 			'ENGINE': 'django.db.backend.sqlite3',
-			'NAME': 'test_db'
+			'NAME': ':memory:',
 		},
-
-	}
+	},
 }
+
+# Funny thing... the options should be inside the 'default' dict. But then it doesn't work. And here it does
+if int(__version__.split('.')[0]) >= 2:
+	DATABASES.update({
+		'OPTIONS': {
+			'timeout': 20
+		},
+	})
 #
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
