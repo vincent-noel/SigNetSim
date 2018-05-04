@@ -25,8 +25,7 @@ virtualenv ${INSTALL_DIR}/venv
 
 # Python Dependencies
 ${INSTALL_DIR}/venv/bin/pip install -i https://pypi.python.org/simple pip --upgrade
-${INSTALL_DIR}/venv/bin/easy_install -U distribute
-${INSTALL_DIR}/venv/bin/pip install setuptools --upgrade
+${INSTALL_DIR}/venv/bin/pip install distribute setuptools --upgrade
 
 ${INSTALL_DIR}/venv/bin/pip install -r ${DIR}/pip_requirements-python3
 
