@@ -66,7 +66,6 @@ class TestContinuation(TestCase):
 		response_compute_curve = c.post('/analyse/bifurcations/', {
 			'action': 'compute_curve',
 			'parameter': 3,
-			'variable': 1,
 			'from_value': 0,
 			'to_value': 5000,
 			'max_steps': 500,

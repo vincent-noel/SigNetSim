@@ -36,21 +36,21 @@ class AnalyseBifurcationsForm(HasErrorMessages):
 		self.parameter = None
 		self.fromValue = None
 		self.toValue = None
-		self.variable = None
 		self.ds = None
 		self.MaxSteps = None
 
 	def read(self, request):
 
-		self.parameter = self.readInt(request, 'parameter', "the identifier of the parameter", required=True,
-									  max_value=len(self.parent.listOfConstants))
+		self.parameter = self.readInt(
+			request,
+			'parameter',
+			"the identifier of the parameter",
+			required=True,
+			max_value=len(self.parent.listOfConstants)
+		)
 
 		self.fromValue = self.readFloat(request, 'from_value', "the minimal value to look for equilibrium")
 		self.toValue = self.readFloat(request, 'to_value', "the minimal value to look for equilibrium")
-
-		self.variable = self.readInt(request, 'variable', "the identifier of the variable", required=True,
-									 max_value=len(self.parent.listOfVariables))
-
 
 		self.ds = self.readFloat(request, 'ds', "the minimal step for parameter modification")
 		self.maxSteps = self.readInt(request, 'max_steps', "the maximum number of steps for the algorithm")

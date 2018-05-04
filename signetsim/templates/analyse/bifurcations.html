@@ -43,7 +43,7 @@
 	<tbody>
 	  {% for computation in list_of_computations %}
 	  <tr class="row">
-		<td class="col-lg-6 col-md-7 col-xs-7">Variable : {{computation.variable}}, Parameter : {{computation.parameter}}</td>
+		<td class="col-lg-6 col-md-7 col-xs-7">Parameter : {{computation.parameter}}</td>
 		<td class="col-lg-4 col-md-3 col-xs-2 text-center">
 
 		</td>
@@ -123,13 +123,7 @@
 							placeholder="Input the final value of the parameter"
 							default="100"
 						%}
-						{% include 'commons/html/dropdown.html' with
-							list=list_of_variables
-							name="Variable"
-							id="variable"
-							default_label="Choose a variable"
-							default=""
-						%}
+
 					</div>
 					<div id="settings" class="tab-pane fade">
 						<table class="table table-striped">
@@ -171,7 +165,7 @@
 	<div class="modal-content">
 	  <div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<h4 class="modal-title" id="modal_modification_title">Variable : , Parameter : </h4>
+		<h4 class="modal-title" id="modal_modification_title">Parameter : </h4>
 	  </div>
 	  <div class="modal-body" id="modal_result_body">
 		<div class="container">

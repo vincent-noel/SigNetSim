@@ -33,9 +33,6 @@ class EquilibriumCurveForm extends FormGroup{
         this.to_value = new FloatForm("to_value", "The final value of the parameter", true, 100);
         this.addForm(this.to_value, true);
 
-        this.variable = new Dropdown("variable", "The variable to plot", null, "", "Choose a variable", true);
-        this.addForm(this.variable, true);
-
     }
 
     show(){
@@ -128,7 +125,7 @@ function view_curve(curve_id)
 			config_graph['data']['datasets'] = [];
 
 			x = data['curve_x'];
-			console.log(Object.keys(data['curve_ys']));
+			$("#modal_modification_title").html(data['parameter']);
 			$.each(Object.keys(data['curve_ys']), (i_variable, variable) => {
 
 				// Equilibrium curves
@@ -209,7 +206,6 @@ function view_curve(curve_id)
 
 				// Units
 				config_graph['options']['scales']['xAxes'][0]['scaleLabel']['labelString'] = data['parameter_unit'];
-				config_graph['options']['scales']['yAxes'][0]['scaleLabel']['labelString'] = data['variable_unit'];
 
 			});
 

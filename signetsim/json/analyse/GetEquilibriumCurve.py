@@ -43,20 +43,15 @@ class GetEquilibriumCurve(JsonRequest, HasWorkingModel):
 		continuation_id = int(request.POST['id'])
 		continuation = self.listOfComputations[continuation_id]
 
-		if continuation.figure is not None and continuation.figure != '':
-			variable = self.getModel().listOfVariables.getBySymbolStr(str(continuation.variable))
+		if continuation.result is not None and continuation.result != '':
 			parameter = self.getModel().listOfVariables.getBySymbolStr(str(continuation.parameter))
-			if variable.getUnits() is not None:
-				variable_unit = str(variable.getUnits())
-			else:
-				variable_unit = ""
 
 			if parameter.getUnits() is not None:
 				parameter_unit = str(parameter.getUnits())
 			else:
 				parameter_unit = ""
 
-			t_object = loads(continuation.figure.encode('Latin-1'))
+			t_object = loads(continuation.result.encode('Latin-1'))
 			x, ys, stab = t_object.getStabilitySlicedCurves()
 			points = t_object.getPoints()
 
@@ -65,14 +60,11 @@ class GetEquilibriumCurve(JsonRequest, HasWorkingModel):
 				'curve_ys': ys,
 				'stability': stab,
 				'points': points,
-				'variable': str(continuation.variable),
-				'variable_unit': variable_unit,
-				'parameter': str(continuation.parameter),
+				'parameter': parameter.getNameOrSbmlId(),
 				'parameter_unit': parameter_unit
 			})
 
 			if t_object.hasHopfBifurcations():
-				t_object.findLimitCycleCurves()
 				x, ys = t_object.getLimitCycleCurves()
 				self.data.update({
 					'curve_lc_x': x,

@@ -45,7 +45,6 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		HasErrorMessages.__init__(self)
 
 		self.listOfConstants = None
-		self.listOfVariables = None
 		self.listComputations = None
 		self.computation = None
 
@@ -56,7 +55,6 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		kwargs = HasWorkingModel.get_context_data(self, **kwargs)
 		kwargs = HasErrorMessages.get_context_data(self, **kwargs)
 		kwargs['list_of_constants'] = [const.getNameOrSbmlId() for const in self.listOfConstants]
-		kwargs['list_of_variables'] = [var.getNameOrSbmlId() for var in self.listOfVariables]
 		kwargs['list_of_computations'] = self.listOfComputations
 		kwargs['colors'] = Settings.default_colors
 
@@ -90,20 +88,15 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		t_computation.delete()
 
 	def callback_success(self, code):
-		# print("Callback success !")
-		# print(ContinuationComputation.objects.all())
-		# print([cont.id for cont in ContinuationComputation.objects.all()])
-		# print(self.computation.id)
+
 		if ContinuationComputation.objects.filter(id=self.computation.id).exists():
-			self.computation.figure = dill.dumps(code).decode('Latin-1')
+			self.computation.result = dill.dumps(code).decode('Latin-1')
 			self.computation.status = ContinuationComputation.ENDED
 			self.computation.save()
 
-			print(self.computation.status)
-
 	def callback_error(self):
 		if ContinuationComputation.objects.filter(id=self.computation.id).exists():
-			self.computation.figure = ""
+			self.computation.result = ""
 			self.computation.status = ContinuationComputation.ERROR
 			self.computation.save()
 
@@ -116,7 +109,6 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 	def loadConstants(self):
 		self.getModelInstance().listOfVariables.classifyVariables()
 		self.listOfConstants = [variable for variable in self.getModel().listOfVariables.values() if variable.isConstant()]
-		self.listOfVariables = [variable for variable in self.getModel().listOfVariables.values() if variable.isDerivative()]
 
 	def loadComputations(self):
 		t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
@@ -133,18 +125,14 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 				project=self.project,
 				model=t_model,
 				parameter=self.listOfConstants[self.form.parameter].getSymbolStr(),
-				variable=self.listOfVariables[self.form.variable].getSymbolStr(),
 			)
 
 			self.computation.save()
-			# print(ContinuationComputation.objects.all())
-			# print([cont.id for cont in ContinuationComputation.objects.all()])
 
-			if self.form.parameter is not None and self.form.variable is not None:
+			if self.form.parameter is not None:
 
 				t_ep_curve = EquilibriumPointCurve(self.getModel())
 				t_ep_curve.setParameter(self.listOfConstants[self.form.parameter])
-				t_ep_curve.setVariable(self.listOfVariables[self.form.variable])
 				t_ep_curve.setRange(self.form.fromValue, self.form.toValue)
 				t_ep_curve.setDs(self.form.ds)
 				t_ep_curve.setMaxSteps(self.form.maxSteps)

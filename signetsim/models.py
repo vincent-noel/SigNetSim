@@ -174,11 +174,10 @@ class ContinuationComputation(models.Model):
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	model = models.ForeignKey(SbmlModel, on_delete=models.CASCADE)
 
-	variable = models.CharField(max_length=255, default="")
 	parameter = models.CharField(max_length=255, default="")
 
-	figure = models.CharField(max_length=10240, default="")
-
+	result = models.CharField(max_length=10240, default="")
+	error = models.CharField(max_length=255, default="")
 	BUSY = 'BU'
 	ENDED = 'EN'
 	ERROR = 'ER'
