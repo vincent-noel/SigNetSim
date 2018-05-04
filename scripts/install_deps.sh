@@ -21,28 +21,16 @@ INSTALL_DIR=`dirname $DIR`
 # System Dependencies
 apt-get install -y $( cat ${DIR}/apt_requirements )
 
+virtualenv ${DIR}/venv
 
 # Python Dependencies
-pip install pip --upgrade
+${DIR}/venv/bin/pip install pip --upgrade
 
-PIP_VERSION=`pip --version`
-LOCAL_PIP_VERSION=`/usr/local/bin/pip --version`
+${DIR}/venv/bin/easy_install -U distribute
 
-if [ -z "$PIP_VERSION" ] && [ ! -z "$LOCAL_PIP_VERSION" ];
-then
-    if [ -f /usr/bin/pip ];
-    then
-        rm /usr/bin/pip
-    fi
+${DIR}/venv/bin/pip install -I setuptools --upgrade
 
-    ln -s /usr/local/bin/pip /usr/bin/pip
-fi
-
-easy_install -U distribute
-
-pip install -I setuptools --upgrade
-
-pip install -r ${DIR}/pip_requirements
+${DIR}/venv/bin/pip install -r ${DIR}/pip_requirements
 
 # JS Dependencies
 curl -sL https://deb.nodesource.com/setup_6.x | bash -

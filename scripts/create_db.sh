@@ -16,9 +16,9 @@ INSTALL_DIR=`dirname $DIR`
 
 cd ${INSTALL_DIR}
 
-python manage.py makemigrations --noinput
-python manage.py migrate --noinput
-python manage.py collectstatic --noinput > /dev/null
+${INSTALL_DIR}/venv/bin/python manage.py makemigrations --noinput
+${INSTALL_DIR}/venv/bin/python manage.py migrate --noinput
+${INSTALL_DIR}/venv/bin/python manage.py collectstatic --noinput > /dev/null
 
 chgrp -R www-data ${INSTALL_DIR}/signetsim/settings/wsgi.py
 chmod -R 664 ${INSTALL_DIR}/signetsim/settings/wsgi.py
