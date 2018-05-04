@@ -21,7 +21,7 @@ INSTALL_DIR=`dirname $DIR`
 # System Dependencies
 apt-get install -y $( cat ${DIR}/apt_requirements-python3 )
 
-virtualenv ${INSTALL_DIR}/venv
+virtualenv -p python3 ${INSTALL_DIR}/venv
 
 # Python Dependencies
 ${INSTALL_DIR}/venv/bin/pip install -i https://pypi.python.org/simple pip --upgrade
