@@ -150,11 +150,11 @@ from string import ascii_uppercase, ascii_lowercase, digits
 
 SECRET_KEY = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
 
-settings_filename = os.path.join(BASE_DIR, "settings", "settings.json")
+settings_filename = os.path.join(BASE_DIR, "data", "settings", "settings.json")
 
 AUTH_USER_MODEL = 'signetsim.User'
 
-if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
+if os.path.isfile(os.path.join(BASE_DIR, "data", "db", "db.sqlite3")):
 
 	if not os.path.isfile(settings_filename):
 

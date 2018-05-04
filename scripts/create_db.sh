@@ -17,7 +17,6 @@ INSTALL_DIR=`dirname $DIR`
 cd ${INSTALL_DIR}
 
 mkdir -p ${INSTALL_DIR}/static
-mkdir -p ${INSTALL_DIR}/settings
 mkdir -p ${INSTALL_DIR}/tmp
 
 if [ ! -d ${INSTALL_DIR}/data/db ]
@@ -25,6 +24,7 @@ then
 
     mkdir -p ${INSTALL_DIR}/data/db
     mkdir -p ${INSTALL_DIR}/data/media
+    mkdir -p ${INSTALL_DIR}/data/settings
 
 fi
 
@@ -35,10 +35,6 @@ python manage.py collectstatic --noinput > /dev/null
 chgrp -R www-data ${INSTALL_DIR}/data
 chmod -R 664 ${INSTALL_DIR}/data
 find ${INSTALL_DIR}/data -type d  -exec chmod 775 {} \;
-
-chgrp -R www-data ${INSTALL_DIR}/settings
-chmod -R 664 ${INSTALL_DIR}/settings
-find ${INSTALL_DIR}/settings -type d  -exec chmod 775 {} \;
 
 chgrp -R www-data ${INSTALL_DIR}/tmp
 chmod -R 664 ${INSTALL_DIR}/tmp

@@ -98,7 +98,7 @@ class InstallView(TemplateView):
 
 				}
 
-			with open(join(django_settings.BASE_DIR, "settings", "settings.json"), "w") as settings_file:
+			with open(join(django_settings.BASE_DIR, "data", "settings", "settings.json"), "w") as settings_file:
 				settings_file.write(dumps(json_settings))
 
 			thread = ReloadConf()
