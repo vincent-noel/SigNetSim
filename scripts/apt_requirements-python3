@@ -6,6 +6,7 @@ liblapack-dev
 libblas-dev
 libatlas-dev
 libatlas-base-dev
+python3-dev
 python3-pip
 wget
 curl

@@ -6,6 +6,7 @@ liblapack-dev
 libblas-dev
 libatlas-dev
 libatlas-base-dev
+python-dev
 python-virtualenv
 wget
 curl
