@@ -21,16 +21,16 @@ INSTALL_DIR=`dirname $DIR`
 # System Dependencies
 apt-get install -y $( cat ${DIR}/apt_requirements )
 
-virtualenv ${DIR}/venv
+virtualenv ${INSTALL_DIR}/venv
 
 # Python Dependencies
-${DIR}/venv/bin/pip install pip --upgrade
+${INSTALL_DIR}/venv/bin/pip install pip --upgrade
 
-${DIR}/venv/bin/easy_install -U distribute
+${INSTALL_DIR}/venv/bin/easy_install -U distribute
 
-${DIR}/venv/bin/pip install -I setuptools --upgrade
+${INSTALL_DIR}/venv/bin/pip install -I setuptools --upgrade
 
-${DIR}/venv/bin/pip install -r ${DIR}/pip_requirements
+${INSTALL_DIR}/venv/bin/pip install -r ${DIR}/pip_requirements
 
 # JS Dependencies
 curl -sL https://deb.nodesource.com/setup_6.x | bash -
