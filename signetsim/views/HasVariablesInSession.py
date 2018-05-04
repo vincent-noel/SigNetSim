@@ -24,6 +24,7 @@
 
 """
 
+from signetsim.models import SbmlModel
 import cloudpickle
 
 
@@ -56,6 +57,7 @@ class HasVariablesInSession(object):
 		return (
 			self.__request.session.get('loaded_model_doc') is not None
 			and self.__request.session.get('loaded_model_id') is not None
+			and self.__request.session.get('loaded_model_filename') is not None
 		)
 
 	def getModelFromSession(self):
@@ -65,16 +67,21 @@ class HasVariablesInSession(object):
 	def getModelIdFromSession(self):
 		return self.__request.session.get('loaded_model_id')
 
+	def getModelFilenameFromSession(self):
+		return self.__request.session.get('loaded_model_id')
+
 	def saveModelInSession(self, model, model_id):
 		# print("> Pickling")
 		self.model.cleanBeforePickle()
 		self.__request.session['loaded_model_doc'] = cloudpickle.dumps(model.parentDoc)
 		self.__request.session['loaded_model_id'] = model_id
+		self.__request.session['loaded_model_filename'] = SbmlModel.objects.get(id=model_id).sbml_file
 
 	def deleteModelFromSession(self):
 		if self.hasModelInSession():
 			del self.__request.session['loaded_model_doc']
 			del self.__request.session['loaded_model_id']
+			del self.__request.session['loaded_model_filename']
 			if self.hasSubmodelInSession():
 				self.deleteSubmodelFromSession()
 

@@ -266,29 +266,20 @@ class HasWorkingModel(HasWorkingProject, HasVariablesInSession):
 			self.saveModelInSession(self.model, self.model_id)
 			self.saveSubmodelInSession(self.model_submodel)
 
-			if self.model_filename is None:
-				if SbmlModel.objects.filter(id=self.model_id).exists():
-					t_model = SbmlModel.objects.get(id=self.model_id)
-					self.model_filename = t_model.sbml_file
-
-			request.session['loaded_model_filename'] = self.model_filename
-
 	def __loadPickledModel(self, request):
 
 		self.model = self.getModelFromSession()
+		self.model_filename = self.getModelFilenameFromSession()
+
 		if self.hasSubmodelInSession():
 			self.model_submodel = self.getSubmodelIdFromSession()
 
 		self.model_name = self.model.getName()
-		self.model_filename = str(request.session['loaded_model_filename'])
 
 	def __clearPickledModel(self, request):
 
 		self.deleteModelFromSession()
 		self.deleteSubmodelFromSession()
-
-		if 'loaded_model_filename' in request.session.keys():
-			del request.session['loaded_model_filename']
 
 	def getModelSubmodels(self, request, model_id):
 		""" Returning the submodels of a model available within the project
