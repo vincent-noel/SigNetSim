@@ -21,27 +21,14 @@ INSTALL_DIR=`dirname $DIR`
 # System Dependencies
 apt-get install -y $( cat ${DIR}/apt_requirements-python3 )
 
+virtualenv ${INSTALL_DIR}/venv
 
 # Python Dependencies
-pip3 install pip --upgrade
+${INSTALL_DIR}/venv/bin/pip install -i https://pypi.python.org/simple pip --upgrade
+${INSTALL_DIR}/venv/bin/easy_install -U distribute
+${INSTALL_DIR}/venv/bin/pip install setuptools --upgrade
 
-PIP_VERSION=`pip3 --version`
-LOCAL_PIP_VERSION=`/usr/local/bin/pip3 --version`
-
-if [ -z "$PIP_VERSION" ] && [ ! -z "$LOCAL_PIP_VERSION" ];
-then
-    if [ -f /usr/bin/pip3 ];
-    then
-        rm /usr/bin/pip3
-    fi
-
-    ln -s /usr/local/bin/pip3 /usr/bin/pip3
-    ln -s /usr/bin/pip3 /usr/bin/pip
-fi
-
-easy_install3 -U distribute
-
-pip install -r ${DIR}/pip_requirements-python3
+${INSTALL_DIR}/venv/bin/pip install -r ${DIR}/pip_requirements-python3
 
 # JS Dependencies
 curl -sL https://deb.nodesource.com/setup_6.x | bash -
