@@ -19,6 +19,27 @@ INSTALL_DIR=`dirname $DIR`
 
 
 ${DIR}/install_deps.sh
+
+mkdir -p ${INSTALL_DIR}/static
+mkdir -p ${INSTALL_DIR}/tmp
+
+if [ ! -d ${INSTALL_DIR}/data/db ]
+then
+
+    mkdir -p ${INSTALL_DIR}/data/db
+    mkdir -p ${INSTALL_DIR}/data/media
+    mkdir -p ${INSTALL_DIR}/data/settings
+
+fi
+
+chgrp -R www-data ${INSTALL_DIR}/data
+chmod -R 664 ${INSTALL_DIR}/data
+find ${INSTALL_DIR}/data -type d  -exec chmod 775 {} \;
+
+chgrp -R www-data ${INSTALL_DIR}/tmp
+chmod -R 664 ${INSTALL_DIR}/tmp
+find ${INSTALL_DIR}/tmp -type d  -exec chmod 775 {} \;
+
 ${DIR}/apache/install_apache.sh ${ROOT_DIR}
 ${DIR}/create_db.sh
 
