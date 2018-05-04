@@ -40,3 +40,6 @@ cp $DIR/apache_template $DIR/apache_conf
 sed -i "s|___ROOT_DIR___|$ROOT_DIR|g" $DIR/apache_conf
 sed -i "s|___ROOT_DIR2___|$ROOT_DIR2|g" $DIR/apache_conf
 sed -i "s|___INSTALL_DIR___|$INSTALL_DIR|g" $DIR/apache_conf
+
+PIP_PYTHON_PATH=`pip3 show django | grep "^Location" | cut -d' ' -f2`
+sed -i "s|___PYTHON_PATH___|$PIP_PYTHON_PATH|g" $DIR/apache_conf

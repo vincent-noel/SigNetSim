@@ -31,7 +31,7 @@ Alias ___ROOT_DIR___/static/ ___INSTALL_DIR___/static/
 </Directory>
 
 # Configuration WSGI
-WSGIDaemonProcess signetsim python-path=/usr/local/lib/python2.7/site-packages home=___INSTALL_DIR___/tmp
+WSGIDaemonProcess signetsim python-path=___PYTHON_PATH___ home=___INSTALL_DIR___/tmp
 WSGIScriptAlias ___ROOT_DIR2___ ___INSTALL_DIR___/signetsim/settings/wsgi.py
 WSGIApplicationGroup %{GLOBAL}
 <Location ___ROOT_DIR2___>
