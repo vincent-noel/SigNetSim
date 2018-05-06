@@ -35,8 +35,8 @@ class TestPublicAccess(TestCase):
 
 	def test_public_access(self):
 
-		user = User.objects.filter(username='test_user')
-		self.assertTrue(not Project.objects.filter(user=user).exists())
+		user = User.objects.filter(username='test_user')[0]
+		self.assertEqual(len(Project.objects.filter(user=user)), 0)
 
 		c_loggedin = Client()
 		self.assertTrue(c_loggedin.login(username='test_user', password='password'))

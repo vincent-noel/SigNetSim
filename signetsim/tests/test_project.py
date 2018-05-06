@@ -38,8 +38,8 @@ class TestProjects(TestCase):
 
 	def testCreateProject(self):
 
-		user = User.objects.filter(username='test_user')
-		self.assertTrue(not Project.objects.filter(user=user).exists())
+		user = User.objects.filter(username='test_user')[0]
+		self.assertEqual(len(Project.objects.filter(user=user)), 0)
 
 		c = Client()
 		self.assertTrue(c.login(username='test_user', password='password'))
@@ -80,7 +80,7 @@ class TestProjects(TestCase):
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		self.assertEqual(Project.objects.filter(user=user)[0], project)
 
-		user_2 = User.objects.filter(username='test_user_2')
+		user_2 = User.objects.filter(username='test_user_2')[0]
 		self.assertEqual(len(Project.objects.filter(user=user_2)), 0)
 
 		response_send_project = c.post('/', {
