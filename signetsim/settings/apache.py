@@ -52,6 +52,7 @@ INSTALLED_APPS = (
 	'django.templatetags',
 	'bootstrap3',
 	'signetsim',
+	'mod_wsgi.server',
 )
 
 
@@ -96,7 +97,7 @@ TEMPLATES = [
 	},
 },]
 
-WSGI_APPLICATION = 'settings.wsgi.application'
+WSGI_APPLICATION = 'signetsim.settings.wsgi.application'
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 

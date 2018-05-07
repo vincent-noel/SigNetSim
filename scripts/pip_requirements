@@ -18,3 +18,4 @@ cloudpickle
 matplotlib
 coveralls
 seaborn
+mod_wsgi

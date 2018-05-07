@@ -13,6 +13,6 @@ wget
 curl
 realpath
 apache2
-libapache2-mod-wsgi-py3
+apache2-dev
 git
 swig

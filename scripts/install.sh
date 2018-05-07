@@ -32,6 +32,8 @@ then
 
 fi
 
+${DIR}/create_db.sh
+
 chgrp -R www-data ${INSTALL_DIR}/data
 chmod -R 664 ${INSTALL_DIR}/data
 find ${INSTALL_DIR}/data -type d  -exec chmod 775 {} \;
@@ -40,11 +42,10 @@ chgrp -R www-data ${INSTALL_DIR}/tmp
 chmod -R 664 ${INSTALL_DIR}/tmp
 find ${INSTALL_DIR}/tmp -type d  -exec chmod 775 {} \;
 
-${DIR}/apache/install_apache.sh ${ROOT_DIR}
-${DIR}/create_db.sh
-
 mkdir /var/www/.config
 chown www-data:www-data /var/www/.config
 
 mkdir /var/www/.cache
 chown www-data:www-data /var/www/.cache
+
+/etc/mod_wsgi-express-80/apachectl start
