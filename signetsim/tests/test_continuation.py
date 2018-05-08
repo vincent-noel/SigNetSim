@@ -83,7 +83,7 @@ class TestContinuation(TestCase):
 
 		self.assertEqual(json_response['status'], 'BU')
 
-		sleep(20)
+		sleep(60)
 
 		response_get_status = c.post('/json/get_continuation_status/', {'continuation_id': 0})
 
