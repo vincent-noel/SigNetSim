@@ -29,8 +29,8 @@ ${INSTALL_DIR}/venv/bin/python manage.py runmodwsgi --setup-only \
     --user www-data --group www-data \
     --server-root=/etc/mod_wsgi-express-80 \
     --settings=signetsim.settings.apache \
-    --url-alias /static /home/travis/build/vincent-noel/SigNetSim/static/ \
-    --url-alias /media /home/travis/build/vincent-noel/SigNetSim/data/media/ \
+    --url-alias /static ${INSTALL_DIR}/static/ \
+    --url-alias /media ${INSTALL_DIR}/data/media/ \
     --reload-on-changes
 
 
