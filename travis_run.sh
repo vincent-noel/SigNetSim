@@ -20,7 +20,7 @@ if [ $1 = "docker" ]; then
         fi
 
         APACHE_RETURN=`wget -q -O - localhost:80 | grep \<title\> | cut -d">" -f2 | cut -d" " -f1`
-        if [ -z "${APACHE_RETURN}" ] && [ "${APACHE_RETURN}" == "Install" ];
+        if [ -n "${APACHE_RETURN}" ] && [ "${APACHE_RETURN}" == "Install" ];
         then
             exit 0;
         else
