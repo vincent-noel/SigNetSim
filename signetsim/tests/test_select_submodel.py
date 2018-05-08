@@ -237,8 +237,8 @@ class TestSelectSubmodel(TestCase):
 		sbml_doc = SbmlDocument()
 		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		sbml_model = sbml_doc.model
-		self.assertEqual(sbml_doc.listOfModelDefinitions.values()[0].getName(), "Internal model")
-		self.assertEqual(sbml_model.listOfSubmodels.values()[3].getSbmlId(), "internal")
+		self.assertEqual(sbml_doc.listOfModelDefinitions[0].getName(), "Internal model")
+		self.assertEqual(sbml_model.listOfSubmodels[3].getSbmlId(), "internal")
 		self.assertEqual(response_add_submodel.context['model_submodels'], ['Model definition', 'Internal model'])
 
 		response_add_submodel = c.post('/edit/submodels/', {
@@ -256,6 +256,6 @@ class TestSelectSubmodel(TestCase):
 		sbml_doc = SbmlDocument()
 		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		sbml_model = sbml_doc.model
-		self.assertEqual(sbml_doc.listOfModelDefinitions.values()[0].getName(), "Internal model, modified")
-		self.assertEqual(sbml_model.listOfSubmodels.values()[3].getSbmlId(), "internal_modified")
+		self.assertEqual(sbml_doc.listOfModelDefinitions[0].getName(), "Internal model, modified")
+		self.assertEqual(sbml_model.listOfSubmodels[3].getSbmlId(), "internal_modified")
 		self.assertEqual(response_add_submodel.context['model_submodels'], ['Model definition', 'Internal model, modified'])

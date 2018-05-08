@@ -48,10 +48,10 @@ class GetListOfObjectsFromSubmodels(JsonRequest, HasWorkingModel):
 	def getListOfObjects(self, request):
 
 		if str(request.POST['model_id']) != "":
-			submodel = self.getModel().listOfSubmodels.values()[int(request.POST['model_id'])].getModelObject()
+			submodel = self.getModel().listOfSubmodels[int(request.POST['model_id'])].getModelObject()
 
 			self.listOfObjects = []
-			for t_object in submodel.listOfSbmlObjects.values():
+			for t_object in submodel.listOfSbmlObjects:
 				if isinstance(t_object, Variable) and not t_object.isStoichiometry():
 					self.listOfObjects.append(t_object.getNameOrSbmlId() + (" (%s)" % type(t_object).__name__))
 

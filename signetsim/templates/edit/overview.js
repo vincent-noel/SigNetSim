@@ -171,8 +171,8 @@ function loadReactionGraph ()
 				],
 				edges: [
 					{% for reaction in list_of_reactions %}
-					{% if reaction.listOfReactants.values|length > 0 %}
-					{% for reactant in reaction.listOfReactants.values %}
+					{% if reaction.listOfReactants|length > 0 %}
+					{% for reactant in reaction.listOfReactants %}
 
 					{
 						data: {
@@ -193,7 +193,7 @@ function loadReactionGraph ()
 
 					},
 					{% endif %}
-					{% for modifier in reaction.listOfModifiers.values %}
+					{% for modifier in reaction.listOfModifiers %}
 
 					{
 						data: {
@@ -204,8 +204,8 @@ function loadReactionGraph ()
 
 					},
 					{% endfor %}
-					{% if reaction.listOfProducts.values|length > 0 %}
-					{% for product in reaction.listOfProducts.values %}
+					{% if reaction.listOfProducts|length > 0 %}
+					{% for product in reaction.listOfProducts %}
 
 					{
 						data: {

@@ -4,12 +4,13 @@ omit =
 	*/virtualenv/*
 	*/dist-packages/*
 	*/site-packages/*
-    */tests/*
-
+    	*/tests/*
+	*/auto_model_0_vf.py
 [report]
 omit = 
 	*/venv/*
 	*/virtualenv/*
 	*/dist-packages/*
 	*/site-packages/*
-    */tests/*
+	*/tests/*
+	*/auto_model_0_vf.py

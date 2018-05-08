@@ -152,12 +152,12 @@ class ModelParametersView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 	def loadParameters(self):
 
-		self.listOfParameters = [param for param in self.getModel().listOfParameters.values()]
-		for reaction in self.getModel().listOfReactions.values():
-			self.listOfParameters += [param for param in reaction.listOfLocalParameters.values()]
+		self.listOfParameters = [param for param in self.getModel().listOfParameters]
+		for reaction in self.getModel().listOfReactions:
+			self.listOfParameters += [param for param in reaction.listOfLocalParameters]
 
 	def loadReactions(self):
-		self.listOfReactions = self.getModel().listOfReactions.values()
+		self.listOfReactions = self.getModel().listOfReactions
 
 	def loadUnits(self):
-		self.listOfUnits = self.getModel().listOfUnitDefinitions.values()
+		self.listOfUnits = self.getModel().listOfUnitDefinitions

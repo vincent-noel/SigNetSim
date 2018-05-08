@@ -76,7 +76,7 @@ class TestCompartment(TestCase):
 		self.assertEqual(response_get_compartment.status_code, 200)
 		json_response = loads(response_get_compartment.content.decode('utf-8'))
 
-		self.assertEqual(json_response[u'id'], sbml_model.listOfCompartments.values().index(compartment))
+		self.assertEqual(json_response[u'id'], sbml_model.listOfCompartments.index(compartment))
 		self.assertEqual(json_response[u'sbml_id'], compartment.getSbmlId())
 		self.assertEqual(json_response[u'name'], compartment.getName())
 		self.assertEqual(json_response[u'value'], compartment.getValue())
@@ -98,7 +98,7 @@ class TestCompartment(TestCase):
 
 		response_save_compartment = c.post('/edit/compartments/', {
 			'action': 'save',
-			'compartment_id': sbml_model.listOfCompartments.values().index(compartment),
+			'compartment_id': sbml_model.listOfCompartments.index(compartment),
 			'compartment_name': "New name",
 			'compartment_sbml_id': "new_name",
 			'compartment_size': 75,
@@ -123,7 +123,7 @@ class TestCompartment(TestCase):
 
 		response_delete_compartment = c.post('/edit/compartments/', {
 			'action': 'delete',
-			'compartment_id': sbml_model.listOfCompartments.values().index(compartment)
+			'compartment_id': sbml_model.listOfCompartments.index(compartment)
 		})
 		self.assertEqual(response_delete_compartment.status_code, 200)
 		self.assertEqual(response_delete_compartment.context['getErrors'], ['Compartment contains 25 species'])
@@ -156,7 +156,7 @@ class TestCompartment(TestCase):
 
 		response_delete_compartment = c.post('/edit/compartments/', {
 			'action': 'delete',
-			'compartment_id': sbml_model.listOfCompartments.values().index(compartment)
+			'compartment_id': sbml_model.listOfCompartments.index(compartment)
 		})
 		self.assertEqual(response_delete_compartment.status_code, 200)
 		self.assertEqual(response_delete_compartment.context['getErrors'], [])

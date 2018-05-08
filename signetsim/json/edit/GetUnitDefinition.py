@@ -38,7 +38,7 @@ class GetUnitDefinition(JsonRequest, HasWorkingModel):
 		self.load(request, *args, **kwargs)
 
 		unit_definition_id = int(request.POST['id'])
-		unit_definition = self.getModel().listOfUnitDefinitions.values()[unit_definition_id]
+		unit_definition = self.getModel().listOfUnitDefinitions[unit_definition_id]
 
 		self.data.update({
 			'unit_id': unit_definition.getSbmlId(),

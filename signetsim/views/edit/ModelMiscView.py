@@ -143,8 +143,8 @@ class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.setModel(request, int(args[0]))
 
 		if self.isModelLoaded():
-			self.listOfUnits = self.getModel().listOfUnitDefinitions.values()
-			self.listOfParameters = self.getModel().listOfParameters.values()
+			self.listOfUnits = self.getModel().listOfUnitDefinitions
+			self.listOfParameters = self.getModel().listOfParameters
 			self.sbmlLevels = self.getModel().getSbmlLevels()
 			self.form.load()
 			# self.modelHistory = self.getModel().modelHistory

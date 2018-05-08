@@ -108,7 +108,7 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 	def loadConstants(self):
 		self.getModelInstance().listOfVariables.classifyVariables()
-		self.listOfConstants = [variable for variable in self.getModel().listOfVariables.values() if variable.isConstant()]
+		self.listOfConstants = [variable for variable in self.getModel().listOfVariables if variable.isConstant()]
 
 	def loadComputations(self):
 		t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)

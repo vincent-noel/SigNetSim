@@ -98,7 +98,7 @@ class DataOptimizationForm(HasErrorMessages):
 				species = request.POST['list_dataset_%d_species_%d_value' % (ind_dataset, ind_species)]
 
 				if len(str(species)) > 0:
-					mapping.update({data_species: self.view.getModelInstance().listOfSpecies.values()[int(species)].getXPath()})
+					mapping.update({data_species: self.view.getModelInstance().listOfSpecies[int(species)].getXPath()})
 				ind_species += 1
 
 			self.mappings.append(mapping)
@@ -112,7 +112,7 @@ class DataOptimizationForm(HasErrorMessages):
 
 			# Default parameters
 			i_parameter = 0
-			for parameter in self.view.getModelInstance().listOfParameters.values():
+			for parameter in self.view.getModelInstance().listOfParameters:
 				if parameter.getValue() is not None:
 					self.selectedParameters.append(
 						(
@@ -125,8 +125,8 @@ class DataOptimizationForm(HasErrorMessages):
 
 					i_parameter += 1
 
-			for reaction in self.view.getModelInstance().listOfReactions.values():
-				for parameter in reaction.listOfLocalParameters.values():
+			for reaction in self.view.getModelInstance().listOfReactions:
+				for parameter in reaction.listOfLocalParameters:
 					if parameter.getValue() is not None:
 						self.selectedParameters.append(
 							(

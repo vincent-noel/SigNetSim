@@ -43,14 +43,14 @@ class GetParameter(JsonRequest, HasWorkingModel):
 		if str(request.POST['reaction']) == "":
 			parameter = self.getModel().listOfParameters.getBySbmlId(str(request.POST['sbml_id']))
 			self.data.update({
-				"reaction_id": "", "reaction_name": "", "id": self.getModel().listOfParameters.values().index(parameter)
+				"reaction_id": "", "reaction_name": "", "id": self.getModel().listOfParameters.index(parameter)
 			})
 		else:
 			reaction = self.getModel().listOfReactions[int(request.POST['reaction'])-1]
 			parameter = reaction.listOfLocalParameters.getBySbmlId(str(request.POST['sbml_id']))
 			self.data.update({
 				"reaction_id": (int(request.POST['reaction'])-1), "reaction_name": reaction.getName(),
-				"id": reaction.listOfLocalParameters.values().index(parameter)
+				"id": reaction.listOfLocalParameters.index(parameter)
 			})
 
 		self.data.update({
@@ -59,7 +59,7 @@ class GetParameter(JsonRequest, HasWorkingModel):
 			'value': parameter.getValue(),
 			'constant': (1 if parameter.constant else 0),
 			'unit_name': "Choose a unit" if parameter.getUnits() is None else parameter.getUnits().getName(),
-			'unit_id': "" if parameter.getUnits() is None else self.getModel().listOfUnitDefinitions.values().index(parameter.getUnits()),
+			'unit_id': "" if parameter.getUnits() is None else self.getModel().listOfUnitDefinitions.index(parameter.getUnits()),
 			'notes': "" if parameter.getNotes() is None else parameter.getNotes()
 		})
 		if parameter.getAnnotation().getSBOTerm() is not None:

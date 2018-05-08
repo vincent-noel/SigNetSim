@@ -255,7 +255,7 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		self.listOfSubmodels = []
 		self.listOfSubmodelTypes = []
 		if self.getModel().parentDoc.useCompPackage:
-			self.listOfSubmodels = self.getModel().listOfSubmodels.values()
+			self.listOfSubmodels = self.getModel().listOfSubmodels
 
 			for submodel in self.listOfSubmodels:
 				if submodel.getModelRef() in self.model.parentDoc.listOfModelDefinitions.sbmlIds():
@@ -273,12 +273,12 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 
 	def loadConversionFactors(self):
-		self.listOfConversionFactors = self.model.listOfParameters.values()
+		self.listOfConversionFactors = self.model.listOfParameters
 
 	def loadObjects(self):
 		self.listOfObjects = []
 		self.listOfObjectsMetaIds = []
-		for object in self.model.listOfSbmlObjects.values():
+		for object in self.model.listOfSbmlObjects:
 			if isinstance(object, Variable) and not object.isStoichiometry():
 				self.listOfObjects.append(object.getNameOrSbmlId() + (" (%s)" % type(object).__name__))
 				self.listOfObjectsMetaIds.append(object.getMetaId())

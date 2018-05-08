@@ -131,10 +131,10 @@ class ModelSpeciesView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.form.clear()
 
 	def loadSpecies(self):
-		self.listOfSpecies = self.getModel().listOfSpecies.values()
+		self.listOfSpecies = self.getModel().listOfSpecies
 
 	def loadCompartments(self):
-		self.listOfCompartments = self.getModel().listOfCompartments.values()
+		self.listOfCompartments = self.getModel().listOfCompartments
 
 	def loadUnits(self):
-		self.listOfUnits = self.getModel().listOfUnitDefinitions.values()
+		self.listOfUnits = self.getModel().listOfUnitDefinitions

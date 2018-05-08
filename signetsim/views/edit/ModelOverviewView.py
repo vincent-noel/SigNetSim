@@ -73,23 +73,19 @@ class ModelOverviewView(TemplateView, HasWorkingModel):
 
 		HasWorkingModel.load(self, request, *args, **kwargs)
 		self.listOfCompartments = self.getModel().listOfCompartments
-		self.listOfReactions = self.getModel().listOfReactions.values()
+		self.listOfReactions = self.getModel().listOfReactions
 
 		if self.isModelLoaded():
 			if self.isCompModelDefinition():
-				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values()]
-				# self.listOfReactions = self.getModel().listOfReactions.values()
+				self.listOfSpecies = [species for species in self.getModel().listOfSpecies]
 
 			elif self.isCompInternalSubmodel():
-				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values()]
-				# self.listOfReactions = self.getModel().listOfReactions.values()
+				self.listOfSpecies = [species for species in self.getModel().listOfSpecies]
 
 			elif self.isFlattenModel():
 				# Would be nice to also draw the boundaries of the submodels here
-				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values() if species.isInReactions(including_modifiers=True)]
-				# self.listOfReactions = self.getModel().listOfReactions.values()
+				self.listOfSpecies = [species for species in self.getModel().listOfSpecies if species.isInReactions(including_modifiers=True)]
 
 			else:
 
-				self.listOfSpecies = [species for species in self.getModel().listOfSpecies.values() if species.isInReactions(including_modifiers=True)]
-				# self.listOfReactions = self.getModel().listOfReactions.values()
+				self.listOfSpecies = [species for species in self.getModel().listOfSpecies if species.isInReactions(including_modifiers=True)]

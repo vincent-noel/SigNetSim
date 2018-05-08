@@ -83,7 +83,7 @@ class TestReactions(TestCase):
 		self.assertEqual(response_choose_model.context['model_name'], "SOS-Ras-MAPK with n17")
 		self.assertEqual(
 			[t_reaction.getReactionDescription() for t_reaction in response_choose_model.context['list_of_reactions']],
-			[t_reaction.getReactionDescription() for t_reaction in sbml_model.listOfReactions.values()]
+			[t_reaction.getReactionDescription() for t_reaction in sbml_model.listOfReactions]
 		)
 
 
@@ -94,7 +94,7 @@ class TestReactions(TestCase):
 		self.assertEqual(response_get_reaction.status_code, 200)
 		json_response = loads(response_get_reaction.content.decode('utf-8'))
 
-		self.assertEqual(json_response[u'id'], sbml_model.listOfReactions.values().index(reaction))
+		self.assertEqual(json_response[u'id'], sbml_model.listOfReactions.index(reaction))
 		self.assertEqual(json_response[u'sbml_id'], reaction.getSbmlId())
 		self.assertEqual(json_response[u'name'], reaction.getName())
 		self.assertEqual(json_response[u'kinetic_law'], reaction.kineticLaw.getPrettyPrintMathFormula())
@@ -107,21 +107,21 @@ class TestReactions(TestCase):
 				sbml_model.listOfSpecies.index(reactant.getSpecies()),
 				reactant.stoichiometry.getPrettyPrintMathFormula()
 			]
-			for reactant in reaction.listOfReactants.values()
+			for reactant in reaction.listOfReactants
 		])
 		self.assertEqual(json_response[u'list_of_modifiers'], [
 			[
 				sbml_model.listOfSpecies.index(modifier.getSpecies()),
 				modifier.stoichiometry.getPrettyPrintMathFormula()
 			]
-			for modifier in reaction.listOfModifiers.values()
+			for modifier in reaction.listOfModifiers
 		])
 		self.assertEqual(json_response[u'list_of_products'], [
 			[
 				sbml_model.listOfSpecies.index(product.getSpecies()),
 				product.stoichiometry.getPrettyPrintMathFormula()
 			]
-			for product in reaction.listOfProducts.values()
+			for product in reaction.listOfProducts
 		])
 
 		response_delete_reaction = c.post('/edit/reactions/', {
@@ -165,7 +165,7 @@ class TestReactions(TestCase):
 
 		response_modify_creation = c.post('/edit/reactions/', {
 			'action': 'save',
-			'reaction_id': sbml_model.listOfReactions.values().index(reaction),
+			'reaction_id': sbml_model.listOfReactions.index(reaction),
 			'reaction_sbml_id': "reaction_4",
 			'reaction_name': "Ras activation by SOS-Ras-GDP, modified",
 			'reaction_reactant_0': 1,

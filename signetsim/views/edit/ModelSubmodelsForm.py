@@ -151,7 +151,7 @@ class ModelSubmodelsForm(ModelParentForm):
 
 		self.listOfObjects = []
 		self.listOfObjectsMetaIds = []
-		for object in submodel.getModelObject().listOfSbmlObjects.values():
+		for object in submodel.getModelObject().listOfSbmlObjects:
 			if isinstance(object, Variable) and not object.isStoichiometry():
 				self.listOfObjects.append(object.getNameOrSbmlId() + (" (%s)" % type(object).__name__))
 				self.listOfObjectsMetaIds.append(object.getMetaId())

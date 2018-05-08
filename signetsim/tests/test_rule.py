@@ -67,9 +67,9 @@ class TestRule(TestCase):
 		sbml_doc = SbmlDocument()
 		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		sbml_model = sbml_doc.getModelInstance()
-		listOfRules = sbml_model.listOfRules.values() + sbml_model.listOfInitialAssignments.values()
+		listOfRules = sbml_model.listOfRules + sbml_model.listOfInitialAssignments
 		listOfVariables = []
-		for variable in sbml_model.listOfVariables.values():
+		for variable in sbml_model.listOfVariables:
 			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
 				or variable.isCompartment()
@@ -118,9 +118,9 @@ class TestRule(TestCase):
 		sbml_doc = SbmlDocument()
 		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		sbml_model = sbml_doc.getModelInstance()
-		listOfRules = sbml_model.listOfRules.values() + sbml_model.listOfInitialAssignments.values()
+		listOfRules = sbml_model.listOfRules + sbml_model.listOfInitialAssignments
 		listOfVariables = []
-		for variable in sbml_model.listOfVariables.values():
+		for variable in sbml_model.listOfVariables:
 			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
 				or variable.isCompartment()

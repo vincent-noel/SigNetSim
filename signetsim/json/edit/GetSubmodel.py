@@ -43,7 +43,7 @@ class GetSubmodel(JsonRequest, HasWorkingModel):
 
 		if submodel_id < len(self.getModel().listOfSubmodels):
 
-			submodel = self.getModel().listOfSubmodels.values()[submodel_id]
+			submodel = self.getModel().listOfSubmodels[submodel_id]
 
 			self.data.update({
 				'id': submodel_id,
@@ -92,7 +92,7 @@ class GetSubmodel(JsonRequest, HasWorkingModel):
 
 			self.data.update({
 				'time_conversion_factor': (
-					self.getModel().listOfParameters.values().index(submodel.getTimeConversionFactor())
+					self.getModel().listOfParameters.index(submodel.getTimeConversionFactor())
 					if submodel.getTimeConversionFactor() is not None
 					else ""
 				),
@@ -102,7 +102,7 @@ class GetSubmodel(JsonRequest, HasWorkingModel):
 					else ""
 				),
 				'extent_conversion_factor': (
-					self.getModel().listOfParameters.values().index(submodel.getExtentConversionFactor())
+					self.getModel().listOfParameters.index(submodel.getExtentConversionFactor())
 					if submodel.getExtentConversionFactor() is not None
 					else ""
 				),

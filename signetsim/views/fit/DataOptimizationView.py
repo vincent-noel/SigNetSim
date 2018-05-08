@@ -53,8 +53,8 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 		kwargs = HasWorkingModel.get_context_data(self, **kwargs)
 
 		kwargs['experimental_data_sets'] = [experiment.name for experiment in Experiment.objects.filter(project=self.project)]
-		kwargs['list_of_species'] = self.getModelInstance().listOfSpecies.values()
-		kwargs['list_of_parameters'] = self.getModelInstance().listOfParameters.values()
+		kwargs['list_of_species'] = self.getModelInstance().listOfSpecies
+		kwargs['list_of_parameters'] = self.getModelInstance().listOfParameters
 		kwargs['selected_datasets_ids'] = self.form.selectedDataSetsIds
 		kwargs['selected_parameters'] = self.form.selectedParameters
 

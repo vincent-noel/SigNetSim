@@ -76,7 +76,7 @@ class TestParameter(TestCase):
 
 		self.assertEqual(response_get_parameter.status_code, 200)
 		json_response = loads(response_get_parameter.content.decode('utf-8'))
-		self.assertEqual(json_response[u'id'], sbml_model.listOfParameters.values().index(parameter))
+		self.assertEqual(json_response[u'id'], sbml_model.listOfParameters.index(parameter))
 		self.assertEqual(json_response[u'sbml_id'], parameter.getSbmlId())
 		self.assertEqual(json_response[u'name'], parameter.getName())
 		self.assertEqual(json_response[u'value'], parameter.getValue())
@@ -98,7 +98,7 @@ class TestParameter(TestCase):
 
 		response_save_parameter = c.post('/edit/parameters/', {
 			'action': 'save',
-			'parameter_id': sbml_model.listOfParameters.values().index(parameter),
+			'parameter_id': sbml_model.listOfParameters.index(parameter),
 			'parameter_name': "New name",
 			'parameter_sbml_id': "new_name",
 			'parameter_value': 75,
@@ -124,7 +124,7 @@ class TestParameter(TestCase):
 
 		response_delete_parameter = c.post('/edit/parameters/', {
 			'action': 'delete',
-			'parameter_id': sbml_model.listOfParameters.values().index(parameter)
+			'parameter_id': sbml_model.listOfParameters.index(parameter)
 		})
 		self.assertEqual(response_delete_parameter.status_code, 200)
 		self.assertEqual(response_delete_parameter.context['getErrors'], ['Parameter in used in reactions'])
@@ -157,7 +157,7 @@ class TestParameter(TestCase):
 
 		response_delete_parameter = c.post('/edit/parameters/', {
 			'action': 'delete',
-			'parameter_id': sbml_model.listOfParameters.values().index(parameter)
+			'parameter_id': sbml_model.listOfParameters.index(parameter)
 		})
 		self.assertEqual(response_delete_parameter.status_code, 200)
 		self.assertEqual(response_delete_parameter.context['getErrors'], [])
@@ -208,7 +208,7 @@ class TestParameter(TestCase):
 
 		self.assertEqual(response_get_parameter.status_code, 200)
 		json_response = loads(response_get_parameter.content.decode('utf-8'))
-		self.assertEqual(json_response[u'id'], sbml_model.listOfParameters.values().index(parameter))
+		self.assertEqual(json_response[u'id'], sbml_model.listOfParameters.index(parameter))
 		self.assertEqual(json_response[u'reaction_id'], "")
 
 		response_to_local_parameter = c.post('/edit/parameters/', {

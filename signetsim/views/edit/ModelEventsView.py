@@ -87,11 +87,11 @@ class ModelEventsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		HasWorkingModel.load(self, request, *args, **kwargs)
 
 		if self.isModelLoaded():
-			self.listOfEvents = self.getModel().listOfEvents.values()
+			self.listOfEvents = self.getModel().listOfEvents
 			self.getModel().listOfVariables.classifyVariables()
 
 			self.listOfVariables = []
-			for variable in self.getModel().listOfVariables.values():
+			for variable in self.getModel().listOfVariables:
 				if ((variable.isParameter() and variable.isGlobal())
 					or variable.isSpecies()
 					or variable.isCompartment()
@@ -112,7 +112,7 @@ class ModelEventsView(TemplateView, HasWorkingModel, HasErrorMessages):
 					self.form.addError(e.message)
 
 				self.saveModel(request)
-				self.listOfEvents = self.getModel().listOfEvents.values()
+				self.listOfEvents = self.getModel().listOfEvents
 
 	def save(self, request):
 
@@ -128,6 +128,6 @@ class ModelEventsView(TemplateView, HasWorkingModel, HasErrorMessages):
 				self.form.save(t_event)
 
 			self.saveModel(request)
-			self.listOfEvents = self.getModel().listOfEvents.values()
+			self.listOfEvents = self.getModel().listOfEvents
 			self.form.clear()
 

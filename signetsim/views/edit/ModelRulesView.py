@@ -151,7 +151,7 @@ class ModelRulesView(TemplateView, HasWorkingModel, HasErrorMessages):
 	def loadGlobalVariables(self):
 
 		self.listOfVariables = []
-		for variable in self.getModel().listOfVariables.values():
+		for variable in self.getModel().listOfVariables:
 			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
 				or variable.isCompartment()
@@ -160,5 +160,5 @@ class ModelRulesView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 
 	def loadRules(self):
-		self.listOfRules = (self.getModel().listOfRules.values()
-			+ self.getModel().listOfInitialAssignments.values())
+		self.listOfRules = (self.getModel().listOfRules
+			+ self.getModel().listOfInitialAssignments)

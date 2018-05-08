@@ -44,13 +44,13 @@ class GetRule(JsonRequest, HasWorkingModel):
 		self.data.update({'rule_id': rule_ind})
 
 		if rule_ind < len(self.getModel().listOfRules):
-			rule = self.getModel().listOfRules.values()[rule_ind]
+			rule = self.getModel().listOfRules[rule_ind]
 			self.data.update({'rule_type': rule.getRuleType(), 'rule_type_label': rule.getRuleTypeDescription()})
 
 
 		else:
 			rule_ind -= len(self.getModel().listOfRules)
-			rule = self.getModel().listOfInitialAssignments.values()[rule_ind]
+			rule = self.getModel().listOfInitialAssignments[rule_ind]
 			self.data.update({'rule_type': 3, 'rule_type_label': 'Initial assignment'})
 
 		self.data.update({
@@ -70,7 +70,7 @@ class GetRule(JsonRequest, HasWorkingModel):
 	def load(self, request, *args, **kwargs):
 		HasWorkingModel.load(self, request, *args, **kwargs)
 
-		for variable in self.getModel().listOfVariables.values():
+		for variable in self.getModel().listOfVariables:
 			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
 				or variable.isCompartment()

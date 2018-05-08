@@ -89,8 +89,8 @@ class ModelCompartmentsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		HasErrorMessages.clearErrors(self)
 		HasWorkingModel.load(self, request, *args, **kwargs)
 		if self.isModelLoaded():
-			self.listOfCompartments = self.getModel().listOfCompartments.values()
-			self.listOfUnits = self.getModel().listOfUnitDefinitions.values()
+			self.listOfCompartments = self.getModel().listOfCompartments
+			self.listOfUnits = self.getModel().listOfUnitDefinitions
 
 
 
@@ -112,7 +112,7 @@ class ModelCompartmentsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			t_compartment = self.listOfCompartments[t_id]
 			self.getModel().listOfCompartments.remove(t_compartment)
 			self.saveModel(request)
-			self.listOfCompartments = self.getModel().listOfCompartments.values()
+			self.listOfCompartments = self.getModel().listOfCompartments
 
 		except ModelException as e:
 			self.addError(e.message)
@@ -131,6 +131,6 @@ class ModelCompartmentsView(TemplateView, HasWorkingModel, HasErrorMessages):
 				self.form.save(t_comp)
 
 			self.saveModel(request)
-			self.listOfCompartments = self.getModel().listOfCompartments.values()
+			self.listOfCompartments = self.getModel().listOfCompartments
 			self.form.clear()
 
