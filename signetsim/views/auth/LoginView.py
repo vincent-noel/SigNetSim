@@ -25,12 +25,10 @@
 """
 
 from django.views.generic import TemplateView
-from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import login
 from signetsim.models import User
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from django.conf import settings
 
 
 class LoginForm(HasErrorMessages):
@@ -90,11 +88,11 @@ class LoginView(TemplateView):
 		if not self.form.hasErrors():
 			if User.objects.filter(username=self.form.username).exists():
 
-				# user = User.objects.get(username=self.form.username)
-				auth_user = authenticate(username=self.form.username, password=self.form.password)
-				if auth_user is not None:
-					if auth_user.is_active:
-						login(self.request, auth_user)
+				user = User.objects.get(username=self.form.username)
+
+				if user.check_password(self.form.password):
+					if user.is_active:
+						login(self.request, user)
 						return True
 					else:
 						self.form.addError("The user account is not activated yet !")

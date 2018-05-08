@@ -64,7 +64,7 @@ class TestAccounts(TestCase):
 			'password': 'password',
 		})
 
-		# self.assertEqual(response_login.context['getErrors'], ['The user account is not activated yet !'])
+		self.assertEqual(response_login.context['getErrors'], ['The user account is not activated yet !'])
 
 		self.assertTrue(c.login(username='admin', password='admin'))
 
