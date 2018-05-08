@@ -24,7 +24,7 @@
 
 """
 
-import os, json
+import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -160,7 +160,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 from random import choice
 from string import ascii_uppercase, ascii_lowercase, digits
 
-SECRET_KEY = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
+SECRET_KEY = "wQgVs2CaC6xRdOLUK8XwefOCshFOWSVQVGcEVuDIyey31VKKQ2q3dADNYQmW"
 
 AUTH_USER_MODEL = 'signetsim.User'
 

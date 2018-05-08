@@ -18,8 +18,34 @@ fi
 
 INSTALL_DIR=`dirname $DIR`
 
-# System Dependencies
-apt-get install -y $( cat ${DIR}/apt_requirements-python3 )
+echo "> Installing system dependencies..."
+
+# libSigNetSim Dependencies
+apt-get install -y libopenmpi-dev openmpi-bin \
+                    libsundials-serial-dev libsundials-serial \
+                    liblapack-dev libblas-dev libatlas-dev libatlas-base-dev
+
+# Python 2 dependencies
+apt-get install -y python3-dev python3-pip python-virtualenv
+
+# Apache dependencies
+if apt-cache show apache2-dev &> /dev/null; then
+    apt-get install -y apache2 apache2-dev
+
+elif apt-cache show apache2-threaded-dev &> /dev/null; then
+    apt-get install -y apache2 apache2-threaded-dev
+
+elif apt-cache show apache2-prefork-dev &> /dev/null; then
+    apt-get install -y apache2 apache2-prefork-dev
+
+else
+    echo "> Could not find apache2 development header !";
+fi
+
+# Misc dependencies
+apt-get install -y wget curl realpath git swig
+
+echo "> Installing Python dependencies...";
 
 virtualenv -p python3 ${INSTALL_DIR}/venv
 
@@ -28,6 +54,8 @@ ${INSTALL_DIR}/venv/bin/pip install -i https://pypi.python.org/simple pip --upgr
 ${INSTALL_DIR}/venv/bin/pip install distribute setuptools --upgrade
 
 ${INSTALL_DIR}/venv/bin/pip install -r ${DIR}/pip_requirements-python3
+
+echo "> Installing JS dependencies...";
 
 # JS Dependencies
 curl -sL https://deb.nodesource.com/setup_6.x | bash -

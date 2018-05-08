@@ -145,7 +145,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 from random import choice
 from string import ascii_uppercase, ascii_lowercase, digits
 
-SECRET_KEY = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
+SECRET_KEY = "wQgVs2CaC6xRdOLUK8XwefOCshFOWSVQVGcEVuDIyey31VKKQ2q3dADNYQmW"
 
 settings_filename = os.path.join(BASE_DIR, "data", "settings", "settings.json")
 
