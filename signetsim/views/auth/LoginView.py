@@ -27,6 +27,7 @@
 from django.views.generic import TemplateView
 from django.shortcuts import redirect
 from django.contrib.auth import login
+from django.conf import settings
 from signetsim.models import User
 from signetsim.views.HasErrorMessages import HasErrorMessages
 
@@ -92,6 +93,7 @@ class LoginView(TemplateView):
 
 				if user.check_password(self.form.password):
 					if user.is_active:
+						user.backend = settings.AUTHENTICATION_BACKENDS[0]
 						login(self.request, user)
 						return True
 					else:

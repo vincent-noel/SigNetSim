@@ -98,7 +98,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'signetsim.settings.wsgi.application'
-
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Database
