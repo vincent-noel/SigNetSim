@@ -8,4 +8,4 @@ RUN /bin/bash /SigNetSim/scripts/install.sh
 
 EXPOSE 80
 
-CMD /usr/sbin/apache2ctl -D FOREGROUND
+CMD /usr/bin/bash
