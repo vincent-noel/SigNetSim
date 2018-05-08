@@ -20,7 +20,13 @@ if [ $1 = "docker" ]; then
         fi
 
         APACHE_RETURN=`wget -q -O - localhost:80 | grep \<title\> | cut -d">" -f2 | cut -d" " -f1`
-        exit `expr ${APACHE_RETURN} != Install`
+        if [ -z "${APACHE_RETURN}" ] && [ "${APACHE_RETURN}" == "Install" ];
+        then
+            exit 0;
+        else
+            exit 1;
+        fi
+
 
     elif [ $2 = "after_script" ]; then
         if [ $3 = "2" ]; then
@@ -30,7 +36,6 @@ if [ $1 = "docker" ]; then
         fi
 
     fi
-
 
 else
 
