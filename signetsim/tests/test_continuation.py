@@ -27,10 +27,12 @@
 from django.test import TestCase, Client
 from django import __version__
 from signetsim.models import User, Project, SbmlModel, ContinuationComputation
-
-from os.path import dirname, join
+from django.conf import settings
+from os import mkdir
+from os.path import dirname, join, isdir
 from json import loads
 from time import sleep
+from shutil import rmtree
 
 
 class TestContinuation(TestCase):
@@ -42,6 +44,10 @@ class TestContinuation(TestCase):
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
+
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		c = Client()
 		self.assertTrue(c.login(username='test_user', password='password'))

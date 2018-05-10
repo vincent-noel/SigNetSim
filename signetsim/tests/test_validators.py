@@ -29,7 +29,9 @@ from django.test import TestCase, Client
 
 from signetsim.models import User, Project, SbmlModel
 
-from os.path import dirname, join
+from os.path import dirname, join, isdir
+from os import mkdir
+from shutil import rmtree
 from json import loads
 
 
@@ -43,6 +45,10 @@ class TestValidators(TestCase):
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
+
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		c = Client()
 		self.assertTrue(c.login(username='test_user', password='password'))

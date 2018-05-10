@@ -28,7 +28,8 @@ from django.test import TestCase, Client
 from signetsim.models import User, Project, SbmlModel
 
 from django.conf import settings
-from os.path import dirname, join
+from os.path import dirname, join, isdir
+from os import mkdir
 from shutil import rmtree
 
 class TestModels(TestCase):
@@ -41,9 +42,9 @@ class TestModels(TestCase):
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
 
-		# This test can only run once with success, because the second time the comp model dependencies will
-		# actually be in the folder. So cleaning the project folder now
-		rmtree(join(join(settings.MEDIA_ROOT, str(project.folder))), "models")
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 

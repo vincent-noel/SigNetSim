@@ -30,10 +30,12 @@ from django.test import TestCase, Client
 from signetsim.models import User, Project, SbmlModel
 
 from libsignetsim import SbmlDocument, MathFormula
-
-from os.path import dirname, join
+from os import mkdir
+from os.path import dirname, join, isdir
 from json import loads
 from sympy import simplify
+from shutil import rmtree
+
 
 class TestRule(TestCase):
 
@@ -45,6 +47,10 @@ class TestRule(TestCase):
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
+
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		c = Client()
 		self.assertTrue(c.login(username='test_user', password='password'))

@@ -30,8 +30,8 @@ from django.conf import settings
 from libsignetsim import SbmlDocument
 
 from signetsim.models import User, Project, SbmlModel
-
-from os.path import dirname, join
+from os.path import dirname, join, isdir
+from os import mkdir
 from shutil import rmtree
 from time import sleep
 from json import loads
@@ -46,9 +46,9 @@ class TestOptimization(TestCase):
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
 
-		# This test can only run once with success, because the second time the comp model dependencies will
-		# actually be in the folder. So cleaning the project folder now
-		rmtree(join(join(settings.MEDIA_ROOT, str(project.folder))), "models")
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
