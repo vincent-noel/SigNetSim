@@ -55,24 +55,20 @@ def new_project_folder():
 def new_secret_key():
 	return ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
 
-
-
 def archive_filename(instance, filename):
 
-	path = dirname(filename)
 	filename = basename(filename)
-	# full_path = join(join(path, str(instance.project.folder)), "models")
+
 	full_path = join(str(instance.project.folder), "models")
 	full_filename = join(full_path, filename)
 
 	while os.path.isfile(full_filename):
 		full_filename = join(full_path, new_archive_filename())
-	return full_filename
 
+	return full_filename
 
 def model_filename(instance, filename):
 
-	path = dirname(filename)
 	filename = basename(filename)
 
 	full_path = join(str(instance.project.folder), "models")
@@ -80,11 +76,11 @@ def model_filename(instance, filename):
 
 	while os.path.isfile(full_filename):
 		full_filename = join(full_path, new_model_filename())
+
 	return full_filename
 
 def sedml_filename(instance, filename):
 
-	path = dirname(filename)
 	filename = basename(filename)
 
 	full_path = join(str(instance.project.folder), "models")
@@ -92,8 +88,8 @@ def sedml_filename(instance, filename):
 
 	while os.path.isfile(full_filename):
 		full_filename = join(full_path, new_sedml_filename())
-	return full_filename
 
+	return full_filename
 
 class User(AbstractUser):
 	"""
@@ -143,15 +139,19 @@ class Project(models.Model):
 		(PRIVATE, 'Private'),
 	)
 
-	access = models.CharField(max_length=2,
-									  choices=ACCESS_CHOICES,
-									  default=PRIVATE)
+	access = models.CharField(max_length=2, choices=ACCESS_CHOICES, default=PRIVATE)
 
 class SbmlModel(models.Model):
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255, null=True)
 	sbml_file = models.FileField(upload_to=model_filename)
 
+
+class ModelsDependency(models.Model):
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
+	model = models.ForeignKey(SbmlModel, on_delete=models.CASCADE, related_name='model')
+	submodel = models.ForeignKey(SbmlModel, on_delete=models.CASCADE, related_name='submodel')
+	submodel_ref = models.CharField(max_length=255, null=True)
 
 class CombineArchiveModel(models.Model):
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -173,7 +173,6 @@ class Optimization(models.Model):
 class ContinuationComputation(models.Model):
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	model = models.ForeignKey(SbmlModel, on_delete=models.CASCADE)
-
 	parameter = models.CharField(max_length=255, default="")
 
 	result = models.CharField(max_length=10240, default="")

@@ -131,8 +131,12 @@
       <comp:submodel comp:id="sos_mod" comp:name="SOS module" comp:modelRef="sos_mod_def"/>
       <comp:submodel comp:id="ras_mod" comp:name="Ras module" comp:modelRef="ras_mod_def"/>
       <comp:submodel comp:id="mapk_mod" comp:name="MAPK module" comp:modelRef="mapk_mod_def"/>
+      <comp:submodel comp:id="submodel_internal" comp:name="Test submodel" comp:modelRef="submodel_internal_def"/>
     </comp:listOfSubmodels>
   </model>
+     <comp:listOfModelDefinitions>
+    <comp:modelDefinition metaid="_meta_id_0_" id="submodel_internal_def" name="Test submodel"/>
+  </comp:listOfModelDefinitions>
   <comp:listOfExternalModelDefinitions>
     <comp:externalModelDefinition metaid="_meta_id_19_" comp:id="sos_mod_def" comp:source="modelcEvRcX.xml"/>
     <comp:externalModelDefinition metaid="_meta_id_20_" comp:id="ras_mod_def" comp:source="modelEHfev9.xml"/>

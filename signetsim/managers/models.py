@@ -87,3 +87,31 @@ def getModelHierarchy(model_filename):
 			deps += getModelHierarchy(join(path, dependency))
 
 	return deps
+
+def getDetailedModelDependencies(sbml_doc):
+
+	documentDependenciesPaths = []
+	if sbml_doc.useCompPackage:
+
+		modelRefs = []
+
+		for submodel in sbml_doc.model.listOfSubmodels:
+			modelRefs.append(submodel.getModelRef())
+
+		for external_doc in sbml_doc.listOfExternalModelDefinitions:
+
+			if external_doc.getSbmlId() in modelRefs:
+				documentDependenciesPaths.append((
+					external_doc.getSource(),
+					external_doc.getModelRef()
+				))
+
+		for internal_model in sbml_doc.listOfModelDefinitions:
+			if internal_model.getSbmlId() in modelRefs:
+				documentDependenciesPaths.append((
+					sbml_doc.documentFilename,
+					internal_model.getSbmlId()
+				))
+
+		documentDependenciesPaths = list(set(documentDependenciesPaths))
+	return documentDependenciesPaths

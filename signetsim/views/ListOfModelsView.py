@@ -33,12 +33,13 @@ from django.core.files import File
 from django.conf import settings
 from django.shortcuts import redirect
 
-from signetsim.models import SbmlModel, new_model_filename
+from signetsim.models import SbmlModel, new_model_filename, ModelsDependency
 from signetsim.forms import DocumentForm
-
+from signetsim.managers.models import getDetailedModelDependencies
 from libsignetsim import SbmlDocument, ModelException, MissingSubmodelException
 
 import os
+from os.path import join
 
 
 class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErrorMessages):
@@ -122,7 +123,7 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 		model_name = str(request.POST['model_name'])
 		model_filename = os.path.join(settings.MEDIA_ROOT, new_model_filename())
 
-		open(model_filename,"a")
+		open(model_filename, "a")
 		new_model = SbmlModel(project=self.project, name=model_name, sbml_file=File(open(model_filename, "rb")))
 		os.remove(model_filename)
 		new_model.save()
@@ -155,14 +156,26 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 		self.fileUploadForm = DocumentForm(request.POST, request.FILES)
 		if self.fileUploadForm.is_valid():
 
-			new_sbml_model = SbmlModel(project=self.project,
-										sbml_file=request.FILES['docfile'])
+			new_sbml_model = SbmlModel(project=self.project, sbml_file=request.FILES['docfile'])
 			new_sbml_model.save()
 
 			try:
 				doc = SbmlDocument()
-				doc.readSbmlFromFile(os.path.join(settings.MEDIA_ROOT,
-											str(new_sbml_model.sbml_file)))
+				doc.readSbmlFromFile(os.path.join(settings.MEDIA_ROOT, str(new_sbml_model.sbml_file)))
+
+				dependencies = getDetailedModelDependencies(doc)
+				if len(dependencies) > 0:
+
+					for submodel_filename, submodel_ref in dependencies:
+						submodel_filename = join(self.project.folder, "models", submodel_filename)
+						submodel = SbmlModel.objects.get(sbml_file=submodel_filename)
+						new_dependency = ModelsDependency(
+							project=self.project,
+							model=new_sbml_model,
+							submodel=submodel,
+							submodel_ref=submodel_ref
+						)
+						new_dependency.save()
 
 				new_sbml_model.name = doc.model.getName()
 				new_sbml_model.save()
@@ -182,8 +195,15 @@ class ListOfModelsView(TemplateView, HasWorkingProject, HasUserLoggedIn, HasErro
 	def deleteModel(self, request):
 
 		model = SbmlModel.objects.get(project=self.project, id=request.POST['id'])
-		os.remove(os.path.join(settings.MEDIA_ROOT, str(model.sbml_file)))
-		model.delete()
+
+		for model_dependency in ModelsDependency.objects.filter(project=self.project, submodel=model):
+			if model_dependency.model != model:
+				self.addError("This model is used as a submodel by %s and cannot be removed." % model_dependency.model.name)
+
+		if not self.hasErrors():
+			ModelsDependency.objects.filter(project=self.project, model=model).delete()
+			os.remove(os.path.join(settings.MEDIA_ROOT, str(model.sbml_file)))
+			model.delete()
 
 	def loadBiomodels(self, request):
 

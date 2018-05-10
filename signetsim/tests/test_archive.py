@@ -27,10 +27,11 @@
 from django.test import TestCase, Client
 from django.conf import settings
 
-from signetsim.models import User, Project, SbmlModel, Experiment, SEDMLSimulation
+from signetsim.models import User, Project, SbmlModel, Experiment, SEDMLSimulation, ModelsDependency
 from libsignetsim import CombineArchive
 
-from os.path import dirname, join
+from os.path import dirname, join, isdir
+from os import mkdir
 from shutil import rmtree
 
 
@@ -44,9 +45,9 @@ class TestArchive(TestCase):
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
 
-		# This test can only run once with success, because the second time the comp model dependencies will
-		# actually be in the folder. So cleaning the project folder now
-		rmtree(join(join(settings.MEDIA_ROOT, str(project.folder))), "models")
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
@@ -75,6 +76,8 @@ class TestArchive(TestCase):
 		self.assertEqual(len(SbmlModel.objects.filter(project=new_project)), 4)
 		self.assertEqual(len(Experiment.objects.filter(project=new_project)), 3)
 		self.assertEqual(len(SEDMLSimulation.objects.filter(project=new_project)), 1)
+		self.assertEqual(len(ModelsDependency.objects.filter(project=new_project)), 4)
+
 
 		response_export_archive = c.get('/project_archive/%s/' % new_project.folder)
 

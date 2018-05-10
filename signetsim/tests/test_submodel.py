@@ -27,10 +27,11 @@
 from django.test import TestCase, Client
 from django.conf import settings
 
-from signetsim.models import User, Project, SbmlModel
-
-from os.path import dirname, join
+from signetsim.models import User, Project, SbmlModel, ModelsDependency
+from os import mkdir
+from os.path import dirname, join, isdir
 from json import loads
+from shutil import rmtree
 
 
 class TestSubmodel(TestCase):
@@ -42,6 +43,10 @@ class TestSubmodel(TestCase):
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
+
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
@@ -87,6 +92,7 @@ class TestSubmodel(TestCase):
 
 		self.assertEqual(response_load_submodel_3.status_code, 200)
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 3)
+		self.assertEqual(len(ModelsDependency.objects.filter(project=project)), 0)
 
 		model_filename = join(comp_files_folder, "modelz9xdww.xml")
 
@@ -97,26 +103,27 @@ class TestSubmodel(TestCase):
 
 		self.assertEqual(response_load_model.status_code, 200)
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 4)
+		self.assertEqual(len(ModelsDependency.objects.filter(project=project)), 4)
 
 		response_choose_model = c.post('/edit/submodels/', {
 			'action': 'choose_model',
 			'model_id': 3
 		})
+
 		self.assertEqual(response_choose_model.status_code, 200)
 		self.assertEqual(
 			[submodel for submodel in response_choose_model.context['model_submodels']],
-			['Model definition']
+			['Model definition', 'Test submodel']
 		)
-
 
 		self.assertEqual(
 			[submodel.getNameOrSbmlId() for submodel in response_choose_model.context['list_of_submodels']],
-			['SOS module', 'Ras module', 'MAPK module']
+			['SOS module', 'Ras module', 'MAPK module', 'Test submodel']
 		)
 
 		self.assertEqual(
 			response_choose_model.context['list_of_submodel_types'],
-			[1,1,1]
+			[1, 1, 1, 0]
 		)
 
 		self.assertEqual(
@@ -144,13 +151,15 @@ class TestSubmodel(TestCase):
 			'submodel_id': 0
 		})
 
+
 		self.assertEqual(response_delete_submodel.status_code, 200)
 		self.assertEqual(
 			response_delete_submodel.context['getErrors'],
 			['Submodel SOS module is used. Please remove the substitutions first']
 		)
 
-		self.assertEqual(len(response_delete_submodel.context['list_of_submodel_types']), 3)
+		self.assertEqual(len(response_delete_submodel.context['list_of_submodel_types']), 4)
+		self.assertEqual(len(ModelsDependency.objects.filter(project=project)), 4)
 
 		list_of_substitutions = response_delete_submodel.context['list_of_substitutions']
 		substitution_id = [
@@ -249,8 +258,8 @@ class TestSubmodel(TestCase):
 			response_delete_submodel.context['getErrors'],
 			[]
 		)
-
-		self.assertEqual(len(response_delete_submodel.context['list_of_submodel_types']), 2)
+		self.assertEqual(len(ModelsDependency.objects.filter(project=project)), 3)
+		self.assertEqual(len(response_delete_submodel.context['list_of_submodel_types']), 3)
 
 		response_add_submodel = c.post('/edit/submodels/', {
 			'action': 'save',
@@ -265,18 +274,18 @@ class TestSubmodel(TestCase):
 		})
 
 		self.assertEqual(response_add_submodel.status_code, 200)
-		self.assertEqual(len(response_add_submodel.context['list_of_submodel_types']), 3)
+		self.assertEqual(len(response_add_submodel.context['list_of_submodel_types']), 4)
+		self.assertEqual(len(ModelsDependency.objects.filter(project=project)), 4)
 
 		self.assertEqual(
 			[submodel.getNameOrSbmlId() for submodel in response_add_submodel.context['list_of_submodels']],
-			['Ras module', 'MAPK module', 'SOS module']
+			['Ras module', 'MAPK module', 'Test submodel', 'SOS module']
 		)
 
 		self.assertEqual(
 			response_add_submodel.context['list_of_submodel_types'],
-			[1, 1, 1]
+			[1, 1, 0, 1]
 		)
-
 
 		response_get_submodel = c.post('/json/get_submodel/', {
 			'id': [
@@ -454,6 +463,7 @@ class TestSubmodel(TestCase):
 		self.assertEqual(json_response['submodel_object_id'], list_of_objects.index(u'ERK-PP (Species)'))
 		self.assertEqual(json_response['submodel_object_name'], "ERK-PP")
 
+		self.assertEqual(len(ModelsDependency.objects.filter(project=project)), 4)
 
 		response_add_submodel = c.post('/edit/submodels/', {
 			'action': 'save',
@@ -465,19 +475,23 @@ class TestSubmodel(TestCase):
 			'time_conversion_factor': ""
 		})
 
+
 		self.assertEqual(response_add_submodel.status_code, 200)
 		self.assertEqual(
 			[submodel.getNameOrSbmlId() for submodel in response_add_submodel.context['list_of_submodels']],
-			['Ras module', 'MAPK module', 'SOS module', 'Internal model']
+			['Ras module', 'MAPK module', 'Test submodel', 'SOS module', 'Internal model']
 		)
 
 		self.assertEqual(
 			response_add_submodel.context['list_of_submodel_types'],
-			[1, 1, 1, 0]
+			[1, 1, 0, 1, 0]
 		)
+
+		self.assertEqual(len(ModelsDependency.objects.filter(project=project)), 5)
+
 		response_add_submodel = c.post('/edit/submodels/', {
 			'action': 'save',
-			'submodel_id': 3,
+			'submodel_id': 4,
 			'submodel_name': "Internal model, modified",
 			'submodel_sbml_id': "internal_modified",
 			'submodel_type': 0,
@@ -488,17 +502,17 @@ class TestSubmodel(TestCase):
 		self.assertEqual(response_add_submodel.status_code, 200)
 		self.assertEqual(
 			[submodel.getNameOrSbmlId() for submodel in response_add_submodel.context['list_of_submodels']],
-			['Ras module', 'MAPK module', 'SOS module', 'Internal model, modified']
+			['Ras module', 'MAPK module', 'Test submodel', 'SOS module', 'Internal model, modified']
 		)
 
 		self.assertEqual(
 			response_add_submodel.context['list_of_submodel_types'],
-			[1, 1, 1, 0]
+			[1, 1, 0, 1, 0]
 		)
 
 		response_select_internal = c.post('/edit/compartments/', {
 			'action': 'choose_submodel',
-			'submodel_id': 1
+			'submodel_id': 2
 		})
 		self.assertEqual(response_select_internal.status_code, 200)
 
@@ -595,7 +609,7 @@ class TestSubmodel(TestCase):
 			'substitution_id': "",
 			'substitution_type': 1,
 			'substitution_model_object': response_delete_substitution.context['list_of_objects'].index("SOS (Species)"),
-			'substitution_submodel': 2,
+			'substitution_submodel': 3,
 			'substitution_submodel_object': 4
 		})
 		self.assertEqual(response_add_replacedby.status_code, 200)
@@ -620,7 +634,80 @@ class TestSubmodel(TestCase):
 				(0, 'erkpp', ['sos_mod'], 'erkpp'),
 			]
 		)
-		#
+
+
+
+		response_delete_substitution = c.post('/edit/submodels/', {
+			'action': 'delete_substitution',
+			'substitution_id': 8
+		})
+		self.assertEqual(response_delete_substitution.status_code, 200)
+
+		response_delete_substitution = c.post('/edit/submodels/', {
+			'action': 'delete_substitution',
+			'substitution_id': 4
+		})
+		self.assertEqual(response_delete_substitution.status_code, 200)
+
+		response_delete_substitution = c.post('/edit/submodels/', {
+			'action': 'delete_substitution',
+			'substitution_id': 2
+		})
+		self.assertEqual(response_delete_substitution.status_code, 200)
+
+		self.assertEqual(
+			[
+				(sub_type, object_1.getSbmlId(), submodel, object_2.getSbmlId())
+				for sub_type, object_1, submodel, object_2
+				in response_delete_substitution.context['list_of_substitutions']
+			],
+			[
+				(0, 'compartment_0', ['ras_mod'], 'cell'),
+				(0, 'compartment_0', ['mapk_mod'], 'cell'),
+				(0, 'compartment_0', ['internal_modified'], 'cell'),
+				(0, 'rasgtp', ['ras_mod'], 'ras_gtp'),
+				(0, 'rasgtp', ['mapk_mod'], 'ras_gtp'),
+				(0, 'erkpp', ['mapk_mod'], 'mapk_pp'),
+			]
+		)
+
+		response_delete_model = c.post('/models/', {
+			'action': 'delete_model',
+			'id': 1
+		})
+
+		self.assertEqual(response_delete_model.status_code, 200)
+		self.assertEqual(
+			response_delete_model.context['getErrors'],
+			[u'This model is used as a submodel by SOS-Ras-MAPK and cannot be removed.']
+		)
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 4)
+
+		response_delete_submodel = c.post('/edit/submodels/', {
+			'action': 'delete',
+			'submodel_id': 3
+		})
+
+		self.assertEqual(response_delete_submodel.status_code, 200)
+		self.assertEqual(
+			response_delete_submodel.context['getErrors'],
+			[]
+		)
+
+		self.assertEqual(
+			[submodel.getNameOrSbmlId() for submodel in response_delete_submodel.context['list_of_submodels']],
+			['Ras module', 'MAPK module', 'Test submodel', 'Internal model, modified']
+		)
+
+		response_delete_model = c.post('/models/', {
+			'action': 'delete_model',
+			'id': 1
+		})
+
+		self.assertEqual(response_delete_model.status_code, 200)
+		self.assertEqual(response_delete_model.context['getErrors'], [])
+		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 3)
+
 		# response_get_replacedby = c.post('/json/get_substitution/', {
 		# 	'id': 0
 		# })

@@ -28,7 +28,9 @@ from django.test import TestCase, Client
 from signetsim.models import User, Project, SbmlModel
 from libsignetsim import SbmlDocument
 from django.conf import settings
-from os.path import dirname, join
+from os.path import dirname, join, isdir
+from os import mkdir
+from shutil import rmtree
 
 
 class TestSelectSubmodel(TestCase):
@@ -40,6 +42,10 @@ class TestSelectSubmodel(TestCase):
 		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
+
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
@@ -171,7 +177,7 @@ class TestSelectSubmodel(TestCase):
 		)
 		self.assertEqual(
 			[submodel for submodel in response_choose_model.context['model_submodels']],
-			['Model definition']
+			['Model definition', 'Test submodel']
 		)
 
 		self.assertEqual(
@@ -192,7 +198,7 @@ class TestSelectSubmodel(TestCase):
 
 		response_choose_submodel = c.post('/edit/species/', {
 			'action': 'choose_submodel',
-			'submodel_id': 1
+			'submodel_id': 2
 		})
 		self.assertEqual(response_choose_submodel.status_code, 200)
 		self.assertEqual(
@@ -220,7 +226,7 @@ class TestSelectSubmodel(TestCase):
 			'submodel_id': 0
 		})
 		self.assertEqual(response_choose_submodel.status_code, 200)
-		self.assertEqual(response_choose_submodel.context['model_submodels'], ['Model definition'])
+		self.assertEqual(response_choose_submodel.context['model_submodels'], ['Model definition', 'Test submodel'])
 
 		response_add_submodel = c.post('/edit/submodels/', {
 			'action': 'save',
@@ -237,13 +243,13 @@ class TestSelectSubmodel(TestCase):
 		sbml_doc = SbmlDocument()
 		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		sbml_model = sbml_doc.model
-		self.assertEqual(sbml_doc.listOfModelDefinitions[0].getName(), "Internal model")
-		self.assertEqual(sbml_model.listOfSubmodels[3].getSbmlId(), "internal")
-		self.assertEqual(response_add_submodel.context['model_submodels'], ['Model definition', 'Internal model'])
+		self.assertEqual(sbml_doc.listOfModelDefinitions[1].getName(), "Internal model")
+		self.assertEqual(sbml_model.listOfSubmodels[4].getSbmlId(), "internal")
+		self.assertEqual(response_add_submodel.context['model_submodels'], ['Model definition', 'Test submodel', 'Internal model'])
 
 		response_add_submodel = c.post('/edit/submodels/', {
 			'action': 'save',
-			'submodel_id': 3,
+			'submodel_id': 4,
 			'submodel_name': "Internal model, modified",
 			'submodel_sbml_id': "internal_modified",
 			'submodel_type': 0,
@@ -256,6 +262,6 @@ class TestSelectSubmodel(TestCase):
 		sbml_doc = SbmlDocument()
 		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		sbml_model = sbml_doc.model
-		self.assertEqual(sbml_doc.listOfModelDefinitions[0].getName(), "Internal model, modified")
-		self.assertEqual(sbml_model.listOfSubmodels[3].getSbmlId(), "internal_modified")
-		self.assertEqual(response_add_submodel.context['model_submodels'], ['Model definition', 'Internal model, modified'])
+		self.assertEqual(sbml_doc.listOfModelDefinitions[1].getName(), "Internal model, modified")
+		self.assertEqual(sbml_model.listOfSubmodels[4].getSbmlId(), "internal_modified")
+		self.assertEqual(response_add_submodel.context['model_submodels'], ['Model definition', 'Test submodel', 'Internal model, modified'])
