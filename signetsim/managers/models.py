@@ -26,7 +26,7 @@
 
 from os.path import isfile, join, dirname
 from os import remove
-from signetsim.models import SbmlModel, new_model_filename
+from signetsim.models import SbmlModel, new_model_filename, ModelsDependency
 from libsignetsim import SbmlDocument
 from django.core.files import File
 from django.conf import settings
@@ -115,3 +115,14 @@ def getDetailedModelDependencies(sbml_doc):
 
 		documentDependenciesPaths = list(set(documentDependenciesPaths))
 	return documentDependenciesPaths
+
+def renameSbmlIdInModelDependencies(sbml_model, old_sbml_id, new_sbml_id):
+
+	for model_dependency in ModelsDependency.objects.filter(submodel=sbml_model):
+
+		doc = SbmlDocument()
+		doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model_dependency.model.sbml_file)))
+
+		doc.renameSbmlIdInSubstitutions(old_sbml_id, new_sbml_id, model_dependency.submodel_ref)
+
+		doc.writeSbmlToFile(join(settings.MEDIA_ROOT, str(model_dependency.model.sbml_file)))

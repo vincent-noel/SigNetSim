@@ -25,8 +25,8 @@
 """
 
 from libsignetsim import ModelException, KineticLaw
-from libsignetsim.model.sbml.Parameter import Parameter
 from .ModelParentForm import ModelParentForm
+from signetsim.managers.models import renameSbmlIdInModelDependencies
 
 
 class ModelReactionsForm(ModelParentForm):
@@ -55,7 +55,10 @@ class ModelReactionsForm(ModelParentForm):
 
 		try:
 			reaction.setName(self.name)
-			reaction.setSbmlId(self.sbmlId)
+
+			if reaction.getSbmlId() != self.sbmlId:
+				renameSbmlIdInModelDependencies(self.parent.getSbmlModel(), reaction.getSbmlId(), self.sbmlId)
+				reaction.setSbmlId(self.sbmlId)
 
 			self.saveReactants(reaction)
 			self.saveModifiers(reaction)

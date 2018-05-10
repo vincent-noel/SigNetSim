@@ -66,7 +66,6 @@ class HasWorkingModel(HasWorkingProject, HasVariablesInSession):
 		kwargs['model_has_submodels'] = (self.model is not None and self.model.parentDoc.isCompEnabled() and len(self.model.listOfSubmodels) > 0)
 		kwargs['model_submodels'] = ["Model definition"] + [model.getName() for model in self.model.parentDoc.listOfModelDefinitions]
 		kwargs['model_submodel'] = self.model_submodel
-
 		return kwargs
 
 
@@ -124,6 +123,9 @@ class HasWorkingModel(HasWorkingProject, HasVariablesInSession):
 		else:
 			t_list_submodels = self.model.parentDoc.listOfModelDefinitions
 			return t_list_submodels[self.model_submodel-1]
+
+	def getSbmlModel(self):
+		return SbmlModel.objects.get(id=self.model_id)
 
 	def saveModel(self, request):
 		if self.model is not None and self.isProjectOwner(request):

@@ -26,6 +26,7 @@
 
 from libsignetsim import ModelException
 from .ModelParentForm import ModelParentForm
+from signetsim.managers.models import renameSbmlIdInModelDependencies
 
 
 class ModelParametersForm(ModelParentForm):
@@ -47,7 +48,11 @@ class ModelParametersForm(ModelParentForm):
 
 		try:
 			parameter.setName(self.name)
-			parameter.setSbmlId(self.sbmlId)
+
+			if parameter.getSbmlId() != self.sbmlId:
+				renameSbmlIdInModelDependencies(self.parent.getSbmlModel(), parameter.getSbmlId(), self.sbmlId)
+				parameter.setSbmlId(self.sbmlId)
+
 			parameter.setValue(self.value)
 			parameter.constant = self.constant
 

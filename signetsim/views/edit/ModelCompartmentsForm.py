@@ -25,6 +25,7 @@
 """
 
 from .ModelParentForm import ModelParentForm
+from signetsim.managers.models import renameSbmlIdInModelDependencies
 from libsignetsim import ModelException
 
 
@@ -44,7 +45,17 @@ class ModelCompartmentsForm(ModelParentForm):
 	def save(self, compartment):
 
 		try:
-			compartment.setSbmlId(self.sbmlId)
+			# Here we test because if we change the sbml id, we have to change all the references to it.
+			# The main problems are mathematical formulas, but libsignetsim will deal with it
+			# For hierarchical model references, it's more complicated, because I'm not sure libsignetsim should know...
+			# At least, SigNetSim knows, just looking inside the models of the project.
+			# So we have to check that.
+			if compartment.getSbmlId() != self.sbmlId:
+				renameSbmlIdInModelDependencies(
+					self.parent.getSbmlModel(), compartment.getSbmlId(), self.sbmlId
+				)
+				compartment.setSbmlId(self.sbmlId)
+
 			compartment.setName(self.name)
 			compartment.setSize(self.size)
 
