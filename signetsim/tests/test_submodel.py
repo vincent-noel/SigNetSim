@@ -174,6 +174,7 @@ class TestSubmodel(TestCase):
 		})
 
 		self.assertEqual(response_delete_substitution.status_code, 200)
+
 		self.assertEqual(
 			[
 				(sub_type, object_1.getSbmlId(), submodel, object_2.getSbmlId())
@@ -627,11 +628,11 @@ class TestSubmodel(TestCase):
 				(0, 'compartment_0', ['mapk_mod'], 'cell'),
 				(0, 'compartment_0', ['sos_mod'], 'cell'),
 				(0, 'compartment_0', ['internal_modified'], 'cell'),
-				(1, 'sos', ['sos_mod'], 'sos'),
 				(0, 'rasgtp', ['ras_mod'], 'ras_gtp'),
 				(0, 'rasgtp', ['mapk_mod'], 'ras_gtp'),
 				(0, 'erkpp', ['mapk_mod'], 'mapk_pp'),
 				(0, 'erkpp', ['sos_mod'], 'erkpp'),
+				(1, 'sos', ['sos_mod'], 'sos'),
 			]
 		)
 
@@ -645,7 +646,7 @@ class TestSubmodel(TestCase):
 
 		response_delete_substitution = c.post('/edit/submodels/', {
 			'action': 'delete_substitution',
-			'substitution_id': 4
+			'substitution_id': 7
 		})
 		self.assertEqual(response_delete_substitution.status_code, 200)
 
@@ -671,9 +672,15 @@ class TestSubmodel(TestCase):
 			]
 		)
 
+
+		response_models = c.get('/models/')
+		self.assertEqual(response_models.status_code, 200)
+
 		response_delete_model = c.post('/models/', {
 			'action': 'delete_model',
-			'id': 1
+			'id': [id for id, _, _ in response_models.context['sbml_models']][
+				[name for _, name, _ in response_models.context['sbml_models']].index('SOS')
+			]
 		})
 
 		self.assertEqual(response_delete_model.status_code, 200)
@@ -699,9 +706,12 @@ class TestSubmodel(TestCase):
 			['Ras module', 'MAPK module', 'Test submodel', 'Internal model, modified']
 		)
 
+
 		response_delete_model = c.post('/models/', {
 			'action': 'delete_model',
-			'id': 1
+			'id': [id for id, _, _ in response_models.context['sbml_models']][
+				[name for _, name, _ in response_models.context['sbml_models']].index('SOS')
+			]
 		})
 
 		self.assertEqual(response_delete_model.status_code, 200)
