@@ -53,7 +53,7 @@ virtualenv -p python3 ${INSTALL_DIR}/venv
 ${INSTALL_DIR}/venv/bin/pip install -i https://pypi.python.org/simple pip --upgrade
 ${INSTALL_DIR}/venv/bin/pip install distribute setuptools --upgrade
 
-${INSTALL_DIR}/venv/bin/pip install -r ${DIR}/pip_requirements-python3
+${INSTALL_DIR}/venv/bin/pip install -r ${DIR}/pip_requirements
 
 echo "> Installing JS dependencies...";
 
