@@ -49,26 +49,24 @@ else
     elif [ $2 = "install" ]; then
         if [ $3 = "2" ]; then
             docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/travis_testenv:$1 bash
-            if [ "$1" != fedora* ] ; then
-                docker exec test_env chown -R www-data:www-data /home/travis/build/vincent-noel/SigNetSim
-            fi
             docker exec test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/install.sh
         else
             docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/travis_testenv:$1-python3 bash
-            if [ "$1" != fedora* ] ; then
-                docker exec test_env chown -R www-data:www-data /home/travis/build/vincent-noel/SigNetSim
-            fi
             docker exec test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/install-python3.sh
         fi
 
     elif [ $2 = "script" ]; then
 
         APACHE_USER=`docker exec test_env /bin/bash apachectl -S | grep User: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
+        APACHE_GROUP=`docker exec test_env /bin/bash apachectl -S | grep Group: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
+
         if [ -z "$APACHE_USER" ]; then
             source /etc/apache2/envvars
             APACHE_USER=`docker exec test_env /bin/bash -c 'source /etc/apache2/envvars; echo "${APACHE_RUN_USER}"'`
+            APACHE_GROUP=`docker exec test_env /bin/bash -c 'source /etc/apache2/envvars; echo "${APACHE_RUN_GROUP}"'`
         fi
 
+        docker exec test_env chown ${APACHE_USER}:${APACHE_GROUP} /home/travis/build/vincent-noel/SigNetSim
         docker exec -u ${APACHE_USER} test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/test_apache.sh
         docker exec -u ${APACHE_USER} test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/run_tests.sh
 
