@@ -17,8 +17,15 @@ fi
 
 INSTALL_DIR=`dirname $DIR`
 
+DISTRIB=`cat /etc/os-release | grep ^ID= | cut -d'=' -f2`
 
-${DIR}/install_deps.sh
+if [ "${DISTRIB}" == "ubuntu" ] || [ "${DISTRIB}" == "debian" ]; then
+    ${DIR}/install_deps.sh
+
+elif [ "${DISTRIB}" == "fedora" ]; then
+    ${DIR}/install_deps-fedora.sh
+
+fi
 
 mkdir -p ${INSTALL_DIR}/static
 mkdir -p ${INSTALL_DIR}/tmp
@@ -34,18 +41,21 @@ fi
 
 ${DIR}/create_db.sh
 
-chgrp -R www-data ${INSTALL_DIR}/data
+APACHE_USER=`apachectl -S | grep User: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
+APACHE_GROUP=`apachectl -S | grep Group: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
+
+chgrp -R ${APACHE_USER}:${APACHE_GROUP} ${INSTALL_DIR}/data
 chmod -R 664 ${INSTALL_DIR}/data
 find ${INSTALL_DIR}/data -type d  -exec chmod 775 {} \;
 
-chgrp -R www-data ${INSTALL_DIR}/tmp
+chgrp -R ${APACHE_USER}:${APACHE_GROUP} ${INSTALL_DIR}/tmp
 chmod -R 664 ${INSTALL_DIR}/tmp
 find ${INSTALL_DIR}/tmp -type d  -exec chmod 775 {} \;
 
 mkdir /var/www/.config
-chown www-data:www-data /var/www/.config
+chown ${APACHE_USER}:${APACHE_GROUP} /var/www/.config
 
 mkdir /var/www/.cache
-chown www-data:www-data /var/www/.cache
+chown ${APACHE_USER}:${APACHE_GROUP} /var/www/.cache
 
 /etc/mod_wsgi-express-80/apachectl start

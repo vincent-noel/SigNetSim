@@ -21,12 +21,15 @@ ${INSTALL_DIR}/venv/bin/python manage.py makemigrations --noinput
 ${INSTALL_DIR}/venv/bin/python manage.py migrate --noinput
 ${INSTALL_DIR}/venv/bin/python manage.py collectstatic --noinput > /dev/null
 
-chgrp -R www-data ${INSTALL_DIR}/signetsim/settings/wsgi.py
+APACHE_USER=`apachectl -S | grep User: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
+APACHE_GROUP=`apachectl -S | grep Group: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
+
+chgrp -R ${APACHE_USER}:${APACHE_GROUP} ${INSTALL_DIR}/signetsim/settings/wsgi.py
 chmod -R 664 ${INSTALL_DIR}/signetsim/settings/wsgi.py
 
 ${INSTALL_DIR}/venv/bin/python manage.py runmodwsgi --setup-only \
     --port=80 \
-    --user www-data --group www-data \
+    --user ${APACHE_USER} --group ${APACHE_GROUP} \
     --server-root=/etc/mod_wsgi-express-80 \
     --settings=signetsim.settings.apache \
     --url-alias /static ${INSTALL_DIR}/static/ \

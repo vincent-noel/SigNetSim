@@ -12,7 +12,7 @@ coveralls
 future
 Django
 django-bootstrap3
-git+https://github.com/vincent-noel/libSigNetSim.git@develop
+git+https://github.com/vincent-noel/libSigNetSim.git@sundials3
 dill
 cloudpickle
 matplotlib

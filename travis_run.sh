@@ -49,11 +49,15 @@ else
     elif [ $2 = "install" ]; then
         if [ $3 = "2" ]; then
             docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/travis_testenv:$1 bash
-            docker exec test_env chown -R www-data:www-data /home/travis/build/vincent-noel/SigNetSim
+            if [ "$1" != fedora* ] ; then
+                docker exec test_env chown -R www-data:www-data /home/travis/build/vincent-noel/SigNetSim
+            fi
             docker exec test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/install.sh
         else
             docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/travis_testenv:$1-python3 bash
-            docker exec test_env chown -R www-data:www-data /home/travis/build/vincent-noel/SigNetSim
+            if [ "$1" != fedora* ] ; then
+                docker exec test_env chown -R www-data:www-data /home/travis/build/vincent-noel/SigNetSim
+            fi
             docker exec test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/install-python3.sh
         fi
 
