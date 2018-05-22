@@ -66,4 +66,10 @@ mkdir /var/www/.cache
 chgrp ${APACHE_GROUP} /var/www/.cache
 chmod 664 /var/www/.cache
 
-/etc/mod_wsgi-express-80/apachectl start
+if [ ${GLOBAL} -eq 1 ] ; then
+    SERVICE_DIR=${INSTALL_DIR}/service
+
+else
+    SERVICE_DIR=/etc/signetsim
+fi
+${SERVICE_DIR}/apachectl start
