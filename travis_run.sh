@@ -66,7 +66,7 @@ else
         APACHE_USER=`docker exec test_env /bin/bash apachectl -S | grep User: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
         if [ -z "$APACHE_USER" ]; then
             source /etc/apache2/envvars
-            APACHE_USER=${APACHE_RUN_USER}
+            APACHE_USER=`docker exec test_env /bin/bash -c 'source /etc/apache2/envvars; echo "${APACHE_RUN_USER}"'`
         fi
 
         docker exec -u ${APACHE_USER} test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/test_apache.sh
