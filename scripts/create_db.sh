@@ -34,7 +34,7 @@ fi
 chgrp -R ${APACHE_GROUP} ${INSTALL_DIR}/signetsim/settings/wsgi.py
 chmod -R 664 ${INSTALL_DIR}/signetsim/settings/wsgi.py
 
-if [ ${GLOBAL} -eq 1 ] ; then
+if [ ${GLOBAL} == 1 ] ; then
     SERVICE_DIR=${INSTALL_DIR}/service
 
 else

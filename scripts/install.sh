@@ -28,6 +28,14 @@ elif [ "${DISTRIB}" == "fedora" ]; then
 
 fi
 
+APACHE_USER=`apachectl -S | grep User: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
+APACHE_GROUP=`apachectl -S | grep Group: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
+if [ -z "$APACHE_USER" ]; then
+    source /etc/apache2/envvars
+    APACHE_USER=${APACHE_RUN_USER}
+    APACHE_GROUP=${APACHE_RUN_GROUP}
+fi
+
 mkdir -p ${INSTALL_DIR}/static
 mkdir -p ${INSTALL_DIR}/tmp
 
@@ -40,15 +48,6 @@ then
 
 fi
 
-${DIR}/create_db.sh ${GLOBAL} ${PORT}
-
-APACHE_USER=`apachectl -S | grep User: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
-APACHE_GROUP=`apachectl -S | grep Group: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
-if [ -z "$APACHE_USER" ]; then
-    source /etc/apache2/envvars
-    APACHE_USER=${APACHE_RUN_USER}
-    APACHE_GROUP=${APACHE_RUN_GROUP}
-fi
 
 chgrp -R ${APACHE_GROUP} ${INSTALL_DIR}/data
 chmod -R 664 ${INSTALL_DIR}/data
@@ -66,10 +65,15 @@ mkdir /var/www/.cache
 chgrp ${APACHE_GROUP} /var/www/.cache
 chmod 664 /var/www/.cache
 
+${DIR}/create_db.sh ${GLOBAL} ${PORT}
+
+
 if [ ${GLOBAL} -eq 1 ] ; then
     SERVICE_DIR=${INSTALL_DIR}/service
 
 else
     SERVICE_DIR=/etc/signetsim
+    
 fi
+
 ${SERVICE_DIR}/apachectl start
