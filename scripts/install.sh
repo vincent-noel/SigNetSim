@@ -1,8 +1,9 @@
 #!/bin/bash
 EXEC_DIR=$PWD
 CMD=$0
-ROOT_DIR=$1
 
+GLOBAL=1
+PORT=80
 
 if [ "${CMD:0:1}" == "/" ]
 then
@@ -39,10 +40,15 @@ then
 
 fi
 
-${DIR}/create_db.sh
+${DIR}/create_db.sh ${GLOBAL} ${PORT}
 
 APACHE_USER=`apachectl -S | grep User: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
 APACHE_GROUP=`apachectl -S | grep Group: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
+if [ -z "$APACHE_USER" ]; then
+    source /etc/apache2/envvars
+    APACHE_USER=${APACHE_RUN_USER}
+    APACHE_GROUP=${APACHE_RUN_GROUP}
+fi
 
 chgrp -R ${APACHE_GROUP} ${INSTALL_DIR}/data
 chmod -R 664 ${INSTALL_DIR}/data
