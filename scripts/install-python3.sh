@@ -32,7 +32,7 @@ then
 
 fi
 
-${DIR}/create_db-python3.sh
+${DIR}/create_db.sh
 
 chgrp -R www-data ${INSTALL_DIR}/data
 chmod -R 664 ${INSTALL_DIR}/data
