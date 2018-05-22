@@ -44,18 +44,20 @@ ${DIR}/create_db.sh
 APACHE_USER=`apachectl -S | grep User: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
 APACHE_GROUP=`apachectl -S | grep Group: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
 
-chgrp -R ${APACHE_USER}:${APACHE_GROUP} ${INSTALL_DIR}/data
+chgrp -R ${APACHE_GROUP} ${INSTALL_DIR}/data
 chmod -R 664 ${INSTALL_DIR}/data
 find ${INSTALL_DIR}/data -type d  -exec chmod 775 {} \;
 
-chgrp -R ${APACHE_USER}:${APACHE_GROUP} ${INSTALL_DIR}/tmp
+chgrp -R ${APACHE_GROUP} ${INSTALL_DIR}/tmp
 chmod -R 664 ${INSTALL_DIR}/tmp
 find ${INSTALL_DIR}/tmp -type d  -exec chmod 775 {} \;
 
 mkdir /var/www/.config
-chown ${APACHE_USER}:${APACHE_GROUP} /var/www/.config
+chgrp ${APACHE_GROUP} /var/www/.config
+chmod 664 /var/www/.config
 
 mkdir /var/www/.cache
-chown ${APACHE_USER}:${APACHE_GROUP} /var/www/.cache
+chgrp ${APACHE_GROUP} /var/www/.cache
+chmod 664 /var/www/.cache
 
 /etc/mod_wsgi-express-80/apachectl start
