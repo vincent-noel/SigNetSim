@@ -44,7 +44,7 @@ else
 fi
 
 ${INSTALL_DIR}/venv/bin/python manage.py runmodwsgi --setup-only \
-    --port=${PORT} \
+    --port ${PORT} \
     --user ${APACHE_USER} --group ${APACHE_GROUP} \
     --server-root=${SERVICE_DIR} \
     --settings=signetsim.settings.apache \
