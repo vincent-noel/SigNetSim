@@ -24,6 +24,18 @@ dnf -y install openmpi-devel openmpi \
                 sundials sundials-devel \
                 lapack-devel blas-devel atlas-devel atlas-static
 
+# Checking if mpicc is in /usr/bin
+if [ ! -f /usr/bin/mpicc ] ; then
+    mpicc_path=$(echo $(find /usr -name mpicc) | cut -d' ' -f1)
+    ln -s ${mpicc_path} /usr/bin
+fi
+
+# Checking if mpirun is in /usr/bin
+if [ ! -f /usr/bin/mpirun ] ; then
+    mpirun_path=$(echo $(find /usr -name mpirun) | cut -d' ' -f1)
+    ln -s ${mpirun_path} /usr/bin
+fi
+
 #apt-get install -y libopenmpi-dev openmpi-bin \
 #                    libsundials-serial-dev libsundials-serial \
 #                    liblapack-dev libblas-dev libatlas-dev libatlas-base-dev
