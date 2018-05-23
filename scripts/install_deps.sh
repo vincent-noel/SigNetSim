@@ -32,7 +32,7 @@ if [ "${PYTHON_VERSION}" == 2 ] ; then
 
 else
     # Python 3 dependencies
-    apt-get install -y python3-dev python3-pip python-virtualenv
+    apt-get install -y python-dev python3-dev python3-pip python-virtualenv
 
 fi
 
