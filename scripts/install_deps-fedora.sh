@@ -36,6 +36,16 @@ if [ ! -f /usr/bin/mpirun ] ; then
     ln -s ${mpirun_path} /usr/bin
 fi
 
+# Checking if libatlas is in /usr/lib
+if [ ! -f /usr/lib/libatlas.so ] ; then
+    ATLAS_PATH=$(find /usr -name libatlas.so)
+    if [ -z "${ATLAS_PATH}" ] ; then
+        ATLAS_PATH=$(find /usr -name libtatlas.so)
+    fi
+
+    ln -s ${ATLAS_PATH} /usr/lib/libatlas.so
+fi
+
 #apt-get install -y libopenmpi-dev openmpi-bin \
 #                    libsundials-serial-dev libsundials-serial \
 #                    liblapack-dev libblas-dev libatlas-dev libatlas-base-dev
