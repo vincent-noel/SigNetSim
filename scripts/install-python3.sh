@@ -51,11 +51,11 @@ chown www-data:www-data /var/www/.cache
 ${DIR}/create_db.sh ${GLOBAL} ${PORT}
 
 
-if [ ${GLOBAL} -eq 1 ] ; then
-    SERVICE_DIR=${INSTALL_DIR}/service
+if [ ${GLOBAL} == 1 ] ; then
+    SERVICE_DIR=/etc/signetsim
 
 else
-    SERVICE_DIR=/etc/signetsim
+    SERVICE_DIR=${INSTALL_DIR}/service
 
 fi
 

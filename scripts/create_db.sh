@@ -35,10 +35,10 @@ chgrp -R ${APACHE_GROUP} ${INSTALL_DIR}/signetsim/settings/wsgi.py
 chmod -R 664 ${INSTALL_DIR}/signetsim/settings/wsgi.py
 
 if [ ${GLOBAL} == 1 ] ; then
-    SERVICE_DIR=${INSTALL_DIR}/service
+    SERVICE_DIR=/etc/signetsim
 
 else
-    SERVICE_DIR=/etc/signetsim
+    SERVICE_DIR=${INSTALL_DIR}/service
     APACHE_USER=$USER
     APACHE_GROUP=$GROUP
 fi

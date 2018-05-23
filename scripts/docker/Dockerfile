@@ -8,4 +8,4 @@ RUN /bin/bash /SigNetSim/scripts/install.sh
 
 EXPOSE 80
 
-CMD /etc/mod_wsgi-express-80/apachectl -D FOREGROUND
+CMD /etc/signetsim/apachectl -D FOREGROUND
