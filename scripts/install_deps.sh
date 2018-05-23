@@ -48,11 +48,6 @@ if [ ! -f /usr/lib/libatlas.so ] ; then
     ln -s ${ATLAS_PATH} /usr/lib/libatlas.so
 fi
 
-
-
-
-fi
-
 if [ "${PYTHON_VERSION}" == 2 ] ; then
     # Python 2 dependencies
     apt-get install -y python-dev python-pip python-virtualenv

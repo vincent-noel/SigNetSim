@@ -46,12 +46,7 @@ if [ ! -f /usr/lib/libatlas.so ] ; then
     ln -s ${ATLAS_PATH} /usr/lib/libatlas.so
 fi
 
-#apt-get install -y libopenmpi-dev openmpi-bin \
-#                    libsundials-serial-dev libsundials-serial \
-#                    liblapack-dev libblas-dev libatlas-dev libatlas-base-dev
-
 # Python 3 dependencies
-#apt-get install -y python3-dev python3-pip python-virtualenv
 dnf -y install python3-devel python3-pip python3-virtualenv gcc-c++
 
 # Apache dependencies
@@ -59,7 +54,6 @@ dnf -y install httpd httpd-devel
 
 # Misc dependencies
 dnf install -y wget curl git swig
-#apt-get install -y wget curl realpath git swig
 
 echo "> Installing Python dependencies...";
 
@@ -76,7 +70,6 @@ echo "> Installing JS dependencies...";
 
 # JS Dependencies
 curl -sL https://rpm.nodesource.com/setup_6.x | bash -
-#apt-get install -y nodejs
 dnf install -y nodejs
 npm install -g yarn
 
