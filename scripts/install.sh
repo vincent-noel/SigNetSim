@@ -4,6 +4,7 @@ CMD=$0
 
 GLOBAL=1
 PORT=80
+PYTHON_VERSION=2
 
 if [ "${CMD:0:1}" == "/" ]
 then
@@ -21,7 +22,7 @@ INSTALL_DIR=`dirname $DIR`
 DISTRIB=`cat /etc/os-release | grep ^ID= | cut -d'=' -f2`
 
 if [ "${DISTRIB}" == "ubuntu" ] || [ "${DISTRIB}" == "debian" ]; then
-    ${DIR}/install_deps.sh
+    ${DIR}/install_deps.sh ${PYTHON_VERSION}
 
 elif [ "${DISTRIB}" == "fedora" ]; then
     ${DIR}/install_deps-fedora.sh

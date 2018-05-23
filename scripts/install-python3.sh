@@ -5,6 +5,7 @@ ROOT_DIR=$1
 
 GLOBAL=1
 PORT=80
+PYTHON_VERSION=3
 
 if [ "${CMD:0:1}" == "/" ]
 then
@@ -20,7 +21,7 @@ fi
 INSTALL_DIR=`dirname $DIR`
 
 
-${DIR}/install_deps-python3.sh
+${DIR}/install_deps.sh ${PYTHON_VERSION}
 
 mkdir -p ${INSTALL_DIR}/static
 mkdir -p ${INSTALL_DIR}/tmp

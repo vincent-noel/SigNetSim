@@ -1,6 +1,7 @@
 #!/bin/bash
 EXEC_DIR=$PWD
 CMD=$0
+PYTHON_VERSION=$1
 
 apt-get -qq update
 apt-get install -y realpath
@@ -25,8 +26,15 @@ apt-get install -y libopenmpi-dev openmpi-bin \
                     libsundials-serial-dev libsundials-serial \
                     liblapack-dev libblas-dev libatlas-dev libatlas-base-dev
 
-# Python 2 dependencies
-apt-get install -y python-dev python-pip python-virtualenv
+if [ "${PYTHON_VERSION}" == 2 ] ; then
+    # Python 2 dependencies
+    apt-get install -y python-dev python-pip python-virtualenv
+
+else
+    # Python 3 dependencies
+    apt-get install -y python3-dev python3-pip python-virtualenv
+
+fi
 
 # Apache dependencies
 if apt-cache show apache2-dev &> /dev/null; then
