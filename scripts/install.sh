@@ -6,6 +6,39 @@ GLOBAL=1
 PORT=80
 PYTHON_VERSION=2
 
+# Reading arguments
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -g|--global)
+    GLOBAL=1
+    shift # past argument
+    ;;
+    -py|--python)
+    PYTHON_VERSION="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -p|--port)
+    PORT="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+echo GLOBAL          = "${GLOBAL}"
+echo PYTHON_VERSION  = "${PYTHON_VERSION}"
+echo PORT            = "${PORT}"
+
 if [ "${CMD:0:1}" == "/" ]
 then
     # absolute path
