@@ -76,24 +76,6 @@ fi
 # Misc dependencies
 apt-get install -y wget curl realpath git swig
 
-
-echo "> Installing Python dependencies...";
-
-
-if [ "${PYTHON_VERSION}" == 2 ] ; then
-    virtualenv ${INSTALL_DIR}/venv
-
-else
-    virtualenv -p python3 ${INSTALL_DIR}/venv
-
-fi
-
-# Python Dependencies
-${INSTALL_DIR}/venv/bin/pip install -i https://pypi.python.org/simple pip --upgrade
-${INSTALL_DIR}/venv/bin/pip install distribute setuptools --upgrade
-
-${INSTALL_DIR}/venv/bin/pip install -r ${DIR}/pip_requirements --no-build-isolation
-
 echo "> Installing JS dependencies...";
 
 # JS Dependencies

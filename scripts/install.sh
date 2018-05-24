@@ -55,12 +55,30 @@ INSTALL_DIR=`dirname $DIR`
 DISTRIB=`cat /etc/os-release | grep ^ID= | cut -d'=' -f2`
 
 if [ "${DISTRIB}" == "ubuntu" ] || [ "${DISTRIB}" == "debian" ]; then
-    ${DIR}/install_deps.sh ${PYTHON_VERSION}
+    ${DIR}/install_deps-debian.sh ${PYTHON_VERSION}
 
 elif [ "${DISTRIB}" == "fedora" ]; then
-    ${DIR}/install_deps-fedora.sh
+    ${DIR}/install_deps-fedora.sh ${PYTHON_VERSION}
 
 fi
+
+echo "> Installing Python dependencies...";
+
+
+if [ "${PYTHON_VERSION}" == 2 ] ; then
+    virtualenv ${INSTALL_DIR}/venv
+
+else
+    virtualenv -p python3 ${INSTALL_DIR}/venv
+
+fi
+
+# Python Dependencies
+${INSTALL_DIR}/venv/bin/pip install -i https://pypi.python.org/simple pip --upgrade
+${INSTALL_DIR}/venv/bin/pip install distribute setuptools --upgrade
+
+${INSTALL_DIR}/venv/bin/pip install -r ${DIR}/pip_requirements --no-build-isolation
+
 
 APACHE_USER=`apachectl -S | grep User: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
 APACHE_GROUP=`apachectl -S | grep Group: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
@@ -100,6 +118,9 @@ chgrp ${APACHE_GROUP} /var/www/.cache
 chmod 664 /var/www/.cache
 
 ${DIR}/create_db.sh ${GLOBAL} ${PORT}
+
+chgrp ${APACHE_GROUP}  ${INSTALL_DIR}/data/db/db.sqlite3
+chmod 664  ${INSTALL_DIR}/data/db/db.sqlite3
 
 
 if [ ${GLOBAL} == 1 ] ; then
