@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo $1
 if [ $1 = "docker" ]; then
     if [ $2 = "before_install" ]; then
         pip install -U docker-compose || exit 1;
@@ -40,14 +40,14 @@ if [ $1 = "docker" ]; then
 else
 
     if [ $2 = "before_install" ]; then
-        if [ $3 = "2" ]; then
+        if [[ $3 = "2" ]] || [[ $1 == fedora* ]] ; then
             docker pull signetsim/travis_testenv:$1 || exit 1;
         else
             docker pull signetsim/travis_testenv:$1-python3 || exit 1;
         fi
 
     elif [ $2 = "install" ]; then
-        if [ $3 = "2" ]; then
+        if [[ $3 = "2" ]] || [[ "$1" == fedora* ]] ; then
             docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/travis_testenv:$1 bash
         else
             docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/travis_testenv:$1-python3 bash
