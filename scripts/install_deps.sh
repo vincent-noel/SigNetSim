@@ -79,7 +79,14 @@ apt-get install -y wget curl realpath git swig
 
 echo "> Installing Python dependencies...";
 
-virtualenv ${INSTALL_DIR}/venv
+
+if [ "${PYTHON_VERSION}" == 2 ] ; then
+    virtualenv ${INSTALL_DIR}/venv
+
+else
+    virtualenv -p python3 ${INSTALL_DIR}/venv
+
+fi
 
 # Python Dependencies
 ${INSTALL_DIR}/venv/bin/pip install -i https://pypi.python.org/simple pip --upgrade
