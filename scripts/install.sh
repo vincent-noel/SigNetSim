@@ -64,13 +64,17 @@ fi
 
 echo "> Installing Python dependencies...";
 
-
 if [ "${PYTHON_VERSION}" == 2 ] ; then
     virtualenv ${INSTALL_DIR}/venv
 
 else
-    virtualenv -p python3 ${INSTALL_DIR}/venv
+    if [ "${DISTRIB}" == "fedora" ]; then
+        virtualenv-3 -p python3 ${INSTALL_DIR}/venv
 
+    else
+        virtualenv -p python3 ${INSTALL_DIR}/venv
+
+    fi
 fi
 
 # Python Dependencies
