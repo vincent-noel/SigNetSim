@@ -46,6 +46,7 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 		TemplateView.__init__(self, **kwargs)
 		HasWorkingModel.__init__(self)
 
+		self.optimization = None
 		self.form = DataOptimizationForm(self)
 
 	def get_context_data(self, **kwargs):
@@ -145,12 +146,19 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 				t_optimization.setTempDirectory(join(self.getProjectFolder(), "optimizations"))
 				nb_procs = 2
 
-				t = Thread(group=None,
-										target=t_optimization.runOptimization,
-										args=(nb_procs, None, None, ))
 
-				t.setDaemon(True)
-				t.start()
+				t_optimization.run_async(
+					success=self.optimization_success,
+					failure=self.optimization_error,
+					nb_procs=nb_procs
+				)
+				#
+				# t = Thread(group=None,
+				# 						target=t_optimization.runOptimization,
+				# 						args=(nb_procs, None, None, ))
+				#
+				# t.setDaemon(True)
+				# t.start()
 
 				t_model = SbmlModel.objects.get(id=self.model_id)
 
@@ -158,8 +166,22 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 										model=t_model,
 										optimization_id=t_optimization.optimizationId)
 				new_optimization.save()
-
+				self.optimization = new_optimization
 
 		except LibSigNetSimException as e:
 			self.form.addError(e.message)
+
+	def optimization_success(self):
+
+		self.optimization.status = 'EN'
+		self.optimization.save()
+
+
+	def optimization_error(self, e=None):
+
+		self.optimization.status = 'ER'
+		self.optimization.save()
+
+
+
 

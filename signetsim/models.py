@@ -169,6 +169,18 @@ class Optimization(models.Model):
 	model = models.ForeignKey(SbmlModel, on_delete=models.CASCADE)
 	optimization_id = models.CharField(max_length=255)
 
+	BUSY = 'BU'
+	ENDED = 'EN'
+	ERROR = 'ER'
+
+	STATUSES = (
+		(BUSY, 'Busy'),
+		(ENDED, 'Ended'),
+		(ERROR, 'Error')
+	)
+
+	status = models.CharField(max_length=2, choices=STATUSES, default=BUSY)
+
 
 class ContinuationComputation(models.Model):
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
