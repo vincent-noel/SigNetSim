@@ -52,13 +52,19 @@ fi
 
 INSTALL_DIR=`dirname $DIR`
 
-DISTRIB=`cat /etc/os-release | grep ^ID= | cut -d'=' -f2`
+DISTRIB=`cat /etc/os-release | grep ^ID= | cut -d'=' -f2 | tr -d '"'`
 
 if [ "${DISTRIB}" == "ubuntu" ] || [ "${DISTRIB}" == "debian" ]; then
     ${DIR}/install_deps-debian.sh ${PYTHON_VERSION}
 
 elif [ "${DISTRIB}" == "fedora" ]; then
     ${DIR}/install_deps-fedora.sh ${PYTHON_VERSION}
+
+elif [ "${DISTRIB}" == "centos" ]; then
+    ${DIR}/install_deps-centos.sh ${PYTHON_VERSION}
+
+elif [ "${DISTRIB}" == "opensuse" ] || [ "${DISTRIB}" == "opensuse-leap" ]; then
+    ${DIR}/install_deps-opensuse.sh ${PYTHON_VERSION}
 
 fi
 
@@ -68,7 +74,7 @@ if [ "${PYTHON_VERSION}" == 2 ] ; then
     virtualenv ${INSTALL_DIR}/venv
 
 else
-    if [ "${DISTRIB}" == "fedora" ]; then
+    if [ "${DISTRIB}" == "fedora" ] || [ "${DISTRIB}" == "centos" ]; then
         virtualenv-3 -p python3 ${INSTALL_DIR}/venv
 
     else
@@ -79,7 +85,8 @@ fi
 
 # Python Dependencies
 ${INSTALL_DIR}/venv/bin/pip install -i https://pypi.python.org/simple pip --upgrade
-${INSTALL_DIR}/venv/bin/pip install distribute setuptools --upgrade
+${INSTALL_DIR}/venv/bin/easy_install --upgrade distribute
+${INSTALL_DIR}/venv/bin/pip install setuptools --upgrade
 
 ${INSTALL_DIR}/venv/bin/pip install -r ${DIR}/pip_requirements --no-build-isolation
 
@@ -104,7 +111,6 @@ then
 
 fi
 
-
 chgrp -R ${APACHE_GROUP} ${INSTALL_DIR}/data
 chmod -R 664 ${INSTALL_DIR}/data
 find ${INSTALL_DIR}/data -type d  -exec chmod 775 {} \;
@@ -126,7 +132,6 @@ ${DIR}/create_db.sh ${GLOBAL} ${PORT}
 chgrp ${APACHE_GROUP}  ${INSTALL_DIR}/data/db/db.sqlite3
 chmod 664  ${INSTALL_DIR}/data/db/db.sqlite3
 
-
 if [ ${GLOBAL} == 1 ] ; then
     SERVICE_DIR=/etc/signetsim
 
@@ -134,6 +139,5 @@ else
     SERVICE_DIR=${INSTALL_DIR}/service
 
 fi
-
 
 ${SERVICE_DIR}/apachectl start

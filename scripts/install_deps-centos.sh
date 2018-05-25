@@ -3,7 +3,8 @@ EXEC_DIR=$PWD
 CMD=$0
 PYTHON_VERSION=$1
 
-dnf -y update
+yum -y install epel-release
+yum -y makecache
 
 if [ "${CMD:0:1}" == "/" ]
 then
@@ -21,9 +22,9 @@ INSTALL_DIR=`dirname $DIR`
 echo "> Installing system dependencies..."
 
 # libSigNetSim Dependencies
-dnf -y install openmpi-devel openmpi \
+yum -y install openmpi openmpi-devel \
                 sundials sundials-devel \
-                lapack-devel blas-devel atlas-devel atlas-static
+                lapack-devel blas-devel atlas-devel
 
 # Checking if mpicc is in /usr/bin
 if [ ! -f /usr/bin/mpicc ] ; then
@@ -47,29 +48,28 @@ if [ ! -f /usr/lib/libatlas.so ] ; then
     ln -s ${ATLAS_PATH} /usr/lib/libatlas.so
 fi
 
-
 if [ "${PYTHON_VERSION}" == 2 ] ; then
     # Python 2 dependencies
-    dnf -y install python-devel python-pip python-virtualenv gcc-c++
+    yum -y install python2-devel python2-pip python2-virtualenv gcc-c++
 
 else
     # Python 3 dependencies
-    dnf -y install python3-devel python3-pip python3-virtualenv gcc-c++
+    yum -y install python34-devel python34-pip python34-virtualenv gcc-c++
 
 fi
 
 # Apache dependencies
-dnf -y install httpd httpd-devel
+yum -y install httpd httpd-devel
 
 # Misc dependencies
-dnf install -y wget curl git swig
+yum -y install wget curl git swig
 
 echo "> Installing JS dependencies...";
 
 # JS Dependencies
+curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
 curl -sL https://rpm.nodesource.com/setup_6.x | bash -
-dnf install -y nodejs
-npm install -g yarn
+yum -y install yarn
 
 cd $INSTALL_DIR
 

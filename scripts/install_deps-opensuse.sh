@@ -2,8 +2,11 @@
 EXEC_DIR=$PWD
 CMD=$0
 PYTHON_VERSION=$1
+DISTRIB_NAME=`cat /etc/os-release| grep PRETTY_NAME | cut -d'=' -f2 | tr -d '"' | tr ' ' '_'`
 
-dnf -y update
+zypper ar -f https://download.opensuse.org/repositories/science/${DISTRIB_NAME}/ repo-science
+zypper ar -f https://download.opensuse.org/repositories/home:/beyerle:/IAC/${DISTRIB_NAME}/ beyerle
+zypper --no-gpg-checks refresh
 
 if [ "${CMD:0:1}" == "/" ]
 then
@@ -21,9 +24,10 @@ INSTALL_DIR=`dirname $DIR`
 echo "> Installing system dependencies..."
 
 # libSigNetSim Dependencies
-dnf -y install openmpi-devel openmpi \
+zypper -n install openmpi-devel openmpi \
                 sundials sundials-devel \
-                lapack-devel blas-devel atlas-devel atlas-static
+                lapack-devel blas-devel libatlas3-basic-devel
+
 
 # Checking if mpicc is in /usr/bin
 if [ ! -f /usr/bin/mpicc ] ; then
@@ -47,29 +51,27 @@ if [ ! -f /usr/lib/libatlas.so ] ; then
     ln -s ${ATLAS_PATH} /usr/lib/libatlas.so
 fi
 
-
 if [ "${PYTHON_VERSION}" == 2 ] ; then
     # Python 2 dependencies
-    dnf -y install python-devel python-pip python-virtualenv gcc-c++
+    zypper -n install python2-devel python2-pip python2-virtualenv gcc-c++
 
 else
     # Python 3 dependencies
-    dnf -y install python3-devel python3-pip python3-virtualenv gcc-c++
+    zypper -n install python3-devel python3-pip python3-virtualenv gcc-c++
 
 fi
 
 # Apache dependencies
-dnf -y install httpd httpd-devel
+zypper -n install apache2 apache2-devel
 
 # Misc dependencies
-dnf install -y wget curl git swig
+zypper -n install wget curl git swig tar nodejs6
 
 echo "> Installing JS dependencies...";
 
 # JS Dependencies
-curl -sL https://rpm.nodesource.com/setup_6.x | bash -
-dnf install -y nodejs
-npm install -g yarn
+curl -o- -L https://yarnpkg.com/install.sh | bash
+ln -s $HOME/.yarn/bin/yarn /usr/bin
 
 cd $INSTALL_DIR
 
