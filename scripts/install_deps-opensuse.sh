@@ -62,10 +62,10 @@ else
 fi
 
 # Apache dependencies
-zypper -n install apache2 apache2-devel
+zypper -n install w3m lynx apache2 apache2-devel
 
 # Misc dependencies
-zypper -n install wget curl git swig tar nodejs6
+zypper -n install wget curl git swig tar nodejs make
 
 echo "> Installing JS dependencies...";
 
