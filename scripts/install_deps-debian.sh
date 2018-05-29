@@ -44,7 +44,7 @@ else
 fi
 
 if [[ $(apt-cache search libatlas-dev | wc -l) -gt 0 ]]; then
-    ATLAS_DEV="libatlas-dev"
+    ATLAS_DEV="libatlas-dev libatlas-base-dev"
 
 elif [[ $(apt-cache search libatlas-base-dev | wc -l) -gt 0 ]]; then
     ATLAS_DEV="libatlas-base-dev"
