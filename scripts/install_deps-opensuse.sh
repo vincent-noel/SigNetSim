@@ -65,7 +65,7 @@ fi
 zypper -n install w3m lynx apache2 apache2-devel
 
 # Misc dependencies
-zypper -n install wget curl git swig tar nodejs make
+zypper -n install wget curl git swig tar nodejs make which
 
 echo "> Installing JS dependencies...";
 
