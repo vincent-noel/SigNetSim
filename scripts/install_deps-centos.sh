@@ -62,7 +62,7 @@ fi
 yum -y install httpd httpd-devel
 
 # Misc dependencies
-yum -y install wget curl git swig
+yum -y install wget curl git swig make
 
 echo "> Installing JS dependencies...";
 
