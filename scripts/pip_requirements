@@ -19,3 +19,4 @@ matplotlib
 coveralls
 seaborn
 mod_wsgi
+gevent==1.3.1
