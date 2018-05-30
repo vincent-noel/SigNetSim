@@ -24,7 +24,7 @@ INSTALL_DIR=`dirname $DIR`
 echo "> Installing system dependencies..."
 
 # libSigNetSim Dependencies
-zypper -n install openmpi-devel openmpi \
+zypper -n install openmpi-devel openmpi libpsm_infinipath1 \
                 sundials sundials-devel \
                 lapack-devel blas-devel libatlas3-basic-devel
 
