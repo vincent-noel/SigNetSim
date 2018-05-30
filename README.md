@@ -54,10 +54,13 @@ If you want to run it on a different port :
 
 ## Installation script
 
-	sudo bash scripts/install.sh [folder]
+	sudo bash scripts/install.sh [options]
+	
+	--python 2|3        : Choose your python version (default: 3)
+	--port port-number  : Port on which signetsim will run (default: 80)
 
-The server will run on localhost/[folder].
-Should work for ubuntu [precise|trusty|stretch] and debian [wheezy|jessie|stretch].
+The server will run on localhost.
+Should work for ubuntu, debian, opensuse and centos. 
 
 
 ## License
