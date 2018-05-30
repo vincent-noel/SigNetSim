@@ -33,6 +33,8 @@ if [ $1 = "docker" ]; then
             docker push signetsim/signetsim:develop-py2 || exit 1;
         else
             docker push signetsim/signetsim:develop || exit 1;
+            docker tag signetsim/signetsim:develop signetsim/signetsim:develop-py3 || exit 1;
+            docker push signetsim/signetsim:develop-py3 || exit 1;
         fi
 
     fi
