@@ -4,7 +4,6 @@ CMD=$0
 PYTHON_VERSION=$1
 
 apt-get -qq update
-apt-get install -y realpath
 
 if [ "${CMD:0:1}" == "/" ]
 then
@@ -13,7 +12,7 @@ then
 
 else
     # relative path
-    DIR=`dirname $( realpath $PWD/${CMD} )`
+    DIR=`dirname $( readlink -e $PWD/${CMD} )`
 
 fi
 
@@ -107,7 +106,7 @@ else
 fi
 
 # Misc dependencies
-apt-get install -y wget curl realpath git swig  apt-transport-https
+apt-get install -y wget curl git swig  apt-transport-https
 
 echo "> Installing JS dependencies...";
 

@@ -12,7 +12,7 @@ then
 
 else
     # relative path
-    DIR=`dirname $( realpath $PWD/${CMD} )`
+    DIR=`dirname $( readlink -e $PWD/${CMD} )`
 
 fi
 
