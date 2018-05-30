@@ -4,7 +4,7 @@ MAINTAINER Vincent Noel version: 0.1
 
 RUN apt-get -qq update
 ADD . /SigNetSim
-RUN /bin/bash /SigNetSim/scripts/install.sh --global --python 3 --port 80
+RUN /bin/bash /SigNetSim/scripts/install.sh --python 2
 
 EXPOSE 80
 
