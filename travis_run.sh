@@ -40,18 +40,10 @@ if [ $1 = "docker" ]; then
 else
 
     if [ $2 = "before_install" ]; then
-        if [[ $3 = "2" ]] || [[ $1 == fedora* ]] || [[ "$1" == centos* ]] || [[ "$1" == opensuse* ]] ; then
-            docker pull signetsim/travis_testenv:$1 || exit 1;
-        else
-            docker pull signetsim/travis_testenv:$1-python3 || exit 1;
-        fi
+        docker pull $1 || exit 1;
 
     elif [ $2 = "install" ]; then
-        if [[ $3 = "2" ]] || [[ "$1" == fedora* ]] || [[ "$1" == centos* ]] || [[ "$1" == opensuse* ]] ; then
-            docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/travis_testenv:$1 bash
-        else
-            docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim signetsim/travis_testenv:$1-python3 bash
-        fi
+        docker run -di --name test_env -v $(pwd):/home/travis/build/vincent-noel/SigNetSim $1 bash
         docker exec test_env /bin/bash /home/travis/build/vincent-noel/SigNetSim/scripts/install.sh --python $3
 
     elif [ $2 = "script" ]; then
