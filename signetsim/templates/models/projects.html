@@ -159,13 +159,13 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <form method="post" class="form-inline" enctype="multipart/form-data">
+				{% csrf_token %}
         <input type="hidden" name="action" value="load_folder">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title" id="myModalLabel_2">Load COMBINE archive</h4>
         </div>
         <div class="modal-body">
-          {% csrf_token %}
 					{% include 'commons/html/file_input.html' with
 						id="combine_file"
 						placeholder="Choose a file..."

@@ -52,7 +52,6 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 		self.createFolderError = None
 		self.sendFolderShow = None
 		self.sendFolderError = None
-		self.fileUploadForm = DocumentForm()
 
 	def get_context_data(self, **kwargs):
 
@@ -63,7 +62,6 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 		kwargs['send_folder_error'] = self.sendFolderError
 		kwargs['send_folder_show'] = self.sendFolderShow
-		kwargs['load_project_form'] = self.fileUploadForm
 		return kwargs
 
 
