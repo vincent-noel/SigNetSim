@@ -6,18 +6,10 @@ if [ $1 = "docker" ]; then
         docker login -u signetsim -p $4
 
     elif [ $2 = "install" ]; then
-        if [ $3 = "2" ]; then
-            docker-compose build signetsim-py2 || exit 1;
-        else
-            docker-compose build signetsim || exit 1;
-        fi
+        docker-compose build signetsim || exit 1;
 
     elif [ $2 = "script" ]; then
-        if [ $3 = "2" ]; then
-            docker run --name signetsim -p 80:80 -d signetsim/signetsim:develop-py2 || exit 1;
-        else
-            docker run --name signetsim -p 80:80 -d signetsim/signetsim:develop || exit 1;
-        fi
+        docker run --name signetsim -p 80:80 -d signetsim/signetsim:develop || exit 1;
 
         APACHE_RETURN=`wget -q -O - localhost:80 | grep \<title\> | cut -d">" -f2 | cut -d" " -f1`
         if [ -n "${APACHE_RETURN}" ] && [ "${APACHE_RETURN}" == "Install" ];
@@ -29,13 +21,7 @@ if [ $1 = "docker" ]; then
 
 
     elif [ $2 = "after_script" ]; then
-        if [ $3 = "2" ]; then
-            docker push signetsim/signetsim:develop-py2 || exit 1;
-        else
-            docker push signetsim/signetsim:develop || exit 1;
-            docker tag signetsim/signetsim:develop signetsim/signetsim:develop-py3 || exit 1;
-            docker push signetsim/signetsim:develop-py3 || exit 1;
-        fi
+        docker push signetsim/signetsim:develop || exit 1;
 
     fi
 
