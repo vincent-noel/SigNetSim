@@ -73,7 +73,7 @@ class FormSubstitution extends FormGroup {
     {
         $("#modal_substitution-title").html("New modification");
 
-        this.resetErrors();
+//        this.resetErrors();
         this.clearForms();
         this.substitution_submodel_object.hide();
         this.show();
@@ -137,7 +137,7 @@ class FormSubstitution extends FormGroup {
 
     save()
     {
-        this.resetErrors();
+//        this.resetErrors();
         this.checkErrors();
 
         if (this.nb_errors === 0){

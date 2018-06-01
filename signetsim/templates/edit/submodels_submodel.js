@@ -208,7 +208,7 @@ class SubmodelForm extends FormGroup {
 
         $("#general").addClass('active in');
         this.updateSubmodelType();
-        this.resetErrors();
+//        this.resetErrors();
 
         this.show();
         this.nb_deletions = 0;
@@ -295,7 +295,7 @@ class SubmodelForm extends FormGroup {
                    if (model_loaded == 2) { model_loaded = 0; this.loadListOfObjects(); }
                });
                this.submodel_sbmlid.check();
-               this.resetErrors();
+//               this.resetErrors();
             },
             () => { console.log("failed"); }
         )
@@ -323,7 +323,7 @@ class SubmodelForm extends FormGroup {
 
     save()
     {
-        this.resetErrors();
+//        this.resetErrors();
         this.checkErrors();
 
         if (this.nb_errors == 0) {
