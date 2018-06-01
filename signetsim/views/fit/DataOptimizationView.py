@@ -28,11 +28,10 @@ from django.views.generic import TemplateView
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.models import Optimization, SbmlModel, Experiment
-from .DataOptimizationForm import DataOptimizationForm
+from signetsim.views.fit.DataOptimizationForm import DataOptimizationForm
 
 from libsignetsim import ModelVsTimeseriesOptimization, LibSigNetSimException
 
-from threading import Thread
 from os.path import isdir, join
 from os import mkdir
 
@@ -124,7 +123,6 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 
 			if len(t_parameters) > 0 and len(self.form.selectedExperiments) > 0:
 
-				# experiments = self.form.buildExperiments(request)
 				t_optimization = ModelVsTimeseriesOptimization(
 									workingModel=self.model,
 									list_of_experiments=self.form.selectedExperiments,
@@ -146,19 +144,11 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 				t_optimization.setTempDirectory(join(self.getProjectFolder(), "optimizations"))
 				nb_procs = 2
 
-
 				t_optimization.run_async(
 					success=self.optimization_success,
 					failure=self.optimization_error,
 					nb_procs=nb_procs
 				)
-				#
-				# t = Thread(group=None,
-				# 						target=t_optimization.runOptimization,
-				# 						args=(nb_procs, None, None, ))
-				#
-				# t.setDaemon(True)
-				# t.start()
 
 				t_model = SbmlModel.objects.get(id=self.model_id)
 
