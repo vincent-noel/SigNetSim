@@ -57,7 +57,7 @@
 			{% if user.is_authenticated %}
 			<li><a href="{% url 'profile' user.username %}">{{user.username}}</a></li>
 			{% if user.is_staff %}
-			<li><a href="{% url 'admin' %}">Admin</a></li>
+			<li><a href="{% url 'admin_users' %}">Admin</a></li>
 			{% endif %}
 			<li><a href="{% url 'help' %}">Help</a></li>
 			<li><a href="{% url 'logout' %}">Logout</a></li>

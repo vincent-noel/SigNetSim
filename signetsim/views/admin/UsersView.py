@@ -29,8 +29,8 @@ from signetsim.models import User
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from signetsim.managers.users import deleteUser
 
-class AdminView(TemplateView, HasErrorMessages):
-	template_name = 'admin/admin.html'
+class UsersView(TemplateView, HasErrorMessages):
+	template_name = 'admin/users.html'
 
 
 	def __init__(self, **kwargs):

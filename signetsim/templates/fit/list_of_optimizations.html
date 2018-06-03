@@ -40,7 +40,7 @@
         <tr class="row">
            <td class="col-xs-4 col-md-4"><a href="{% url 'view_optimization' optimization.optimization_id  %}">{{ model_name }}</a></td>
            <td class="col-xs-2 col-md-2">{{ optimization_start|hms_string }} ago</td>
-           <td class="col-xs-2 col-md-2">{{ optimization_status}}</td>
+           <td class="col-xs-2 col-md-2">{{ optimization.status}}</td>
            <td class="col-xs-4 col-md-4">
              <div class="pull-right">
                <form class="form-inline" method="post" enctype="multipart/form-data">

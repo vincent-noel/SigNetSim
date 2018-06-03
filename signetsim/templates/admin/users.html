@@ -15,12 +15,13 @@
 {#   You should have received a copy of the GNU Affero General Public License #}
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
-{% extends '_layouts/fullpage.html' %}
+{% extends '_layouts/menupage.html' %}
 {% load static from staticfiles %}
 
 {% load bootstrap3 %}
 {% load tags %}
 
+{% block view_sidebar %}{% include 'admin/menu.html' with page="users" %}{% endblock view_sidebar %}
 {% block title %} Admin | {{ block.super }}{% endblock title %}
 {% block view_content %}
 
@@ -121,5 +122,5 @@
 
 {% block js %}
 {{ block.super }}
-{% include 'admin/admin.js' %}
+{% include 'admin/users.js' %}
 {% endblock js %}

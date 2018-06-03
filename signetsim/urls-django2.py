@@ -49,7 +49,8 @@ from .views import HelpView, SuccessView, InstallView
 from .views import ListOfModelsView, ListOfProjectsView, ProjectArchive, SimulationArchive
 from .views import ListOfOptimizationsView, OptimizationResultView
 from .views import ListOfSimulationsView, SedmlSimulationView
-from .views import LoginView, ActivateAccountView, ProfileView, AdminView
+from .views import LoginView, ActivateAccountView, ProfileView
+from .views import UsersView, ComputationsView
 from .views import ModelCompartmentsView, ModelOverviewView, ModelAnnotationsView
 from .views import ModelReactionsView, ModelRulesView, ModelSubmodelsView
 from .views import ModelSpeciesView, ModelParametersView
@@ -82,7 +83,8 @@ urlpatterns += [
 	url(r'^install/$', InstallView.as_view(), name='install'),
 	url(r'^success/$', SuccessView.as_view(), name='success'),
 	url(r'^profile/(.*)/$', ProfileView.as_view(), name='profile'),
-	url(r'^admin/$', AdminView.as_view(), name='admin'),
+	url(r'^admin/$', UsersView.as_view(), name='admin_users'),
+	url(r'^admin/computations/$', ComputationsView.as_view(), name='admin_computations'),
 
 	# Model import/export
 	url(r'^project/([^/]+)/$', ListOfModelsView.as_view(), name='project'),
