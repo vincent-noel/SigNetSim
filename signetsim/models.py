@@ -168,41 +168,64 @@ class Optimization(models.Model):
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	model = models.ForeignKey(SbmlModel, on_delete=models.CASCADE)
 	optimization_id = models.CharField(max_length=255)
+	cores = models.IntegerField(default=2)
 
+	QUEUED = 'QU'
+	INTERRUPTED = 'IN'
 	BUSY = 'BU'
 	ENDED = 'EN'
 	ERROR = 'ER'
 
 	STATUSES = (
+		(QUEUED, 'Queued'),
+		(INTERRUPTED, 'Interrupted'),
 		(BUSY, 'Busy'),
 		(ENDED, 'Ended'),
 		(ERROR, 'Error')
 	)
 
-	status = models.CharField(max_length=2, choices=STATUSES, default=BUSY)
+	status = models.CharField(max_length=2, choices=STATUSES, default=QUEUED)
+	error = models.CharField(max_length=255, default="", null=True)
 
 
-class ContinuationComputation(models.Model):
+class Continuation(models.Model):
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	model = models.ForeignKey(SbmlModel, on_delete=models.CASCADE)
 	parameter = models.CharField(max_length=255, default="")
 
 	result = models.CharField(max_length=10240, default="")
-	error = models.CharField(max_length=255, default="")
+	error = models.CharField(max_length=255, default="", null=True)
+
+	QUEUED = 'QU'
 	BUSY = 'BU'
 	ENDED = 'EN'
 	ERROR = 'ER'
 
 	STATUSES = (
+		(QUEUED, 'Queued'),
 		(BUSY, 'Busy'),
 		(ENDED, 'Ended'),
 		(ERROR, 'Error')
 	)
 
-	status = models.CharField(max_length=2,
-									  choices=STATUSES,
-									  default=BUSY)
+	status = models.CharField(max_length=2, choices=STATUSES, default=QUEUED)
 
+
+class ComputationQueue(models.Model):
+	OPTIM = 'Optimization'
+	CONT = 'Continuation'
+	SIM = 'Simulation'
+
+	TYPES = (
+		(OPTIM, 'Optimization'),
+		(CONT, 'Continuation'),
+		(SIM, 'Simulation')
+	)
+
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
+	type = models.CharField(max_length=12, choices=TYPES, null=True)
+	computation_id = models.IntegerField(default=-1)
+	object = models.CharField(max_length=102400, default="")
 
 #######################################################################################
 # Experimental data v2

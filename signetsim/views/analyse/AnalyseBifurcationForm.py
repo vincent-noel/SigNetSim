@@ -49,6 +49,9 @@ class AnalyseBifurcationsForm(HasErrorMessages):
 			max_value=len(self.parent.listOfConstants)
 		)
 
+		if self.parameter is None:
+			self.addError("Please select a parameter")
+
 		self.fromValue = self.readFloat(request, 'from_value', "the minimal value to look for equilibrium")
 		self.toValue = self.readFloat(request, 'to_value', "the minimal value to look for equilibrium")
 

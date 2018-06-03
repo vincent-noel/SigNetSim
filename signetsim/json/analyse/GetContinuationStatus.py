@@ -25,7 +25,7 @@
 """
 
 from signetsim.json import JsonRequest
-from signetsim.models import SbmlModel, ContinuationComputation
+from signetsim.models import SbmlModel, Continuation
 from signetsim.views.HasWorkingModel import HasWorkingModel
 
 
@@ -55,4 +55,4 @@ class GetContinuationStatus(JsonRequest, HasWorkingModel):
 
 		HasWorkingModel.load(self, request, *args, **kwargs)
 		t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
-		self.listOfComputations = ContinuationComputation.objects.filter(project=self.project, model=t_model)
+		self.listOfComputations = Continuation.objects.filter(project=self.project, model=t_model)

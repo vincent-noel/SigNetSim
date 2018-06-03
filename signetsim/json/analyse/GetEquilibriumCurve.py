@@ -26,7 +26,7 @@
 
 from signetsim.json import JsonRequest
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.models import ContinuationComputation, SbmlModel
+from signetsim.models import Continuation, SbmlModel
 
 from dill import loads
 
@@ -78,5 +78,5 @@ class GetEquilibriumCurve(JsonRequest, HasWorkingModel):
 
 		HasWorkingModel.load(self, request, *args, **kwargs)
 		t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
-		self.listOfComputations = ContinuationComputation.objects.filter(project=self.project, model=t_model)
+		self.listOfComputations = Continuation.objects.filter(project=self.project, model=t_model)
 

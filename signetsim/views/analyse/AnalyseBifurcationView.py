@@ -27,10 +27,11 @@
 from libsignetsim.continuation.EquilibriumPointCurve import EquilibriumPointCurve
 from django.views.generic import TemplateView
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from signetsim.models import ContinuationComputation, SbmlModel
+from signetsim.models import Continuation, SbmlModel
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.analyse.AnalyseBifurcationForm import AnalyseBifurcationsForm
 from signetsim.settings.Settings import Settings
+from signetsim.managers.computations import add_computation
 import dill
 
 
@@ -84,20 +85,20 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 	def deleteCurve(self, request):
 		curve_id = self.readInt(request, 'result_id', "The id of the curve to delete")
-		t_computation = ContinuationComputation.objects.get(id=curve_id)
+		t_computation = Continuation.objects.get(id=curve_id)
 		t_computation.delete()
 
 	def callback_success(self, code):
 
-		if ContinuationComputation.objects.filter(id=self.computation.id).exists():
+		if Continuation.objects.filter(id=self.computation.id).exists():
 			self.computation.result = dill.dumps(code).decode('Latin-1')
-			self.computation.status = ContinuationComputation.ENDED
+			self.computation.status = Continuation.ENDED
 			self.computation.save()
 
 	def callback_error(self):
-		if ContinuationComputation.objects.filter(id=self.computation.id).exists():
+		if Continuation.objects.filter(id=self.computation.id).exists():
 			self.computation.result = ""
-			self.computation.status = ContinuationComputation.ERROR
+			self.computation.status = Continuation.ERROR
 			self.computation.save()
 
 	def load(self, request, *args, **kwargs):
@@ -112,7 +113,7 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 	def loadComputations(self):
 		t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
-		self.listOfComputations = ContinuationComputation.objects.filter(project=self.project, model=t_model)
+		self.listOfComputations = Continuation.objects.filter(project=self.project, model=t_model)
 
 	def computeCurve(self, request):
 
@@ -121,7 +122,7 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 			t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
 
-			self.computation = ContinuationComputation(
+			self.computation = Continuation(
 				project=self.project,
 				model=t_model,
 				parameter=self.listOfConstants[self.form.parameter].getSymbolStr(),
@@ -129,12 +130,21 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 			self.computation.save()
 
-			if self.form.parameter is not None:
+			t_ep_curve = EquilibriumPointCurve(self.getModel())
+			t_ep_curve.setParameter(self.listOfConstants[self.form.parameter])
+			t_ep_curve.setRange(self.form.fromValue, self.form.toValue)
+			t_ep_curve.setDs(self.form.ds)
+			t_ep_curve.setMaxSteps(self.form.maxSteps)
+			t_ep_curve.build()
 
-				t_ep_curve = EquilibriumPointCurve(self.getModel())
-				t_ep_curve.setParameter(self.listOfConstants[self.form.parameter])
-				t_ep_curve.setRange(self.form.fromValue, self.form.toValue)
-				t_ep_curve.setDs(self.form.ds)
-				t_ep_curve.setMaxSteps(self.form.maxSteps)
-				t_ep_curve.build()
-				t_ep_curve.run_async(self.callback_success, self.callback_error)
+			add_computation(
+				project=self.project,
+				entry=self.computation,
+				object=t_ep_curve
+			)
+
+
+			# t_ep_curve.run_async(self.callback_success, self.callback_error)
+			#
+			# self.computation.status = Continuation.BUSY
+			# self.computation.save()

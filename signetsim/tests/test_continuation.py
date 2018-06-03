@@ -26,7 +26,7 @@
 
 from django.test import TestCase, Client
 from django import __version__
-from signetsim.models import User, Project, SbmlModel, ContinuationComputation
+from signetsim.models import User, Project, SbmlModel, Continuation
 from django.conf import settings
 from os import mkdir
 from os.path import dirname, join, isdir
@@ -67,7 +67,7 @@ class TestContinuation(TestCase):
 
 		self.assertEqual(response_load_model.status_code, 200)
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 1)
-		self.assertEqual(len(ContinuationComputation.objects.filter(project=project)), 0)
+		self.assertEqual(len(Continuation.objects.filter(project=project)), 0)
 
 		response_compute_curve = c.post('/analyse/bifurcations/', {
 			'action': 'compute_curve',
@@ -80,7 +80,7 @@ class TestContinuation(TestCase):
 
 		self.assertEqual(response_compute_curve.status_code, 200)
 		self.assertEqual(len(response_compute_curve.context['list_of_computations']), 1)
-		self.assertEqual(len(ContinuationComputation.objects.filter(project=project)), 1)
+		self.assertEqual(len(Continuation.objects.filter(project=project)), 1)
 
 		response_get_status = c.post('/json/get_continuation_status/', {'continuation_id': 0})
 

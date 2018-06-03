@@ -28,7 +28,7 @@ from django.contrib import admin
 
 # Register your models here.
 from .models import User, Project, SbmlModel, SEDMLSimulation, CombineArchiveModel
-from .models import Optimization, ContinuationComputation
+from .models import Optimization, Continuation, ComputationQueue
 from .models import Experiment, Condition, Observation, Treatment
 
 
@@ -38,7 +38,8 @@ admin.site.register(SbmlModel)
 admin.site.register(SEDMLSimulation)
 admin.site.register(CombineArchiveModel)
 admin.site.register(Optimization)
-admin.site.register(ContinuationComputation)
+admin.site.register(Continuation)
+admin.site.register(ComputationQueue)
 
 
 admin.site.register(Experiment)

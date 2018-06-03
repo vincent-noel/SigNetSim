@@ -27,9 +27,9 @@
 from django.views.generic import TemplateView
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.models import Optimization, SbmlModel, Experiment
+from signetsim.models import Optimization, SbmlModel, Experiment, ComputationQueue
 from signetsim.views.fit.DataOptimizationForm import DataOptimizationForm
-
+from signetsim.managers.computations import add_computation
 from libsignetsim import ModelVsTimeseriesOptimization, LibSigNetSimException
 
 from os.path import isdir, join
@@ -144,11 +144,6 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 				t_optimization.setTempDirectory(join(self.getProjectFolder(), "optimizations"))
 				nb_procs = 2
 
-				t_optimization.run_async(
-					success=self.optimization_success,
-					failure=self.optimization_error,
-					nb_procs=nb_procs
-				)
 
 				t_model = SbmlModel.objects.get(id=self.model_id)
 
@@ -156,21 +151,34 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 										model=t_model,
 										optimization_id=t_optimization.optimizationId)
 				new_optimization.save()
-				self.optimization = new_optimization
+
+				add_computation(
+					project=self.project,
+					entry=new_optimization,
+					object=t_optimization
+				)
+				# t_optimization.run_async(
+				# 	success=self.optimization_success,
+				# 	failure=self.optimization_error,
+				# 	nb_procs=nb_procs
+				# )
+				#
+				#
+				# self.optimization = new_optimization
 
 		except LibSigNetSimException as e:
 			self.form.addError(e.message)
 
-	def optimization_success(self):
-
-		self.optimization.status = 'EN'
-		self.optimization.save()
-
-
-	def optimization_error(self, e=None):
-
-		self.optimization.status = 'ER'
-		self.optimization.save()
+	# def optimization_success(self):
+	#
+	# 	self.optimization.status = 'EN'
+	# 	self.optimization.save()
+	#
+	#
+	# def optimization_error(self, e=None):
+	#
+	# 	self.optimization.status = 'ER'
+	# 	self.optimization.save()
 
 
 

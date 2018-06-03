@@ -27,7 +27,7 @@
 from django.conf import settings
 from django.core.files import File
 
-from signetsim.models import SbmlModel, Experiment, Optimization, SEDMLSimulation, ContinuationComputation, ModelsDependency
+from signetsim.models import SbmlModel, Experiment, Optimization, SEDMLSimulation, Continuation, ModelsDependency
 from signetsim.managers.models import deleteModel, copyModel, getDetailedModelDependencies
 from signetsim.managers.data import deleteExperiment, copyExperiment, buildExperiment, importExperiment
 from signetsim.managers.simulations import deleteSimulation, copySimulation
@@ -74,7 +74,7 @@ def deleteProject(project):
 
 
 def deleteProjectEquilibriumCurve(project):
-	for cont in ContinuationComputation.objects.filter(project=project):
+	for cont in Continuation.objects.filter(project=project):
 		cont.delete()
 
 # def deleteProjectArchives(project):
