@@ -27,7 +27,7 @@
 from signetsim.models import SbmlModel
 from django.conf import settings
 from os.path import join
-import cloudpickle
+from dill import dumps, loads
 
 
 class HasVariablesInSession(object):
@@ -64,7 +64,7 @@ class HasVariablesInSession(object):
 
 	def getModelFromSession(self):
 		# print("> Unpickling")
-		return cloudpickle.loads(self.__request.session['loaded_model_doc']).model
+		return loads(self.__request.session['loaded_model_doc']).model
 
 	def getModelIdFromSession(self):
 		return self.__request.session.get('loaded_model_id')
@@ -75,9 +75,9 @@ class HasVariablesInSession(object):
 	def saveModelInSession(self, model, model_id):
 		# print("> Pickling")
 		self.model.cleanBeforePickle()
-		self.__request.session['loaded_model_doc'] = cloudpickle.dumps(model.parentDoc)
+		self.__request.session['loaded_model_doc'] = dumps(model.parentDoc)
 		self.__request.session['loaded_model_id'] = model_id
-		self.__request.session['loaded_model_filename'] = join(settings.MEDIA_ROOT,str(SbmlModel.objects.get(id=model_id).sbml_file))
+		self.__request.session['loaded_model_filename'] = join(settings.MEDIA_ROOT, str(SbmlModel.objects.get(id=model_id).sbml_file))
 
 	def deleteModelFromSession(self):
 		if self.hasModelInSession():
