@@ -25,7 +25,7 @@
 """
 
 from django.conf import settings
-from django.conf.urls import include, url
+from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import logout
@@ -73,9 +73,20 @@ else:
 		urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 
-urlpatterns += [
+from django import __version__
+if int(__version__.split('.')[0]) < 2:
+	from django.conf.urls import include
+	urlpatterns += [
+		url(r'^admin_db/', include(admin.site.urls)),
+	]
 
-	url(r'^admin_db/', include(admin.site.urls)),
+else:
+	from django.urls import path
+	urlpatterns += [
+		path('admin_db/', admin.site.urls),
+	]
+
+urlpatterns += [
 
 	# Basic
 	url(r'^help/$', HelpView.as_view(), name='help'),

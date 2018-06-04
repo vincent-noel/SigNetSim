@@ -54,7 +54,6 @@ INSTALLED_APPS = (
 	'signetsim',
 )
 
-
 from django import __version__
 if int(__version__.split('.')[0]) < 2:
 	MIDDLEWARE_CLASSES = (
@@ -66,8 +65,6 @@ if int(__version__.split('.')[0]) < 2:
 		'django.middleware.clickjacking.XFrameOptionsMiddleware',
 	)
 
-	ROOT_URLCONF = 'signetsim.urls'
-
 else:
 	MIDDLEWARE = (
 		'django.contrib.sessions.middleware.SessionMiddleware',
@@ -78,8 +75,7 @@ else:
 		'django.middleware.clickjacking.XFrameOptionsMiddleware',
 	)
 
-	ROOT_URLCONF = 'signetsim.urls-django2'
-
+ROOT_URLCONF = 'signetsim.urls'
 
 TEMPLATES = [
 	{
