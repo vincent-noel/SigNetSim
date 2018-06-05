@@ -149,7 +149,7 @@ settings_filename = os.path.join(BASE_DIR, "data", "settings", "settings.json")
 
 AUTH_USER_MODEL = 'signetsim.User'
 
-if os.path.isfile(os.path.join(BASE_DIR, "data", "db" "db.sqlite3")):
+if os.path.isfile(os.path.join(BASE_DIR, "data", "db", "db.sqlite3")):
 
 	if not os.path.isfile(settings_filename):
 
@@ -190,6 +190,8 @@ if os.path.isfile(os.path.join(BASE_DIR, "data", "db" "db.sqlite3")):
 				EMAIL_HOST_USER = settings['email_user']
 				EMAIL_HOST_PASSWORD = settings['email_password']
 
+		MAX_CORES = settings['max_cores']
+
 		# Static files (CSS, JavaScript, Images)
 		# https://docs.djangoproject.com/en/1.10/howto/static-files/
 
@@ -215,3 +217,5 @@ else:
 	STATICFILES_DIRS = (
 		os.path.join(BASE_DIR, "signetsim/static/"),
 	)
+
+	MAX_CORES = 3

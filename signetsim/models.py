@@ -170,11 +170,11 @@ class Optimization(models.Model):
 	optimization_id = models.CharField(max_length=255)
 	cores = models.IntegerField(default=2)
 
-	QUEUED = 'QU'
-	INTERRUPTED = 'IN'
-	BUSY = 'BU'
-	ENDED = 'EN'
-	ERROR = 'ER'
+	QUEUED = 'Queued'
+	INTERRUPTED = 'Interrupted'
+	BUSY = 'Running'
+	ENDED = 'Finished'
+	ERROR = 'Failed'
 
 	STATUSES = (
 		(QUEUED, 'Queued'),
@@ -184,9 +184,9 @@ class Optimization(models.Model):
 		(ERROR, 'Error')
 	)
 
-	status = models.CharField(max_length=2, choices=STATUSES, default=QUEUED)
+	status = models.CharField(max_length=15, choices=STATUSES, default=QUEUED)
 	error = models.CharField(max_length=255, default="", null=True)
-
+	result = models.CharField(max_length=102400, default="")
 
 class Continuation(models.Model):
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -196,10 +196,10 @@ class Continuation(models.Model):
 	result = models.CharField(max_length=10240, default="")
 	error = models.CharField(max_length=255, default="", null=True)
 
-	QUEUED = 'QU'
-	BUSY = 'BU'
-	ENDED = 'EN'
-	ERROR = 'ER'
+	QUEUED = 'Queued'
+	BUSY = 'Running'
+	ENDED = 'Finished'
+	ERROR = 'Failed'
 
 	STATUSES = (
 		(QUEUED, 'Queued'),
@@ -208,7 +208,7 @@ class Continuation(models.Model):
 		(ERROR, 'Error')
 	)
 
-	status = models.CharField(max_length=2, choices=STATUSES, default=QUEUED)
+	status = models.CharField(max_length=15, choices=STATUSES, default=QUEUED)
 
 
 class ComputationQueue(models.Model):

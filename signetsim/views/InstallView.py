@@ -85,7 +85,8 @@ class InstallView(TemplateView):
 					'email_host': email_host,
 					'email_port': int(email_port),
 					'email_user': email_username,
-					'email_password': email_password
+					'email_password': email_password,
+					'max_cores': 3
 				}
 
 			else:
@@ -95,6 +96,7 @@ class InstallView(TemplateView):
 					'admin_address': admin.email,
 					'secret_key': secret_key,
 					'allowed_hosts': ['*'],
+					'max_cores': 3
 
 				}
 

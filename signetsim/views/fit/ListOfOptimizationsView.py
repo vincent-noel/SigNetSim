@@ -30,13 +30,12 @@ from django.views.generic import TemplateView
 from libsignetsim import SbmlDocument, ModelException
 from signetsim.models import SbmlModel, Optimization
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.managers.optimizations import getOptimizationStatus, stopOptimization, restartOptimization
-
-from time import time, sleep
-from os.path import dirname, isdir, isfile, join
+from signetsim.managers.optimizations import stopOptimization
+from signetsim.managers.computations import add_computation
+from time import time
+from os.path import isdir, isfile, join
 from shutil import rmtree
-from threading import Thread
-
+from dill import loads
 
 class ListOfOptimizationsView(TemplateView, HasWorkingModel):
 
@@ -116,29 +115,15 @@ class ListOfOptimizationsView(TemplateView, HasWorkingModel):
 
 		if isdir(optim_path):
 			stopOptimization(optim_path)
-			self.loadOptimizations(request)
+
+		self.loadOptimizations(request)
 
 	def restartOptimization(self, request):
 
 		t_optim = Optimization.objects.get(id=request.POST['entry_id'])
-		optim_path = join(
-			settings.MEDIA_ROOT,
-			str(self.project.folder),
-			"optimizations/optimization_%s/" % str(t_optim.optimization_id))
 
-		if isdir(optim_path):
-
-			t = Thread(
-				group=None,
-				target=restartOptimization,
-				args=(optim_path,)
-			)
-
-			t.setDaemon(True)
-			t.start()
-			sleep(2)
-
-			self.loadOptimizations(request)
+		add_computation(self.project, t_optim, loads(t_optim.result.encode('Latin-1')))
+		self.loadOptimizations(request)
 
 
 	def loadOptimizations(self, request):
@@ -155,7 +140,6 @@ class ListOfOptimizationsView(TemplateView, HasWorkingModel):
 								str(self.project.folder),
 								"optimizations/optimization_%s/" % str(t_optim_id))
 
-				optimization_status = getOptimizationStatus(optim_path)
 
 				t_time_of_launch = int(time()) - (int(t_optim_id)/1000)
 
@@ -168,5 +152,5 @@ class ListOfOptimizationsView(TemplateView, HasWorkingModel):
 					except ModelException as e:
 						t_model_name = "Unknown"
 
-				self.listOfOptimizations.append((optimization, optimization_status, t_time_of_launch, t_model_name))
+				self.listOfOptimizations.append((optimization, t_time_of_launch, t_model_name))
 

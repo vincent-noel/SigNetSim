@@ -1,6 +1,7 @@
 from signetsim.models import ComputationQueue, Optimization, Continuation
+from django.conf import settings
 from dill import loads, dumps
-NB_CORES = 3
+NB_CORES = settings.MAX_CORES
 
 def list_computations(project=None):
 
@@ -13,11 +14,25 @@ def list_computations(project=None):
 def add_computation(project, entry, object):
 
 	if isinstance(entry, Optimization):
-		comp = ComputationQueue(project=project, type=ComputationQueue.OPTIM, computation_id=entry.id, object=dumps(object).decode('Latin-1'))
+		entry.status = Optimization.QUEUED
+		entry.save()
+		comp = ComputationQueue(
+			project=project,
+			type=ComputationQueue.OPTIM,
+			computation_id=entry.id,
+			object=dumps(object).decode('Latin-1')
+		)
 		comp.save()
 
 	elif isinstance(entry, Continuation):
-		comp = ComputationQueue(project=project, type=ComputationQueue.CONT, computation_id=entry.id, object=dumps(object).decode('Latin-1'))
+		entry.status = Continuation.QUEUED
+		entry.save()
+		comp = ComputationQueue(
+			project=project,
+			type=ComputationQueue.CONT,
+			computation_id=entry.id,
+			object=dumps(object).decode('Latin-1')
+		)
 		comp.save()
 
 	update_queue()
@@ -31,28 +46,27 @@ def get_next_computation():
 
 def get_nb_cores_running():
 
-	optims = [comp for comp in Optimization.objects.all() if comp.status == "BU"]
+	optims = [comp for comp in Optimization.objects.all() if comp.status == Optimization.BUSY]
 
 	nb_cores_optim = 0
 	for optim in optims:
 		nb_cores_optim += optim.cores
 
-	nb_continuation = len([comp for comp in Continuation.objects.all() if comp.status == "BU"])
+	nb_continuation = len([comp for comp in Continuation.objects.all() if comp.status == Continuation.BUSY])
 
 	return nb_cores_optim + nb_continuation
 
 def get_user_nb_cores_running(user):
 
-	optims = [comp for comp in Optimization.objects.all() if comp.status == "BU" and comp.project.user == user]
+	optims = [comp for comp in Optimization.objects.all() if comp.status == Optimization.BUSY and comp.project.user == user]
 
 	nb_cores_optim = 0
 	for optim in optims:
 		nb_cores_optim += optim.cores
 
-	nb_continuation = len([comp for comp in Continuation.objects.all() if comp.status == "BU" and comp.project.user == user])
+	nb_continuation = len([comp for comp in Continuation.objects.all() if comp.status == Continuation.BUSY and comp.project.user == user])
 
 	return nb_cores_optim + nb_continuation
-
 
 def can_execute_next_computation():
 
@@ -74,18 +88,6 @@ def can_execute_next_computation():
 		print("Empty queue")
 		return False
 
-
-def mark_success(object):
-	object.status = "EN"
-	object.save()
-	update_queue()
-
-def mark_error(object, e=None):
-	object.status = "ER"
-	# object.error = e.message()
-	object.save()
-	update_queue()
-
 def optim_success(object, optim):
 
 	if optim.isInterrupted():
@@ -96,14 +98,26 @@ def optim_success(object, optim):
 	update_queue()
 
 def optim_error(object, optim, error):
-	mark_error(object, error)
 
-def cont_success(object, result):
-	object.result = dumps(result).decode('Latin-1')
-	object.status = "EN"
+	if optim.isInterrupted():
+		object.status = Optimization.INTERRUPTED
+	else:
+		object.status = Optimization.ERROR
+
+	object.result = dumps(optim).decode('Latin-1')
 	object.save()
 	update_queue()
 
+def cont_success(object, result):
+	object.result = dumps(result).decode('Latin-1')
+	object.status = Continuation.ENDED
+	object.save()
+	update_queue()
+
+def cont_error(object, result, error=None):
+	object.status = Continuation.ERROR
+	object.save()
+	update_queue()
 
 def execute_next_computation():
 	print("Executing next computation !")
@@ -111,11 +125,20 @@ def execute_next_computation():
 	if next_computation.type == ComputationQueue.OPTIM:
 		optimization = Optimization.objects.get(id=next_computation.computation_id)
 		optim = loads(next_computation.object.encode('Latin-1'))
-		optim.run_async(
-			success=lambda executed_optim: optim_success(optimization, executed_optim),
-			failure=lambda executed_optim, error=None: optim_error(optimization, executed_optim, error),
-			nb_procs=optimization.cores
-		)
+
+		if not optim.isInterrupted():
+			optim.run_async(
+				success=lambda executed_optim: optim_success(optimization, executed_optim),
+				failure=lambda executed_optim, error=None: optim_error(optimization, executed_optim, error),
+				nb_procs=optimization.cores
+			)
+
+		else:
+			optim.restart_async(
+				success=lambda executed_optim: optim_success(optimization, executed_optim),
+				failure=lambda executed_optim, error=None: optim_error(optimization, executed_optim, error),
+				nb_procs=optimization.cores
+			)
 		optimization.status = Optimization.BUSY
 		optimization.save()
 		next_computation.delete()
@@ -126,7 +149,7 @@ def execute_next_computation():
 		cont = loads(next_computation.object.encode('Latin-1'))
 		cont.run_async(
 			lambda res: cont_success(continuation, res),
-			lambda error=None: mark_error(continuation, error)
+			lambda error=None: cont_error(continuation, error)
 		)
 		continuation.status = Continuation.BUSY
 		continuation.save()

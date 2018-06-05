@@ -36,7 +36,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for optimization, optimization_status, optimization_start, model_name in optimizations %}
+        {% for optimization, optimization_start, model_name in optimizations %}
         <tr class="row">
            <td class="col-xs-4 col-md-4"><a href="{% url 'view_optimization' optimization.optimization_id  %}">{{ model_name }}</a></td>
            <td class="col-xs-2 col-md-2">{{ optimization_start|hms_string }} ago</td>
@@ -47,8 +47,8 @@
                  {% csrf_token %}
                  <input type="hidden" name="entry_id" value="{{ optimization.id }}">
                  <input type="hidden" name="optimization_id" value="{{ optimization.optimization_id }}">
-                 {% if optimization_status == "Ongoing" %}<button type="submit" name="action" value="stop_optimization" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "stop" %}</button>{% endif %}
-                 {% if optimization_status == "Interrupted" %}<button type="submit" name="action" value="restart_optimization" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "play" %}</button>{% endif %}
+                 {% if optimization.status == "Running" %}<button type="submit" name="action" value="stop_optimization" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "stop" %}</button>{% endif %}
+                 {% if optimization.status == "Interrupted" %}<button type="submit" name="action" value="restart_optimization" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "play" %}</button>{% endif %}
 								 <button type="submit" name="action" value="delete_optimization" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
 							 </form>
              </div>

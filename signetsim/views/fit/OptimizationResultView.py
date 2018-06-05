@@ -28,7 +28,7 @@ from django.core.files import File
 from django.conf import settings
 from django.shortcuts import redirect
 
-from signetsim.models import SbmlModel
+from signetsim.models import SbmlModel, Optimization
 import os
 import re
 from threading import Thread
@@ -38,7 +38,7 @@ from django.views.generic import TemplateView
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from signetsim.settings.Settings import Settings
-from signetsim.managers.optimizations import getOptimizationStatus, stopOptimization, restartOptimization
+from signetsim.managers.optimizations import stopOptimization, restartOptimization
 
 
 class OptimizationResultView(TemplateView, HasWorkingProject):
@@ -134,7 +134,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 		def stopOptimization(self):
 
 			stopOptimization(self.optimPath)
-			self.optimizationStatus = getOptimizationStatus(self.optimPath)
+			self.optimizationStatus = Optimization.objects.get(optimization_id=self.optimizationId).status
 
 
 		def restartOptimization(self):
@@ -149,7 +149,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 			t.start()
 			sleep(2)
 
-			self.optimizationStatus = getOptimizationStatus(self.optimPath)
+			self.optimizationStatus = Optimization.objects.get(optimization_id=self.optimizationId).status
 
 		def saveFittedModel(self, request):
 
@@ -239,7 +239,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 			self.optimPath = os.path.join(self.getProjectFolder(),
 							"optimizations/optimization_%s/" % self.optimizationId)
 
-			self.optimizationStatus = getOptimizationStatus(self.optimPath)
+			self.optimizationStatus = Optimization.objects.get(optimization_id=self.optimizationId).status
 
 			self.showGraph = None
 			self.parameters = []

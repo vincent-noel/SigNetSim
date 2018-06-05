@@ -51,19 +51,19 @@
 		  <form class="form-inline" method="post" enctype="multipart/form-data">
 			{% csrf_token %}
 			<input type="hidden" name="result_id" value="{{ computation.id }}">
-			<div id="result_{{forloop.counter0}}_waiting" class="collapse{% if computation.status == "BU" %} in{% endif %}">
+			<div id="result_{{forloop.counter0}}_waiting" class="collapse{% if computation.status == "Running" %} in{% endif %}">
 			  <div class="pull-right">
 				<img src="{% static 'images/wait_blue.svg' %}" class="loading-anim">
 				<button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
 			  </div>
 			</div>
-			<div id="result_{{forloop.counter0}}_finished" class="collapse{% if computation.status == "EN" %} in{% endif %}">
+			<div id="result_{{forloop.counter0}}_finished" class="collapse{% if computation.status == "Finished" %} in{% endif %}">
 			  <div class="pull-right">
 				<button type="button" onclick="view_curve({{ forloop.counter0 }});" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "eye-open" %}</button>
 				<button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
 			  </div>
 			</div>
-			<div id="result_{{forloop.counter0}}_failed" class="collapse{% if computation.status == "ER" %} in{% endif %}">
+			<div id="result_{{forloop.counter0}}_failed" class="collapse{% if computation.status == "Failed" or computation.status == "Queued" %} in{% endif %}">
 			  <div class="pull-right">
 				<button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
 			  </div>

@@ -170,3 +170,5 @@ MEDIA_ROOT = "/tmp/"
 STATICFILES_DIRS = (
 	os.path.join(BASE_DIR, "signetsim/static/"),
 )
+
+MAX_CORES = 2
