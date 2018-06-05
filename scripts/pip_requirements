@@ -3,7 +3,7 @@ python-libsedml
 python-libnuml
 numpy
 scipy
-git+https://github.com/tkf/pydstool.git@tkf
+git+https://github.com/vincent-noel/pydstool.git@tkf
 sympy
 bioservices
 lxml
