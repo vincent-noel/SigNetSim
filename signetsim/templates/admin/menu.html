@@ -15,24 +15,28 @@
 {#   You should have received a copy of the GNU Affero General Public License #}
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
-  <br/>
-  <table class="table">
-    <thead>
-      <tr>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr{% if page == "users" %}  class="item_active"{% endif %}>
-        <td>
-          <a href="{% url 'admin_users' %}">Users</a>
-        </td>
-      </tr>
-      <tr{% if page == "computations" %}  class="item_active"{% endif %}>
-        <td>
-          <a href="{% url 'admin_computations' %}">Computations</a>
-        </td>
-      </tr>
-    </tbody>
-
-  </table>
+<br/>
+<table class="table">
+	<thead>
+		<tr>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr{% if page == "users" %}  class="item_active"{% endif %}>
+			<td>
+				<a href="{% url 'admin_users' %}">Users</a>
+			</td>
+		</tr>
+		<tr{% if page == "computations" %}  class="item_active"{% endif %}>
+			<td>
+				<a href="{% url 'admin_computations' %}">Computations</a>
+			</td>
+		</tr>
+		<tr{% if page == "settings" %}  class="item_active"{% endif %}>
+			<td>
+				<a href="{% url 'admin_settings' %}">Settings</a>
+			</td>
+		</tr>
+	</tbody>
+</table>

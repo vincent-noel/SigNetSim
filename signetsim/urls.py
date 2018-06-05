@@ -49,7 +49,7 @@ from .views import ListOfModelsView, ListOfProjectsView, ProjectArchive, Simulat
 from .views import ListOfOptimizationsView, OptimizationResultView
 from .views import ListOfSimulationsView, SedmlSimulationView
 from .views import LoginView, ActivateAccountView, ProfileView
-from .views import UsersView, ComputationsView
+from .views import UsersView, ComputationsView, SettingsView
 from .views import ModelCompartmentsView, ModelOverviewView, ModelAnnotationsView
 from .views import ModelReactionsView, ModelRulesView, ModelSubmodelsView
 from .views import ModelSpeciesView, ModelParametersView
@@ -95,6 +95,7 @@ urlpatterns += [
 	url(r'^profile/(.*)/$', ProfileView.as_view(), name='profile'),
 	url(r'^admin/$', UsersView.as_view(), name='admin_users'),
 	url(r'^admin/computations/$', ComputationsView.as_view(), name='admin_computations'),
+	url(r'^admin/settings/$', SettingsView.as_view(), name='admin_settings'),
 
 	# Model import/export
 	url(r'^project/([^/]+)/$', ListOfModelsView.as_view(), name='project'),

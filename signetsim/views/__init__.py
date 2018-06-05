@@ -49,4 +49,4 @@ from .SimulationArchive import SimulationArchive
 from .auth import SignUpView, SignUpSuccessView, ValidateEmailView
 from .auth import ActivateAccountView, LoginView, ProfileView
 
-from .admin import UsersView, ComputationsView
+from .admin import UsersView, ComputationsView, SettingsView
