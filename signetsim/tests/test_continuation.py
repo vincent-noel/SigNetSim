@@ -87,7 +87,7 @@ class TestContinuation(TestCase):
 		self.assertEqual(response_get_status.status_code, 200)
 		json_response = loads(response_get_status.content.decode('utf-8'))
 
-		self.assertEqual(json_response['status'], 'BU')
+		self.assertEqual(json_response['status'], 'Running')
 
 		sleep(60)
 
@@ -100,7 +100,7 @@ class TestContinuation(TestCase):
 		# Maybe we could find a trick for that, but for now i will give up
 		# Actually, it works with the django2 version, maybe earlier
 		if int(__version__.split('.')[0]) >= 2:
-			self.assertEquals(json_response['status'], 'EN')
+			self.assertEquals(json_response['status'], 'Finished')
 
 		response_get_curve = c.post('/json/get_equilibrium_curve/', {'id': 0})
 

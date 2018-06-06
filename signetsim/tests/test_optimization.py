@@ -267,7 +267,7 @@ class TestOptimization(TestCase):
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
 		self.assertEqual(len(response_list_optimizations.context['optimizations']), 1)
-		self.assertEqual(response_list_optimizations.context['optimizations'][0][1], "Ongoing")
+		self.assertEqual(response_list_optimizations.context['optimizations'][0][0].status, "Running")
 
 		sleep(10)
 
@@ -278,7 +278,7 @@ class TestOptimization(TestCase):
 
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
-		self.assertEqual(response_list_optimizations.context['optimizations'][0][1], "Finished")
+		self.assertEqual(response_list_optimizations.context['optimizations'][0][0].status, "Finished")
 
 		response_get_optimization = c.get(
 			'/fit/%s/' % response_list_optimizations.context['optimizations'][0][0].optimization_id)
