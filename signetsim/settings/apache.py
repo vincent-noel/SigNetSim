@@ -151,6 +151,7 @@ SECRET_KEY = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in
 settings_filename = os.path.join(BASE_DIR, "data", "settings", "settings.json")
 
 AUTH_USER_MODEL = 'signetsim.User'
+MAX_CORES = 2
 
 if os.path.isfile(os.path.join(BASE_DIR, "data", "db", "db.sqlite3")):
 
@@ -226,3 +227,4 @@ else:
 	STATICFILES_DIRS = (
 		os.path.join(BASE_DIR, "signetsim/static/"),
 	)
+
