@@ -90,15 +90,18 @@ class SedmlSimulationView(TemplateView, HasWorkingProject, HasErrorMessages):
 			sedml_file = SEDMLSimulation.objects.get(id=sedml_id)
 
 			if sedml_file.project.user == request.user or sedml_file.project.access == "PU":
-				try:
-					sedml_doc = SedmlDocument()
-					sedml_doc.readSedmlFromFile(join(settings.MEDIA_ROOT, str(sedml_file.sedml_file)))
-					sedml_doc.run()
-					self.listOfPlots2D = sedml_doc.listOfOutputs.getPlots2D()
+				if self.hasCPUTimeQuota(request):
+					try:
+						sedml_doc = SedmlDocument()
+						sedml_doc.readSedmlFromFile(join(settings.MEDIA_ROOT, str(sedml_file.sedml_file)))
+						sedml_doc.run()
+						self.addCPUTime(request, sedml_doc.executionDuration)
+						self.listOfPlots2D = sedml_doc.listOfOutputs.getPlots2D()
 
-				except SedmlException as e:
-					self.addError("Invalid SEDML document : " + e.message)
-
+					except SedmlException as e:
+						self.addError("Invalid SEDML document : " + e.message)
+				else:
+					self.addError("You exceeded your allowed computation time. Please contact the administrator")
 			else:
 				raise PermissionDenied
 

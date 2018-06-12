@@ -126,7 +126,7 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 							list_of_initial_values=self.form.steady_states,
 		)
 
-		t_simulation.run()
+		t_simulation.run(timeout=self.getCPUTimeQuota(request))
 		t_y = {}
 		for species in self.form.selectedSpeciesIds:
 			t_list = t_simulation.getRawData()[self.listOfVariables[species].getSbmlId()]
@@ -135,16 +135,21 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			t_list = t_simulation.getRawData()[self.listOfReactions[reaction].getSbmlId()]
 			t_y.update({self.listOfReactions[reaction].getNameOrSbmlId(): t_list})
 		self.simResults = t_y
+		self.addCPUTime(request, t_simulation.getSimulationDuration())
 
 	def simulateModel(self, request):
 
 		self.form.read(request)
 		if not self.form.hasErrors():
-			try:
-				self.simulate_steady_states(request)
+			if self.hasCPUTimeQuota(request):
 
-			except LibSigNetSimException as e:
-				self.form.addError(e.message)
+				try:
+					self.simulate_steady_states(request)
+
+				except LibSigNetSimException as e:
+					self.form.addError(e.message)
+			else:
+				self.form.addError("You exceeded your allowed computation time. Please contact the administrator")
 
 	def saveSimulation(self, request):
 

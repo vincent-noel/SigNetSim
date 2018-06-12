@@ -155,7 +155,8 @@ class DataOptimizationView(TemplateView, HasWorkingModel):
 				add_computation(
 					project=self.project,
 					entry=new_optimization,
-					object=t_optimization
+					object=t_optimization,
+					timeout=self.getCPUTimeQuota(request)
 				)
 				# t_optimization.run_async(
 				# 	success=self.optimization_success,

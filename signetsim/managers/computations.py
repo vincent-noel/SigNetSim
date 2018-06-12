@@ -11,7 +11,7 @@ def list_computations(project=None):
 	else:
 		return ComputationQueue.objects.filter(project=project)
 
-def add_computation(project, entry, object):
+def add_computation(project, entry, object, timeout=None):
 
 	if isinstance(entry, Optimization):
 		entry.status = Optimization.QUEUED
@@ -20,7 +20,8 @@ def add_computation(project, entry, object):
 			project=project,
 			type=ComputationQueue.OPTIM,
 			computation_id=entry.id,
-			object=dumps(object).decode('Latin-1')
+			object=dumps(object).decode('Latin-1'),
+			timeout=timeout
 		)
 		comp.save()
 
@@ -31,7 +32,8 @@ def add_computation(project, entry, object):
 			project=project,
 			type=ComputationQueue.CONT,
 			computation_id=entry.id,
-			object=dumps(object).decode('Latin-1')
+			object=dumps(object).decode('Latin-1'),
+			timeout=timeout
 		)
 		comp.save()
 
@@ -82,10 +84,8 @@ def can_execute_next_computation():
 		user_quota = next_computation.project.user.max_cores
 		enough_on_server = (NB_CORES - get_nb_cores_running()) >= nb_cores
 		enough_for_user = (user_quota - get_user_nb_cores_running(next_computation.project.user)) >= nb_cores
-		print("%d availables cores, %d needed" % (NB_CORES - get_nb_cores_running(), nb_cores))
 		return enough_on_server and enough_for_user
 	else:
-		print("Empty queue")
 		return False
 
 def optim_success(object, optim):
@@ -120,7 +120,7 @@ def cont_error(object, result, error=None):
 	update_queue()
 
 def execute_next_computation():
-	print("Executing next computation !")
+
 	next_computation = get_next_computation()
 	if next_computation.type == ComputationQueue.OPTIM:
 		optimization = Optimization.objects.get(id=next_computation.computation_id)
@@ -130,14 +130,16 @@ def execute_next_computation():
 			optim.run_async(
 				success=lambda executed_optim: optim_success(optimization, executed_optim),
 				failure=lambda executed_optim, error=None: optim_error(optimization, executed_optim, error),
-				nb_procs=optimization.cores
+				nb_procs=optimization.cores,
+				timeout=next_computation.timeout
 			)
 
 		else:
 			optim.restart_async(
 				success=lambda executed_optim: optim_success(optimization, executed_optim),
 				failure=lambda executed_optim, error=None: optim_error(optimization, executed_optim, error),
-				nb_procs=optimization.cores
+				nb_procs=optimization.cores,
+				timeout=next_computation.timeout
 			)
 		optimization.status = Optimization.BUSY
 		optimization.save()
@@ -162,3 +164,7 @@ def update_queue():
 		execute_next_computation()
 		update_queue()
 
+def updateComputationTime(user, time):
+
+	user.used_cpu_time += time/3600
+	user.save()

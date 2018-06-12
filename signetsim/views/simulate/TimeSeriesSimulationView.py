@@ -180,26 +180,30 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		self.form.read(request)
 		if not self.form.hasErrors():
 
-			self.experiment = None
-			if self.form.experimentId is not None:
-				t_experiment = Experiment.objects.get(id=self.experiments[self.form.experimentId].id)
-				self.experiment = buildExperiment(t_experiment)
+			if self.hasCPUTimeQuota(request):
+				self.experiment = None
+				if self.form.experimentId is not None:
+					t_experiment = Experiment.objects.get(id=self.experiments[self.form.experimentId].id)
+					self.experiment = buildExperiment(t_experiment)
 
-			try:
-				t_simulation = TimeseriesSimulation(
-					list_of_models=[self.getModelInstance()],
-					experiment=self.experiment,
-					time_min=self.form.timeMin,
-					time_max=self.form.timeMax,
-					time_ech=self.form.timeEch)
+				try:
+					t_simulation = TimeseriesSimulation(
+						list_of_models=[self.getModelInstance()],
+						experiment=self.experiment,
+						time_min=self.form.timeMin,
+						time_max=self.form.timeMax,
+						time_ech=self.form.timeEch)
 
-				t_simulation.run()
+					t_simulation.run(timeout=self.getCPUTimeQuota(request))
 
-				results = t_simulation.getRawData()
-				self.read_timeseries(results)
+					results = t_simulation.getRawData()
+					self.addCPUTime(request, t_simulation.getSimulationDuration())
+					self.read_timeseries(results)
 
-			except LibSigNetSimException as e:
-				self.form.addError(e.message)
+				except LibSigNetSimException as e:
+					self.form.addError(e.message)
+			else:
+				self.form.addError("You exceeded your allowed computation time. Please contact the administrator")
 
 	def saveSimulation(self, request):
 
