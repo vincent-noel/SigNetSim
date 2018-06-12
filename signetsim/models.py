@@ -98,7 +98,7 @@ class User(AbstractUser):
 	organization = models.CharField(max_length=255, null=True)
 	used_cores = models.IntegerField(null=False, default=0)
 	max_cores = models.IntegerField(null=False, default=2)
-	used_cpu_time = models.IntegerField(null=False, default=0)
+	used_cpu_time = models.FloatField(null=False, default=0)
 	max_cpu_time = models.IntegerField(null=False, default=1000)
 
 	# this is not needed if small_image is created at set_image
@@ -163,7 +163,6 @@ class SEDMLSimulation(models.Model):
 	sedml_file = models.FileField(upload_to=sedml_filename)
 	sbml_file = models.FileField(upload_to=model_filename, null=True)
 
-
 class Optimization(models.Model):
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	model = models.ForeignKey(SbmlModel, on_delete=models.CASCADE)
@@ -226,6 +225,7 @@ class ComputationQueue(models.Model):
 	type = models.CharField(max_length=12, choices=TYPES, null=True)
 	computation_id = models.IntegerField(default=-1)
 	object = models.CharField(max_length=102400, default="")
+	timeout = models.IntegerField(blank=True, null=True)
 
 #######################################################################################
 # Experimental data v2
