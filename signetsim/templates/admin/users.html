@@ -61,10 +61,11 @@
            </td>
            <td class="col-md-1 col-xs-2 text-right">
             {% if user.is_superuser != True %}
-            <div class="pull-right">
+							<div class="pull-right">
               <form class="form-inline" role="form" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="id" value="{{ user.id }}">
+							 	<button type="button" title="Set user quotas" class="btn btn-primary btn-xs" onclick="form_quotas.load('{{ user.username }}')">{% bootstrap_icon "pencil" %}</button>
                 <button type="submit" name="action" value="delete" title="Delete user" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
                </form>
 
@@ -81,24 +82,51 @@
 {% block view_modal %}
 
 <!-- Modal -->
-<div class="modal fade in" id="quotas" tabindex="1" role="dialog" aria-labelledby="User's quotas">
+<div class="modal fade in" id="user_quotas" tabindex="1" role="dialog" aria-labelledby="User's quotas">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form action="." method="post" class="form-inline" enctype="multipart/form-data">
+      <form method="post" class="form-inline" enctype="multipart/form-data" onsubmit="form_quotas.save()">
         {% csrf_token %}
+				<input type="hidden" name="username" value="" id="user_username">
+
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">User's quotas</h4>
+          <h4 class="user_quotas-title">User's quotas</h4>
         </div>
         <div class="modal-body">
-            <div class="input-group" style="width:100%">
-              <span class="input-group-addon" id="users_cores">Cores</span>
-              <input type="text" class="form-control" placeholder="Name" name="folder_name">
-            </div>
-            <div class="input-group" style="width:100%">
-              <span class="input-group-addon" id="users_cpu_time">CPU Time</span>
-              <input type="text" class="form-control" placeholder="Name" name="folder_name">
-            </div>
+						{% include 'commons/html/float_input.html' with
+							id="user_cores"
+							name="Max CPUs"
+							placeholder="Input the maximum number of allowed CPU"
+							default=""
+						%}
+						{% include 'commons/html/float_input.html' with
+							id="user_cpu_time"
+							name="CPU time (hours)"
+							placeholder="Input the maximum time per cpu allowed"
+							default=""
+						%}
+						<table class="table table-striped" id="user_used_cpu_time_group">
+							<thead>
+								<tr class="row">
+									<th class="col-xs-8" id="user_used_cpu_time_label">Used CPU time (hours)</th>
+									<th class="col-xs-4"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="row">
+									<td class="col-xs-8">
+										<input type="text" class="form-control input-sm" placeholder="Used CPU time"
+													 name="user_used_cpu_time" id="user_used_cpu_time" value="" readonly>
+									</td>
+									<td class="col-xs-4">
+										<div class="pull-right">
+											<button type="button" class="btn btn-primary btn-xs" id="quotas_reset_button" onclick="form_quotas.reset();">{% bootstrap_icon "repeat" %}</button>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
             {% if create_folder_error != None %}
             <br/><br/>
             <div class="alert alert-danger">
@@ -107,7 +135,7 @@
             {% endif %}
         </div>
         <div class="modal-footer">
-          <button type="submit"  name="action" value="new_folder" class="btn btn-primary">Save</button>
+          <button type="submit"  name="action" value="save_quotas" class="btn btn-primary">Save</button>
         </div>
       </form>
     </div>

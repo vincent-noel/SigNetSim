@@ -26,7 +26,7 @@
 
 from .JsonRequest import JsonRequest
 
-from .admin import SetAccountStaff, SetAccountActive
+from .admin import SetAccountStaff, SetAccountActive, GetUserQuotas
 from .data import GetExperiment, GetCondition, GetTreatment, GetObservation
 from .edit import GetListOfObjects, GetListOfObjectsFromSubmodels
 from .edit import GetSpecies, GetParameter, GetCompartment, GetReaction, GetReactionKineticLaw, GetRule, \

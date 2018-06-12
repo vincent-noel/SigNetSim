@@ -18,12 +18,36 @@
 # You should have received a copy of the GNU General Public License
 # along with libSigNetSim.  If not, see <http://www.gnu.org/licenses/>.
 
-""" __init__.py
+""" GetUserQuotas.py
 
-	Initialization of the module signetsim.views.json.validators
+	This file...
 
 """
 
-from .SetAccountStaff import SetAccountStaff
-from .SetAccountActive import SetAccountActive
-from .GetUserQuotas import GetUserQuotas
+from signetsim.json.JsonRequest import JsonRequest
+from signetsim.models import User
+
+class GetUserQuotas(JsonRequest):
+
+	def __init__(self):
+		JsonRequest.__init__(self)
+
+	def post(self, request, *args, **kwargs):
+
+		if 'username' in request.POST:
+			username = request.POST['username']
+
+			if User.objects.filter(username=username).exists():
+
+				user = User.objects.get(username=username)
+
+				self.data.update({
+					'max_cpu': user.max_cores,
+					'max_time': user.max_cpu_time,
+					'used_time': float("%.2g" % user.used_cpu_time)
+				})
+
+
+		return JsonRequest.post(self, request, *args, **kwargs)
+
+

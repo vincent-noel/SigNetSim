@@ -55,6 +55,8 @@ class UsersView(TemplateView, HasErrorMessages):
 			if request.POST['action'] == "delete":
 				self.deleteUser(request)
 
+			elif request.POST['action'] == "save_quotas":
+				self.saveQuotas(request)
 		return TemplateView.get(self, request, *args, **kwargs)
 
 	def load(self, request, *args, **kwargs):
@@ -67,3 +69,16 @@ class UsersView(TemplateView, HasErrorMessages):
 			user = User.objects.get(id=int(request.POST['id']))
 			deleteUser(user)
 
+	def saveQuotas(self, request):
+		if (
+			User.objects.filter(username=request.POST['username']).exists() and
+			"user_cores" in request.POST and request.POST["user_cores"] != "" and
+			"user_cpu_time" in request.POST and request.POST["user_cpu_time"] != ""
+			"user_used_cpu_time" in request.POST and request.POST["user_used_cpu_time"] != ""
+		):
+			user = User.objects.get(username=request.POST['username'])
+			user.max_cores = int(request.POST["user_cores"])
+			user.max_cpu_time = int(request.POST["user_cpu_time"])
+			user.used_cpu_time = float(request.POST["user_used_cpu_time"])
+
+			user.save()

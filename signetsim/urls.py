@@ -32,7 +32,7 @@ from django.contrib.auth.views import logout
 
 from .json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, ModelNameValidator
 from .json import GetListOfObjectsFromSubmodels, UsernameValidator
-from .json import GetSBOName, SetAccountActive, SetAccountStaff
+from .json import GetSBOName, SetAccountActive, SetAccountStaff, GetUserQuotas
 from .json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction, GetRule
 from .json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetListOfObjects
 from .json import GetUnitDefinition
@@ -175,6 +175,7 @@ urlpatterns += [
 
 	url(r'^json/set_account_active/$', SetAccountActive.as_view(), name='set_account_active'),
 	url(r'^json/set_account_staff/$', SetAccountStaff.as_view(), name='set_account_staff'),
+	url(r'^json/get_user_quotas/$', GetUserQuotas.as_view(), name='get_user_quotas'),
 	url(r'^json/get_project/$', GetProject.as_view(), name='get_project'),
 
 	url(r'^json/get_experiment/$', GetExperiment.as_view(), name='get_experiment'),
