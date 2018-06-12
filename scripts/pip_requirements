@@ -15,6 +15,5 @@ django-bootstrap3
 git+https://github.com/vincent-noel/libSigNetSim.git@develop
 dill
 matplotlib
-coveralls
 seaborn
 mod_wsgi
