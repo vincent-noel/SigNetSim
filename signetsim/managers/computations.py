@@ -95,9 +95,14 @@ def optim_success(object, optim):
 	else:
 		object.status = Optimization.ENDED
 	object.save()
+
+	user = object.project.user
+	user.used_cpu_time = user.used_cpu_time + optim.elapsedTime
+	user.save()
+
 	update_queue()
 
-def optim_error(object, optim, error):
+def optim_error(object, optim, error=None):
 
 	if optim.isInterrupted():
 		object.status = Optimization.INTERRUPTED
@@ -105,18 +110,37 @@ def optim_error(object, optim, error):
 		object.status = Optimization.ERROR
 
 	object.result = dumps(optim).decode('Latin-1')
+	if error is not None:
+		object.error = error
 	object.save()
+
+	user = object.project.user
+	user.used_cpu_time = user.used_cpu_time + optim.elapsedTime
+	user.save()
+
 	update_queue()
 
-def cont_success(object, result):
+def cont_success(object, cont, result):
 	object.result = dumps(result).decode('Latin-1')
 	object.status = Continuation.ENDED
 	object.save()
+
+	user = object.project.user
+	user.used_cpu_time = user.used_cpu_time + cont.elapsedTime
+	user.save()
+
 	update_queue()
 
-def cont_error(object, result, error=None):
+def cont_error(object, cont, error=None):
 	object.status = Continuation.ERROR
+	if error is not None:
+		object.error = error
 	object.save()
+
+	user = object.project.user
+	user.used_cpu_time = user.used_cpu_time + cont.elapsedTime
+	user.save()
+
 	update_queue()
 
 def execute_next_computation():
@@ -150,8 +174,8 @@ def execute_next_computation():
 		continuation = Continuation.objects.get(id=next_computation.computation_id)
 		cont = loads(next_computation.object.encode('Latin-1'))
 		cont.run_async(
-			lambda res: cont_success(continuation, res),
-			lambda error=None: cont_error(continuation, error)
+			lambda res: cont_success(continuation, cont, res),
+			lambda error=None: cont_error(continuation, cont, error)
 		)
 		continuation.status = Continuation.BUSY
 		continuation.save()
