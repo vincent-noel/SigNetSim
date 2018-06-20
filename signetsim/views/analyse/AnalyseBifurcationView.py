@@ -58,6 +58,7 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		kwargs['list_of_constants'] = [const.getNameOrSbmlId() for const in self.listOfConstants]
 		kwargs['list_of_computations'] = self.listOfComputations
 		kwargs['colors'] = Settings.default_colors
+		kwargs['form'] = self.form
 
 		return kwargs
 
@@ -88,19 +89,6 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		t_computation = Continuation.objects.get(id=curve_id)
 		t_computation.delete()
 
-	def callback_success(self, code):
-
-		if Continuation.objects.filter(id=self.computation.id).exists():
-			self.computation.result = dill.dumps(code).decode('Latin-1')
-			self.computation.status = Continuation.ENDED
-			self.computation.save()
-
-	def callback_error(self):
-		if Continuation.objects.filter(id=self.computation.id).exists():
-			self.computation.result = ""
-			self.computation.status = Continuation.ERROR
-			self.computation.save()
-
 	def load(self, request, *args, **kwargs):
 		HasWorkingModel.load(self, request, *args, **kwargs)
 		HasErrorMessages.clearErrors(self)
@@ -116,35 +104,34 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		self.listOfComputations = Continuation.objects.filter(project=self.project, model=t_model)
 
 	def computeCurve(self, request):
+		if self.isProjectOwner(request):
+			self.form.read(request)
+			if not self.form.hasErrors():
 
-		self.form.read(request)
-		if not self.form.hasErrors():
+				t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
 
-			t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
+				self.computation = Continuation(
+					project=self.project,
+					model=t_model,
+					parameter=self.listOfConstants[self.form.parameter].getSymbolStr(),
+				)
 
-			self.computation = Continuation(
-				project=self.project,
-				model=t_model,
-				parameter=self.listOfConstants[self.form.parameter].getSymbolStr(),
-			)
+				self.computation.save()
 
-			self.computation.save()
+				t_ep_curve = EquilibriumPointCurve(self.getModel())
+				t_ep_curve.setParameter(self.listOfConstants[self.form.parameter])
+				t_ep_curve.setRange(self.form.fromValue, self.form.toValue)
+				t_ep_curve.setDs(self.form.ds)
+				t_ep_curve.setMaxSteps(self.form.maxSteps)
+				t_ep_curve.build()
 
-			t_ep_curve = EquilibriumPointCurve(self.getModel())
-			t_ep_curve.setParameter(self.listOfConstants[self.form.parameter])
-			t_ep_curve.setRange(self.form.fromValue, self.form.toValue)
-			t_ep_curve.setDs(self.form.ds)
-			t_ep_curve.setMaxSteps(self.form.maxSteps)
-			t_ep_curve.build()
+				add_computation(
+					project=self.project,
+					entry=self.computation,
+					object=t_ep_curve
+				)
+		else:
 
-			add_computation(
-				project=self.project,
-				entry=self.computation,
-				object=t_ep_curve
-			)
+			self.form.addError(
+				"You are not the owner of this project. Please make a local copy if you want to compute equilibrium curve.")
 
-
-			# t_ep_curve.run_async(self.callback_success, self.callback_error)
-			#
-			# self.computation.status = Continuation.BUSY
-			# self.computation.save()
