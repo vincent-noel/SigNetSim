@@ -106,9 +106,9 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 	def copyFolder(self, request):
 
 		folder_id = str(request.POST['id'])
-		if Project.objects.filter(user=request.user, id=folder_id).exists():
+		if Project.objects.filter(id=folder_id).exists():
 
-			folder = Project.objects.get(user=request.user, id=folder_id)
+			folder = Project.objects.get(id=folder_id)
 			new_folder = Project(user=request.user, name=(str(folder.name) + " (Copy)"))
 			copyProject(folder, new_folder)
 
