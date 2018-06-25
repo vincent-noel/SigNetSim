@@ -45,7 +45,7 @@
 	  {% for computation in list_of_computations %}
 	  <tr class="row">
 		<td class="col-lg-6 col-md-7 col-xs-7">Parameter : {{computation.parameter}}</td>
-		<td class="col-lg-4 col-md-3 col-xs-2 text-center">
+			<td class="col-lg-4 col-md-3 col-xs-2 text-center" >{% if computation.status == "Failed" %}<div title="{{ computation.error }}">{{ computation.status }}</div>{% else %}{{ computation.status}}{% endif %}
 
 		</td>
 		<td class="col-lg-2 col-md-2 col-xs-3">
