@@ -97,7 +97,7 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 	def loadConstants(self):
 		self.getModelInstance().listOfVariables.classifyVariables()
-		self.listOfConstants = [variable for variable in self.getModel().listOfVariables if variable.isConstant()]
+		self.listOfConstants = [variable for variable in self.getModelInstance().listOfVariables if variable.isConstant()]
 
 	def loadComputations(self):
 		t_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
@@ -118,7 +118,7 @@ class AnalyseBifurcationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 				self.computation.save()
 
-				t_ep_curve = EquilibriumPointCurve(self.getModel())
+				t_ep_curve = EquilibriumPointCurve(self.getModelInstance())
 				t_ep_curve.setParameter(self.listOfConstants[self.form.parameter])
 				t_ep_curve.setRange(self.form.fromValue, self.form.toValue)
 				t_ep_curve.setDs(self.form.ds)
