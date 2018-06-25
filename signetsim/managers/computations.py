@@ -3,14 +3,6 @@ from django.conf import settings
 from dill import loads, dumps
 NB_CORES = settings.MAX_CORES
 
-def list_computations(project=None):
-
-	if project is None:
-		return ComputationQueue.objects.all()
-
-	else:
-		return ComputationQueue.objects.filter(project=project)
-
 def add_computation(project, entry, object, timeout=None):
 
 	if isinstance(entry, Optimization):
@@ -39,12 +31,14 @@ def add_computation(project, entry, object, timeout=None):
 
 	update_queue()
 
-def get_next_computation():
+def get_next_computations(project=None):
 
-	ids = sorted([comp.id for comp in list_computations()])
-	if len(ids) > 0:
-		comp = ComputationQueue.objects.get(id=ids[0])
-		return comp
+	if project is None:
+		return sorted(ComputationQueue.objects.all(), key=lambda comp: comp.id)
+
+	else:
+		return sorted(ComputationQueue.objects.filter(project=project), key=lambda comp: comp.id)
+
 
 def get_nb_cores_running():
 
@@ -70,9 +64,7 @@ def get_user_nb_cores_running(user):
 
 	return nb_cores_optim + nb_continuation
 
-def can_execute_next_computation():
-
-	next_computation = get_next_computation()
+def can_execute_computation(next_computation):
 
 	if next_computation is not None:
 		if next_computation.type == ComputationQueue.OPTIM:
@@ -84,7 +76,8 @@ def can_execute_next_computation():
 		user_quota = next_computation.project.user.max_cores
 		enough_on_server = (NB_CORES - get_nb_cores_running()) >= nb_cores
 		enough_for_user = (user_quota - get_user_nb_cores_running(next_computation.project.user)) >= nb_cores
-		return enough_on_server and enough_for_user
+		user_has_quota = next_computation.project.user.used_cpu_time < next_computation.project.user.max_cpu_time
+		return enough_on_server and enough_for_user and user_has_quota
 	else:
 		return False
 
@@ -96,9 +89,10 @@ def optim_success(object, optim):
 		object.status = Optimization.ENDED
 	object.save()
 
-	user = object.project.user
-	user.used_cpu_time = user.used_cpu_time + optim.elapsedTime
-	user.save()
+	if optim.elapsedTime is not None:
+		user = object.project.user
+		user.used_cpu_time = user.used_cpu_time + optim.elapsedTime
+		user.save()
 
 	update_queue()
 
@@ -114,9 +108,10 @@ def optim_error(object, optim, error=None):
 		object.error = error
 	object.save()
 
-	user = object.project.user
-	user.used_cpu_time = user.used_cpu_time + optim.elapsedTime
-	user.save()
+	if optim.elapsedTime is not None:
+		user = object.project.user
+		user.used_cpu_time = user.used_cpu_time + optim.elapsedTime
+		user.save()
 
 	update_queue()
 
@@ -125,9 +120,10 @@ def cont_success(object, cont, result):
 	object.status = Continuation.ENDED
 	object.save()
 
-	user = object.project.user
-	user.used_cpu_time = user.used_cpu_time + cont.elapsedTime
-	user.save()
+	if cont.elapsedTime is not None:
+		user = object.project.user
+		user.used_cpu_time = user.used_cpu_time + cont.elapsedTime
+		user.save()
 
 	update_queue()
 
@@ -137,15 +133,15 @@ def cont_error(object, cont, error=None):
 		object.error = error
 	object.save()
 
-	user = object.project.user
-	user.used_cpu_time = user.used_cpu_time + cont.elapsedTime
-	user.save()
+	if cont.elapsedTime is not None:
+		user = object.project.user
+		user.used_cpu_time = user.used_cpu_time + cont.elapsedTime
+		user.save()
 
 	update_queue()
 
-def execute_next_computation():
+def execute_computation(next_computation):
 
-	next_computation = get_next_computation()
 	if next_computation.type == ComputationQueue.OPTIM:
 		optimization = Optimization.objects.get(id=next_computation.computation_id)
 		optim = loads(next_computation.object.encode('Latin-1'))
@@ -168,7 +164,6 @@ def execute_next_computation():
 		optimization.status = Optimization.BUSY
 		optimization.save()
 		next_computation.delete()
-		print("Optimization executed")
 
 	else:
 		continuation = Continuation.objects.get(id=next_computation.computation_id)
@@ -180,13 +175,13 @@ def execute_next_computation():
 		continuation.status = Continuation.BUSY
 		continuation.save()
 		next_computation.delete()
-		print("Continuation executed")
+
 
 def update_queue():
 
-	if can_execute_next_computation():
-		execute_next_computation()
-		update_queue()
+	for computation in get_next_computations():
+		if can_execute_computation(computation):
+			execute_computation(computation)
 
 def updateComputationTime(user, time):
 
