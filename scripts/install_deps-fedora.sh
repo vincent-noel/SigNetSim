@@ -62,7 +62,7 @@ fi
 dnf -y install httpd httpd-devel
 
 # Misc dependencies
-dnf install -y wget curl git swig
+dnf install -y wget curl git swig make
 
 echo "> Installing JS dependencies...";
 
