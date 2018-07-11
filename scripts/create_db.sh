@@ -1,6 +1,8 @@
 #!/bin/bash
 EXEC_DIR=$PWD
 CMD=$0
+GLOBAL=$1
+PORT=$2
 
 if [ "${CMD:0:1}" == "/" ]
 then
@@ -9,37 +11,47 @@ then
 
 else
     # relative path
-    DIR=`dirname $( realpath $PWD/${CMD} )`
+    DIR=`dirname $( readlink -e $PWD/${CMD} )`
 
 fi
 INSTALL_DIR=`dirname $DIR`
 
 cd ${INSTALL_DIR}
 
-mkdir -p ${INSTALL_DIR}/signetsim/static/mpld3
-cp -r /usr/local/lib/python2.7/dist-packages/mpld3/js/d3.v3.min.js ${INSTALL_DIR}/signetsim/static/mpld3/
-cp -r /usr/local/lib/python2.7/dist-packages/mpld3/js/mpld3.v0.3.min.js ${INSTALL_DIR}/signetsim/static/mpld3/
-mkdir -p ${INSTALL_DIR}/static
+${INSTALL_DIR}/venv/bin/python manage.py makemigrations --noinput
+${INSTALL_DIR}/venv/bin/python manage.py migrate --noinput
+${INSTALL_DIR}/venv/bin/python manage.py collectstatic --noinput > /dev/null
 
-if [ ! -d ${INSTALL_DIR}/data/db ]
-then
+APACHE_USER=`apachectl -S | grep User: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
+APACHE_GROUP=`apachectl -S | grep Group: | cut -d' ' -f2 | cut -d'=' -f2 | tr -d '"'`
 
-    mkdir -p ${INSTALL_DIR}/data/db
-    mkdir -p ${INSTALL_DIR}/data/media
-
+if [ -z "$APACHE_USER" ]; then
+    source /etc/apache2/envvars
+    APACHE_USER=${APACHE_RUN_USER}
+    APACHE_GROUP=${APACHE_RUN_GROUP}
 fi
 
-python manage.py makemigrations --noinput
-python manage.py migrate --noinput
-python manage.py collectstatic --noinput > /dev/null
+chgrp -R ${APACHE_GROUP} ${INSTALL_DIR}/signetsim/settings/wsgi.py
+chmod -R 664 ${INSTALL_DIR}/signetsim/settings/wsgi.py
 
-chgrp -R www-data ${INSTALL_DIR}/data
-chmod -R 664 ${INSTALL_DIR}/data
-find ${INSTALL_DIR}/data -type d  -exec chmod 775 {} \;
+if [ ${GLOBAL} == 1 ] ; then
+    SERVICE_DIR=/etc/signetsim
 
-chgrp -R www-data ${INSTALL_DIR}/signetsim/settings
-chmod -R 664 ${INSTALL_DIR}/signetsim/settings
-find ${INSTALL_DIR}/signetsim/settings -type d  -exec chmod 775 {} \;
+else
+    SERVICE_DIR=${INSTALL_DIR}/service
+    APACHE_USER=$USER
+    APACHE_GROUP=$GROUP
+fi
 
+${INSTALL_DIR}/venv/bin/python manage.py runmodwsgi --setup-only \
+    --port ${PORT} \
+    --user ${APACHE_USER} --group ${APACHE_GROUP} \
+    --server-root=${SERVICE_DIR} \
+    --settings=signetsim.settings.apache \
+    --url-alias /static ${INSTALL_DIR}/static/ \
+    --url-alias /media ${INSTALL_DIR}/data/media/ \
+    --python-path ${INSTALL_DIR} \
+    --working-directory ${INSTALL_DIR}/tmp/ \
+    --reload-on-changes
 
 cd $EXEC_DIR

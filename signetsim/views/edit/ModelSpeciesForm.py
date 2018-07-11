@@ -25,7 +25,9 @@
 """
 
 from libsignetsim import ModelException
-from ModelParentForm import ModelParentForm
+from .ModelParentForm import ModelParentForm
+from signetsim.managers.models import renameSbmlIdInModelDependencies
+
 
 class ModelSpeciesForm(ModelParentForm):
 
@@ -53,7 +55,11 @@ class ModelSpeciesForm(ModelParentForm):
 			else:
 				species.setCompartment(None)
 			species.setName(self.name)
-			species.setSbmlId(self.sbmlId)
+
+			if species.getSbmlId() != self.sbmlId:
+				renameSbmlIdInModelDependencies(self.parent.getSbmlModel(), species.getSbmlId(), self.sbmlId)
+				species.setSbmlId(self.sbmlId)
+
 			species.setValue(self.value)
 			species.constant = self.constant
 			species.hasOnlySubstanceUnits = not self.isConcentration
@@ -76,10 +82,10 @@ class ModelSpeciesForm(ModelParentForm):
 								"The indice of the species",
 								required=False)
 
-		self.name = self.readString(request, 'species_name',
+		self.name = self.readASCIIString(request, 'species_name',
 								"The name of the species", required=False)
 
-		self.sbmlId = self.readString(request, 'species_sbml_id',
+		self.sbmlId = self.readASCIIString(request, 'species_sbml_id',
 								"The identifier of the species")
 
 		self.value = self.readFloat(request, 'species_value',

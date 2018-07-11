@@ -52,17 +52,30 @@ INSTALLED_APPS = (
 	'django.templatetags',
 	'bootstrap3',
 	'signetsim',
+	'mod_wsgi.server',
 )
 
+from django import __version__
+if int(__version__.split('.')[0]) < 2:
+	MIDDLEWARE_CLASSES = (
+		'django.contrib.sessions.middleware.SessionMiddleware',
+		'django.middleware.common.CommonMiddleware',
+		'django.middleware.csrf.CsrfViewMiddleware',
+		'django.contrib.auth.middleware.AuthenticationMiddleware',
+		'django.contrib.messages.middleware.MessageMiddleware',
+		'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	)
 
-MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+
+else:
+	MIDDLEWARE = (
+		'django.contrib.sessions.middleware.SessionMiddleware',
+		'django.middleware.common.CommonMiddleware',
+		'django.middleware.csrf.CsrfViewMiddleware',
+		'django.contrib.auth.middleware.AuthenticationMiddleware',
+		'django.contrib.messages.middleware.MessageMiddleware',
+		'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	)
 
 ROOT_URLCONF = 'signetsim.urls'
 
@@ -81,7 +94,7 @@ TEMPLATES = [
 	},
 },]
 
-WSGI_APPLICATION = 'settings.wsgi.application'
+WSGI_APPLICATION = 'signetsim.settings.wsgi.application'
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
@@ -135,42 +148,57 @@ from string import ascii_uppercase, ascii_lowercase, digits
 
 SECRET_KEY = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
 
-from signetsim.models import Settings
+settings_filename = os.path.join(BASE_DIR, "data", "settings", "settings.json")
 
 AUTH_USER_MODEL = 'signetsim.User'
+MAX_CORES = 2
 
-if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
-	if len(Settings.objects.all()) == 0:
+if os.path.isfile(os.path.join(BASE_DIR, "data", "db", "db.sqlite3")):
+
+	if not os.path.isfile(settings_filename):
 
 		RUN_INSTALL = True
+
+		ALLOWED_HOSTS = ["*"]
+
 		STATIC_URL = 'static/'
 		STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 		MEDIA_URL = 'media/'
 		MEDIA_ROOT = os.path.join(BASE_DIR, "data/media/")
-
-		ALLOWED_HOSTS = ["*"]
-
 	else:
 
 		RUN_INSTALL = False
 
-		signetsim_settings = Settings.objects.all()[0]
-		BASE_URL = signetsim_settings.base_url
+		with open(settings_filename, 'r') as settings_file:
 
-		# SECURITY WARNING: keep the secret key used in production secret!
-		SECRET_KEY = signetsim_settings.secret_key
+			settings = json.loads(settings_file.read())
 
-		ADMINS = [(signetsim_settings.admin.username, signetsim_settings.admin.email)]
+			# signetsim_settings = Settings.objects.all()[0]
+			BASE_URL = settings['base_url']
 
-		EMAIL_ADDRESS = signetsim_settings.email_address
-		EMAIL_USE_TLS = signetsim_settings.email_use_tls
-		EMAIL_HOST = signetsim_settings.email_host
-		EMAIL_PORT = signetsim_settings.email_port
-		EMAIL_HOST_USER = signetsim_settings.email_user
-		EMAIL_HOST_PASSWORD = signetsim_settings.email_password
+			# SECURITY WARNING: keep the secret key used in production secret!
+			SECRET_KEY = settings['secret_key']
 
-		ALLOWED_HOSTS = ["*"]
+			ADMINS = [(settings['admin'], settings['admin_address'])]
+
+			if (
+				'email_address' in settings.keys() and
+				'email_use_tls' in settings.keys() and
+				'email_host' in settings.keys() and
+				'email_port' in settings.keys() and
+				'email_user' in settings.keys() and
+				'email_password' in settings.keys()
+			):
+				EMAIL_ADDRESS = settings['email_address']
+				EMAIL_USE_TLS = settings['email_use_tls']
+				EMAIL_HOST = settings['email_host']
+				EMAIL_PORT = settings['email_port']
+				EMAIL_HOST_USER = settings['email_user']
+				EMAIL_HOST_PASSWORD = settings['email_password']
+
+			ALLOWED_HOSTS = settings['allowed_hosts']
+			MAX_CORES = settings['max_cores']
 
 		# Static files (CSS, JavaScript, Images)
 		# https://docs.djangoproject.com/en/1.10/howto/static-files/
@@ -187,6 +215,9 @@ if os.path.isfile(os.path.join(BASE_DIR, 'data/db/db.sqlite3')):
 
 else:
 	RUN_INSTALL = False
+
+	ALLOWED_HOSTS = ["*"]
+
 	STATIC_URL = '/static/'
 	STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
@@ -196,3 +227,4 @@ else:
 	STATICFILES_DIRS = (
 		os.path.join(BASE_DIR, "signetsim/static/"),
 	)
+

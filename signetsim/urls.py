@@ -25,35 +25,37 @@
 """
 
 from django.conf import settings
-from django.conf.urls import include, url
+from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import logout
 
-from signetsim.json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, ModelNameValidator
-from signetsim.json import GetContinuationFigure, GetListOfObjectsFromSubmodels
-from signetsim.json import GetSBOName, SetAccountActive, SetAccountStaff
-from signetsim.json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction, GetRule
-from signetsim.json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetListOfObjects
-from signetsim.json import GetUnitDefinition
-from signetsim.json import GetContinuationStatus, GetProject, SearchBiomodels, GetBiomodelsName
-from signetsim.json import GetExperiment, GetCondition, GetTreatment, GetObservation
-from signetsim.json import GetInstallStatus, AddDataset
+from .json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, ModelNameValidator
+from .json import GetListOfObjectsFromSubmodels, UsernameValidator
+from .json import GetSBOName, SetAccountActive, SetAccountStaff, GetUserQuotas
+from .json import GetSpecies, GetParameter, GetCompartment, GetReactionKineticLaw, GetReaction, GetRule
+from .json import GetEvent, GetSubmodel, GetSubstitution, GetSubmodels, GetListOfObjects
+from .json import GetUnitDefinition
+from .json import GetContinuationStatus, GetProject, SearchBiomodels, GetBiomodelsName
+from .json import GetExperiment, GetCondition, GetTreatment, GetObservation
+from .json import GetInstallStatus, AddDataset
+from .json import GetEquilibriumCurve
 
-from views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
-from views import DataOptimizationView, ModelOptimizationView
-from views import DataView, ExperimentView, ConditionView, DataArchive
-from views import HelpView, SuccessView, InstallView
-from views import ListOfModelsView, ListOfProjectsView, ProjectArchive, SimulationArchive
-from views import ListOfOptimizationsView, OptimizationResultView
-from views import ListOfSimulationsView, SedmlSimulationView
-from views import LoginView, ActivateAccountView, ProfileView, AdminView
-from views import ModelCompartmentsView, ModelOverviewView, ModelAnnotationsView
-from views import ModelReactionsView, ModelRulesView, ModelSubmodelsView
-from views import ModelSpeciesView, ModelParametersView
-from views import ModelUnitsView, ModelEventsView, ModelMiscView
-from views import SignUpView, SignUpSuccessView, ValidateEmailView
-from views import TimeSeriesSimulationView, SteadyStateSimulationView, PhasePlaneSimulationView
+from .views import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
+from .views import DataOptimizationView, ModelOptimizationView
+from .views import DataView, ExperimentView, ConditionView, DataArchive
+from .views import HelpView, SuccessView, InstallView
+from .views import ListOfModelsView, ListOfProjectsView, ProjectArchive, SimulationArchive
+from .views import ListOfOptimizationsView, OptimizationResultView
+from .views import ListOfSimulationsView, SedmlSimulationView
+from .views import LoginView, ActivateAccountView, ProfileView
+from .views import UsersView, ComputationsView, SettingsView
+from .views import ModelCompartmentsView, ModelOverviewView, ModelAnnotationsView
+from .views import ModelReactionsView, ModelRulesView, ModelSubmodelsView
+from .views import ModelSpeciesView, ModelParametersView
+from .views import ModelUnitsView, ModelEventsView, ModelMiscView
+from .views import SignUpView, SignUpSuccessView, ValidateEmailView
+from .views import TimeSeriesSimulationView, SteadyStateSimulationView, PhasePlaneSimulationView
 
 
 if settings.RUN_INSTALL:
@@ -71,16 +73,29 @@ else:
 		urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 
-urlpatterns += [
+from django import __version__
+if int(__version__.split('.')[0]) < 2:
+	from django.conf.urls import include
+	urlpatterns += [
+		url(r'^admin_db/', include(admin.site.urls)),
+	]
 
-	url(r'^admin_db/', include(admin.site.urls)),
+else:
+	from django.urls import path
+	urlpatterns += [
+		path('admin_db/', admin.site.urls),
+	]
+
+urlpatterns += [
 
 	# Basic
 	url(r'^help/$', HelpView.as_view(), name='help'),
 	url(r'^install/$', InstallView.as_view(), name='install'),
 	url(r'^success/$', SuccessView.as_view(), name='success'),
 	url(r'^profile/(.*)/$', ProfileView.as_view(), name='profile'),
-	url(r'^admin/$', AdminView.as_view(), name='admin'),
+	url(r'^admin/$', UsersView.as_view(), name='admin_users'),
+	url(r'^admin/computations/$', ComputationsView.as_view(), name='admin_computations'),
+	url(r'^admin/settings/$', SettingsView.as_view(), name='admin_settings'),
 
 	# Model import/export
 	url(r'^project/([^/]+)/$', ListOfModelsView.as_view(), name='project'),
@@ -140,12 +155,12 @@ urlpatterns += [
 	url(r'^json/sbml_id_validator/$', SbmlIdValidator.as_view(), name='sbml_id_validator'),
 	url(r'^json/unit_id_validator/$', UnitIdValidator.as_view(), name='unit_id_validator'),
 	url(r'^json/modelname_validator/$', ModelNameValidator.as_view(), name='modelname_validator'),
+	url(r'^json/username_validator/$', UsernameValidator.as_view(), name='username_validator'),
+
 	url(r'^json/get_submodels/$', GetSubmodels.as_view(), name='get_submodels'),
 	url(r'^json/get_list_of_objects/$', GetListOfObjects.as_view(), name='get_list_of_objects'),
 	url(r'^json/get_list_of_objects_from_submodels/$', GetListOfObjectsFromSubmodels.as_view(), name='get_list_of_objects_from_submodels'),
 
-	url(r'^json/get_continuation_status/$', GetContinuationStatus.as_view(), name='get_continuation_status'),
-	url(r'^json/get_continuation_figure/$', GetContinuationFigure.as_view(), name='get_continuation_figure'),
 	url(r'^json/get_species/$', GetSpecies.as_view(), name='get_species'),
 	url(r'^json/get_parameter/$', GetParameter.as_view(), name='get_parameter'),
 	url(r'^json/get_compartment/$', GetCompartment.as_view(), name='get_compartment'),
@@ -160,6 +175,7 @@ urlpatterns += [
 
 	url(r'^json/set_account_active/$', SetAccountActive.as_view(), name='set_account_active'),
 	url(r'^json/set_account_staff/$', SetAccountStaff.as_view(), name='set_account_staff'),
+	url(r'^json/get_user_quotas/$', GetUserQuotas.as_view(), name='get_user_quotas'),
 	url(r'^json/get_project/$', GetProject.as_view(), name='get_project'),
 
 	url(r'^json/get_experiment/$', GetExperiment.as_view(), name='get_experiment'),
@@ -169,6 +185,9 @@ urlpatterns += [
 
 	url(r'^json/search_biomodels/$', SearchBiomodels.as_view(), name='search_biomodels'),
 	url(r'^json/get_biomodels_name/$', GetBiomodelsName.as_view(), name='get_biomodels_name'),
+
+	url(r'^json/get_continuation_status/$', GetContinuationStatus.as_view(), name='get_continuation_status'),
+	url(r'^json/get_equilibrium_curve/$', GetEquilibriumCurve.as_view(), name='get_equilibrium_curve'),
 
 	url(r'^json/get_install_status/$', GetInstallStatus.as_view(), name='get_install_status'),
 	url(r'^json/add_dataset/$', AddDataset.as_view(), name='add_dataset'),

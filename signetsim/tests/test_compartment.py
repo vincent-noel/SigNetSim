@@ -30,9 +30,10 @@ from django.test import TestCase, Client
 from signetsim.models import User, Project, SbmlModel
 
 from libsignetsim import SbmlDocument
-
-from os.path import dirname, join
+from os import mkdir
+from os.path import dirname, join, isdir
 from json import loads
+from shutil import rmtree
 
 
 class TestCompartment(TestCase):
@@ -46,6 +47,10 @@ class TestCompartment(TestCase):
 		project = Project.objects.filter(user=user)[0]
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
+
 		c = Client()
 		self.assertTrue(c.login(username='test_user', password='password'))
 
@@ -57,7 +62,7 @@ class TestCompartment(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)
@@ -74,9 +79,9 @@ class TestCompartment(TestCase):
 		})
 
 		self.assertEqual(response_get_compartment.status_code, 200)
-		json_response = loads(response_get_compartment.content)
+		json_response = loads(response_get_compartment.content.decode('utf-8'))
 
-		self.assertEqual(json_response[u'id'], sbml_model.listOfCompartments.values().index(compartment))
+		self.assertEqual(json_response[u'id'], sbml_model.listOfCompartments.index(compartment))
 		self.assertEqual(json_response[u'sbml_id'], compartment.getSbmlId())
 		self.assertEqual(json_response[u'name'], compartment.getName())
 		self.assertEqual(json_response[u'value'], compartment.getValue())
@@ -98,7 +103,7 @@ class TestCompartment(TestCase):
 
 		response_save_compartment = c.post('/edit/compartments/', {
 			'action': 'save',
-			'compartment_id': sbml_model.listOfCompartments.values().index(compartment),
+			'compartment_id': sbml_model.listOfCompartments.index(compartment),
 			'compartment_name': "New name",
 			'compartment_sbml_id': "new_name",
 			'compartment_size': 75,
@@ -123,7 +128,7 @@ class TestCompartment(TestCase):
 
 		response_delete_compartment = c.post('/edit/compartments/', {
 			'action': 'delete',
-			'compartment_id': sbml_model.listOfCompartments.values().index(compartment)
+			'compartment_id': sbml_model.listOfCompartments.index(compartment)
 		})
 		self.assertEqual(response_delete_compartment.status_code, 200)
 		self.assertEqual(response_delete_compartment.context['getErrors'], ['Compartment contains 25 species'])
@@ -156,7 +161,7 @@ class TestCompartment(TestCase):
 
 		response_delete_compartment = c.post('/edit/compartments/', {
 			'action': 'delete',
-			'compartment_id': sbml_model.listOfCompartments.values().index(compartment)
+			'compartment_id': sbml_model.listOfCompartments.index(compartment)
 		})
 		self.assertEqual(response_delete_compartment.status_code, 200)
 		self.assertEqual(response_delete_compartment.context['getErrors'], [])

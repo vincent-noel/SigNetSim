@@ -53,13 +53,13 @@ class SignUpForm(HasErrorMessages):
 
 	def read(self, request):
 
-		self.username = self.readString(request, 'username', 'the username')
+		self.username = self.readASCIIString(request, 'username', 'the username')
 		self.firstname = self.readUnicodeString(request, 'first_name', 'the first name', required=False)
 		self.lastname = self.readUnicodeString(request, 'last_name', 'the last name', required=False)
-		self.email = self.readString(request, 'email', 'the email address')
-		self.organisation = self.readString(request, 'organization', 'the organisation')
-		self.password1 = self.readString(request, 'password1', 'the password')
-		self.password2 = self.readString(request, 'password2', 'the password confirmation')
+		self.email = self.readASCIIString(request, 'email', 'the email address')
+		self.organisation = self.readASCIIString(request, 'organization', 'the organisation')
+		self.password1 = self.readASCIIString(request, 'password1', 'the password')
+		self.password2 = self.readASCIIString(request, 'password2', 'the password confirmation')
 
 		if self.password1 != self.password2:
 			self.addError("The two passwords are different !")

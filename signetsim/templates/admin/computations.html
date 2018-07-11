@@ -1,0 +1,167 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% load static from staticfiles %}
+
+{% load bootstrap3 %}
+{% load tags %}
+
+{% block view_sidebar %}{% include 'admin/menu.html' with page="computations" %}{% endblock view_sidebar %}
+{% block title %} Computations | {{ block.super }}{% endblock title %}
+{% block view_content %}
+
+<div class="container-fluid">
+  <h4>Running</h4>
+  <hr/><br/>
+  <div class="container-fluid">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th class="col-md-8 col-xs-7">Username</th>
+          <th class="col-md-2 col-xs-2 text-center">Type</th>
+          <th class="col-md-1 col-xs-1 text-center">Status</th>
+          <th class="col-md-1 col-xs-2 text-right"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for optim in optims %}
+        <tr>
+           <td class="col-md-8 col-xs-7">{{ optim.project.user.username }}</td>
+           <td class="col-md-2 col-xs-2 text-center">Optimization</td>
+          <td class="col-md-1 col-xs-1 text-center">Running</td>
+           <td class="col-md-1 col-xs-2 text-right">
+            <div class="pull-right">
+              <form class="form-inline" role="form" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ optim.id }}">
+                <button type="submit" name="action" value="delete_optim" title="Delete optimization" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+               </form>
+
+             </div>
+           </td>
+        </tr>
+        {% endfor %}
+				{% for cont in conts %}
+        <tr>
+           <td class="col-md-8 col-xs-7">{{ cont.project.user.username }}</td>
+           <td class="col-md-2 col-xs-2 text-center">Continuation</td>
+          <td class="col-md-1 col-xs-1 text-center">Running</td>
+           <td class="col-md-1 col-xs-2 text-right">
+            <div class="pull-right">
+              <form class="form-inline" role="form" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ cont.id }}">
+                <button type="submit" name="action" value="delete_cont" title="Delete continuation" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+               </form>
+
+             </div>
+           </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <h4>Queued</h4>
+  <hr/><br/>
+  <div class="container-fluid">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th class="col-md-8 col-xs-7">Username</th>
+          <th class="col-md-2 col-xs-2 text-center">Type</th>
+          <th class="col-md-1 col-xs-1 text-center">Status</th>
+          <th class="col-md-1 col-xs-2 text-right"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for computation in computations %}
+        <tr>
+           <td class="col-md-8 col-xs-7">{{ computation.project.user.username }}</td>
+
+           <td class="col-md-2 col-xs-2 text-center">{{ computation.type }}</td>
+          <td class="col-md-1 col-xs-1 text-center">{{ computation_statuses|my_lookup:forloop.counter0 }}</td>
+           <td class="col-md-1 col-xs-2 text-right">
+            <div class="pull-right">
+              <form class="form-inline" role="form" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ computation.id }}">
+                <button type="submit" name="action" value="delete" title="Delete computation" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+               </form>
+
+             </div>
+           </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+	<div class="container-fluid">
+		<form method="post" class="form-inline" enctype="multipart/form-data">
+			{% csrf_token %}
+		 	<button type="submit" class="btn btn-primary btn-sm" name="action" value="update_queue">{% bootstrap_icon "file" %} Update Queue</button>
+		</form>
+  </div>
+</div>
+{% endblock view_content %}
+
+{% block view_modal %}
+
+<!-- Modal -->
+<div class="modal fade in" id="quotas" tabindex="1" role="dialog" aria-labelledby="User's quotas">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="." method="post" class="form-inline" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">User's quotas</h4>
+        </div>
+        <div class="modal-body">
+            <div class="input-group" style="width:100%">
+              <span class="input-group-addon" id="users_cores">Cores</span>
+              <input type="text" class="form-control" placeholder="Name" name="folder_name">
+            </div>
+            <div class="input-group" style="width:100%">
+              <span class="input-group-addon" id="users_cpu_time">CPU Time</span>
+              <input type="text" class="form-control" placeholder="Name" name="folder_name">
+            </div>
+            {% if create_folder_error != None %}
+            <br/><br/>
+            <div class="alert alert-danger">
+              <strong>Error :</strong> {{ create_folder_error }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="modal-footer">
+          <button type="submit"  name="action" value="new_folder" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock view_modal %}
+{% block footer_js %}
+	{{ block.super }}
+	<script src="{% static 'js/forms.js' %}"></script>
+{% endblock footer_js %}
+
+{% block js %}
+{{ block.super }}
+{% include 'admin/users.js' %}
+{% endblock js %}

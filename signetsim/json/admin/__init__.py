@@ -24,5 +24,6 @@
 
 """
 
-from SetAccountStaff import SetAccountStaff
-from SetAccountActive import SetAccountActive
+from .SetAccountStaff import SetAccountStaff
+from .SetAccountActive import SetAccountActive
+from .GetUserQuotas import GetUserQuotas

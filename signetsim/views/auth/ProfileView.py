@@ -86,7 +86,7 @@ class ProfileView(TemplateView, HasErrorMessages):
 
 	def changeEmail(self, request):
 
-		t_email = self.readString(request, 'email', 'The email address')
+		t_email = self.readASCIIString(request, 'email', 'The email address')
 		if t_email is not None:
 			try:
 				validate_email(t_email)
@@ -97,7 +97,7 @@ class ProfileView(TemplateView, HasErrorMessages):
 
 	def changePassword(self, request):
 		if request.POST['password1'] == request.POST['password2']:
-			t_password = self.readString(request, 'password1', "the password")
+			t_password = self.readASCIIString(request, 'password1', "the password")
 			if t_password is not None:
 				request.user.set_password(t_password)
 				request.user.save()

@@ -27,20 +27,22 @@
 from django.conf import settings
 from django.core.files import File
 
-from signetsim.models import SbmlModel, Experiment, Optimization, SEDMLSimulation, ContinuationComputation, CombineArchiveModel
-from signetsim.managers.models import deleteModel, copyModel
+from signetsim.models import SbmlModel, Experiment, Optimization, SEDMLSimulation, Continuation, ModelsDependency
+from signetsim.managers.models import deleteModel, copyModel, getDetailedModelDependencies
 from signetsim.managers.data import deleteExperiment, copyExperiment, buildExperiment, importExperiment
 from signetsim.managers.simulations import deleteSimulation, copySimulation
 from signetsim.managers.optimizations import deleteOptimization
 
 from libsignetsim import CombineArchive, CombineException, SbmlDocument, SedmlDocument, ModelException, Settings
 
-from os.path import isdir, isfile, join, splitext, basename, exists
-from os import remove
+from os.path import isdir, join, splitext, basename
 from shutil import rmtree
 
 
 def deleteProject(project):
+
+	for modelDependency in ModelsDependency.objects.filter(project=project):
+		modelDependency.delete()
 
 	# Deleting models
 	for model in SbmlModel.objects.filter(project=project):
@@ -59,6 +61,8 @@ def deleteProject(project):
 		deleteOptimization(optim)
 
 
+
+
 	deleteProjectEquilibriumCurve(project)
 	# deleteProjectArchives(project)
 
@@ -70,7 +74,7 @@ def deleteProject(project):
 
 
 def deleteProjectEquilibriumCurve(project):
-	for cont in ContinuationComputation.objects.filter(project=project):
+	for cont in Continuation.objects.filter(project=project):
 		cont.delete()
 
 # def deleteProjectArchives(project):
@@ -111,8 +115,9 @@ def importProject(new_folder, filename):
 	try:
 		new_combine_archive.readArchive(filename)
 
+		deps = []
 		for sbml_file in new_combine_archive.getAllSbmls():
-			t_file = File(open(sbml_file, 'r'))
+			t_file = File(open(sbml_file, 'rb'))
 
 			sbml_model = SbmlModel(project=new_folder, sbml_file=t_file)
 			sbml_model.save()
@@ -122,17 +127,28 @@ def importProject(new_folder, filename):
 
 				doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(sbml_model.sbml_file)))
 
+				dependencies = getDetailedModelDependencies(doc)
+				if len(dependencies) > 0:
+					deps.append((sbml_model, dependencies))
+
 				sbml_model.name = doc.model.getName()
 				sbml_model.save()
 			except ModelException:
 				name = splitext(str(sbml_model.sbml_file))[0]
 				sbml_model.name = name
 				sbml_model.save()
-#
+
+		for model, submodels in deps:
+
+			for submodel_filename, submodel_ref in submodels:
+				submodel_filename = join(new_folder.folder, "models", submodel_filename)
+				submodel = SbmlModel.objects.get(sbml_file=submodel_filename)
+				new_dependency = ModelsDependency(project=new_folder, model=model, submodel=submodel, submodel_ref=submodel_ref)
+				new_dependency.save()
 
 		for sedml_filename in new_combine_archive.getAllSedmls():
 
-			sedml_archive = SEDMLSimulation(project=new_folder, sedml_file=File(open(sedml_filename, 'r')))
+			sedml_archive = SEDMLSimulation(project=new_folder, sedml_file=File(open(sedml_filename, 'rb')))
 			sedml_archive.name = basename(sedml_filename).split('.')[0]
 			sedml_archive.save()
 
@@ -146,7 +162,7 @@ def importProject(new_folder, filename):
 
 				if len(SbmlModel.objects.filter(project=new_folder, sbml_file=join(join(str(new_folder.folder), "models"), basename(sbml_file)))) == 0:
 
-					t_file = File(open(sbml_file, 'r'))
+					t_file = File(open(sbml_file, 'rb'))
 					sbml_model = SbmlModel(project=new_folder, sbml_file=t_file)
 					sbml_model.save()
 					try:
@@ -170,7 +186,7 @@ def importProject(new_folder, filename):
 			importExperiment(new_experiment, numl_file)
 
 	except CombineException as e:
-		print e.message
+		print(e.message)
 
 def exportProject(project):
 
@@ -190,3 +206,4 @@ def exportProject(project):
 	filename = join(Settings.tempDirectory, filename)
 	combine_archive.writeArchive(filename)
 	return filename
+

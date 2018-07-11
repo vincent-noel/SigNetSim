@@ -119,8 +119,7 @@ class ListOfSimulationsView(TemplateView, HasWorkingProject):
 
 				if len(SbmlModel.objects.filter(project=self.project, sbml_file=join(join(str(self.project.folder), "models"), basename(sbml_file)))) == 0:
 
-					t_file = File(open(sbml_file, 'r'))
-					sbml_model = SbmlModel(project=self.project, sbml_file=t_file)
+					sbml_model = SbmlModel(project=self.project, sbml_file=File(open(sbml_file, 'rb')))
 					sbml_model.save()
 					try:
 						doc = SbmlDocument()

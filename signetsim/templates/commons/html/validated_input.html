@@ -13,7 +13,7 @@
 				{% if pre or post %}<div class="input-group">{% endif %}
 
 					{% if pre %}<span class="input-group-addon">{{ pre }}</span>{% endif %}
-					<input type="text" class="form-control input-sm" placeholder="{{ placeholder }}"
+					<input type="text" class="form-control input-sm" style="width: 100%" placeholder="{{ placeholder }}"
 								 name="{{ id }}" id="{{ id }}" value="{{ default }}"
 					>
 					{% if post %}<span class="input-group-addon">{{ post }}</span>{% endif %}

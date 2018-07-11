@@ -26,9 +26,9 @@
 
 from django.views.generic import TemplateView
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.views.simulate.SedmlWriter import SedmlWriter
+from .SedmlWriter import SedmlWriter
 
-from signetsim.views.simulate.PhasePlaneSimulationForm import PhasePlaneSimulationForm
+from .PhasePlaneSimulationForm import PhasePlaneSimulationForm
 from signetsim.models import Experiment, Condition, Treatment, SEDMLSimulation, new_sedml_filename
 from signetsim.managers.data import buildExperiment
 from signetsim.managers.models import copyModelHierarchy
@@ -184,27 +184,30 @@ class PhasePlaneSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 
 		self.form.read(request)
 		if not self.form.hasErrors():
+			if self.hasCPUTimeQuota(request):
+				self.experiment = None
+				if self.form.experimentId is not None:
+					t_experiment = Experiment.objects.get(id=self.experiments[self.form.experimentId].id)
+					self.experiment = buildExperiment(t_experiment)
 
-			self.experiment = None
-			if self.form.experimentId is not None:
-				t_experiment = Experiment.objects.get(id=self.experiments[self.form.experimentId].id)
-				self.experiment = buildExperiment(t_experiment)
+				try:
+					t_simulation = TimeseriesSimulation(
+						list_of_models=[self.getModelInstance()],
+						experiment=self.experiment,
+						time_min=self.form.timeMin,
+						time_max=self.form.timeMax,
+						time_ech=self.form.timeEch)
 
-			try:
-				t_simulation = TimeseriesSimulation(
-					list_of_models=[self.getModelInstance()],
-					experiment=self.experiment,
-					time_min=self.form.timeMin,
-					time_max=self.form.timeMax,
-					time_ech=self.form.timeEch)
+					t_simulation.run(timeout=self.getCPUTimeQuota(request))
 
-				t_simulation.run()
+					results = t_simulation.getRawData()
+					self.addCPUTime(request, t_simulation.getSimulationDuration())
+					self.read_timeseries(results)
 
-				results = t_simulation.getRawData()
-				self.read_timeseries(results)
-
-			except LibSigNetSimException as e:
-				self.form.addError(e.message)
+				except LibSigNetSimException as e:
+					self.form.addError(e.message)
+			else:
+				self.form.addError("You exceeded your allowed computation time. Please contact the administrator")
 
 	def saveSimulation(self, request):
 
@@ -278,7 +281,7 @@ class PhasePlaneSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			new_simulation = SEDMLSimulation(
 				project=self.project,
 				name=("Simulation" if self.form.simulationName is None else self.form.simulationName),
-				sedml_file=File(open(simulation_filename, "r")),
+				sedml_file=File(open(simulation_filename, "rb")),
 				sbml_file=sbml_model
 			)
 			new_simulation.save()
@@ -290,8 +293,8 @@ class PhasePlaneSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		self.experiments = Experiment.objects.filter(project=self.project)
 
 	def loadVariables(self):
-		self.listOfVariables = [obj for obj in self.getModelInstance().listOfVariables.values() if not obj.constant and (obj.isSpecies() or obj.isParameter() or obj.isCompartment())]
+		self.listOfVariables = [obj for obj in self.getModelInstance().listOfVariables if not obj.constant and (obj.isSpecies() or obj.isParameter() or obj.isCompartment())]
 
 	def loadReactions(self):
-		self.listOfReactions = [obj for obj in self.getModelInstance().listOfVariables.values() if obj.isReaction()]
+		self.listOfReactions = [obj for obj in self.getModelInstance().listOfVariables if obj.isReaction()]
 

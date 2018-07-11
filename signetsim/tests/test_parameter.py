@@ -31,8 +31,10 @@ from signetsim.models import User, Project, SbmlModel
 
 from libsignetsim import SbmlDocument
 
-from os.path import dirname, join
+from os.path import dirname, join, isdir
+from os import mkdir
 from json import loads
+from shutil import rmtree
 
 
 class TestParameter(TestCase):
@@ -46,6 +48,10 @@ class TestParameter(TestCase):
 		project = Project.objects.filter(user=user)[0]
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
+
 		c = Client()
 		self.assertTrue(c.login(username='test_user', password='password'))
 
@@ -57,7 +63,7 @@ class TestParameter(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)
@@ -75,8 +81,8 @@ class TestParameter(TestCase):
 		})
 
 		self.assertEqual(response_get_parameter.status_code, 200)
-		json_response = loads(response_get_parameter.content)
-		self.assertEqual(json_response[u'id'], sbml_model.listOfParameters.values().index(parameter))
+		json_response = loads(response_get_parameter.content.decode('utf-8'))
+		self.assertEqual(json_response[u'id'], sbml_model.listOfParameters.index(parameter))
 		self.assertEqual(json_response[u'sbml_id'], parameter.getSbmlId())
 		self.assertEqual(json_response[u'name'], parameter.getName())
 		self.assertEqual(json_response[u'value'], parameter.getValue())
@@ -98,7 +104,7 @@ class TestParameter(TestCase):
 
 		response_save_parameter = c.post('/edit/parameters/', {
 			'action': 'save',
-			'parameter_id': sbml_model.listOfParameters.values().index(parameter),
+			'parameter_id': sbml_model.listOfParameters.index(parameter),
 			'parameter_name': "New name",
 			'parameter_sbml_id': "new_name",
 			'parameter_value': 75,
@@ -124,7 +130,7 @@ class TestParameter(TestCase):
 
 		response_delete_parameter = c.post('/edit/parameters/', {
 			'action': 'delete',
-			'parameter_id': sbml_model.listOfParameters.values().index(parameter)
+			'parameter_id': sbml_model.listOfParameters.index(parameter)
 		})
 		self.assertEqual(response_delete_parameter.status_code, 200)
 		self.assertEqual(response_delete_parameter.context['getErrors'], ['Parameter in used in reactions'])
@@ -157,7 +163,7 @@ class TestParameter(TestCase):
 
 		response_delete_parameter = c.post('/edit/parameters/', {
 			'action': 'delete',
-			'parameter_id': sbml_model.listOfParameters.values().index(parameter)
+			'parameter_id': sbml_model.listOfParameters.index(parameter)
 		})
 		self.assertEqual(response_delete_parameter.status_code, 200)
 		self.assertEqual(response_delete_parameter.context['getErrors'], [])
@@ -181,7 +187,7 @@ class TestParameter(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)
@@ -198,7 +204,7 @@ class TestParameter(TestCase):
 		})
 
 		self.assertEqual(response_get_reaction.status_code, 200)
-		json_response = loads(response_get_reaction.content)
+		json_response = loads(response_get_reaction.content.decode('utf-8'))
 		self.assertEqual(json_response[u'kinetic_law'], '-1 * sos_ras_gdp * sos_ras_gdp_decomp + ras_gdp * sos * sos_ras_gdp_comp')
 
 		response_get_parameter = c.post('/json/get_parameter/', {
@@ -207,8 +213,8 @@ class TestParameter(TestCase):
 		})
 
 		self.assertEqual(response_get_parameter.status_code, 200)
-		json_response = loads(response_get_parameter.content)
-		self.assertEqual(json_response[u'id'], sbml_model.listOfParameters.values().index(parameter))
+		json_response = loads(response_get_parameter.content.decode('utf-8'))
+		self.assertEqual(json_response[u'id'], sbml_model.listOfParameters.index(parameter))
 		self.assertEqual(json_response[u'reaction_id'], "")
 
 		response_to_local_parameter = c.post('/edit/parameters/', {
@@ -232,7 +238,7 @@ class TestParameter(TestCase):
 		})
 
 		self.assertEqual(response_get_reaction.status_code, 200)
-		json_response = loads(response_get_reaction.content)
+		json_response = loads(response_get_reaction.content.decode('utf-8'))
 		self.assertEqual(
 			json_response[u'kinetic_law'],
 			'-1 * sos_ras_gdp * sos_ras_gdp_decomp + sos_ras_gdp_comp * ras_gdp * sos'
@@ -244,7 +250,7 @@ class TestParameter(TestCase):
 		reaction = sbml_model.listOfReactions.getBySbmlId('reaction_2')
 		self.assertEqual(
 			str(reaction.kineticLaw.getDefinition().getInternalMathFormula()),
-			"_local_0_sos_ras_gdp_comp*(ras_gdp*sos) + (-sos_ras_gdp)*sos_ras_gdp_decomp"
+			"_local_0_sos_ras_gdp_comp*ras_gdp*sos - sos_ras_gdp*sos_ras_gdp_decomp"
 		)
 
 		self.assertEqual(sbml_model.listOfParameters.getBySbmlId("sos_ras_gdp_comp"), None)
@@ -255,7 +261,7 @@ class TestParameter(TestCase):
 		})
 
 		self.assertEqual(response_get_parameter.status_code, 200)
-		json_response = loads(response_get_parameter.content)
+		json_response = loads(response_get_parameter.content.decode('utf-8'))
 
 		response_list_parameters = c.get('/edit/parameters/')
 		self.assertEqual(response_list_parameters.status_code, 200)
@@ -284,7 +290,7 @@ class TestParameter(TestCase):
 		})
 
 		self.assertEqual(response_get_reaction.status_code, 200)
-		json_response = loads(response_get_reaction.content)
+		json_response = loads(response_get_reaction.content.decode('utf-8'))
 		# print json_response
 		self.assertEqual(
 			json_response[u'kinetic_law'],
@@ -297,7 +303,7 @@ class TestParameter(TestCase):
 		reaction = sbml_model.listOfReactions.getBySbmlId('reaction_2')
 		self.assertEqual(
 			str(reaction.kineticLaw.getDefinition().getInternalMathFormula()),
-			"sos*(ras_gdp*sos_ras_gdp_comp) + (-sos_ras_gdp)*sos_ras_gdp_decomp"
+			"ras_gdp*sos*sos_ras_gdp_comp - sos_ras_gdp*sos_ras_gdp_decomp"
 		)
 
 		self.assertEqual(sbml_model.listOfParameters.getBySbmlId("sos_ras_gdp_comp").getSbmlId(), "sos_ras_gdp_comp")

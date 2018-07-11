@@ -24,7 +24,10 @@
 
 """
 
-import cloudpickle
+from signetsim.models import SbmlModel
+from django.conf import settings
+from os.path import join
+from dill import dumps, loads
 
 
 class HasVariablesInSession(object):
@@ -56,25 +59,31 @@ class HasVariablesInSession(object):
 		return (
 			self.__request.session.get('loaded_model_doc') is not None
 			and self.__request.session.get('loaded_model_id') is not None
+			and self.__request.session.get('loaded_model_filename') is not None
 		)
 
 	def getModelFromSession(self):
-		# print "> Unpickling"
-		return cloudpickle.loads(self.__request.session['loaded_model_doc']).model
+		# print("> Unpickling")
+		return loads(self.__request.session['loaded_model_doc']).model
 
 	def getModelIdFromSession(self):
 		return self.__request.session.get('loaded_model_id')
 
+	def getModelFilenameFromSession(self):
+		return self.__request.session.get('loaded_model_filename')
+
 	def saveModelInSession(self, model, model_id):
-		# print "> Pickling"
+		# print("> Pickling")
 		self.model.cleanBeforePickle()
-		self.__request.session['loaded_model_doc'] = cloudpickle.dumps(model.parentDoc)
+		self.__request.session['loaded_model_doc'] = dumps(model.parentDoc)
 		self.__request.session['loaded_model_id'] = model_id
+		self.__request.session['loaded_model_filename'] = join(settings.MEDIA_ROOT, str(SbmlModel.objects.get(id=model_id).sbml_file))
 
 	def deleteModelFromSession(self):
 		if self.hasModelInSession():
 			del self.__request.session['loaded_model_doc']
 			del self.__request.session['loaded_model_id']
+			del self.__request.session['loaded_model_filename']
 			if self.hasSubmodelInSession():
 				self.deleteSubmodelFromSession()
 

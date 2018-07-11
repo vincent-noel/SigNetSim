@@ -45,11 +45,14 @@ class GetReaction(JsonRequest, HasWorkingModel):
 		list_of_parameters = []
 
 
-		for parameter in reaction.listOfLocalParameters.values():
+		for parameter in reaction.listOfLocalParameters:
 			list_of_parameters.append(parameter)
 
-		list_of_parameters.append(None)
-		for parameter in self.getModel().listOfParameters.values():
+		# If there is local parameters
+		if len(list_of_parameters) > 0:
+			list_of_parameters.append(None)
+
+		for parameter in self.getModel().listOfParameters:
 			list_of_parameters.append(parameter)
 
 		t_reaction_type = reaction.getReactionType()
@@ -63,7 +66,7 @@ class GetReaction(JsonRequest, HasWorkingModel):
 			t_reaction_type = KineticLaw.UNDEFINED
 
 		self.data.update({
-			'id': self.getModel().listOfReactions.values().index(reaction),
+			'id': self.getModel().listOfReactions.index(reaction),
 			'name': "" if reaction.getName() is None else reaction.getName(),
 			'sbml_id': reaction.getSbmlId(),
 			'list_of_reactants': [
@@ -71,21 +74,21 @@ class GetReaction(JsonRequest, HasWorkingModel):
 					self.getModel().listOfSpecies.index(reactant.getSpecies()),
 					reactant.stoichiometry.getPrettyPrintMathFormula()
 				)
-				for reactant in reaction.listOfReactants.values()
+				for reactant in reaction.listOfReactants
 			],
 			'list_of_modifiers': [
 				(
 					self.getModel().listOfSpecies.index(modifier.getSpecies()),
 					modifier.stoichiometry.getPrettyPrintMathFormula()
 				)
-				for modifier in reaction.listOfModifiers.values()
+				for modifier in reaction.listOfModifiers
 			],
 			'list_of_products': [
 				(
 					self.getModel().listOfSpecies.index(product.getSpecies()),
 					product.stoichiometry.getPrettyPrintMathFormula()
 				)
-				for product in reaction.listOfProducts.values()
+				for product in reaction.listOfProducts
 			],
 			'kinetic_law': reaction.kineticLaw.getPrettyPrintMathFormula(),
 			'reaction_type': t_reaction_type,
@@ -94,7 +97,7 @@ class GetReaction(JsonRequest, HasWorkingModel):
 			'list_of_parameters': [] if t_reaction_parameters is None else t_reaction_parameters_index
 			,
 			'list_of_local_parameters': [
-				[param.getNameOrSbmlId(), "" if param.getValue() is None else param.getValue()] for param in reaction.listOfLocalParameters.values()
+				[param.getNameOrSbmlId(), "" if param.getValue() is None else param.getValue()] for param in reaction.listOfLocalParameters
 			]
 			,
 			'notes': "" if reaction.getNotes() is None else reaction.getNotes(),

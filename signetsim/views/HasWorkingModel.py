@@ -64,15 +64,14 @@ class HasWorkingModel(HasWorkingProject, HasVariablesInSession):
 		kwargs['model_id'] = self.model_id
 		kwargs['model_name'] = self.model_name
 		kwargs['model_has_submodels'] = (self.model is not None and self.model.parentDoc.isCompEnabled() and len(self.model.listOfSubmodels) > 0)
-		kwargs['model_submodels'] = ["Model definition"] + [model.getName() for model in self.model.parentDoc.listOfModelDefinitions.values()]
+		kwargs['model_submodels'] = ["Model definition"] + [model.getName() for model in self.model.parentDoc.listOfModelDefinitions]
 		kwargs['model_submodel'] = self.model_submodel
-
 		return kwargs
 
 
 	def load(self, request, recompute=True, *args, **kwargs):
 
-		# print "> Model loading"
+		# print("> Model loading")
 		HasWorkingProject.load(self, request, *args, **kwargs)
 		HasVariablesInSession.load(self, request, *args, **kwargs)
 
@@ -122,8 +121,11 @@ class HasWorkingModel(HasWorkingProject, HasVariablesInSession):
 			return self.getModelInstance()
 
 		else:
-			t_list_submodels = self.model.parentDoc.listOfModelDefinitions.values()
+			t_list_submodels = self.model.parentDoc.listOfModelDefinitions
 			return t_list_submodels[self.model_submodel-1]
+
+	def getSbmlModel(self):
+		return SbmlModel.objects.get(id=self.model_id)
 
 	def saveModel(self, request):
 		if self.model is not None and self.isProjectOwner(request):
@@ -156,7 +158,8 @@ class HasWorkingModel(HasWorkingProject, HasVariablesInSession):
 		return self.model_submodel is not None and self.model_submodel > 0
 
 	def saveModelName(self, request, name):
-		if self.model_submodel == 0 and self.isProjectOwner(request):
+
+		if (self.model_submodel == 0 or self.model_submodel is None) and self.isProjectOwner(request):
 			db_model = SbmlModel.objects.get(project=self.project_id, id=self.model_id)
 			db_model.name = name
 			db_model.save()
@@ -235,10 +238,10 @@ class HasWorkingModel(HasWorkingProject, HasVariablesInSession):
 				self.model = t_doc.model
 				self.model_name = self.model.getName()
 
-				self.model_list_of_submodels = self.model.listOfSubmodels.values()
+				self.model_list_of_submodels = self.model.listOfSubmodels
 				self.model_list_of_submodels_names = []
 				self.model_list_of_submodels_types = []
-				for submodel in self.model.listOfSubmodels.values():
+				for submodel in self.model.listOfSubmodels:
 					if submodel.getModelRef() in self.model.parentDoc.listOfModelDefinitions.sbmlIds():
 						self.model_list_of_submodels_names.append(self.model.parentDoc.listOfModelDefinitions.getBySbmlId(submodel.getModelRef()).getNameOrSbmlId())
 						self.model_list_of_submodels_types.append(0)
@@ -265,29 +268,20 @@ class HasWorkingModel(HasWorkingProject, HasVariablesInSession):
 			self.saveModelInSession(self.model, self.model_id)
 			self.saveSubmodelInSession(self.model_submodel)
 
-			if self.model_filename is None:
-				if SbmlModel.objects.filter(id=self.model_id).exists():
-					t_model = SbmlModel.objects.get(id=self.model_id)
-					self.model_filename = t_model.sbml_file
-
-			request.session['loaded_model_filename'] = self.model_filename
-
 	def __loadPickledModel(self, request):
 
 		self.model = self.getModelFromSession()
+		self.model_filename = self.getModelFilenameFromSession()
+
 		if self.hasSubmodelInSession():
 			self.model_submodel = self.getSubmodelIdFromSession()
 
 		self.model_name = self.model.getName()
-		self.model_filename = str(request.session['loaded_model_filename'])
 
 	def __clearPickledModel(self, request):
 
 		self.deleteModelFromSession()
 		self.deleteSubmodelFromSession()
-
-		if 'loaded_model_filename' in request.session.keys():
-			del request.session['loaded_model_filename']
 
 	def getModelSubmodels(self, request, model_id):
 		""" Returning the submodels of a model available within the project

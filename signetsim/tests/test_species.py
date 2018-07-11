@@ -30,9 +30,10 @@ from django.test import TestCase, Client
 from signetsim.models import User, Project, SbmlModel
 
 from libsignetsim import SbmlDocument
-
-from os.path import dirname, join
+from os import mkdir
+from os.path import dirname, join, isdir
 from json import loads
+from shutil import rmtree
 
 
 class TestSpecies(TestCase):
@@ -46,6 +47,10 @@ class TestSpecies(TestCase):
 		project = Project.objects.filter(user=user)[0]
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
+
 		c = Client()
 		self.assertTrue(c.login(username='test_user', password='password'))
 
@@ -57,7 +62,7 @@ class TestSpecies(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)
@@ -74,12 +79,12 @@ class TestSpecies(TestCase):
 		})
 
 		self.assertEqual(response_get_species.status_code, 200)
-		json_response = loads(response_get_species.content)
-		self.assertEqual(json_response[u'id'], sbml_model.listOfSpecies.values().index(species))
+		json_response = loads(response_get_species.content.decode('utf-8'))
+		self.assertEqual(json_response[u'id'], sbml_model.listOfSpecies.index(species))
 		self.assertEqual(json_response[u'sbml_id'], species.getSbmlId())
 		self.assertEqual(json_response[u'name'], species.getName())
 		self.assertEqual(json_response[u'compartment_name'], species.getCompartment().getName())
-		self.assertEqual(json_response[u'compartment_id'], sbml_model.listOfCompartments.values().index(species.getCompartment()))
+		self.assertEqual(json_response[u'compartment_id'], sbml_model.listOfCompartments.index(species.getCompartment()))
 		self.assertEqual(json_response[u'value'], species.getValue())
 		self.assertEqual(json_response[u'isConcentration'], 1 if not species.hasOnlySubstanceUnits else 0)
 		self.assertEqual(json_response[u'constant'], 1 if species.constant else 0)
@@ -130,7 +135,7 @@ class TestSpecies(TestCase):
 
 		response_delete_species = c.post('/edit/species/', {
 			'action': 'delete',
-			'species_id': sbml_model.listOfSpecies.values().index(species)
+			'species_id': sbml_model.listOfSpecies.index(species)
 		})
 		self.assertEqual(response_delete_species.status_code, 200)
 		self.assertEqual(response_delete_species.context['getErrors'], ['Species is used in reactions'])
@@ -166,7 +171,7 @@ class TestSpecies(TestCase):
 
 		response_delete_species = c.post('/edit/species/', {
 			'action': 'delete',
-			'species_id': sbml_model.listOfSpecies.values().index(species)
+			'species_id': sbml_model.listOfSpecies.index(species)
 		})
 		self.assertEqual(response_delete_species.status_code, 200)
 

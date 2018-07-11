@@ -28,7 +28,7 @@ from django.core.files import File
 from django.conf import settings
 from django.shortcuts import redirect
 
-from signetsim.models import SbmlModel
+from signetsim.models import SbmlModel, Optimization
 import os
 import re
 from threading import Thread
@@ -38,7 +38,7 @@ from django.views.generic import TemplateView
 from signetsim.views.HasWorkingProject import HasWorkingProject
 from libsignetsim.model.SbmlDocument import SbmlDocument
 from signetsim.settings.Settings import Settings
-from signetsim.managers.optimizations import getOptimizationStatus, stopOptimization, restartOptimization
+from signetsim.managers.optimizations import stopOptimization, restartOptimization
 
 
 class OptimizationResultView(TemplateView, HasWorkingProject):
@@ -134,7 +134,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 		def stopOptimization(self):
 
 			stopOptimization(self.optimPath)
-			self.optimizationStatus = getOptimizationStatus(self.optimPath)
+			self.optimizationStatus = Optimization.objects.get(optimization_id=self.optimizationId).status
 
 
 		def restartOptimization(self):
@@ -149,7 +149,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 			t.start()
 			sleep(2)
 
-			self.optimizationStatus = getOptimizationStatus(self.optimPath)
+			self.optimizationStatus = Optimization.objects.get(optimization_id=self.optimizationId).status
 
 		def saveFittedModel(self, request):
 
@@ -202,7 +202,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 
 					modified_files = {}
 					for i_modified, modified in enumerate(modifieds):
-						file = File(open(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, modified.documentFilename))))
+						file = File(open(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, modified.documentFilename)), 'rb'))
 						new_sbml_model = SbmlModel(project=self.project, name=submodel_names[i_modified], sbml_file=file)
 						new_sbml_model.save()
 
@@ -212,8 +212,8 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 						new_document.writeSbmlToFile(os.path.join(settings.MEDIA_ROOT, str(new_sbml_model.sbml_file)))
 						modified_files.update({modified.documentFilename: os.path.basename(str(new_sbml_model.sbml_file))})
 
-					print modified_files
-					print [subdoc.documentFilename for subdoc in document.documentDependencies]
+					print(modified_files)
+					print(subdoc.documentFilename for subdoc in document.documentDependencies)
 					renaming = {}
 					for subdoc in document.documentDependencies:
 						if subdoc.documentFilename in modified_files:
@@ -221,9 +221,9 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 						else:
 							renaming.update({subdoc.documentFilename: subdoc.documentFilename})
 
-					print renaming
+					print(renaming)
 
-					file = File(open(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, "model.sbml"))))
+					file = File(open(os.path.join(settings.MEDIA_ROOT, os.path.join(self.optimPath, "model.sbml")), 'rb'))
 					new_sbml_model = SbmlModel(project=self.project, name=self.modelName, sbml_file=file)
 					new_sbml_model.save()
 
@@ -239,7 +239,7 @@ class OptimizationResultView(TemplateView, HasWorkingProject):
 			self.optimPath = os.path.join(self.getProjectFolder(),
 							"optimizations/optimization_%s/" % self.optimizationId)
 
-			self.optimizationStatus = getOptimizationStatus(self.optimPath)
+			self.optimizationStatus = Optimization.objects.get(optimization_id=self.optimizationId).status
 
 			self.showGraph = None
 			self.parameters = []

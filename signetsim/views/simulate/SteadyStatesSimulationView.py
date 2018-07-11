@@ -29,8 +29,8 @@ from django.views.generic import TemplateView
 from libsignetsim import LibSigNetSimException, SteadyStatesSimulation
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.views.simulate.SedmlWriter import SedmlWriter
-from signetsim.views.simulate.SteadyStatesSimulationForm import SteadyStateSimulationForm
+from .SedmlWriter import SedmlWriter
+from .SteadyStatesSimulationForm import SteadyStateSimulationForm
 from signetsim.models import Experiment, SEDMLSimulation, new_sedml_filename
 from signetsim.managers.models import copyModelHierarchy
 from signetsim.settings.Settings import Settings
@@ -126,7 +126,7 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 							list_of_initial_values=self.form.steady_states,
 		)
 
-		t_simulation.run()
+		t_simulation.run(timeout=self.getCPUTimeQuota(request))
 		t_y = {}
 		for species in self.form.selectedSpeciesIds:
 			t_list = t_simulation.getRawData()[self.listOfVariables[species].getSbmlId()]
@@ -135,16 +135,21 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			t_list = t_simulation.getRawData()[self.listOfReactions[reaction].getSbmlId()]
 			t_y.update({self.listOfReactions[reaction].getNameOrSbmlId(): t_list})
 		self.simResults = t_y
+		self.addCPUTime(request, t_simulation.getSimulationDuration())
 
 	def simulateModel(self, request):
 
 		self.form.read(request)
 		if not self.form.hasErrors():
-			try:
-				self.simulate_steady_states(request)
+			if self.hasCPUTimeQuota(request):
 
-			except LibSigNetSimException as e:
-				self.form.addError(e.message)
+				try:
+					self.simulate_steady_states(request)
+
+				except LibSigNetSimException as e:
+					self.form.addError(e.message)
+			else:
+				self.form.addError("You exceeded your allowed computation time. Please contact the administrator")
 
 	def saveSimulation(self, request):
 
@@ -182,7 +187,7 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			new_simulation = SEDMLSimulation(
 				project=self.project,
 				name=("Simulation" if self.form.simulationName is None else self.form.simulationName),
-				sedml_file=File(open(simulation_filename, "r")),
+				sedml_file=File(open(simulation_filename, "rb")),
 				sbml_file=sbml_model
 			)
 			new_simulation.save()
@@ -194,8 +199,8 @@ class SteadyStateSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		self.experiments = Experiment.objects.filter(project = self.project)
 
 	def loadVariables(self):
-		self.listOfVariables = [obj for obj in self.getModelInstance().listOfVariables.values() if (obj.isSpecies() or obj.isParameter() or obj.isCompartment())]
+		self.listOfVariables = [obj for obj in self.getModelInstance().listOfVariables if (obj.isSpecies() or obj.isParameter() or obj.isCompartment())]
 
 	def loadReactions(self):
-		self.listOfReactions = [obj for obj in self.getModelInstance().listOfVariables.values() if obj.isReaction()]
+		self.listOfReactions = [obj for obj in self.getModelInstance().listOfVariables if obj.isReaction()]
 

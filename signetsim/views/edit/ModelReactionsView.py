@@ -28,7 +28,7 @@ from django.views.generic import TemplateView
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from libsignetsim import KineticLaw, ModelException
-from ModelReactionsForm import ModelReactionsForm
+from .ModelReactionsForm import ModelReactionsForm
 
 class ModelReactionsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
@@ -141,13 +141,13 @@ class ModelReactionsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.loadReactions()
 
 	def loadReactions(self):
-		self.listOfReactions = self.getModel().listOfReactions.values()
+		self.listOfReactions = self.getModel().listOfReactions
 
 	def loadKineticLaws(self):
 		self.listOfKineticLaws = ["" for reaction in self.listOfReactions]
 
 	def loadSpecies(self):
-		self.listOfSpecies = self.getModel().listOfSpecies.values()
+		self.listOfSpecies = self.getModel().listOfSpecies
 
 	def loadParameters(self):
-		self.listOfParameters = self.getModel().listOfParameters.values()
+		self.listOfParameters = self.getModel().listOfParameters

@@ -30,8 +30,8 @@ from django.conf import settings
 from libsignetsim import SbmlDocument
 
 from signetsim.models import User, Project, SbmlModel
-
-from os.path import dirname, join
+from os.path import dirname, join, isdir
+from os import mkdir
 from shutil import rmtree
 from time import sleep
 from json import loads
@@ -46,9 +46,9 @@ class TestOptimization(TestCase):
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
 
-		# This test can only run once with success, because the second time the comp model dependencies will
-		# actually be in the folder. So cleaning the project folder now
-		rmtree(join(join(settings.MEDIA_ROOT, str(project.folder))), "models")
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
@@ -65,7 +65,7 @@ class TestOptimization(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)
@@ -208,14 +208,14 @@ class TestOptimization(TestCase):
 		})
 
 		self.assertEqual(response_add_dataset.status_code, 200)
-		mapping = loads(response_add_dataset.content)['model_xpaths']
+		mapping = loads(response_add_dataset.content.decode('utf-8'))['model_xpaths']
 
 		sbml_filename = str(SbmlModel.objects.filter(project=project)[0].sbml_file)
 
 		doc = SbmlDocument()
 		doc.readSbmlFromFile(join(settings.MEDIA_ROOT, sbml_filename))
 
-		self.assertEqual(mapping.keys(), ['Product', 'Substrate'])
+		self.assertEqual(sorted(list(mapping.keys())), ['Product', 'Substrate'])
 
 		self.assertEqual(doc.model.listOfSpecies.index(doc.getByXPath(mapping['Substrate'])), 0)
 		self.assertEqual(doc.model.listOfSpecies.index(doc.getByXPath(mapping['Product'])), 3)
@@ -267,7 +267,7 @@ class TestOptimization(TestCase):
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
 		self.assertEqual(len(response_list_optimizations.context['optimizations']), 1)
-		self.assertEqual(response_list_optimizations.context['optimizations'][0][1], "Ongoing")
+		self.assertEqual(response_list_optimizations.context['optimizations'][0][0].status, "Running")
 
 		sleep(10)
 
@@ -278,7 +278,7 @@ class TestOptimization(TestCase):
 
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
-		self.assertEqual(response_list_optimizations.context['optimizations'][0][1], "Finished")
+		self.assertEqual(response_list_optimizations.context['optimizations'][0][0].status, "Finished")
 
 		response_get_optimization = c.get(
 			'/fit/%s/' % response_list_optimizations.context['optimizations'][0][0].optimization_id)

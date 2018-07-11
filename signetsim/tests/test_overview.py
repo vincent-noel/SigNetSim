@@ -28,10 +28,9 @@ from django.test import TestCase, Client
 from django.conf import settings
 
 from signetsim.models import User, Project, SbmlModel
-
-from os.path import dirname, join
-from json import loads
-
+from os import mkdir
+from os.path import dirname, join, isdir
+from shutil import rmtree
 
 class TestOverview(TestCase):
 
@@ -44,6 +43,10 @@ class TestOverview(TestCase):
 		project = Project.objects.filter(user=user)[0]
 
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
+
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		c = Client()
 		self.assertTrue(c.login(username='test_user', password='password'))
@@ -63,7 +66,7 @@ class TestOverview(TestCase):
 		model_filename = join(comp_files_folder, "modelcEvRcX.xml")
 		response_load_submodel_1 = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_submodel_1.status_code, 200)
@@ -72,7 +75,7 @@ class TestOverview(TestCase):
 		model_filename = join(comp_files_folder, "modelEHfev9.xml")
 		response_load_submodel_2 = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_submodel_2.status_code, 200)
@@ -82,7 +85,7 @@ class TestOverview(TestCase):
 		model_filename = join(comp_files_folder, "modelI1vrys.xml")
 		response_load_submodel_3 = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_submodel_3.status_code, 200)
@@ -92,7 +95,7 @@ class TestOverview(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)
@@ -128,7 +131,7 @@ class TestOverview(TestCase):
 
 		response_choose_submodel = c.post('/edit/overview/', {
 			'action': 'choose_submodel',
-			'submodel_id': 1
+			'submodel_id': 2
 		})
 		self.assertEqual(response_choose_submodel.status_code, 200)
 

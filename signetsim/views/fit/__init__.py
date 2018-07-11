@@ -24,7 +24,7 @@
 
 """
 
-from ListOfOptimizationsView import ListOfOptimizationsView
-from OptimizationResultView import OptimizationResultView
-from DataOptimizationView import DataOptimizationView
-from ModelOptimizationView import ModelOptimizationView
+from .ListOfOptimizationsView import ListOfOptimizationsView
+from .OptimizationResultView import OptimizationResultView
+from .DataOptimizationView import DataOptimizationView
+from .ModelOptimizationView import ModelOptimizationView

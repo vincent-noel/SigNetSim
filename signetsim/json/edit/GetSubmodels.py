@@ -51,11 +51,11 @@ class GetSubmodels(JsonRequest, HasWorkingModel):
 	def getSubmodelList(self, request):
 
 		if str(request.POST['model_id']) != "":
-			print "model id = %d" % int(request.POST['model_id'])
+			# print("model id = %d" % int(request.POST['model_id']))
 
 			list_of_project_models = [pm for pm in self.getProjectModels(request) if pm.id != self.model_id]
-			print "list of models : %s" % [pm.name for pm in list_of_project_models]
-			print "selected model : %s" % str(list_of_project_models[int(request.POST['model_id'])].name)
+			# print("list of models : %s" % [pm.name for pm in list_of_project_models])
+			# print("selected model : %s" % str(list_of_project_models[int(request.POST['model_id'])].name))
 			return self.getModelSubmodels(request, int(request.POST['model_id']))
 			#
 			# t_model = list_of_project_models[int(request.POST['model_id'])]

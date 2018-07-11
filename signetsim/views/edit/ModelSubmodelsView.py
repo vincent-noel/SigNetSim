@@ -27,12 +27,15 @@
 from django.views.generic import TemplateView
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from ModelSubmodelsForm import ModelSubmodelsForm
-from ModelSubmodelSubstitutionForm import ModelSubmodelSubstitutionForm
+from signetsim.models import SbmlModel, ModelsDependency
+from .ModelSubmodelsForm import ModelSubmodelsForm
+from .ModelSubmodelSubstitutionForm import ModelSubmodelSubstitutionForm
 from libsignetsim import ModelException
 from libsignetsim.model.Variable import Variable
 from libsignetsim.model.sbml.ReplacedElement import ReplacedElement
 from libsignetsim.model.sbml.ReplacedBy import ReplacedBy
+from os.path import join
+
 
 class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
@@ -137,9 +140,28 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 			if self.listOfSubmodelTypes[submodel_id] == 0:
 				t_def = self.model.parentDoc.listOfModelDefinitions.getBySbmlId(t_submodel.getModelRef())
 				self.model.parentDoc.listOfModelDefinitions.remove(t_def)
+				dependency = ModelsDependency.objects.get(
+					project=self.project,
+					model=SbmlModel.objects.get(project=self.project, id=self.model_id),
+					submodel=SbmlModel.objects.get(project=self.project, id=self.model_id),
+					submodel_ref=t_def.getSbmlId()
+				)
+				dependency.delete()
+
 			elif self.listOfSubmodelTypes[submodel_id] == 1:
 				t_def = self.model.parentDoc.listOfExternalModelDefinitions.getBySbmlId(t_submodel.getModelRef())
 				self.model.parentDoc.listOfExternalModelDefinitions.remove(t_def)
+
+				submodel_filename = join(str(self.project.folder), "models", t_def.getSource())
+				submodel_object = SbmlModel.objects.get(project=self.project, sbml_file=submodel_filename)
+				dependency = ModelsDependency.objects.get(
+					project=self.project,
+					model=SbmlModel.objects.get(project=self.project, id=self.model_id),
+					submodel=submodel_object,
+					submodel_ref=t_def.getModelRef()
+				)
+
+				dependency.delete()
 
 			self.saveModel(request)
 			self.loadSubmodels()
@@ -164,18 +186,35 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 					new_definition = self.model.parentDoc.listOfModelDefinitions.new()
 					self.form.save(request, new_submodel, new_definition)
 
+					new_dependency = ModelsDependency(
+						project=self.project,
+						model=SbmlModel.objects.get(project=self.project, id=self.model_id),
+						submodel=SbmlModel.objects.get(project=self.project, id=self.model_id),
+						submodel_ref=new_definition.getSbmlId()
+					)
+					new_dependency.save()
+
 				if self.form.type == 1:
 
 					if not self.model.parentDoc.isCompEnabled():
 						self.model.parentDoc.enableComp()
 
 					new_submodel = self.model.listOfSubmodels.new()
-					# self.form.readDeletions(new_submodel, request)
 
 					new_definition = self.model.parentDoc.listOfExternalModelDefinitions.new()
 
 					self.form.save(request, new_submodel, new_definition)
 
+					new_dependency = ModelsDependency(
+						project=self.project,
+						model=SbmlModel.objects.get(project=self.project, id=self.model_id),
+						submodel=SbmlModel.objects.get(
+							project=self.project,
+							sbml_file=join(self.project.folder, "models", new_definition.getSource()),
+						),
+						submodel_ref=new_definition.getModelRef()
+					)
+					new_dependency.save()
 			else:
 
 				t_submodel = self.listOfSubmodels[self.form.id]
@@ -255,7 +294,7 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 		self.listOfSubmodels = []
 		self.listOfSubmodelTypes = []
 		if self.getModel().parentDoc.useCompPackage:
-			self.listOfSubmodels = self.getModel().listOfSubmodels.values()
+			self.listOfSubmodels = self.getModel().listOfSubmodels
 
 			for submodel in self.listOfSubmodels:
 				if submodel.getModelRef() in self.model.parentDoc.listOfModelDefinitions.sbmlIds():
@@ -273,12 +312,12 @@ class ModelSubmodelsView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 
 	def loadConversionFactors(self):
-		self.listOfConversionFactors = self.model.listOfParameters.values()
+		self.listOfConversionFactors = self.model.listOfParameters
 
 	def loadObjects(self):
 		self.listOfObjects = []
 		self.listOfObjectsMetaIds = []
-		for object in self.model.listOfSbmlObjects.values():
+		for object in self.model.listOfSbmlObjects:
 			if isinstance(object, Variable) and not object.isStoichiometry():
 				self.listOfObjects.append(object.getNameOrSbmlId() + (" (%s)" % type(object).__name__))
 				self.listOfObjectsMetaIds.append(object.getMetaId())

@@ -4,7 +4,6 @@
 [![DOI](https://zenodo.org/badge/20701382.svg)](https://zenodo.org/badge/latestdoi/20701382)
 
 
-
 A django web application for building, fitting, and analyzing mathematical models of molecular signaling networks. A test version is available at [https://live.signetsim.org](https://live.signetsim.org).
 
 
@@ -32,30 +31,36 @@ This will pull the latest signetsim image from Docker Hub, and run SigNetSim on 
 
     docker-compose up -d signetsim
     
-
-If you downloaded the repository and want to build the image locally:
-
-    docker-compose build
     
 ## Running within a docker
 
-	docker pull signetsim/signetsim
-	docker run --name signetsim -d signetsim/signetsim
+	docker run -p 8080:80 -d signetsim/signetsim
 
-The server will run on localhost:80.
+The server will run on localhost:8080.
 
 If you want to locally store persistent data, use :
 
-    docker run --name signetsim -v <data folder>:/SigNetSim/data -d signetsim/signetsim
+    docker run -p 8080:80 -v <data folder>:/SigNetSim/data -d signetsim/signetsim
 
 If you want to run it on a different port :
 
-    docker run --name signetsim -p <port>:80 -d signetsim/signetsim
+    docker run -p <port>:80 -d signetsim/signetsim
+
+
+## Installation script
+
+	sudo bash scripts/install.sh [options]
+	
+	--python 2|3        : Choose your python version (default: 3)
+	--port port-number  : Port on which signetsim will run (default: 80)
+
+The server will run on localhost.
+Tested for ubuntu, debian, opensuse and centos. 
 
 
 ## License
 
-Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br)
+Copyright (C) 2016-2018 Vincent Noel (contact@vincent-noel.fr)
 
 SigNetSim is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 

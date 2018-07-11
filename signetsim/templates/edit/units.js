@@ -187,10 +187,10 @@ class FormUnit extends FormGroup
         super();
         this.field = field;
 
-        this.unit_id = new Form("unit_definition_id", "The id of the unit", "");
+        this.unit_id = new ValueForm("unit_definition_id", "The id of the unit", "");
         this.addForm(this.unit_id);
 
-        this.name = new Form("unit_definition_name", "The name of the unit", "");
+        this.name = new ValueForm("unit_definition_name", "The name of the unit", "");
         this.addForm(this.name);
 
         this.sbmlId = new SbmlIdForm("unit_definition_identifier", "The identifier of the unit", "");

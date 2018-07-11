@@ -38,13 +38,13 @@ class CompartmentForm extends FormGroup{
         this.form_constant = new SliderForm("compartment_constant", "The constant parameter of the compartment", true);
         this.addForm(this.form_constant);
 
-        this.form_name = new Form("compartment_name", "The name of the compartment", "");
+        this.form_name = new ValueForm("compartment_name", "The name of the compartment", "");
         this.addForm(this.form_name);
 
-        this.form_id = new Form("compartment_id", "The id of the compartment", "");
+        this.form_id = new ValueForm("compartment_id", "The id of the compartment", "");
         this.addForm(this.form_id);
 
-        this.form_notes = new Form("compartment_notes", "The notes of the compartment", "");
+        this.form_notes = new ValueForm("compartment_notes", "The notes of the compartment", "");
         this.addForm(this.form_notes);
 
     }
@@ -75,8 +75,8 @@ class CompartmentForm extends FormGroup{
                        this.form_id.setValue(element.toString());
 
                    } else if (index == "sbml_id") {
-                       this.form_sbmlid.setValue(element.toString());
                        this.form_sbmlid.setInitialValue(element.toString());
+                       this.form_sbmlid.setValue(element.toString());
 
                    } else if (index == "name") {
                        this.form_name.setValue(element.toString());
@@ -106,9 +106,6 @@ class CompartmentForm extends FormGroup{
                        this.form_sboterm.setName(element.toString());
                    }
                });
-
-               this.form_sbmlid.check();
-               this.resetErrors();
             },
             () => { console.log("compartment data retrieving failed"); }
         )

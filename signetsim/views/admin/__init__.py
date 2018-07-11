@@ -24,4 +24,6 @@
 
 """
 
-from AdminView import AdminView
+from .ComputationsView import ComputationsView
+from .UsersView import UsersView
+from .SettingsView import SettingsView

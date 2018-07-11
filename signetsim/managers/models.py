@@ -26,7 +26,7 @@
 
 from os.path import isfile, join, dirname
 from os import remove
-from signetsim.models import SbmlModel, new_model_filename
+from signetsim.models import SbmlModel, new_model_filename, ModelsDependency
 from libsignetsim import SbmlDocument
 from django.core.files import File
 from django.conf import settings
@@ -40,7 +40,7 @@ def deleteModel(model):
 
 def copyModel(model, new_project):
 
-	t_file = File(open(join(settings.MEDIA_ROOT, str(model.sbml_file))))
+	t_file = File(open(join(settings.MEDIA_ROOT, str(model.sbml_file)), 'rb'))
 
 	new_model = SbmlModel(project=new_project, name=model.name,	sbml_file=t_file)
 	new_model.save()
@@ -87,3 +87,42 @@ def getModelHierarchy(model_filename):
 			deps += getModelHierarchy(join(path, dependency))
 
 	return deps
+
+def getDetailedModelDependencies(sbml_doc):
+
+	documentDependenciesPaths = []
+	if sbml_doc.useCompPackage:
+
+		modelRefs = []
+
+		for submodel in sbml_doc.model.listOfSubmodels:
+			modelRefs.append(submodel.getModelRef())
+
+		for external_doc in sbml_doc.listOfExternalModelDefinitions:
+
+			if external_doc.getSbmlId() in modelRefs:
+				documentDependenciesPaths.append((
+					external_doc.getSource(),
+					external_doc.getModelRef()
+				))
+
+		for internal_model in sbml_doc.listOfModelDefinitions:
+			if internal_model.getSbmlId() in modelRefs:
+				documentDependenciesPaths.append((
+					sbml_doc.documentFilename,
+					internal_model.getSbmlId()
+				))
+
+		documentDependenciesPaths = list(set(documentDependenciesPaths))
+	return documentDependenciesPaths
+
+def renameSbmlIdInModelDependencies(sbml_model, old_sbml_id, new_sbml_id):
+
+	for model_dependency in ModelsDependency.objects.filter(submodel=sbml_model):
+
+		doc = SbmlDocument()
+		doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model_dependency.model.sbml_file)))
+
+		doc.renameSbmlIdInSubstitutions(old_sbml_id, new_sbml_id, model_dependency.submodel_ref)
+
+		doc.writeSbmlToFile(join(settings.MEDIA_ROOT, str(model_dependency.model.sbml_file)))

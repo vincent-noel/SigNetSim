@@ -25,24 +25,44 @@
 """
 
 from django.views.generic import TemplateView
+from django.conf import settings
 from signetsim.models import User
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from signetsim.managers.users import deleteUser
 
-class AdminView(TemplateView, HasErrorMessages):
-	template_name = 'admin/admin.html'
-
+class SettingsView(TemplateView, HasErrorMessages):
+	template_name = 'admin/settings.html'
 
 	def __init__(self, **kwargs):
 		TemplateView.__init__(self, **kwargs)
 		HasErrorMessages.__init__(self)
 
-		self.users = None
+		# "email_address": "signetsim@gmail.com",
+		# "email_use_tls": true,
+		# "email_host": "smtp.gmail.com",
+		# "email_port": "587",
+		# "email_user": "signetsim",
+		# "email_password": "poil0cu!",
 
+		self.mailAddress = None
+		self.mailUseTLS = None
+		self.mailHost = None
+		self.mailPort = None
+		self.mailUser = None
 
 	def get_context_data(self, **kwargs):
 		kwargs = HasErrorMessages.get_context_data(self, **kwargs)
-		kwargs['users'] = self.users
+		kwargs['mail_address'] = self.mailAddress
+		kwargs['mail_use_tls'] = self.mailUseTLS
+		kwargs['mail_host'] = self.mailHost
+		kwargs['mail_port'] = self.mailPort
+		kwargs['mail_user'] = self.mailUser
+		kwargs['mail_active'] = (
+			self.mailAddress != None and
+			self.mailHost != None and
+			self.mailPort!= None and
+			self.mailUser != None
+		)
 		return kwargs
 
 	def get(self, request, *args, **kwargs):
@@ -52,18 +72,20 @@ class AdminView(TemplateView, HasErrorMessages):
 	def post(self, request, *args, **kwargs):
 		self.load(request, *args, **kwargs)
 		if "action" in request.POST:
-			if request.POST['action'] == "delete":
-				self.deleteUser(request)
+			pass
 
 		return TemplateView.get(self, request, *args, **kwargs)
 
 	def load(self, request, *args, **kwargs):
-		self.users = User.objects.all()
+		self.mailAddress = settings.EMAIL_ADDRESS
+		self.mailUseTLS = settings.EMAIL_USE_TLS
+		self.mailHost = settings.EMAIL_HOST
+		self.mailPort = settings.EMAIL_PORT
+		self.mailUser = settings.EMAIL_HOST_USER
 
 	def deleteUser(self, request):
 
 		if User.objects.filter(id=int(request.POST['id'])).exists():
-
 			user = User.objects.get(id=int(request.POST['id']))
 			deleteUser(user)
 

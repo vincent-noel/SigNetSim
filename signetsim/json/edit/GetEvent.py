@@ -42,7 +42,7 @@ class GetEvent(JsonRequest, HasWorkingModel):
 		event_ind = int(request.POST['event_ind'])
 
 		if event_ind < len(self.getModel().listOfEvents):
-			event = self.getModel().listOfEvents.values()[event_ind]
+			event = self.getModel().listOfEvents[event_ind]
 
 			self.data.update({
 				'event_ind': event_ind,
@@ -75,7 +75,7 @@ class GetEvent(JsonRequest, HasWorkingModel):
 	def load(self, request, *args, **kwargs):
 		HasWorkingModel.load(self, request, *args, **kwargs)
 
-		for variable in self.getModel().listOfVariables.values():
+		for variable in self.getModel().listOfVariables:
 			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
 				or variable.isCompartment()

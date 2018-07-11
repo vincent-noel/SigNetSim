@@ -26,9 +26,8 @@
 
 from django.views.generic import TemplateView
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.views.simulate.SedmlWriter import SedmlWriter
-
-from signetsim.views.simulate.TimeSeriesSimulationForm import TimeSeriesSimulationForm
+from .SedmlWriter import SedmlWriter
+from .TimeSeriesSimulationForm import TimeSeriesSimulationForm
 from signetsim.models import Experiment, Condition, Treatment, SEDMLSimulation, new_sedml_filename
 from signetsim.managers.data import buildExperiment
 from signetsim.managers.models import copyModelHierarchy
@@ -137,7 +136,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			y_filtered = {}
 			if self.form.selectedSpeciesIds is not None:
 				for var in self.form.selectedSpeciesIds:
-					t_sbml_id = self.listOfVariables[var].getSbmlId()
+					t_sbml_id = str(self.listOfVariables[var].symbol.getSymbol())
 					t_name = self.listOfVariables[var].getNameOrSbmlId()
 					if self.form.showObservations == True:
 						t_name += " (model)"
@@ -145,7 +144,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 
 			if self.form.selectedReactionsIds is not None:
 				for var in self.form.selectedReactionsIds:
-					t_sbml_id = self.listOfReactions[var].getSbmlId()
+					t_sbml_id = str(self.listOfReactions[var].symbol.getSymbol())
 					t_name = self.listOfReactions[var].getNameOrSbmlId()
 					y_filtered.update({t_name: t_y[t_sbml_id]})
 
@@ -181,26 +180,30 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		self.form.read(request)
 		if not self.form.hasErrors():
 
-			self.experiment = None
-			if self.form.experimentId is not None:
-				t_experiment = Experiment.objects.get(id=self.experiments[self.form.experimentId].id)
-				self.experiment = buildExperiment(t_experiment)
+			if self.hasCPUTimeQuota(request):
+				self.experiment = None
+				if self.form.experimentId is not None:
+					t_experiment = Experiment.objects.get(id=self.experiments[self.form.experimentId].id)
+					self.experiment = buildExperiment(t_experiment)
 
-			try:
-				t_simulation = TimeseriesSimulation(
-					list_of_models=[self.getModelInstance()],
-					experiment=self.experiment,
-					time_min=self.form.timeMin,
-					time_max=self.form.timeMax,
-					time_ech=self.form.timeEch)
+				try:
+					t_simulation = TimeseriesSimulation(
+						list_of_models=[self.getModelInstance()],
+						experiment=self.experiment,
+						time_min=self.form.timeMin,
+						time_max=self.form.timeMax,
+						time_ech=self.form.timeEch)
 
-				t_simulation.run()
+					t_simulation.run(timeout=self.getCPUTimeQuota(request))
 
-				results = t_simulation.getRawData()
-				self.read_timeseries(results)
+					results = t_simulation.getRawData()
+					self.addCPUTime(request, t_simulation.getSimulationDuration())
+					self.read_timeseries(results)
 
-			except LibSigNetSimException as e:
-				self.form.addError(e.message)
+				except LibSigNetSimException as e:
+					self.form.addError(e.message)
+			else:
+				self.form.addError("You exceeded your allowed computation time. Please contact the administrator")
 
 	def saveSimulation(self, request):
 
@@ -273,7 +276,7 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 			new_simulation = SEDMLSimulation(
 				project=self.project,
 				name=("Simulation" if self.form.simulationName is None else self.form.simulationName),
-				sedml_file=File(open(simulation_filename, "r")),
+				sedml_file=File(open(simulation_filename, "rb")),
 				sbml_file=sbml_model)
 			new_simulation.save()
 			filename = join(settings.MEDIA_ROOT, str(new_simulation.sedml_file))
@@ -284,8 +287,8 @@ class TimeSeriesSimulationView(TemplateView, HasWorkingModel, SedmlWriter):
 		self.experiments = Experiment.objects.filter(project=self.project)
 
 	def loadVariables(self):
-		self.listOfVariables = [obj for obj in self.getModelInstance().listOfVariables.values() if not obj.constant and (obj.isSpecies() or obj.isParameter() or obj.isCompartment())]
+		self.listOfVariables = [obj for obj in self.getModelInstance().listOfVariables if not obj.constant and (obj.isSpecies() or obj.isParameter() or obj.isCompartment())]
 
 	def loadReactions(self):
-		self.listOfReactions = [obj for obj in self.getModelInstance().listOfVariables.values() if obj.isReaction()]
+		self.listOfReactions = [obj for obj in self.getModelInstance().listOfVariables if obj.isReaction()]
 

@@ -28,7 +28,7 @@ from django.views.generic import TemplateView
 from libsignetsim import ModelException
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from ModelSpeciesForm import ModelSpeciesForm
+from .ModelSpeciesForm import ModelSpeciesForm
 
 class ModelSpeciesView(TemplateView, HasWorkingModel, HasErrorMessages):
 
@@ -131,10 +131,10 @@ class ModelSpeciesView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.form.clear()
 
 	def loadSpecies(self):
-		self.listOfSpecies = self.getModel().listOfSpecies.values()
+		self.listOfSpecies = self.getModel().listOfSpecies
 
 	def loadCompartments(self):
-		self.listOfCompartments = self.getModel().listOfCompartments.values()
+		self.listOfCompartments = self.getModel().listOfCompartments
 
 	def loadUnits(self):
-		self.listOfUnits = self.getModel().listOfUnitDefinitions.values()
+		self.listOfUnits = self.getModel().listOfUnitDefinitions

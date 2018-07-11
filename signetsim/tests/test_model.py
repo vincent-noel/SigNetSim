@@ -28,7 +28,8 @@ from django.test import TestCase, Client
 from signetsim.models import User, Project, SbmlModel
 
 from django.conf import settings
-from os.path import dirname, join
+from os.path import dirname, join, isdir
+from os import mkdir
 from shutil import rmtree
 
 class TestModels(TestCase):
@@ -41,9 +42,9 @@ class TestModels(TestCase):
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
 
-		# This test can only run once with success, because the second time the comp model dependencies will
-		# actually be in the folder. So cleaning the project folder now
-		rmtree(join(join(settings.MEDIA_ROOT, str(project.folder))), "models")
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
@@ -70,7 +71,7 @@ class TestModels(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)
@@ -119,7 +120,7 @@ class TestModels(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)
@@ -132,7 +133,7 @@ class TestModels(TestCase):
 		model_filename = join(comp_files_folder, "modelcEvRcX.xml")
 		response_load_submodel_1 = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_submodel_1.status_code, 200)
@@ -141,7 +142,7 @@ class TestModels(TestCase):
 		model_filename = join(comp_files_folder, "modelEHfev9.xml")
 		response_load_submodel_2 = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_submodel_2.status_code, 200)
@@ -151,7 +152,7 @@ class TestModels(TestCase):
 		model_filename = join(comp_files_folder, "modelI1vrys.xml")
 		response_load_submodel_3 = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_submodel_3.status_code, 200)
@@ -161,7 +162,7 @@ class TestModels(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)

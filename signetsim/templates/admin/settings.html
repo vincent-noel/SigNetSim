@@ -1,0 +1,235 @@
+{#   _layout/base.html : This is the top template 							  #}
+
+{#   Copyright (C) 2016 Vincent Noel (vincent.noel@butantan.gov.br) 		  #}
+
+{#   This program is free software: you can redistribute it and/or modify     #}
+{#   it under the terms of the GNU Affero General Public License as published #}
+{#   by the Free Software Foundation, either version 3 of the License, or     #}
+{#   (at your option) any later version. 									  #}
+
+{#   This program is distributed in the hope that it will be useful, 		  #}
+{#   but WITHOUT ANY WARRANTY; without even the implied warranty of 		  #}
+{#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 			  #}
+{#   GNU Affero General Public License for more details.					  #}
+
+{#   You should have received a copy of the GNU Affero General Public License #}
+{#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
+
+{% extends '_layouts/menupage.html' %}
+{% load static from staticfiles %}
+
+{% load bootstrap3 %}
+{% load tags %}
+
+{% block view_sidebar %}{% include 'admin/menu.html' with page="settings" %}{% endblock view_sidebar %}
+{% block title %} Settings | {{ block.super }}{% endblock title %}
+{% block view_content %}
+
+<div class="container-fluid">
+  <h4>Settings</h4>
+  <hr/><br/>
+	<div class="container-fluid">
+		<form method="post">
+	 		{% csrf_token %}
+			<br/>
+			<table class="table table-striped">
+				<thead>
+					<tr class="row" onclick="toggle_mail();">
+						<th class="col-xs-10">Configure mail</th>
+						<th class="col-xs-2 text-right">
+							<span class="input-group col-xs-12">
+									<label class="switch">
+										<input type="checkbox" name="mail_active" id="mail_active"{% if mail_active %} checked{% endif %}>
+										<div class="slider round"></div>
+									</label>
+							</span>
+						</th>
+					</tr>
+				</thead>
+				<script>
+					function toggle_mail(){
+							if ($('#mail_active').prop('checked')){
+
+									$("#mail_config_form").removeClass("in");
+									$("#mail_active").prop('checked', false);
+
+							} else {
+
+									$("#mail_config_form").addClass("in");
+									$("#mail_active").prop('checked', true);
+
+							}
+
+					}
+				</script>
+			</table>
+			<div class="collapse{% if mail_active %} in{% endif %}" id="mail_config_form">
+				<table class="table table-striped">
+					<thead>
+						<tr class="row">
+							<th class="col-xs-12">Email address</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="row">
+							<td class="col-xs-12">
+								<input type="text" class="form-control input-sm"
+											 placeholder="Input the email address of this account"
+											 name="email_address" value="{% if mail_address != None %}{{ mail_address }}{% endif %}"
+								>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<table class="table table-striped">
+					<thead>
+						<tr class="row">
+							<th class="col-xs-12">SMTP server host</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="row">
+							<td class="col-xs-12">
+								<input type="text" class="form-control input-sm"
+											 placeholder="Input the address of the SMTP server"
+											 name="email_host" value="{% if mail_host != None %}{{ mail_host }}{% endif %}"
+								>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<table class="table table-striped">
+					<thead>
+						<tr class="row">
+							<th class="col-xs-12">SMTP server port</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="row">
+							<td class="col-xs-12">
+								<input type="text" class="form-control input-sm"
+											 placeholder="Input the port of the SMTP server"
+											 name="email_port" value="{% if mail_port != None %}{{ mail_port }}{% endif %}"
+								>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<table class="table table-striped">
+				<thead>
+					<tr class="row" onclick="toggle_tls();">
+						<th class="col-xs-10">SMTP server uses TLS</th>
+						<th class="col-xs-2 text-right">
+							<span class="input-group col-xs-12">
+									<label class="switch">
+										<input type="checkbox" name="email_tls" id="mail_tls_active">
+										<div class="slider round"></div>
+									</label>
+							</span>
+						</th>
+					</tr>
+				</thead>
+				<script>
+				function toggle_tls(){
+						if ($('#mail_tls_active').prop('checked')){
+								$("#mail_tls_active").prop('checked', false);
+
+						} else {
+								$("#mail_tls_active").prop('checked', true);
+
+						}
+
+				}
+			</script>
+			</table>
+			<table class="table table-striped">
+				<thead>
+					<tr class="row">
+						<th class="col-xs-12">SMTP server login</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="row">
+						<td class="col-xs-12">
+							<input type="text" class="form-control input-sm"
+										 placeholder="Input the username of the account"
+										 name="email_username" value="{% if mail_user != None %}{{ mail_user }}{% endif %}"
+							>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="table table-striped">
+				<thead>
+					<tr class="row">
+						<th class="col-xs-12">SMTP server password</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="row">
+						<td class="col-xs-12">
+							<input type="password" class="form-control input-sm"
+										 placeholder="Input the password of the account"
+										 name="email_password" value=""
+							>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<br/>
+			</div>
+			<div class="form-group pull-right">
+				<input type="submit" class="btn btn-primary btn-primary" value="Create">
+			</div>
+		</form>
+	</div>
+</div>
+
+{% endblock view_content %}
+
+{% block view_modal %}
+
+<!-- Modal -->
+<div class="modal fade in" id="quotas" tabindex="1" role="dialog" aria-labelledby="User's quotas">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="." method="post" class="form-inline" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">User's quotas</h4>
+        </div>
+        <div class="modal-body">
+            <div class="input-group" style="width:100%">
+              <span class="input-group-addon" id="users_cores">Cores</span>
+              <input type="text" class="form-control" placeholder="Name" name="folder_name">
+            </div>
+            <div class="input-group" style="width:100%">
+              <span class="input-group-addon" id="users_cpu_time">CPU Time</span>
+              <input type="text" class="form-control" placeholder="Name" name="folder_name">
+            </div>
+            {% if create_folder_error != None %}
+            <br/><br/>
+            <div class="alert alert-danger">
+              <strong>Error :</strong> {{ create_folder_error }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="modal-footer">
+          <button type="submit"  name="action" value="new_folder" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock view_modal %}
+{% block footer_js %}
+	{{ block.super }}
+	<script src="{% static 'js/forms.js' %}"></script>
+{% endblock footer_js %}
+
+{% block js %}
+{{ block.super }}
+{% include 'admin/users.js' %}
+{% endblock js %}

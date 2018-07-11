@@ -64,7 +64,7 @@ class ObservationForm(ParentForm):
 		self.id = self.readInt(request, 'id',
 								"The identifier of the observation", required=False)
 
-		self.name = self.readString(request, 'name',
+		self.name = self.readASCIIString(request, 'name',
 									"The name of the observed species")
 
 		self.time = self.readFloat(request, 'time',
@@ -76,7 +76,7 @@ class ObservationForm(ParentForm):
 		self.stddev = self.readFloat(request, 'stddev',
 									"The standard deviation of the observation")
 
-		self.steadyState = self.readOnOff(request, 'steady_state',
+		self.steadyState = self.readOnOff(request, 'observation_steady_state',
 				"The settings describing if the observation is at steady state")
 
 		self.minTimeSteadyState = self.readFloat(request, 'min_steady_state',

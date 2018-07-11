@@ -24,14 +24,13 @@
 
 """
 
-from django.test import TestCase, Client, RequestFactory
-from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import TestCase, Client
 from django.conf import settings
 
 from signetsim.models import User, Project, SbmlModel
-from signetsim.views.ListOfModelsView import ListOfModelsView
 
-from os.path import dirname, join
+from os.path import dirname, join, isdir
+from os import mkdir
 from shutil import rmtree
 from json import loads
 
@@ -46,9 +45,9 @@ class TestData(TestCase):
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
 
-		# This test can only run once with success, because the second time the comp model dependencies will
-		# actually be in the folder. So cleaning the project folder now
-		rmtree(join(join(settings.MEDIA_ROOT, str(project.folder))), "models")
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
@@ -63,7 +62,7 @@ class TestData(TestCase):
 
 		response_import_data = c.post('/data/', {
 			'action': 'import',
-			'docfile': open(experiment_filename, 'r')
+			'docfile': open(experiment_filename, 'rb')
 		})
 
 		self.assertEqual(response_import_data.status_code, 200)
@@ -117,7 +116,7 @@ class TestData(TestCase):
 		})
 
 		self.assertEqual(response_json_get_experiment.status_code, 200)
-		json_response = loads(response_json_get_experiment.content)
+		json_response = loads(response_json_get_experiment.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'name'], u'Ras, Mapk quantifications')
 		self.assertEqual(json_response[u'notes'], u'')
@@ -127,7 +126,7 @@ class TestData(TestCase):
 		)
 
 		self.assertEqual(response_download_experiment.status_code, 200)
-		lines = response_download_experiment.content.split("\n")
+		lines = response_download_experiment.content.decode('utf-8').split("\n")
 		self.assertEqual(lines[0], "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
 		self.assertEqual(lines[1], "<numl xmlns=\"http://www.numl.org/numl/level1/version1\" level=\"1\" version=\"1\">")
 
@@ -198,7 +197,7 @@ class TestData(TestCase):
 		})
 
 		self.assertEqual(response_json_get_condition.status_code, 200)
-		json_response = loads(response_json_get_condition.content)
+		json_response = loads(response_json_get_condition.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'name'], u'Test condition, but different')
 		self.assertEqual(json_response[u'notes'], u'Some modified notes')
@@ -264,7 +263,7 @@ class TestData(TestCase):
 		})
 
 		self.assertEqual(response_get_treatment.status_code, 200)
-		json_response = loads(response_get_treatment.content)
+		json_response = loads(response_get_treatment.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'species'], u'FGF2')
 		self.assertEqual(json_response[u'time'], 0)
@@ -287,7 +286,7 @@ class TestData(TestCase):
 		})
 
 		self.assertEqual(response_get_treatment.status_code, 200)
-		json_response = loads(response_get_treatment.content)
+		json_response = loads(response_get_treatment.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'species'], u'Ras-GTP')
 		self.assertEqual(json_response[u'time'], 20)
@@ -303,7 +302,7 @@ class TestData(TestCase):
 			'time': 300,
 			'value': 333.0,
 			'stddev': 30,
-			'steady_state': 'off',
+			'observation_steady_state': 'off',
 			'min_steady_state': "0",
 			'max_steady_state': "0"
 		})
@@ -317,7 +316,7 @@ class TestData(TestCase):
 		})
 
 		self.assertEqual(response_get_observation.status_code, 200)
-		json_response = loads(response_get_observation.content)
+		json_response = loads(response_get_observation.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'species'], u'Ras-GTP')
 		self.assertEqual(json_response[u'time'], 300)
@@ -335,7 +334,7 @@ class TestData(TestCase):
 			'time': 3600,
 			'value': 60.0,
 			'stddev': 10,
-			'steady_state': 'on',
+			'observation_steady_state': 'on',
 			'min_steady_state': "2400",
 			'max_steady_state': "4800"
 		})
@@ -348,7 +347,7 @@ class TestData(TestCase):
 		})
 
 		self.assertEqual(response_get_observation.status_code, 200)
-		json_response = loads(response_get_observation.content)
+		json_response = loads(response_get_observation.content.decode('utf-8'))
 
 		self.assertEqual(json_response[u'species'], u'Ras-GDP')
 		self.assertEqual(json_response[u'time'], 3600)

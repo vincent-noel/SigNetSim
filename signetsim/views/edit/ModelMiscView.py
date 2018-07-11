@@ -25,15 +25,17 @@
 """
 
 from django.views.generic import TemplateView
-from django.core.urlresolvers import reverse
 
-from libsignetsim.uris.URI import URI
-from libsignetsim import Settings
+from django import __version__
+if int(__version__.split('.')[0]) < 2:
+	from django.core.urlresolvers import reverse
+else:
+	from django.urls import reverse
 
-from signetsim.models import SbmlModel
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from signetsim.views.edit.ModelMiscForm import ModelMiscForm
+
 
 class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 
@@ -141,8 +143,8 @@ class ModelMiscView(TemplateView, HasWorkingModel, HasErrorMessages):
 			self.setModel(request, int(args[0]))
 
 		if self.isModelLoaded():
-			self.listOfUnits = self.getModel().listOfUnitDefinitions.values()
-			self.listOfParameters = self.getModel().listOfParameters.values()
+			self.listOfUnits = self.getModel().listOfUnitDefinitions
+			self.listOfParameters = self.getModel().listOfParameters
 			self.sbmlLevels = self.getModel().getSbmlLevels()
 			self.form.load()
 			# self.modelHistory = self.getModel().modelHistory

@@ -56,12 +56,12 @@ class TestAccounts(TestCase):
 		self.assertEqual(new_user.email, 'test_user@mail.com')
 		self.assertEqual(new_user.organization, 'lab')
 		self.assertEqual(new_user.is_active, False)
-		self.assertRedirects(response_signup, 'accounts/register_success/', status_code=302, target_status_code=200)
+		self.assertRedirects(response_signup, '/accounts/register_success/', status_code=302, target_status_code=200)
 
 		response_login = c.post('/accounts/login/', {
 			'action': 'login',
 			'username': 'test_user',
-			'password': 'password'
+			'password': 'password',
 		})
 
 		self.assertEqual(response_login.context['getErrors'], ['The user account is not activated yet !'])

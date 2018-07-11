@@ -27,7 +27,7 @@
 from django.views.generic import TemplateView
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
-from signetsim.views.edit.ModelUnitsForm import ModelUnitsForm
+from .ModelUnitsForm import ModelUnitsForm
 
 from libsignetsim.model.sbml.Unit import Unit
 
@@ -75,7 +75,7 @@ class ModelUnitsView(TemplateView, HasWorkingModel):
 
 	def deleteUnitDefinition(self, request):
 		t_id = int(request.POST['id'])
-		t_unit_definition = self.getModel().listOfUnitDefinitions.values()[t_id]
+		t_unit_definition = self.getModel().listOfUnitDefinitions[t_id]
 		self.getModel().listOfUnitDefinitions.remove(t_unit_definition)
 		self.loadUnitDefinitions()
 		self.saveModel(request)
@@ -88,7 +88,7 @@ class ModelUnitsView(TemplateView, HasWorkingModel):
 				unit_definition = self.getModel().listOfUnitDefinitions.new()
 				self.form.save(unit_definition)
 			else:
-				unit_definition = self.getModel().listOfUnitDefinitions.values()[self.form.id]
+				unit_definition = self.getModel().listOfUnitDefinitions[self.form.id]
 				self.form.save(unit_definition)
 
 		self.loadUnitDefinitions()
@@ -103,4 +103,4 @@ class ModelUnitsView(TemplateView, HasWorkingModel):
 
 	def loadUnitDefinitions(self):
 
-		self.listOfUnitDefinitions = [unit.getNameOrSbmlId() for unit in self.getModel().listOfUnitDefinitions.values()]
+		self.listOfUnitDefinitions = [unit.getNameOrSbmlId() for unit in self.getModel().listOfUnitDefinitions]

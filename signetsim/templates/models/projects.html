@@ -16,6 +16,8 @@
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
 {% extends '_layouts/fullpage.html' %}
+{% load static from staticfiles %}
+
 {% block title %} Projects | {{ block.super }}{% endblock title %}
 
 {% block view_name %}Projects{% endblock view_name %}
@@ -49,8 +51,8 @@
               <form class="form-inline" action="." method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="id" value="{{ project.id }}">
-                <button type="button" class="btn btn-xs btn-primary" onclick="view_project({{project.id}});" title="Edit project">{% bootstrap_icon "pencil" %}</button>
-                <button type="button" class="btn btn-xs btn-primary" id="send_{{project.id}}" title="Send project">{% bootstrap_icon "send" %}</button>
+                <button type="button" class="btn btn-xs btn-primary" onclick="form_project.load({{project.id}});" title="Edit project">{% bootstrap_icon "pencil" %}</button>
+                <button type="button" class="btn btn-xs btn-primary" onclick="form_send_project.show({{project.id}});" title="Send project">{% bootstrap_icon "send" %}</button>
                 <button type="submit" name="action" value="copy_folder" class="btn btn-xs btn-primary" title="Duplicate project">{% bootstrap_icon "duplicate" %}</button>
                 <a href="{% url 'project_archive' project.folder %}" style="display: inline-block" target="_blank">
                   <button type="button" class="btn btn-xs btn-default" title="Download as COMBINE archive">{% bootstrap_icon "download-alt" %}</button>
@@ -74,7 +76,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-    <button type="button" class="btn btn-primary btn-sm" onclick="new_project();">{% bootstrap_icon "file" %} Create new project</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="form_project.new();">{% bootstrap_icon "file" %} Create new project</button>
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#load_folder">{% bootstrap_icon "folder-open" %}&nbsp;&nbsp;Load combine archive</button>
  </div>
   {% endif %}
@@ -89,45 +91,33 @@
 <div class="modal fade in" id="modal_project" tabindex="1" role="dialog" aria-labelledby="New project">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form method="post" class="form-inline" enctype="multipart/form-data" id="form_project">
+      <form method="post" class="form-inline" enctype="multipart/form-data" onsubmit="return form_project.save();">
         {% csrf_token %}
         <input type="hidden" name="action" value="save_project">
-        <input type="hidden" name="project_id" id="modal_project_id" value="">
+        <input type="hidden" name="modal_project_id" id="modal_project_id" value="">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title" id="modal_project_title">Create a new project</h4>
         </div>
         <div class="modal-body">
-            <div class="input-group" style="width:100%">
-              <span class="input-group-addon">Project name</span>
-              <input type="text" class="form-control" placeholder="Name" name="project_name" id="modal_project_name">
-            </div>
-             <table class="table table-striped">
-                <thead>
-                  <tr class="row" onclick="toggle_slide('modal_project_access');">
-                    <th class="col-xs-10">Public</th>
-                    <th class="col-xs-2 text-right">
-                      <span class="input-group col-xs-12">
-                          <label class="switch">
-                            <input type="checkbox" name="project_access" id="modal_project_access">
-                            <div class="slider round"></div>
-                          </label>
-                      </span>
-                    </th>
-                  </tr>
-                </thead>
-              </table>
+					{% include 'commons/html/name_input.html' with
+						name="Project name"
+						id="modal_project_name"
+						default=""
+						placeholder="Name"
+					%}
 
-
-            {% if create_folder_error != None %}
-            <br/><br/>
-            <div class="alert alert-danger">
-              <strong>Error :</strong> {{ create_folder_error }}
-            </div>
-            {% endif %}
+					{% include 'commons/html/toggle_switch.html' with
+						name="Public"
+						id="modal_project_access"
+						default=""
+						onclick="form_project.access.toggle();"
+					%}
+					<div class="container-fluid" id="error_modal">
+					</div>
         </div>
-        <div class="modal-footer">
-          <button type="button" onclick="save_project();" class="btn btn-primary">Save</button>
+				<div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save</button>
         </div>
       </form>
     </div>
@@ -135,30 +125,29 @@
 </div>
 
 
-<div class="modal fade in" id="send_folder" tabindex="1" role="dialog" aria-labelledby="Send project">
+<div class="modal fade in" id="modal_send_project" tabindex="1" role="dialog" aria-labelledby="Send project">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form action="." method="post" class="form-inline" enctype="multipart/form-data">
+      <form method="post" class="form-inline" enctype="multipart/form-data" onsubmit="return form_send_project.send();">
         {% csrf_token %}
-        <input type="hidden" id="send_id" name="id" value="">
+        <input type="hidden" id="modal_send_project_id" name="modal_send_project_id" value="">
+				<input type="hidden" name="action" value="send_folder">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title">Choose the user to send the project to</h4>
         </div>
         <div class="modal-body">
-            <div class="input-group" style="width:100%">
-              <span class="input-group-addon" id="model_name_id">Username</span>
-              <input type="text" class="form-control" placeholder="Username" name="username">
-            </div>
-            {% if send_folder_error != None %}
-            <br/><br/>
-            <div class="alert alert-danger">
-              <strong>Error :</strong> {{ send_folder_error }}
-            </div>
-            {% endif %}
+					{% include 'commons/html/validated_input.html' with
+						name="Username"
+						id="modal_send_project_username"
+						default=""
+						placeholder="Username"
+					%}
+					<div class="container-fluid" id="error_modal_send_project">
+				  </div>
         </div>
         <div class="modal-footer">
-          <button type="submit"  name="action" value="send_folder" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
         </div>
       </form>
     </div>
@@ -170,16 +159,17 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <form method="post" class="form-inline" enctype="multipart/form-data">
+				{% csrf_token %}
         <input type="hidden" name="action" value="load_folder">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title" id="myModalLabel_2">Load COMBINE archive</h4>
         </div>
         <div class="modal-body">
-          {% csrf_token %}
-          {% bootstrap_form load_project_form layout=inline %}
-          {% buttons %}
-          {% endbuttons %}
+					{% include 'commons/html/file_input.html' with
+						id="combine_file"
+						placeholder="Choose a file..."
+					%}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -193,9 +183,12 @@
 
 {% endblock view_modal %}
 
+{% block footer_js %}
+	{{ block.super }}
+	<script src="{% static 'js/forms.js' %}"></script>
+{% endblock footer_js %}
 
 {% block js %}
-
-{{ block.super }}
-{% include 'models/projects.js' %}
+	{{ block.super }}
+	{% include 'models/projects.js' %}
 {% endblock js %}

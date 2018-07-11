@@ -25,8 +25,8 @@
 """
 
 from libsignetsim import ModelException, KineticLaw
-from libsignetsim.model.sbml.Parameter import Parameter
-from signetsim.views.edit.ModelParentForm import ModelParentForm
+from .ModelParentForm import ModelParentForm
+from signetsim.managers.models import renameSbmlIdInModelDependencies
 
 
 class ModelReactionsForm(ModelParentForm):
@@ -53,10 +53,12 @@ class ModelReactionsForm(ModelParentForm):
 
 	def save(self, reaction):
 
-
 		try:
 			reaction.setName(self.name)
-			reaction.setSbmlId(self.sbmlId)
+
+			if reaction.getSbmlId() != self.sbmlId:
+				renameSbmlIdInModelDependencies(self.parent.getSbmlModel(), reaction.getSbmlId(), self.sbmlId)
+				reaction.setSbmlId(self.sbmlId)
 
 			self.saveReactants(reaction)
 			self.saveModifiers(reaction)
@@ -74,10 +76,11 @@ class ModelReactionsForm(ModelParentForm):
 			parameters = [param for param in reaction.listOfLocalParameters]
 
 			# Separator
-			parameters.append(None)
+			# If there is no local parameters, there is no need
+			if len(parameters) > 0:
+				parameters.append(None)
+
 			parameters += [param for param in self.parent.listOfParameters]
-
-
 
 			if self.reactionType == KineticLaw.UNDEFINED:
 				reaction.setKineticLaw(self.reactionType, self.reversible, math=self.kineticLaw)
@@ -85,11 +88,12 @@ class ModelReactionsForm(ModelParentForm):
 				t_parameters = [parameters[param] for param in self.listOfParameters]
 				reaction.setKineticLaw(self.reactionType, self.reversible, parameters=t_parameters)
 
-
 			reaction.getAnnotation().setSBOTerm(self.SBOTerm)
+
 		except ModelException as e:
 			self.addError(e.message)
 
+		self.printErrors()
 
 	def read(self, request):
 
@@ -98,10 +102,10 @@ class ModelReactionsForm(ModelParentForm):
 		self.id = self.readInt(request, 'reaction_id',
 								"the id of the reaction", required=False)
 
-		self.name = self.readString(request, 'reaction_name',
-							"the name of the reaction")
+		self.name = self.readASCIIString(request, 'reaction_name',
+							"the name of the reaction", required=False)
 
-		self.sbmlId = self.readString(request, 'reaction_sbml_id',
+		self.sbmlId = self.readASCIIString(request, 'reaction_sbml_id',
 							"the identifier of the reaction")
 
 		self.readReactants(request)
@@ -116,8 +120,7 @@ class ModelReactionsForm(ModelParentForm):
 		if self.reactionType != KineticLaw.UNDEFINED:
 			self.readParameters(request)
 		else:
-
-			self.kineticLaw = self.readString(request, 'reaction_kinetic_law',
+			self.kineticLaw = self.readASCIIString(request, 'reaction_kinetic_law',
 								"the formula of the reaction's kinetic law")
 
 		self.reversible = self.readOnOff(request, 'reaction_reversible',
@@ -127,6 +130,7 @@ class ModelReactionsForm(ModelParentForm):
 									"The SBO term of the reaction",
 									required=False)
 
+		self.printErrors()
 	def readReactants(self, request):
 
 		reactant_id = 0
@@ -144,7 +148,6 @@ class ModelReactionsForm(ModelParentForm):
 			self.listOfReactants.append((t_species, t_stoichiometry))
 			reactant_id += 1
 
-
 	def readProducts(self, request):
 
 		product_id = 0
@@ -161,7 +164,6 @@ class ModelReactionsForm(ModelParentForm):
 
 			self.listOfProducts.append((t_species, t_stoichiometry))
 			product_id += 1
-
 
 	def readModifiers(self, request):
 
@@ -181,14 +183,14 @@ class ModelReactionsForm(ModelParentForm):
 			self.listOfModifiers.append((t_species, t_stoichiometry))
 			modifier_id += 1
 
-
 	def readParameters(self, request):
 
+		# print request.POST
 		parameter_id = 0
 		self.listOfParameters = []
 
 		while self.existField(request, "reaction_parameter_%d" % parameter_id):
-			# print "loop %d" % parameter_id
+			# print("loop %d" % parameter_id)
 			t_parameter = self.readInt(request,
 					'reaction_parameter_%d' % parameter_id,
 					"the identifier of the parameter #%d" % parameter_id,
@@ -203,7 +205,7 @@ class ModelReactionsForm(ModelParentForm):
 		self.listOfLocalParameters = []
 
 		while self.existField(request, "local_parameter_%d_name" % parameter_id):
-			t_parameter_name = self.readString(
+			t_parameter_name = self.readASCIIString(
 				request,
 				'local_parameter_%d_name' % parameter_id,
 				"the name of the local parameter #%d" % parameter_id
@@ -217,7 +219,6 @@ class ModelReactionsForm(ModelParentForm):
 
 			self.listOfLocalParameters.append((t_parameter_name, t_parameter_value))
 			parameter_id += 1
-
 
 	def saveReactants(self, reaction):
 
@@ -234,7 +235,6 @@ class ModelReactionsForm(ModelParentForm):
 			t_modifier = reaction.listOfModifiers.new()
 			t_modifier.setSpecies(self.parent.listOfSpecies[species_id])
 			t_modifier.setStoichiometry(stoichiometry)
-
 
 	def saveProducts(self, reaction):
 

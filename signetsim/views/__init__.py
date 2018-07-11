@@ -24,38 +24,29 @@
 
 """
 
-from data import DataView, ExperimentView, ConditionView, DataArchive
+from .data import DataView, ExperimentView, ConditionView, DataArchive
 
-from edit import ModelCompartmentsView, ModelOverviewView
-from edit import ModelParametersView, ModelReactionsView, ModelRulesView, ModelSpeciesView
-from edit import ModelUnitsView, ModelEventsView, ModelMiscView, ModelSubmodelsView, ModelAnnotationsView
+from .edit import ModelCompartmentsView, ModelOverviewView
+from .edit import ModelParametersView, ModelReactionsView, ModelRulesView, ModelSpeciesView
+from .edit import ModelUnitsView, ModelEventsView, ModelMiscView, ModelSubmodelsView, ModelAnnotationsView
 
-from simulate import TimeSeriesSimulationView, SteadyStateSimulationView, PhasePlaneSimulationView
-from simulate import ListOfSimulationsView, SedmlSimulationView
+from .simulate import TimeSeriesSimulationView, SteadyStateSimulationView, PhasePlaneSimulationView
+from .simulate import ListOfSimulationsView, SedmlSimulationView
 
-from fit import ListOfOptimizationsView, OptimizationResultView, DataOptimizationView
-from fit import ModelOptimizationView
+from .fit import ListOfOptimizationsView, OptimizationResultView, DataOptimizationView
+from .fit import ModelOptimizationView
 
-from analyse import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
+from .analyse import AnalyseMainView, AnalyseSensitivityView, AnalyseBifurcationsView
 
-# from graphs import TimeseriesGraph
-# from graphs import SteadyStatesGraph
-# from graphs import TimeseriesOptimizationGraph
-# from graphs import SteadyStatesOptimizationGraph
-# from graphs import OptimizationScoreGraph
-# from graphs import ObservationGraph
-# from graphs import TreatmentGraph
+from .SuccessView import SuccessView
+from .HelpView import HelpView
+from .InstallView import InstallView
+from .ListOfModelsView import ListOfModelsView
+from .ListOfProjectsView import ListOfProjectsView
+from .ProjectArchive import ProjectArchive
+from .SimulationArchive import SimulationArchive
 
+from .auth import SignUpView, SignUpSuccessView, ValidateEmailView
+from .auth import ActivateAccountView, LoginView, ProfileView
 
-from SuccessView import SuccessView
-from HelpView import HelpView
-from InstallView import InstallView
-from ListOfModelsView import ListOfModelsView
-from ListOfProjectsView import ListOfProjectsView
-from ProjectArchive import ProjectArchive
-from SimulationArchive import SimulationArchive
-
-from auth import SignUpView, SignUpSuccessView, ValidateEmailView
-from auth import ActivateAccountView, LoginView, ProfileView
-
-from admin import AdminView
+from .admin import UsersView, ComputationsView, SettingsView

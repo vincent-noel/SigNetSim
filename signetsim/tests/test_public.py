@@ -35,7 +35,7 @@ class TestPublicAccess(TestCase):
 
 	def test_public_access(self):
 
-		user = User.objects.filter(username='test_user')
+		user = User.objects.filter(username='test_user')[0]
 		self.assertEqual(len(Project.objects.filter(user=user)), 0)
 
 		c_loggedin = Client()
@@ -44,8 +44,8 @@ class TestPublicAccess(TestCase):
 		# Private
 
 		response_create_project = c_loggedin.post('/', {
-			'action': 'new_folder',
-			'project_name': 'Private project'
+			'action': 'save_project',
+			'modal_project_name': 'Private project'
 		})
 
 		self.assertEqual(response_create_project.status_code, 200)
@@ -138,9 +138,9 @@ class TestPublicAccess(TestCase):
 		# Public
 
 		response_create_project = c_loggedin.post('/', {
-			'action': 'new_folder',
-			'project_access': 'on',
-			'project_name': 'Public project'
+			'action': 'save_project',
+			'modal_project_access': 'on',
+			'modal_project_name': 'Public project'
 		})
 
 		self.assertEqual(response_create_project.status_code, 200)

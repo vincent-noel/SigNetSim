@@ -7,7 +7,7 @@ then
 
 else
     # relative path
-    DIR=`dirname $( realpath $PWD/${CMD} )`
+    DIR=`dirname $( readlink -e $PWD/${CMD} )`
 
 fi
 
@@ -15,4 +15,4 @@ INSTALL_DIR=`dirname $DIR`
 
 cd ${INSTALL_DIR}
 
-coverage run -a manage.py test --settings=signetsim.settings.test -v 2 || exit 1;
+${INSTALL_DIR}/venv/bin/coverage run -a manage.py test --settings=signetsim.settings.test -v 2 || exit 1;

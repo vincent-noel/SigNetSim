@@ -40,13 +40,13 @@ class GetCompartment(JsonRequest, HasWorkingModel):
 
 		compartment = self.getModel().listOfCompartments.getBySbmlId(str(request.POST['sbml_id']))
 		self.data.update({
-			'id': self.getModel().listOfCompartments.values().index(compartment),
+			'id': self.getModel().listOfCompartments.index(compartment),
 			'name': "" if compartment.getName() is None else compartment.getName(),
 			'sbml_id': compartment.getSbmlId(),
 			'value': compartment.getValue(),
 			'constant': (1 if compartment.constant else 0),
 			'unit_name': "Choose a unit" if compartment.getUnits() is None else compartment.getUnits().getName(),
-			'unit_id': "" if compartment.getUnits() is None else self.getModel().listOfUnitDefinitions.values().index(compartment.getUnits()),
+			'unit_id': "" if compartment.getUnits() is None else self.getModel().listOfUnitDefinitions.index(compartment.getUnits()),
 			'notes': "" if compartment.getNotes() is None else compartment.getNotes()
 		})
 		if compartment.getAnnotation().getSBOTerm() is not None:

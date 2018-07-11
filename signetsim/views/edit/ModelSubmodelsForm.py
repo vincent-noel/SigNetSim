@@ -26,7 +26,7 @@
 
 from libsignetsim import ModelException
 from libsignetsim.model.Variable import Variable
-from signetsim.views.edit.ModelParentForm import ModelParentForm
+from .ModelParentForm import ModelParentForm
 import os
 
 class ModelSubmodelsForm(ModelParentForm):
@@ -114,10 +114,10 @@ class ModelSubmodelsForm(ModelParentForm):
 								"The indice of the submodel",
 								required=False)
 
-		self.name = self.readString(request, 'submodel_name',
+		self.name = self.readASCIIString(request, 'submodel_name',
 								"The name of the submodel")
 
-		self.sbmlId = self.readString(request, 'submodel_sbml_id',
+		self.sbmlId = self.readASCIIString(request, 'submodel_sbml_id',
 								"The identifier of the submodel")
 
 		self.type = self.readInt(request, 'submodel_type',
@@ -151,7 +151,7 @@ class ModelSubmodelsForm(ModelParentForm):
 
 		self.listOfObjects = []
 		self.listOfObjectsMetaIds = []
-		for object in submodel.getModelObject().listOfSbmlObjects.values():
+		for object in submodel.getModelObject().listOfSbmlObjects:
 			if isinstance(object, Variable) and not object.isStoichiometry():
 				self.listOfObjects.append(object.getNameOrSbmlId() + (" (%s)" % type(object).__name__))
 				self.listOfObjectsMetaIds.append(object.getMetaId())

@@ -25,13 +25,18 @@
 """
 
 from django.views.generic import TemplateView
-from django.core.urlresolvers import reverse
+
+from django import __version__
+if int(__version__.split('.')[0]) < 2:
+	from django.core.urlresolvers import reverse
+else:
+	from django.urls import reverse
 
 from libsignetsim.uris.URI import URI
 
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
-from signetsim.views.edit.ModelAnnotationsForm import ModelAnnotationsForm
+from .ModelAnnotationsForm import ModelAnnotationsForm
 
 class ModelAnnotationsView(TemplateView, HasWorkingModel, HasErrorMessages):
 

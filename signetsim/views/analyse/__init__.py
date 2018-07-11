@@ -24,6 +24,6 @@
 
 """
 
-from AnalyseMainView import AnalyseMainView
-from AnalyseSensitivityView import AnalyseSensitivityView
-from AnalyseBifurcationView import AnalyseBifurcationsView
+from .AnalyseMainView import AnalyseMainView
+from .AnalyseSensitivityView import AnalyseSensitivityView
+from .AnalyseBifurcationView import AnalyseBifurcationsView

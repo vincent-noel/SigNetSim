@@ -25,7 +25,6 @@
 """
 
 from libsignetsim import MathFormula
-
 from re import match
 
 class HasErrorMessages(object):
@@ -35,13 +34,11 @@ class HasErrorMessages(object):
 		self.errorMessages = []
 		self.errorFields = []
 
-
 	def get_context_data(self, **kwargs):
 		kwargs['hasErrors'] = self.hasErrors()
 		kwargs['getErrors'] = self.getErrors()
 		kwargs['errorFields'] = self.errorFields
 		return kwargs
-
 
 	def clearErrors(self):
 		self.nbErrors = 0
@@ -63,7 +60,7 @@ class HasErrorMessages(object):
 
 	def printErrors(self):
 		for error in self.errorMessages:
-			print error
+			print(error)
 
 
 	def findMathErrors(self, expression):
@@ -86,34 +83,34 @@ class HasErrorMessages(object):
 
 
 
-	def readString(self, request, field, name, required=True, reportField=True):
+	def readASCIIString(self, request, field, name, required=True, reportField=True):
 
 		try:
 			if request.POST.get(field) is None:
 				if required:
 					self.addError("%s does not exist !" % name, reportField, field)
 
-			elif str(request.POST[field]) == "":
+			elif request.POST[field] == "":
 				if required:
 					self.addError("%s is required !" % name, reportField, field)
 
 			else:
-				return str(request.POST[field])
-		except UnicodeEncodeError:
-			self.addError("Unauthorized special characters (non-utf8) in %s" % name)
+				return request.POST[field].encode('utf-8').decode('ascii')
 
+		except UnicodeDecodeError:
+			self.addError("Unauthorized special characters in %s" % name)
 
 	def readUnicodeString(self, request, field, name, required=True, reportField=True):
 
 		if request.POST.get(field) is None:
 			self.addError("%s does not exist !" % name, reportField, field)
 
-		elif unicode(request.POST[field]) == "":
+		elif request.POST[field] == "":
 			if required:
 				self.addError("%s is required !" % name, reportField, field)
 
 		else:
-			return unicode(request.POST[field])
+			return request.POST[field]
 
 	def readInt(self, request, field, name, max_value=None, required=True, reportField=True):
 
@@ -135,9 +132,6 @@ class HasErrorMessages(object):
 
 			except ValueError:
 				self.addError("%s must be an integer !" % name, reportField, field)
-
-
-
 
 	def readFloat(self, request, field, name, max_value=None, required=True, reportField=True):
 
@@ -219,7 +213,7 @@ class HasErrorMessages(object):
 
 	def readDuration(self, request, field, name, reportField=True):
 
-		t_string = self.readString(request, field, name, reportField)
+		t_string = self.readASCIIString(request, field, name, reportField)
 		res_match = match(("^"
 							+ "(\d{1,2}d){0,1}\s*"
 							+ "(\d{1,2}h){0,1}\s*"

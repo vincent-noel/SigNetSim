@@ -24,18 +24,18 @@
 
 """
 
-from GetSpecies import GetSpecies
-from GetCompartment import GetCompartment
-from GetParameter import GetParameter
-from GetReaction import GetReaction
-from GetReactionKineticLaw import GetReactionKineticLaw
-from GetRule import GetRule
-from GetEvent import GetEvent
-from GetSubmodel import GetSubmodel
-from GetSubstitution import GetSubstitution
-from GetSubmodels import GetSubmodels
-from GetUnitDefinition import GetUnitDefinition
-from GetSBOName import GetSBOName
+from .GetSpecies import GetSpecies
+from .GetCompartment import GetCompartment
+from .GetParameter import GetParameter
+from .GetReaction import GetReaction
+from .GetReactionKineticLaw import GetReactionKineticLaw
+from .GetRule import GetRule
+from .GetEvent import GetEvent
+from .GetSubmodel import GetSubmodel
+from .GetSubstitution import GetSubstitution
+from .GetSubmodels import GetSubmodels
+from .GetUnitDefinition import GetUnitDefinition
+from .GetSBOName import GetSBOName
 
-from GetListOfObjects import GetListOfObjects
-from GetListOfObjectsFromSubmodels import GetListOfObjectsFromSubmodels
+from .GetListOfObjects import GetListOfObjects
+from .GetListOfObjectsFromSubmodels import GetListOfObjectsFromSubmodels

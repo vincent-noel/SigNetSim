@@ -30,10 +30,12 @@ from django.test import TestCase, Client
 from signetsim.models import User, Project, SbmlModel
 
 from libsignetsim import SbmlDocument, MathFormula
-
-from os.path import dirname, join
+from os import mkdir
+from os.path import dirname, join, isdir
 from json import loads
 from sympy import simplify
+from shutil import rmtree
+
 
 class TestRule(TestCase):
 
@@ -46,6 +48,10 @@ class TestRule(TestCase):
 		project = Project.objects.filter(user=user)[0]
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
+
 		c = Client()
 		self.assertTrue(c.login(username='test_user', password='password'))
 
@@ -57,7 +63,7 @@ class TestRule(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)
@@ -67,9 +73,9 @@ class TestRule(TestCase):
 		sbml_doc = SbmlDocument()
 		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		sbml_model = sbml_doc.getModelInstance()
-		listOfRules = sbml_model.listOfRules.values() + sbml_model.listOfInitialAssignments.values()
+		listOfRules = sbml_model.listOfRules + sbml_model.listOfInitialAssignments
 		listOfVariables = []
-		for variable in sbml_model.listOfVariables.values():
+		for variable in sbml_model.listOfVariables:
 			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
 				or variable.isCompartment()
@@ -83,7 +89,7 @@ class TestRule(TestCase):
 		})
 
 		self.assertEqual(response_get_compartment.status_code, 200)
-		json_response = loads(response_get_compartment.content)
+		json_response = loads(response_get_compartment.content.decode('utf-8'))
 
 
 		self.assertEqual(json_response[u'rule_id'], listOfRules.index(rule))
@@ -118,9 +124,9 @@ class TestRule(TestCase):
 		sbml_doc = SbmlDocument()
 		sbml_doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(model.sbml_file)))
 		sbml_model = sbml_doc.getModelInstance()
-		listOfRules = sbml_model.listOfRules.values() + sbml_model.listOfInitialAssignments.values()
+		listOfRules = sbml_model.listOfRules + sbml_model.listOfInitialAssignments
 		listOfVariables = []
-		for variable in sbml_model.listOfVariables.values():
+		for variable in sbml_model.listOfVariables:
 			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
 				or variable.isCompartment()

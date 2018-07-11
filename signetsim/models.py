@@ -55,24 +55,20 @@ def new_project_folder():
 def new_secret_key():
 	return ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
 
-
-
 def archive_filename(instance, filename):
 
-	path = dirname(filename)
 	filename = basename(filename)
-	# full_path = join(join(path, str(instance.project.folder)), "models")
+
 	full_path = join(str(instance.project.folder), "models")
 	full_filename = join(full_path, filename)
 
 	while os.path.isfile(full_filename):
 		full_filename = join(full_path, new_archive_filename())
-	return full_filename
 
+	return full_filename
 
 def model_filename(instance, filename):
 
-	path = dirname(filename)
 	filename = basename(filename)
 
 	full_path = join(str(instance.project.folder), "models")
@@ -80,11 +76,11 @@ def model_filename(instance, filename):
 
 	while os.path.isfile(full_filename):
 		full_filename = join(full_path, new_model_filename())
+
 	return full_filename
 
 def sedml_filename(instance, filename):
 
-	path = dirname(filename)
 	filename = basename(filename)
 
 	full_path = join(str(instance.project.folder), "models")
@@ -92,8 +88,8 @@ def sedml_filename(instance, filename):
 
 	while os.path.isfile(full_filename):
 		full_filename = join(full_path, new_sedml_filename())
-	return full_filename
 
+	return full_filename
 
 class User(AbstractUser):
 	"""
@@ -102,7 +98,7 @@ class User(AbstractUser):
 	organization = models.CharField(max_length=255, null=True)
 	used_cores = models.IntegerField(null=False, default=0)
 	max_cores = models.IntegerField(null=False, default=2)
-	used_cpu_time = models.IntegerField(null=False, default=0)
+	used_cpu_time = models.FloatField(null=False, default=0)
 	max_cpu_time = models.IntegerField(null=False, default=1000)
 
 	# this is not needed if small_image is created at set_image
@@ -123,7 +119,7 @@ class User(AbstractUser):
 			sbml_model = open(sbml_model_filename, 'a')
 			sbml_model.close()
 
-			new_model = SbmlModel(project=new_project, name="My first model", sbml_file=File(open(sbml_model_filename, "r")))
+			new_model = SbmlModel(project=new_project, name="My first model", sbml_file=File(open(sbml_model_filename, "rb")))
 			new_model.save()
 			os.remove(sbml_model_filename)
 
@@ -132,7 +128,7 @@ class User(AbstractUser):
 			doc.writeSbmlToFile(os.path.join(settings.MEDIA_ROOT, str(new_model.sbml_file)))
 
 class Project(models.Model):
-	user = models.ForeignKey(User)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255, null=True)
 	folder = models.CharField(max_length=255, default=new_project_folder)
 	PUBLIC = 'PU'
@@ -143,73 +139,110 @@ class Project(models.Model):
 		(PRIVATE, 'Private'),
 	)
 
-	access = models.CharField(max_length=2,
-									  choices=ACCESS_CHOICES,
-									  default=PRIVATE)
+	access = models.CharField(max_length=2, choices=ACCESS_CHOICES, default=PRIVATE)
 
 class SbmlModel(models.Model):
-	project = models.ForeignKey(Project)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255, null=True)
 	sbml_file = models.FileField(upload_to=model_filename)
 
 
+class ModelsDependency(models.Model):
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
+	model = models.ForeignKey(SbmlModel, on_delete=models.CASCADE, related_name='model')
+	submodel = models.ForeignKey(SbmlModel, on_delete=models.CASCADE, related_name='submodel')
+	submodel_ref = models.CharField(max_length=255, null=True)
+
 class CombineArchiveModel(models.Model):
-	project = models.ForeignKey(Project)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	archive_file = models.FileField(upload_to=archive_filename)
 
 class SEDMLSimulation(models.Model):
-	project = models.ForeignKey(Project)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255, null=True)
 	sedml_file = models.FileField(upload_to=sedml_filename)
 	sbml_file = models.FileField(upload_to=model_filename, null=True)
 
-
 class Optimization(models.Model):
-	project = models.ForeignKey(Project)
-	model = models.ForeignKey(SbmlModel)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
+	model = models.ForeignKey(SbmlModel, on_delete=models.CASCADE)
 	optimization_id = models.CharField(max_length=255)
+	cores = models.IntegerField(default=2)
 
-
-class ContinuationComputation(models.Model):
-	project = models.ForeignKey(Project)
-	model = models.ForeignKey(SbmlModel)
-
-	variable = models.CharField(max_length=255, default="")
-	parameter = models.CharField(max_length=255, default="")
-
-	figure = models.CharField(max_length=10240, default="")
-
-	BUSY = 'BU'
-	ENDED = 'EN'
-	ERROR = 'ER'
+	QUEUED = 'Queued'
+	INTERRUPTED = 'Interrupted'
+	BUSY = 'Running'
+	ENDED = 'Finished'
+	ERROR = 'Failed'
 
 	STATUSES = (
+		(QUEUED, 'Queued'),
+		(INTERRUPTED, 'Interrupted'),
 		(BUSY, 'Busy'),
 		(ENDED, 'Ended'),
 		(ERROR, 'Error')
 	)
 
-	status = models.CharField(max_length=2,
-									  choices=STATUSES,
-									  default=BUSY)
+	status = models.CharField(max_length=15, choices=STATUSES, default=QUEUED)
+	error = models.CharField(max_length=255, default="", null=True)
+	result = models.CharField(max_length=102400, default="")
 
+class Continuation(models.Model):
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
+	model = models.ForeignKey(SbmlModel, on_delete=models.CASCADE)
+	parameter = models.CharField(max_length=255, default="")
+
+	result = models.CharField(max_length=10240, default="")
+	error = models.CharField(max_length=255, default="", null=True)
+
+	QUEUED = 'Queued'
+	BUSY = 'Running'
+	ENDED = 'Finished'
+	ERROR = 'Failed'
+
+	STATUSES = (
+		(QUEUED, 'Queued'),
+		(BUSY, 'Busy'),
+		(ENDED, 'Ended'),
+		(ERROR, 'Error')
+	)
+
+	status = models.CharField(max_length=15, choices=STATUSES, default=QUEUED)
+
+
+class ComputationQueue(models.Model):
+	OPTIM = 'Optimization'
+	CONT = 'Continuation'
+	SIM = 'Simulation'
+
+	TYPES = (
+		(OPTIM, 'Optimization'),
+		(CONT, 'Continuation'),
+		(SIM, 'Simulation')
+	)
+
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
+	type = models.CharField(max_length=12, choices=TYPES, null=True)
+	computation_id = models.IntegerField(default=-1)
+	object = models.CharField(max_length=102400, default="")
+	timeout = models.IntegerField(blank=True, null=True)
 
 #######################################################################################
 # Experimental data v2
 #######################################################################################
 class Experiment(models.Model):
-	project = models.ForeignKey(Project)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255)
 	notes = models.CharField(max_length=2048, null=True)
 
 class Condition(models.Model):
-	experiment = models.ForeignKey(Experiment)
+	experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255)
 	notes = models.CharField(max_length=2048, null=True)
 
 
 class Observation(models.Model):
-	condition = models.ForeignKey(Condition)
+	condition = models.ForeignKey(Condition, on_delete=models.CASCADE)
 	species = models.CharField(max_length=255)
 
 	time = models.FloatField()
@@ -227,7 +260,7 @@ class Observation(models.Model):
 		return data_point
 
 class Treatment(models.Model):
-	condition = models.ForeignKey(Condition)
+	condition = models.ForeignKey(Condition, on_delete=models.CASCADE)
 	species = models.CharField(max_length=255)
 
 	time = models.FloatField()
@@ -236,18 +269,3 @@ class Treatment(models.Model):
 	def create(cls, species, time, value):
 		data_point = cls(species=species, time=time, value=value)
 		return data_point
-
-class Settings(models.Model):
-
-	base_url = models.CharField(max_length=255, default="/")
-	secret_key = models.CharField(max_length=255, default=new_secret_key)
-
-	admin = models.ForeignKey(User)
-
-	email_address = models.CharField(max_length=255, default="")
-	email_use_tls = models.BooleanField(default=True)
-	email_host = models.CharField(max_length=255, default="")
-	email_port = models.IntegerField(default=587)
-	email_user = models.CharField(max_length=255, default="")
-	email_password = models.CharField(max_length=255, default="")
-

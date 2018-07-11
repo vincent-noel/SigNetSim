@@ -37,7 +37,7 @@ class FormSubstitution extends FormGroup {
         )
         this.addForm(this.substitution_submodel_object, true);
 
-        this.substitution_id = new Form("substitution_id", "The id of the substitution", "");
+        this.substitution_id = new ValueForm("substitution_id", "The id of the substitution", "");
         this.addForm(this.substitution_id);
     }
 
@@ -73,7 +73,7 @@ class FormSubstitution extends FormGroup {
     {
         $("#modal_substitution-title").html("New modification");
 
-        this.resetErrors();
+//        this.resetErrors();
         this.clearForms();
         this.substitution_submodel_object.hide();
         this.show();
@@ -137,7 +137,7 @@ class FormSubstitution extends FormGroup {
 
     save()
     {
-        this.resetErrors();
+//        this.resetErrors();
         this.checkErrors();
 
         if (this.nb_errors === 0){

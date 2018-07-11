@@ -28,7 +28,7 @@ from django.views.generic import TemplateView
 from signetsim.views.HasWorkingModel import HasWorkingModel
 from signetsim.views.HasErrorMessages import HasErrorMessages
 from libsignetsim import ModelException
-from ModelRulesForm import ModelRulesForm
+from .ModelRulesForm import ModelRulesForm
 
 class ModelRulesView(TemplateView, HasWorkingModel, HasErrorMessages):
 
@@ -151,7 +151,7 @@ class ModelRulesView(TemplateView, HasWorkingModel, HasErrorMessages):
 	def loadGlobalVariables(self):
 
 		self.listOfVariables = []
-		for variable in self.getModel().listOfVariables.values():
+		for variable in self.getModel().listOfVariables:
 			if ((variable.isParameter() and variable.isGlobal())
 				or variable.isSpecies()
 				or variable.isCompartment()
@@ -160,5 +160,5 @@ class ModelRulesView(TemplateView, HasWorkingModel, HasErrorMessages):
 
 
 	def loadRules(self):
-		self.listOfRules = (self.getModel().listOfRules.values()
-			+ self.getModel().listOfInitialAssignments.values())
+		self.listOfRules = (self.getModel().listOfRules
+			+ self.getModel().listOfInitialAssignments)

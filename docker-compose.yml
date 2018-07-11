@@ -1,10 +1,22 @@
 #docker-compose.yml
 version: '3.3'
 services:
+  signetsim-py2:
+    build:
+      context: ./
+      dockerfile: scripts/docker-py2/Dockerfile
+    image: signetsim/signetsim:py2
+    container_name: signetsim-py2
+    volumes:
+      - signetsim_data:/SigNetSim/data
+    ports:
+      - "8080:80"
+    restart: always
+
   signetsim:
     build:
       context: ./
-      dockerfile: ./scripts/docker/Dockerfile
+      dockerfile: scripts/docker-py3/Dockerfile
     image: signetsim/signetsim
     container_name: signetsim
     volumes:

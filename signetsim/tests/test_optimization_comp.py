@@ -31,7 +31,9 @@ from libsignetsim import SbmlDocument
 
 from signetsim.models import User, Project, SbmlModel
 
-from os.path import dirname, join
+from os.path import dirname, join, isdir
+from os import mkdir
+from shutil import rmtree
 from json import loads
 from time import sleep
 
@@ -47,6 +49,10 @@ class TestOptimization(TestCase):
 		project = Project.objects.filter(user=user)[0]
 
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
+
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		c = Client()
 		self.assertTrue(c.login(username='test_user', password='password'))
@@ -66,7 +72,7 @@ class TestOptimization(TestCase):
 		model_filename = join(comp_files_folder, "modelcEvRcX.xml")
 		response_load_submodel_1 = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_submodel_1.status_code, 200)
@@ -75,7 +81,7 @@ class TestOptimization(TestCase):
 		model_filename = join(comp_files_folder, "modelEHfev9.xml")
 		response_load_submodel_2 = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_submodel_2.status_code, 200)
@@ -84,7 +90,7 @@ class TestOptimization(TestCase):
 		model_filename = join(comp_files_folder, "modelI1vrys.xml")
 		response_load_submodel_3 = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_submodel_3.status_code, 200)
@@ -94,7 +100,7 @@ class TestOptimization(TestCase):
 
 		response_load_model = c.post('/models/', {
 			'action': 'load_model',
-			'docfile': open(model_filename, 'r')
+			'docfile': open(model_filename, 'rb')
 		})
 
 		self.assertEqual(response_load_model.status_code, 200)
@@ -109,7 +115,7 @@ class TestOptimization(TestCase):
 
 		response_import_data = c.post('/data/', {
 			'action': 'import',
-			'docfile': open(experiment_filename, 'r')
+			'docfile': open(experiment_filename, 'rb')
 		})
 
 		self.assertEqual(response_import_data.status_code, 200)
@@ -135,14 +141,14 @@ class TestOptimization(TestCase):
 		})
 
 		self.assertEqual(response_add_dataset.status_code, 200)
-		mapping = loads(response_add_dataset.content)['model_xpaths']
+		mapping = loads(response_add_dataset.content.decode('utf-8'))['model_xpaths']
 
 		sbml_filename = str(SbmlModel.objects.filter(project=project)[3].sbml_file)
 
 		doc = SbmlDocument()
 		doc.readSbmlFromFile(join(settings.MEDIA_ROOT, sbml_filename))
 
-		self.assertEqual(mapping.keys(), ['FGF2', 'Total Ras-GTP'])
+		self.assertEqual(sorted(list(mapping.keys())), ['FGF2', 'Total Ras-GTP'])
 
 		self.assertEqual(doc.getModelInstance().listOfSpecies.index(doc.getByXPath(mapping['FGF2'], instance=True)), 4)
 		self.assertEqual(doc.getModelInstance().listOfSpecies.index(doc.getByXPath(mapping['Total Ras-GTP'], instance=True)), 13)
@@ -188,7 +194,7 @@ class TestOptimization(TestCase):
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
 		self.assertEqual(len(response_list_optimizations.context['optimizations']), 1)
-		self.assertEqual(response_list_optimizations.context['optimizations'][0][1], "Ongoing")
+		self.assertEqual(response_list_optimizations.context['optimizations'][0][0].status, "Running")
 
 		sleep(10)
 
@@ -196,10 +202,11 @@ class TestOptimization(TestCase):
 		response_get_optimization = c.get('/fit/%s/' % optimization_id)
 		self.assertEqual(response_get_optimization.status_code, 200)
 
+		max_time = 360
 		sleep(360)
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
-		self.assertEqual(response_list_optimizations.context['optimizations'][0][1], "Finished")
+		self.assertEqual(response_list_optimizations.context['optimizations'][0][0].status, "Finished")
 
 		response_get_optimization = c.get('/fit/%s/' % optimization_id)
 		self.assertEqual(response_get_optimization.status_code, 200)

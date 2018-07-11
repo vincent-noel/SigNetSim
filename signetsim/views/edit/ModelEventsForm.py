@@ -24,7 +24,9 @@
 
 """
 
-from ModelParentForm import ModelParentForm
+from .ModelParentForm import ModelParentForm
+from signetsim.managers.models import renameSbmlIdInModelDependencies
+
 
 class ModelEventsForm(ModelParentForm):
 
@@ -46,7 +48,13 @@ class ModelEventsForm(ModelParentForm):
 	def save(self, event):
 
 		event.setName(self.name)
-		event.setSbmlId(self.sbmlId)
+
+		if event.getSbmlId() != self.sbmlId:
+			renameSbmlIdInModelDependencies(
+				self.parent.getSbmlModel(), event.getSbmlId(), self.sbmlId
+			)
+			event.setSbmlId(self.sbmlId)
+
 		event.setTrigger(self.trigger)
 		event.setDelay(self.delay)
 		event.setPriority(self.priority)
@@ -69,9 +77,9 @@ class ModelEventsForm(ModelParentForm):
 		self.id = self.readInt(request, 'event_id',
 								"The indice of the event", required=False)
 
-		self.name = self.readString(request, 'event_name',
+		self.name = self.readASCIIString(request, 'event_name',
 									"The name of the event", required=False)
-		self.sbmlId = self.readString(request, 'event_sbmlid',
+		self.sbmlId = self.readASCIIString(request, 'event_sbmlid',
 									"The identifier of the event")
 
 		self.readTrigger(request)

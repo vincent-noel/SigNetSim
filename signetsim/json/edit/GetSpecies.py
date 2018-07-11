@@ -41,11 +41,11 @@ class GetSpecies(JsonRequest, HasWorkingModel):
 		species = self.getModel().listOfSpecies.getBySbmlId(str(request.POST['sbml_id']))
 
 		self.data.update({
-			'id': self.getModel().listOfSpecies.values().index(species),
+			'id': self.getModel().listOfSpecies.index(species),
 			'name': "" if species.getName() is None else species.getName(),
 			'sbml_id': species.getSbmlId(),
 			'compartment_name': species.getCompartment().getNameOrSbmlId(),
-			'compartment_id': self.getModel().listOfCompartments.values().index(species.getCompartment()),
+			'compartment_id': self.getModel().listOfCompartments.index(species.getCompartment()),
 			'value': species.getValue(),
 			'isConcentration': 1 if not species.hasOnlySubstanceUnits else 0,
 			'constant': (1 if species.constant else 0),
@@ -56,7 +56,7 @@ class GetSpecies(JsonRequest, HasWorkingModel):
 		if species.getUnits() is not None:
 			self.data.update({
 				'unit_name': "" if species.getUnits().getName() is None else species.getUnits().getName(),
-				'unit_id': self.getModel().listOfUnitDefinitions.values().index(species.getUnits()),
+				'unit_id': self.getModel().listOfUnitDefinitions.index(species.getUnits()),
 			})
 		if species.getAnnotation().getSBOTerm() is not None:
 			self.data.update({

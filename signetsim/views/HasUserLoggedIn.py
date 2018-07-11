@@ -23,9 +23,30 @@
 	This file ...
 
 """
-
+from django import __version__
+from signetsim.managers.computations import updateComputationTime
+from signetsim.settings.Settings import Settings
 
 class HasUserLoggedIn(object):
 
 	def isUserLoggedIn(self, request):
-		return not request.user.is_anonymous()
+		if int(__version__.split('.')[0]) < 2:
+			return not request.user.is_anonymous()
+		else:
+			return not request.user.is_anonymous
+
+	def hasCPUTimeQuota(self, request):
+		if self.isUserLoggedIn(request):
+			return request.user.used_cpu_time < request.user.max_cpu_time
+		else:
+			return True
+
+	def getCPUTimeQuota(self, request):
+		if self.isUserLoggedIn(request):
+			return (request.user.max_cpu_time - request.user.used_cpu_time) * 3600
+		else:
+			return Settings.maxVisitorCPUTime
+
+	def addCPUTime(self, request, time):
+		if self.isUserLoggedIn(request):
+			updateComputationTime(request.user, time)

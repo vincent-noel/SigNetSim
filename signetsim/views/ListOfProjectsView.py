@@ -34,7 +34,7 @@ from signetsim.models import Project
 from signetsim.managers.projects import deleteProject, copyProject, importProject
 from signetsim.forms import DocumentForm
 
-from os.path import join, exists
+from os.path import join, exists, isfile
 from os import remove, mkdir
 
 
@@ -52,7 +52,6 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 		self.createFolderError = None
 		self.sendFolderShow = None
 		self.sendFolderError = None
-		self.fileUploadForm = DocumentForm()
 
 	def get_context_data(self, **kwargs):
 
@@ -63,7 +62,6 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 		kwargs['send_folder_error'] = self.sendFolderError
 		kwargs['send_folder_show'] = self.sendFolderShow
-		kwargs['load_project_form'] = self.fileUploadForm
 		return kwargs
 
 
@@ -80,9 +78,6 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 		if "action" in request.POST:
 			if HasWorkingProject.isChooseProject(self, request):
 				self.load(request, *args, **kwargs)
-
-			elif request.POST['action'] == "new_folder":
-				self.newFolder(request)
 
 			elif request.POST['action'] == "copy_folder":
 				self.copyFolder(request)
@@ -108,34 +103,12 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 		if self.isUserLoggedIn(request):
 			self.loadFolders(request)
 
-	def newFolder(self, request):
-
-		name = str(request.POST['project_name'])
-		access = False
-		if 'project_access' in request.POST and request.POST['project_access'] == "on":
-			access = True
-
-		if not Project.objects.filter(user=request.user, name=name).exists():
-			new_folder = Project(user=request.user, name=name)
-			if access:
-				new_folder.access = 'PU'
-			else:
-				new_folder.access = 'PR'
-
-			new_folder.save()
-			mkdir(join(settings.MEDIA_ROOT, str(new_folder.folder)))
-
-			self.loadFolders(request)
-		else:
-			self.createFolderShow = True
-			self.createFolderError = "Project %s already exists !" % name
-
 	def copyFolder(self, request):
 
 		folder_id = str(request.POST['id'])
-		if Project.objects.filter(user=request.user, id=folder_id).exists():
+		if Project.objects.filter(id=folder_id).exists():
 
-			folder = Project.objects.get(user=request.user, id=folder_id)
+			folder = Project.objects.get(id=folder_id)
 			new_folder = Project(user=request.user, name=(str(folder.name) + " (Copy)"))
 			copyProject(folder, new_folder)
 
@@ -155,8 +128,8 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 	def sendFolder(self, request):
 
-		folder_id = str(request.POST['id'])
-		t_username = str(request.POST['username'])
+		folder_id = str(request.POST['modal_send_project_id'])
+		t_username = str(request.POST['modal_send_project_username'])
 		try :
 			t_user = User.objects.get(username=t_username)
 			if Project.objects.filter(user=request.user, id=folder_id).exists():
@@ -172,12 +145,12 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 
 	def saveProject(self, request):
 
-		if 'project_name' in request.POST and 'project_id' in request.POST:
-			if request.POST['project_id'] != "":
-				id = request.POST['project_id']
-				name = request.POST['project_name']
+		if 'modal_project_name' in request.POST:
+			if 'modal_project_id' in request.POST and request.POST['modal_project_id'] != "":
+				id = request.POST['modal_project_id']
+				name = request.POST['modal_project_name']
 				access = False
-				if 'project_access' in request.POST and request.POST['project_access'] == "on":
+				if 'modal_project_access' in request.POST and request.POST['modal_project_access'] == "on":
 					access = True
 
 				if Project.objects.filter(id=id).exists():
@@ -190,30 +163,49 @@ class ListOfProjectsView(TemplateView, HasWorkingProject):
 					project.save()
 
 			else:
-				self.newFolder(request)
+
+				name = str(request.POST['modal_project_name'])
+				access = False
+				if 'modal_project_access' in request.POST and request.POST['modal_project_access'] == "on":
+					access = True
+
+				if not Project.objects.filter(user=request.user, name=name).exists():
+					new_folder = Project(user=request.user, name=name)
+					if access:
+						new_folder.access = 'PU'
+					else:
+						new_folder.access = 'PR'
+
+					new_folder.save()
+					mkdir(join(settings.MEDIA_ROOT, str(new_folder.folder)))
+
+					self.loadFolders(request)
+				else:
+					self.createFolderShow = True
+					self.createFolderError = "Project %s already exists !" % name
 
 	def loadFolder(self, request):
 
-		self.fileUploadForm = DocumentForm(request.POST, request.FILES)
-		if self.fileUploadForm.is_valid():
+		if 'combine_file' in request.FILES:
 
 			try:
 				new_folder = Project(user=request.user)
 
-				archive = request.FILES['docfile']
+				archive = request.FILES['combine_file']
 				path = join(settings.MEDIA_ROOT, str(archive))
 
 				if exists(path):
 					remove(path)
 
-				t_content_file = open(path, "w")
+				t_content_file = open(path, "wb")
 				t_content_file.write(archive.read())
 				t_content_file.close()
 
 				importProject(new_folder, path)
 
 			except Exception as e:
-				remove(path)
+				if isfile(path):
+					remove(path)
 
 			new_folder.save()
 

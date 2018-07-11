@@ -24,7 +24,7 @@
 
 """
 
-import os, json
+import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -54,15 +54,26 @@ INSTALLED_APPS = (
 	'signetsim',
 )
 
+from django import __version__
+if int(__version__.split('.')[0]) < 2:
+	MIDDLEWARE_CLASSES = (
+		'django.contrib.sessions.middleware.SessionMiddleware',
+		'django.middleware.common.CommonMiddleware',
+		'django.middleware.csrf.CsrfViewMiddleware',
+		'django.contrib.auth.middleware.AuthenticationMiddleware',
+		'django.contrib.messages.middleware.MessageMiddleware',
+		'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	)
 
-MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+else:
+	MIDDLEWARE = (
+		'django.contrib.sessions.middleware.SessionMiddleware',
+		'django.middleware.common.CommonMiddleware',
+		'django.middleware.csrf.CsrfViewMiddleware',
+		'django.contrib.auth.middleware.AuthenticationMiddleware',
+		'django.contrib.messages.middleware.MessageMiddleware',
+		'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	)
 
 ROOT_URLCONF = 'signetsim.urls'
 
@@ -83,7 +94,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'signetsim.settings.wsgi.application'
-
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Database
@@ -92,9 +103,22 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': os.path.join(BASE_DIR, 'data/db/db.sqlite3'),
-	}
+		'NAME': ':memory:',
+
+		'TEST': {
+			'ENGINE': 'django.db.backend.sqlite3',
+			'NAME': ':memory:',
+		},
+	},
 }
+
+# Funny thing... the options should be inside the 'default' dict. But then it doesn't work. And here it does
+if int(__version__.split('.')[0]) >= 2:
+	DATABASES.update({
+		'OPTIONS': {
+			'timeout': 20
+		},
+	})
 #
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -132,9 +156,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 from random import choice
 from string import ascii_uppercase, ascii_lowercase, digits
 
-SECRET_KEY = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(60))
-
-from signetsim.models import Settings
+SECRET_KEY = "wQgVs2CaC6xRdOLUK8XwefOCshFOWSVQVGcEVuDIyey31VKKQ2q3dADNYQmW"
 
 AUTH_USER_MODEL = 'signetsim.User'
 
@@ -148,3 +170,5 @@ MEDIA_ROOT = "/tmp/"
 STATICFILES_DIRS = (
 	os.path.join(BASE_DIR, "signetsim/static/"),
 )
+
+MAX_CORES = 2

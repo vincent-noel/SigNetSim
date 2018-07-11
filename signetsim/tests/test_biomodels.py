@@ -64,7 +64,7 @@ class TestBiomodels(TestCase):
 		})
 
 		self.assertEqual(response_search_tyson.status_code, 200)
-		json_response = loads(response_search_tyson.content)
+		json_response = loads(response_search_tyson.content.decode('utf-8'))
 
 		self.assertTrue('results' in json_response.keys() or 'error' in json_response.keys())
 
@@ -112,7 +112,7 @@ class TestBiomodels(TestCase):
 		})
 
 		self.assertEqual(response_search_name.status_code, 200)
-		json_response = loads(response_search_name.content)
+		json_response = loads(response_search_name.content.decode('utf-8'))
 
 		self.assertTrue('name' in json_response.keys() or 'error' in json_response.keys())
 

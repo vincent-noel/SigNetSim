@@ -29,7 +29,8 @@ from django.conf import settings
 
 from signetsim.models import User, Project, SbmlModel, SEDMLSimulation
 
-from os.path import dirname, join
+from os.path import dirname, join, isdir
+from os import mkdir
 from shutil import rmtree
 
 
@@ -43,9 +44,9 @@ class TestSedml(TestCase):
 		self.assertEqual(len(Project.objects.filter(user=user)), 1)
 		project = Project.objects.filter(user=user)[0]
 
-		# This test can only run once with success, because the second time the comp model dependencies will
-		# actually be in the folder. So cleaning the project folder now
-		rmtree(join(join(settings.MEDIA_ROOT, str(project.folder))), "models")
+		if isdir(join(settings.MEDIA_ROOT, project.folder)):
+			rmtree(join(settings.MEDIA_ROOT, project.folder))
+			mkdir(join(settings.MEDIA_ROOT, project.folder))
 
 		self.assertEqual(len(SbmlModel.objects.filter(project=project)), 0)
 
@@ -62,7 +63,7 @@ class TestSedml(TestCase):
 
 		response_import_sedml = c.post('/simulate/stored/', {
 			'action': 'load_simulation',
-			'docfile': open(sedml_filename, 'r')
+			'docfile': open(sedml_filename, 'rb')
 		})
 
 		self.assertEqual(response_import_sedml.status_code, 200)
