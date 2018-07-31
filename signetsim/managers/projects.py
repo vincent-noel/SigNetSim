@@ -122,7 +122,14 @@ def importProject(new_folder, filename):
 			sbml_model = SbmlModel(project=new_folder, sbml_file=t_file)
 			sbml_model.save()
 
+		for sbml_file in new_combine_archive.getAllSbmls():
+
 			try:
+				sbml_model = SbmlModel.objects.get(
+					project=new_folder,
+					sbml_file=join(new_folder.folder, "models", basename(sbml_file))
+				)
+
 				doc = SbmlDocument()
 
 				doc.readSbmlFromFile(join(settings.MEDIA_ROOT, str(sbml_model.sbml_file)))
