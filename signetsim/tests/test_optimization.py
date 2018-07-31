@@ -30,11 +30,14 @@ from django.conf import settings
 from libsignetsim import SbmlDocument
 
 from signetsim.models import User, Project, SbmlModel
+from signetsim.managers.optimizations import stopOptimization
 from os.path import dirname, join, isdir
 from os import mkdir
 from shutil import rmtree
 from time import sleep
 from json import loads
+
+
 
 class TestOptimization(TestCase):
 
@@ -274,15 +277,24 @@ class TestOptimization(TestCase):
 		response_get_optimization = c.get('/fit/%s/' % response_list_optimizations.context['optimizations'][0][0].optimization_id)
 		self.assertEqual(response_get_optimization.status_code, 200)
 
-		sleep(240)
+		sleep(360)
 
 		response_list_optimizations = c.get('/fit/list/')
 		self.assertEqual(response_list_optimizations.status_code, 200)
-		self.assertEqual(response_list_optimizations.context['optimizations'][0][0].status, "Finished")
+
+		optimization = response_list_optimizations.context['optimizations'][0][0]
+		if optimization.status != "Finished":
+			# Then we need to stop the optimization, otherwise it will influence the other tests
+			path = join(settings.MEDIA_ROOT, project.folder, "optimizations", optimization.optimization_id)
+			stopOptimization(path)
+
+
+		self.assertEqual(optimization.status, "Finished")
 
 		response_get_optimization = c.get(
-			'/fit/%s/' % response_list_optimizations.context['optimizations'][0][0].optimization_id)
+			'/fit/%s/' % optimization.optimization_id)
 		self.assertEqual(response_get_optimization.status_code, 200)
 
 		scores = response_get_optimization.context['score_values']
 		self.assertTrue(scores[len(scores)-1] < 0.24)
+
