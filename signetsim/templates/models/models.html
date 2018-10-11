@@ -44,22 +44,20 @@
           <td class="col-xs-8 col-sm-10">
             <a href="{% url 'edit_model' id %}">{{ name }}</a>
           </td>
-          <td class="col-xs-4 col-sm-2">
-            <div class="pull-right">
-              {% if user.is_authenticated %}
-                <form class="form-inline" method="post" enctype="multipart/form-data">
-                  {% csrf_token %}
-                  <input type="hidden" name="id" value="{{ id }}">
-              {% endif %}
-                  <a href="../media/{{ path }}" style="display: inline-block" target="_blank">
-                    <button type="button" class="btn btn-xs btn-default" title="Download">{% icon "download" %}</button>
-                  </a>
-              {% if user.is_authenticated %}
-                  <button type="submit" name="action" value="duplicate_model" class="btn btn-xs btn-primary" tite="Duplicate">{% icon "copy" %}</button>
-                  <button type="submit" name="action" value="delete_model" class="btn btn-primary btn-xs btn-danger" title="Remove">{% icon "trash" %}</button>
-                </form>
-              {% endif %}
-            </div>
+          <td class="col-xs-4 col-sm-2 d-flex align-content-end ">
+						{% if user.is_authenticated %}
+							<form class="form-inline" method="post" enctype="multipart/form-data">
+								{% csrf_token %}
+								<input type="hidden" name="id" value="{{ id }}">
+						{% endif %}
+								<a href="../media/{{ path }}" style="display: inline-block" target="_blank">
+									<button type="button" class="btn btn-sm btn-default ml-1" title="Download">{% icon "download" %}</button>
+								</a>
+						{% if user.is_authenticated %}
+								<button type="submit" name="action" value="duplicate_model" class="btn btn-sm btn-primary ml-1" tite="Duplicate">{% icon "copy" %}</button>
+								<button type="submit" name="action" value="delete_model" class="btn btn-primary btn-sm btn-danger ml-1" title="Remove">{% icon "trash" %}</button>
+							</form>
+						{% endif %}
           </td>
         </tr>
         {% endfor %}
