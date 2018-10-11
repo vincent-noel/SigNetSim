@@ -132,13 +132,14 @@
         <h4 class="modal-title">Import experimental data</h4>
       </div>
 			<div class="modal-body">
-				{% bootstrap_form file_upload_form layout=inline %}
-				{% buttons %}
-				{% endbuttons %}
+				{% include 'commons/html/file_input.html' with
+						id="docfile"
+						placeholder="Choose a file..."
+					%}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="submit" name="action" value="import" class="btn btn-primary">Load model</button>
+        <button type="submit" name="action" value="import" class="btn btn-primary">Load data</button>
       </div>
 			</form>
     </div>
