@@ -28,7 +28,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth.views import logout
+from django.contrib.auth import logout
 
 from .json import FloatValidator, MathValidator, SbmlIdValidator, UnitIdValidator, ModelNameValidator
 from .json import GetListOfObjectsFromSubmodels, UsernameValidator
