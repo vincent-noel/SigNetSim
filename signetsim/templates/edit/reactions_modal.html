@@ -16,7 +16,7 @@
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
 {% load static from staticfiles %}
-{% load bootstrap3 %}
+{% load icons %}
 {% load tags %}
 
 <div class="modal fade out" tabindex="-1" role="dialog" aria-labelledby="New reaction" id="modal_reaction">
@@ -76,7 +76,7 @@
                     <tr class="row">
                       <th class="col-xs-3 text-center">Stoichiometry</th>
                       <th class="col-xs-7 text-center">Reactants</th>
-                      <th class="col-xs-2 text-right"><button type="button" onclick="form_reaction.form_list_reactants.add();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
+                      <th class="col-xs-2 text-right"><button type="button" onclick="form_reaction.form_list_reactants.add();" class="btn btn-primary btn-xs">{% icon "plus" %}</button></th>
                     </tr>
                   </thead>
                   <tbody id="body_reaction_reactants">
@@ -87,7 +87,7 @@
                     <tr class="row">
                       <th class="col-xs-3 text-center">Stoichiometry</th>
                       <th class="col-xs-7 text-center">Modifiers</th>
-                      <th class="col-xs-2 text-right"><button type="button" onclick="form_reaction.form_list_modifiers.add();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
+                      <th class="col-xs-2 text-right"><button type="button" onclick="form_reaction.form_list_modifiers.add();" class="btn btn-primary btn-xs">{% icon "plus" %}</button></th>
                     </tr>
                   </thead>
                   <tbody id="body_reaction_modifiers">
@@ -98,7 +98,7 @@
                     <tr class="row">
                       <th class="col-xs-3 text-center">Stoichiometry</th>
                       <th class="col-xs-7 text-center">Products</th>
-                      <th class="col-xs-2 text-right"><button type="button" onclick="form_reaction.form_list_products.add();" class="btn btn-primary btn-xs">{% bootstrap_icon "plus" %}</button></th>
+                      <th class="col-xs-2 text-right"><button type="button" onclick="form_reaction.form_list_products.add();" class="btn btn-primary btn-xs">{% icon "plus" %}</button></th>
                     </tr>
                   </thead>
                   <tbody id="body_reaction_products">
@@ -151,7 +151,7 @@
                       <th class="col-xs-2 text-right">
                         <button type="button" onclick="form_reaction.form_local_parameters.add();"
                                 class="btn btn-primary btn-xs"
-                        >{% bootstrap_icon "plus" %}</button>
+                        >{% icon "plus" %}</button>
                       </th>
                     </tr>
                   </thead>

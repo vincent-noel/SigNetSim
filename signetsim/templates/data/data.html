@@ -22,7 +22,7 @@
 
 {% block view_name %}Experimental data{% endblock view_name %}
 {% block view_content %}
-{% load bootstrap3 %}
+{% load icons %}
 
 
 <div class="main">
@@ -47,13 +47,13 @@
     	           {% csrf_token %}
 							 {% endif %}
       	         <a href="{% url 'data_archive' experiment.id %}" style="display: inline-block" target="_blank">
-									 <button type="button" class="btn btn-xs btn-default" title="Download">{% bootstrap_icon "download-alt" %}</button>
+									 <button type="button" class="btn btn-xs btn-default" title="Download">{% icon "download" %}</button>
 								 </a>
 							 {% if user.is_authenticated %}
 								 <input type="hidden" class="form-control" name="id" value="{{experiment.id}}">
-								 <button type="button" onclick="view_experiment({{ experiment.id }})" class="btn btn-primary btn-xs btn-primary" title="Edit">{% bootstrap_icon "pencil" %}</button>
-								 <button type="submit" name="action" value="duplicate" class="btn btn-xs btn-primary" title="Duplicate">{% bootstrap_icon "duplicate" %}</button>
-								 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger" title="Remove">{% bootstrap_icon "trash" %}</button>
+								 <button type="button" onclick="view_experiment({{ experiment.id }})" class="btn btn-primary btn-xs btn-primary" title="Edit">{% icon "pencil-alt" %}</button>
+								 <button type="submit" name="action" value="duplicate" class="btn btn-xs btn-primary" title="Duplicate">{% icon "copy" %}</button>
+								 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger" title="Remove">{% icon "trash" %}</button>
 						 </form>
 						 {% endif %}
              </div>
@@ -66,8 +66,8 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="containter-fluid">
-    <button type="button" class="btn btn-primary btn-sm" onclick="new_experiment()">{% bootstrap_icon "file" %} New experiment</button>
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#import_experiment">{% bootstrap_icon "folder-open" %}&nbsp; Import experiment</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="new_experiment()">{% icon "file" %} New experiment</button>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#import_experiment">{% icon "folder-open" %}&nbsp; Import experiment</button>
 
   </div>
   {% endif %}

@@ -17,7 +17,7 @@
 
 {% endcomment %}
 
-{% load bootstrap3 %}
+{% load icons %}
 {% load tags %}
 
 class SpeciesForm extends FormGroup{

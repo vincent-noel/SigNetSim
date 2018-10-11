@@ -1,7 +1,7 @@
 {% extends '_layouts/menupage.html' %}
 
 {% load static from staticfiles %}
-{% load bootstrap3 %}
+{% load icons %}
 {% load tags %}
 
 {% block title %} Species | {{ block.super }}{% endblock title %}
@@ -38,8 +38,8 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="species_id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="form_species.load('{{species.getSbmlId}}')" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
-                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+                <button type="button" onclick="form_species.load('{{species.getSbmlId}}')" class="btn btn-primary btn-xs btn-primary">{% icon "pencil-alt" %}</button>
+                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% icon "trash" %}</button>
              </form>
           </div>
           {% endif %}
@@ -53,7 +53,7 @@
   <hr/>
   <div class="container-fluid">
       <button type="button" class="btn btn-primary btn-sm" onclick="form_species.new();">
-				{% bootstrap_icon "file" %} Create new species
+				{% icon "file" %} Create new species
 			</button>
   </div>
   {% endif %}

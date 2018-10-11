@@ -24,7 +24,7 @@
 
 {% block view_content %}
 
-{% load bootstrap3 %}
+{% load icons %}
 
 
 <div class="main">
@@ -51,19 +51,19 @@
               <form class="form-inline" action="." method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="id" value="{{ project.id }}">
-                <button type="button" class="btn btn-xs btn-primary" onclick="form_project.load({{project.id}});" title="Edit project">{% bootstrap_icon "pencil" %}</button>
-                <button type="button" class="btn btn-xs btn-primary" onclick="form_send_project.show({{project.id}});" title="Send project">{% bootstrap_icon "send" %}</button>
-                <button type="submit" name="action" value="copy_folder" class="btn btn-xs btn-primary" title="Duplicate project">{% bootstrap_icon "duplicate" %}</button>
+                <button type="button" class="btn btn-xs btn-primary" onclick="form_project.load({{project.id}});" title="Edit project">{% icon "pencil-alt" %}</button>
+                <button type="button" class="btn btn-xs btn-primary" onclick="form_send_project.show({{project.id}});" title="Send project">{% icon "share" %}</button>
+                <button type="submit" name="action" value="copy_folder" class="btn btn-xs btn-primary" title="Duplicate project">{% icon "copy" %}</button>
                 <a href="{% url 'project_archive' project.folder %}" style="display: inline-block" target="_blank">
-                  <button type="button" class="btn btn-xs btn-default" title="Download as COMBINE archive">{% bootstrap_icon "download-alt" %}</button>
+                  <button type="button" class="btn btn-xs btn-default" title="Download as COMBINE archive">{% icon "download" %}</button>
                 </a>
-                <button type="submit" name="action" value="delete_folder" class="btn btn-primary btn-xs btn-danger" title="Remove project">{% bootstrap_icon "trash" %}</button>
+                <button type="submit" name="action" value="delete_folder" class="btn btn-primary btn-xs btn-danger" title="Remove project">{% icon "trash" %}</button>
               </form>
             </div>
             {% else %}
             <div class="pull-right">
               <a href="{% url 'project_archive' project.folder %}" style="display: inline-block" target="_blank">
-                <button type="button" class="btn btn-xs btn-default" title="Download as COMBINE archive">{% bootstrap_icon "download-alt" %}</button>
+                <button type="button" class="btn btn-xs btn-default" title="Download as COMBINE archive">{% icon "download" %}</button>
               </a>
             </div>
             {% endif %}
@@ -76,8 +76,8 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-    <button type="button" class="btn btn-primary btn-sm" onclick="form_project.new();">{% bootstrap_icon "file" %} Create new project</button>
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#load_folder">{% bootstrap_icon "folder-open" %}&nbsp;&nbsp;Load combine archive</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="form_project.new();">{% icon "file" %} Create new project</button>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#load_folder">{% icon "folder-open" %}&nbsp;&nbsp;Load combine archive</button>
  </div>
   {% endif %}
   {% endif %}

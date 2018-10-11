@@ -18,7 +18,7 @@
 {% extends '_layouts/menupage.html' %}
 {% load static from staticfiles %}
 
-{% load bootstrap3 %}
+{% load icons %}
 {% load tags %}
 
 {% block view_sidebar %}{% include 'admin/menu.html' with page="users" %}{% endblock view_sidebar %}
@@ -65,8 +65,8 @@
               <form class="form-inline" role="form" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="id" value="{{ user.id }}">
-							 	<button type="button" title="Set user quotas" class="btn btn-primary btn-xs" onclick="form_quotas.load('{{ user.username }}')">{% bootstrap_icon "pencil" %}</button>
-                <button type="submit" name="action" value="delete" title="Delete user" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+							 	<button type="button" title="Set user quotas" class="btn btn-primary btn-xs" onclick="form_quotas.load('{{ user.username }}')">{% icon "pencil-alt" %}</button>
+                <button type="submit" name="action" value="delete" title="Delete user" class="btn btn-primary btn-xs btn-danger">{% icon "trash" %}</button>
                </form>
 
              </div>
@@ -121,7 +121,7 @@
 									</td>
 									<td class="col-xs-4">
 										<div class="pull-right">
-											<button type="button" class="btn btn-primary btn-xs" id="quotas_reset_button" onclick="form_quotas.reset();">{% bootstrap_icon "repeat" %}</button>
+											<button type="button" class="btn btn-primary btn-xs" id="quotas_reset_button" onclick="form_quotas.reset();">{% icon "redo-alt" %}</button>
 										</div>
 									</td>
 								</tr>

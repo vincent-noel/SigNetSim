@@ -15,10 +15,10 @@
 {#   You should have received a copy of the GNU Affero General Public License #}
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
-{% load bootstrap3 %}
+{% load icons %}
 
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {% if element_id != None %}<input type="hidden" name="element_id" value="{{ element_id }}">{% endif %}
-  <button type="submit" name="action" value="{{action}}" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+  <button type="submit" name="action" value="{{action}}" class="btn btn-primary btn-xs btn-danger">{% icon "trash" %}</button>
 </form>

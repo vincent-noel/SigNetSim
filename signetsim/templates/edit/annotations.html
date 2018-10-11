@@ -23,7 +23,7 @@
 {% block view_name %}Model annotations{% endblock view_name %}
 {% block view_sidebar %}{% include 'edit/menu.html' with page="misc" %}{% endblock view_sidebar %}
 {% block view_content %}
-{% load bootstrap3 %}
+{% load icons %}
 {% load tags %}
 
 <div class="container-fluid" id="view">
@@ -61,11 +61,11 @@
 						{% if user.is_authenticated %}
             <td class="col-xs-2">
 							<div class="pull-right collapse in" id="edit_reaction_off_actions">
-								<button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_name">{% bootstrap_icon "pencil" %}</button>
+								<button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_name">{% icon "pencil-alt" %}</button>
 							</div>
 							<div class="pull-right collapse out" id="edit_reaction_on_actions">
-								<button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_name_cancel">{% bootstrap_icon "remove" %}</button>
-								<button type="submit" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
+								<button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_name_cancel">{% icon "times" %}</button>
+								<button type="submit" class="btn btn-primary btn-xs btn-success">{% icon "check" %}</button>
 							</div>
             </td>
 						{% endif %}
@@ -104,11 +104,11 @@
 						{% if user.is_authenticated %}
             <td class="col-xs-2">
               <div class="pull-right collapse in" id="edit_notes_off_actions">
-                  <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_notes">{% bootstrap_icon "pencil" %}</button>
+                  <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_notes">{% icon "pencil-alt" %}</button>
               </div>
               <div class="pull-right collapse out" id="edit_notes_on_actions">
-                  <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_notes_cancel">{% bootstrap_icon "remove" %}</button>
-                  <button type="submit" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
+                  <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_notes_cancel">{% icon "times" %}</button>
+                  <button type="submit" class="btn btn-primary btn-xs btn-success">{% icon "check" %}</button>
               </div>
             </td>
 						{% endif %}
@@ -158,11 +158,11 @@
             <td class="col-xs-2">
               {% if user.is_authenticated %}
               <div class="pull-right collapse in" id="edit_publi_off_actions">
-                  <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_publi">{% bootstrap_icon "pencil" %}</button>
+                  <button type="button" class="btn btn-primary btn-xs btn-primary" id="edit_model_publi">{% icon "pencil-alt" %}</button>
               </div>
               <div class="pull-right collapse out" id="edit_publi_on_actions">
-                  <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_publi_cancel">{% bootstrap_icon "remove" %}</button>
-                  <button type="submit" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
+                  <button type="button" class="btn btn-primary btn-xs btn-danger" id="edit_model_publi_cancel">{% icon "times" %}</button>
+                  <button type="submit" class="btn btn-primary btn-xs btn-success">{% icon "check" %}</button>
               </div>
               {% endif %}
             </td>

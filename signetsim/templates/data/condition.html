@@ -28,7 +28,7 @@
 {% endblock header %}
 
 {% block view_content %}
-{% load bootstrap3 %}
+{% load icons %}
 
 
 <div class="main">
@@ -69,8 +69,8 @@
                 {% csrf_token %}
                 <input type="hidden" name="data_type" value="treatment">
                 <input type="hidden" name="id" value="{{ data_point.id }}">
-                <button type="button" onclick="view_treatment({{ data_point.id }})" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
-                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+                <button type="button" onclick="view_treatment({{ data_point.id }})" class="btn btn-primary btn-xs btn-primary">{% icon "pencil-alt" %}</button>
+                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% icon "trash" %}</button>
                </form>
              </div>
              {% endif %}
@@ -82,7 +82,7 @@
   </div>
   <hr/>
   {% if user.is_authenticated %}
-  <button type="button" onclick="new_treatment()" class="btn btn-primary btn-sm">{% bootstrap_icon "plus" %} New treatment</button>
+  <button type="button" onclick="new_treatment()" class="btn btn-primary btn-sm">{% icon "plus" %} New treatment</button>
   {% endif %}
 
   <hr/><br/>
@@ -113,8 +113,8 @@
                  {% csrf_token %}
                  <input type="hidden" name="data_type" value="observation">
                  <input type="hidden" name="id" value="{{ data_point.id }}">
-                 <button type="button" onclick="view_observation({{ data_point.id }})" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
-                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+                 <button type="button" onclick="view_observation({{ data_point.id }})" class="btn btn-primary btn-xs btn-primary">{% icon "pencil-alt" %}</button>
+                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% icon "trash" %}</button>
                </form>
              </div>
              {% endif %}
@@ -126,7 +126,7 @@
   </div>
   <hr/>
   {% if user.is_authenticated %}
-  <button type="button" class="btn btn-primary btn-sm" onclick="new_observation()">{% bootstrap_icon "plus" %} New observed data</button>
+  <button type="button" class="btn btn-primary btn-sm" onclick="new_observation()">{% icon "plus" %} New observed data</button>
 	{% endif %}
 
 

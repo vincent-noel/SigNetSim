@@ -19,7 +19,7 @@
 {% block view_name %}Stored simulations{% endblock view_name %}
 {% block view_sidebar %}{% include 'simulate/menu.html' with page="stored_simulations" %}{% endblock view_sidebar %}
 {% block view_content %}
-{% load bootstrap3 %}
+{% load icons %}
 
 <div class="container-fluid" id="view">
   <h4>Stored simulations</h4>
@@ -44,10 +44,10 @@
                  {% csrf_token %}
                  <input type="hidden" name="id" value="{{ simulation_id }}">
 								 <a href="{% url 'simulation_archive' simulation_id %}" style="display: inline-block" target="_blank">
-                  <button type="button" class="btn btn-xs btn-default" title="Download simulation archive">{% bootstrap_icon "download-alt" %}</button>
+                  <button type="button" class="btn btn-xs btn-default" title="Download simulation archive">{% icon "download" %}</button>
                 </a>
                  {% if user.is_authenticated %}
-                   <button type="submit" name="action" value="delete_simulation" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+                   <button type="submit" name="action" value="delete_simulation" class="btn btn-primary btn-xs btn-danger">{% icon "trash" %}</button>
                  {% endif %}
                </form>
              </div>
@@ -59,7 +59,7 @@
   </div>
   <hr/>
   <div class="container-fluid">
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#load_sedml">{% bootstrap_icon "folder-open" %}&nbsp;&nbsp;Load SEDML file</button>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#load_sedml">{% icon "folder-open" %}&nbsp;&nbsp;Load SEDML file</button>
   </div>
 </div>
 {% endblock view_content %}

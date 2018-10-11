@@ -18,7 +18,7 @@
 {% extends '_layouts/menupage.html' %}
 
 {% load static from staticfiles %}
-{% load bootstrap3 %}
+{% load icons %}
 {% load tags %}
 
 {% block title %} Rules | {{ block.super }}{% endblock title %}
@@ -56,8 +56,8 @@
               <form class="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="rule_id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="form_rule.load({{forloop.counter0}});" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
-                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+                <button type="button" onclick="form_rule.load({{forloop.counter0}});" class="btn btn-primary btn-xs btn-primary">{% icon "pencil-alt" %}</button>
+                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% icon "trash" %}</button>
               </form>
             </div>
             {% endif %}
@@ -70,7 +70,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-    <button type="submit" class="btn btn-primary btn-sm" onclick="form_rule.new();">{% bootstrap_icon "file" %} Create new rule</button>
+    <button type="submit" class="btn btn-primary btn-sm" onclick="form_rule.new();">{% icon "file" %} Create new rule</button>
   </div>
   {% endif %}
   {% endif %}

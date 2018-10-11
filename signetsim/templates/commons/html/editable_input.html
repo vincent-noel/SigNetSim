@@ -1,4 +1,4 @@
-{% load bootstrap3 %}
+{% load icons %}
 
 <table class="table table-striped">
 	<thead>
@@ -22,11 +22,11 @@
 			<td class="col-xs-2">
 				{% if user.is_authenticated %}
 				<div class="pull-right collapse in" id="{{ id }}_edit_on_actions">
-						<button type="button" class="btn btn-primary btn-xs btn-primary" id="{{ id }}_edit">{% bootstrap_icon "pencil" %}</button>
+						<button type="button" class="btn btn-primary btn-xs btn-primary" id="{{ id }}_edit">{% icon "pencil-alt" %}</button>
 				</div>
 				<div class="pull-right collapse" id="{{ id }}_edit_off_actions">
-					<button type="button" class="btn btn-primary btn-xs btn-danger" id="{{ id }}_edit_cancel">{% bootstrap_icon "remove" %}</button>
-					<button type="button" onclick="{{ validate }}" class="btn btn-primary btn-xs btn-success">{% bootstrap_icon "ok" %}</button>
+					<button type="button" class="btn btn-primary btn-xs btn-danger" id="{{ id }}_edit_cancel">{% icon "times" %}</button>
+					<button type="button" onclick="{{ validate }}" class="btn btn-primary btn-xs btn-success">{% icon "check" %}</button>
 				</div>
 				{% endif %}
 			</td>

@@ -21,7 +21,7 @@
 
 {% block view_name %}Experiment : {{ experiment_name }}{% endblock view_name %}
 {% block view_content %}
-{% load bootstrap3 %}
+{% load icons %}
 
 
 <div class="main">
@@ -45,9 +45,9 @@
                <form class="form" role="form" action="" method="post">
                  {% csrf_token %}
                  <input type="hidden" class="form-control" name="id" value="{{condition.id}}">
-                 <button type="button" onclick="view_condition({{ condition.id }})" class="btn btn-primary btn-xs btn-primary" title="Edit">{% bootstrap_icon "pencil" %}</button>
-                 <button type="submit" name="action" value="duplicate" class="btn btn-xs btn-primary" title="Duplicate">{% bootstrap_icon "duplicate" %}</button>
-                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger" title="Remove">{% bootstrap_icon "trash" %}</button>
+                 <button type="button" onclick="view_condition({{ condition.id }})" class="btn btn-primary btn-xs btn-primary" title="Edit">{% icon "pencil-alt" %}</button>
+                 <button type="submit" name="action" value="duplicate" class="btn btn-xs btn-primary" title="Duplicate">{% icon "copy" %}</button>
+                 <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger" title="Remove">{% icon "trash" %}</button>
                </form>
              </div>
              {% endif %}
@@ -60,7 +60,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="containter-fluid">
-    <button type="button" class="btn btn-primary btn-sm" onclick="new_condition()">{% bootstrap_icon "file" %} New condition</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="new_condition()">{% icon "file" %} New condition</button>
   </div>
   {% endif %}
 </div>

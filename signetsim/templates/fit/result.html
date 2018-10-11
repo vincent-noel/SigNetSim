@@ -27,7 +27,7 @@
 {% block view_name %}Optimization_results{% endblock view_name %}
 
 {% block view_content %}
-{% load bootstrap3 %}
+{% load icons %}
 {% load tags %}
 <div class="container-fluid">
   <div class="row row-xs-offset-2">
@@ -84,8 +84,8 @@
               <td class="col-xs-4 text-center">
                 <form action="" method="POST">
                   {% csrf_token %}
-                  <button type="submit" name="action" value="stop_optim" class="btn btn-primary btn-sm" {% if optimization_status != "Ongoing" %}disabled{% endif %}>{% bootstrap_icon "pause" %} Pause optimization</button>
-                  <button type="submit" name="action" value="restart_optim" class="btn btn-primary btn-sm" {% if optimization_status != "Interrupted" %}disabled{% endif %}>{% bootstrap_icon "play" %} Restart optimization</button>
+                  <button type="submit" name="action" value="stop_optim" class="btn btn-primary btn-sm" {% if optimization_status != "Ongoing" %}disabled{% endif %}>{% icon "pause" %} Pause optimization</button>
+                  <button type="submit" name="action" value="restart_optim" class="btn btn-primary btn-sm" {% if optimization_status != "Interrupted" %}disabled{% endif %}>{% icon "play" %} Restart optimization</button>
                 </form>
               </td>
               <td class="col-xs-4 text-center">
@@ -129,12 +129,12 @@
               <td class="col-xs-6 text-center">
                 <form action="" method="POST">
                   {% csrf_token %}
-                  <button type="button" data-toggle="modal" data-target="#modal_save_fitted_model" class="btn btn-primary btn-sm">{% bootstrap_icon "duplicate" %} Save as a new model</button>
+                  <button type="button" data-toggle="modal" data-target="#modal_save_fitted_model" class="btn btn-primary btn-sm">{% icon "copy" %} Save as a new model</button>
                 </form>
               </td>
               <td class="col-xs-6 text-center">
                 <a href="/signetsim/media/{{user.id}}/models/fitted/{{optimization_id}}/fitted_model.sbml">
-                  <button type="button" class="btn btn-primary btn-sm">{% bootstrap_icon "download-alt" %} Save SBML</button>
+                  <button type="button" class="btn btn-primary btn-sm">{% icon "download" %} Save SBML</button>
                 </a>
               </td>
             </tr>

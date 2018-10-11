@@ -19,7 +19,7 @@
 {% block view_name %}Optimize data{% endblock view_name %}
 {% block view_sidebar %}{% include 'fit/menu.html' %}{% endblock view_sidebar %}
 {% block view_content %}
-{% load bootstrap3 %}
+{% load icons %}
 {% load tags %}
 
 <div class="container-fluid" id="view">
@@ -47,9 +47,9 @@
                  {% csrf_token %}
                  <input type="hidden" name="entry_id" value="{{ optimization.id }}">
                  <input type="hidden" name="optimization_id" value="{{ optimization.optimization_id }}">
-                 {% if optimization.status == "Running" %}<button type="submit" name="action" value="stop_optimization" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "stop" %}</button>{% endif %}
-                 {% if optimization.status == "Interrupted" %}<button type="submit" name="action" value="restart_optimization" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "play" %}</button>{% endif %}
-								 <button type="submit" name="action" value="delete_optimization" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+                 {% if optimization.status == "Running" %}<button type="submit" name="action" value="stop_optimization" class="btn btn-primary btn-xs btn-primary">{% icon "stop" %}</button>{% endif %}
+                 {% if optimization.status == "Interrupted" %}<button type="submit" name="action" value="restart_optimization" class="btn btn-primary btn-xs btn-primary">{% icon "play" %}</button>{% endif %}
+								 <button type="submit" name="action" value="delete_optimization" class="btn btn-primary btn-xs btn-danger">{% icon "trash" %}</button>
 							 </form>
              </div>
          </td>

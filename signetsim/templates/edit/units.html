@@ -17,7 +17,7 @@
 
 {% extends '_layouts/menupage.html' %}
 
-{% load bootstrap3 %}
+{% load icons %}
 {% load static from staticfiles %}
 
 {% block title %} Units | {{ block.super }}{% endblock title %}
@@ -50,8 +50,8 @@
               <form lass="form-inline" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="id" value="{{ forloop.counter0 }}">
-                <button type="button" onclick="form_unit.load({{ forloop.counter0 }})" class="btn btn-primary btn-xs btn-primary">{% bootstrap_icon "pencil" %}</button>
-                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% bootstrap_icon "trash" %}</button>
+                <button type="button" onclick="form_unit.load({{ forloop.counter0 }})" class="btn btn-primary btn-xs btn-primary">{% icon "pencil-alt" %}</button>
+                <button type="submit" name="action" value="delete" class="btn btn-primary btn-xs btn-danger">{% icon "trash" %}</button>
               </form>
             </div>
             {% endif %}
@@ -64,7 +64,7 @@
   {% if user.is_authenticated %}
   <hr/>
   <div class="container-fluid">
-    <button type="button" class="btn btn-primary btn-sm" onclick="form_unit.new()">{% bootstrap_icon "file" %} Create new unit</button>
+    <button type="button" class="btn btn-primary btn-sm" onclick="form_unit.new()">{% icon "file" %} Create new unit</button>
   </div>
   {% endif %}
   {% endif %}

@@ -16,7 +16,7 @@
 {#   along with this program. If not, see <http://www.gnu.org/licenses/>. 	  #}
 
 {% extends '_layouts/fullpage.html' %}
-{% load bootstrap3 %}
+{% load icons %}
 
 {% block title %} Profile | {{ block.super }}{% endblock title %}
 {% block view_content %}
@@ -40,7 +40,7 @@
           </td>
           <td class="col-xs-1">
             <div class="pull-right collapse" id="save_first_name_input">
-              <button type="submit" name="action" value="change_first_name" class="btn btn-primary btn-xs btn-success" title="Save changes to first name">{% bootstrap_icon "ok" %}</button>
+              <button type="submit" name="action" value="change_first_name" class="btn btn-primary btn-xs btn-success" title="Save changes to first name">{% icon "check" %}</button>
             </div>
           </td>
         </tr>
@@ -63,7 +63,7 @@
           </td>
           <td class="col-xs-1">
             <div class="pull-right collapse" id="save_last_name_input">
-              <button type="submit" name="action" value="change_last_name" class="btn btn-primary btn-xs btn-success" title="Save changes to last name">{% bootstrap_icon "ok" %}</button>
+              <button type="submit" name="action" value="change_last_name" class="btn btn-primary btn-xs btn-success" title="Save changes to last name">{% icon "check" %}</button>
             </div>
           </td>
         </tr>
@@ -87,7 +87,7 @@
           </td>
           <td class="col-xs-1">
             <div class="pull-right collapse" id="save_email_input">
-              <button type="submit" name="action" value="change_email" class="btn btn-primary btn-xs btn-success" title="Save changes to email">{% bootstrap_icon "ok" %}</button>
+              <button type="submit" name="action" value="change_email" class="btn btn-primary btn-xs btn-success" title="Save changes to email">{% icon "check" %}</button>
             </div>
           </td>
         </tr>
@@ -111,7 +111,7 @@
           </td>
           <td class="col-xs-1">
             <div class="pull-right collapse" id="save_organization_input">
-              <button type="submit" name="action" value="change_organization" class="btn btn-primary btn-xs btn-success" title="Save changes to organization">{% bootstrap_icon "ok" %}</button>
+              <button type="submit" name="action" value="change_organization" class="btn btn-primary btn-xs btn-success" title="Save changes to organization">{% icon "check" %}</button>
             </div>
           </td>
         </tr>
@@ -142,7 +142,7 @@
           </td>
           <td class="col-xs-1">
             <div class="pull-right collapse" id="save_password_input">
-              <button type="submit" name="action" value="change_password" class="btn btn-primary btn-xs btn-success" title="Save changes to passord">{% bootstrap_icon "ok" %}</button>
+              <button type="submit" name="action" value="change_password" class="btn btn-primary btn-xs btn-success" title="Save changes to passord">{% icon "check" %}</button>
             </div>
           </td>
         </tr>
