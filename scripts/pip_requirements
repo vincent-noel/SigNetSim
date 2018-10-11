@@ -11,7 +11,8 @@ jinja2
 coveralls
 future
 Django
-django-bootstrap3
+django-bootstrap4
+django-icons
 git+https://github.com/vincent-noel/libSigNetSim.git@develop
 dill
 matplotlib
