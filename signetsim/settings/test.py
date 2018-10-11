@@ -50,7 +50,8 @@ INSTALLED_APPS = (
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
 	'django.templatetags',
-	'bootstrap3',
+	'bootstrap4',
+	'django_icons',
 	'signetsim',
 )
 
