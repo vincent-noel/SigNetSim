@@ -11,13 +11,13 @@
 
 	<title>{% block title %}SigNetSim{% endblock title %}</title>
 	<!-- Bootstrap core CSS -->
-	<link href="{% static "bootstrap/dist/css/bootstrap.min.css" %}" rel="stylesheet">
-	<!-- Custom styles for this template -->
+	<link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">	<!-- Custom styles for this template -->
 	<!-- Font Awesome CSS -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/solid.css" integrity="sha384-VGP9aw4WtGH/uPAOseYxZ+Vz/vaTb1ehm1bwx92Fm8dTrE+3boLfF1SpAtB1z7HW" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/fontawesome.css" integrity="sha384-1rquJLNOM3ijoueaaeS5m+McXPJCGdr5HcA03/VHXxcp2kX2sUrQDmFc3jR5i/C7" crossorigin="anonymous">
-	{% block css %}{% endblock css %}
-	<script src="{% static "jquery/dist/jquery.min.js" %}"></script>
+	<link rel="stylesheet" href="{% static '@fortawesome/fontawesome-free/css/solid.min.css' %}">
+	<link rel="stylesheet" href="{% static '@fortawesome/fontawesome-free/css/fontawesome.min.css' %}">
+
+		{% block css %}{% endblock css %}
+	<script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
 	{% block header %}{% endblock header %}
 	{% block header_js %}
 	<script type="application/javascript">
@@ -27,55 +27,64 @@
   </head>
 
   <body>
-	<nav class="navbar navbar-inverse navbar-fixed-top" id="navbar-fixed-top">
-	  <div class="container-fluid">
-		<div class="navbar-header">
-		  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-			<span class="sr-only">Toggle navigation</span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		  </button>
-		  <a class="navbar-brand" href="{% url 'home' %}">SigNetSim</a>
-		</div>
-		<div id="navbar" class="navbar-collapse collapse">
-		  {% if project_id != None %}
-		  <ul class="nav navbar-nav navbar-left">
-			<li class="{% block models_item %}{% endblock models_item %}"><a href="{% url 'models' %}">Models</a></li>
-			<li class="{% block data_item %}{% endblock data_item %}"><a href="{% url 'experimental_data' %}">Data</a></li>
-			<li class="{% block edit_item %}{% endblock edit_item %}"><a href="{% url 'edit_overview' %}">Edition</a></li>
-			<li class="{% block sim_item %}{% endblock sim_item %}"><a href="{% url 'list_of_simulations' %}">Simulation</a></li>
-			{% if user.is_authenticated %}
-			<li class="{% block fit_item %}{% endblock fit_item %}"><a href="{% url 'list_of_optimizations' %}">Fitting</a></li>
-			<li class="{% block analyse_item %}{% endblock analyse_item %}"><a href="{% url 'analyse' %}">Analysis</a></li>
-			{% endif %}
-		  </ul>
-		  {% endif %}
-		  <ul class="nav navbar-nav navbar-right">
-			<li>{% include 'commons/select_project.html' %}</li>
-			{% if not user.is_authenticated %}
-			<li><a href="{% url 'signup' %}">Signup</a></li>
-			<li><a href="{% url 'login' %}">Login</a></li>
-			{% endif %}
-			{% if user.is_authenticated %}
-			<li><a href="{% url 'profile' user.username %}">{{user.username}}</a></li>
-			{% if user.is_staff %}
-			<li><a href="{% url 'admin_users' %}">Admin</a></li>
-			{% endif %}
-			<li><a href="{% url 'help' %}">Help</a></li>
-			<li><a href="{% url 'logout' %}">Logout</a></li>
-			{% endif %}
-		  </ul>
-		</div>
-	  </div>
-	</nav>
 
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top" id="navbar-fixed-top">
+		  <a class="navbar-brand" href="{% url 'home' %}">SigNetSim</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+  		<div class="collapse navbar-collapse" id="navbarNavDropdown">
+				{% if project_id != None %}
+				<ul class="nav navbar-nav mr-auto">
+				<li class="nav-item {% block models_item %}{% endblock models_item %}">
+					<a class="nav-link" href="{% url 'models' %}">Models</a>
+				</li>
+				<li class="nav-item {% block data_item %}{% endblock data_item %}">
+					<a class="nav-link" href="{% url 'experimental_data' %}">Data</a>
+				</li>
+				<li class="nav-item {% block edit_item %}{% endblock edit_item %}">
+					<a class="nav-link" href="{% url 'edit_overview' %}">Edition</a>
+				</li>
+				<li class="nav-item {% block sim_item %}{% endblock sim_item %}">
+					<a class="nav-link" href="{% url 'list_of_simulations' %}">Simulation</a>
+				</li>
+				{% if user.is_authenticated %}
+				<li class="nav-item {% block fit_item %}{% endblock fit_item %}">
+					<a class="nav-link" href="{% url 'list_of_optimizations' %}">Fitting</a>
+				</li>
+				<li class="nav-item {% block analyse_item %}{% endblock analyse_item %}">
+					<a class="nav-link" href="{% url 'analyse' %}">Analysis</a>
+				</li>
+				{% endif %}
+				</ul>
+				{% endif %}
+				<ul class="nav navbar-nav ml-auto mr-auto">
+								<li class="nav-item">{% include 'commons/select_project.html' %}</li>
+
+				</ul>
+				<ul class="nav navbar-nav ml-auto">
+				{% if not user.is_authenticated %}
+				<li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">Signup</a></li>
+				<li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+				{% endif %}
+				{% if user.is_authenticated %}
+				<li class="nav-item"><a class="nav-link" href="{% url 'profile' user.username %}">{{user.username}}</a></li>
+				{% if user.is_staff %}
+				<li class="nav-item"><a class="nav-link" href="{% url 'admin_users' %}">Admin</a></li>
+				{% endif %}
+				<li class="nav-item"><a class="nav-link" href="{% url 'help' %}">Help</a></li>
+				<li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+				{% endif %}
+				</ul>
+			</div>
+		</nav>
 	{% block view %}{% endblock view %}
 	{% block view_modal %}{% endblock view_modal %}
 
 	<!-- Bootstrap core JavaScript -->
 	<!-- Placed at the start of the document so the pages load faster -->
-	<script src="{% static "bootstrap/dist/js/bootstrap.min.js" %}"></script>
+<script src="{% static 'popper.js/dist/popper.min.js' %}" ></script>
+<script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
 	{% block footer_js %}{% endblock footer_js %}
 	<script src="{% static 'custom.js' %}"></script>
 
