@@ -1,7 +1,7 @@
 python-libsbml
 python-libsedml
 python-libnuml
-numpy
+numpy<1.16.0
 scipy
 git+https://github.com/vincent-noel/pydstool.git@tkf
 sympy<1.2
